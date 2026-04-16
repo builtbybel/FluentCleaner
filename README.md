@@ -104,7 +104,8 @@ CCleaner dropping support was honestly part of the motivation to build this
 
 yes. FluentCleaner isn't locked to one source.
 
-tools like BleachBit (primarily a Linux cleaner, honestly not great on Windows), and others have their own flavors of winapp2.ini,
+tools like BBleachBit (primarily a Linux cleaner, discovered it through this project actually,
+but the UI was bad enough that it came right back off), and others have their own flavors of winapp2.ini,
 slightly modified versions tuned for their specific needs. you can grab any of them
 (or build your own) and plug it straight into FluentCleaner.
 
