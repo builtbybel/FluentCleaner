@@ -53,7 +53,7 @@ FluentCleaner just gives you more control over what exactly gets cleaned
 <details>
 <summary>what even is winapp2.ini?</summary>
 
-a community-maintained database of cleaning rules for Windows apps —
+a community-maintained database of cleaning rules for Windows apps,
 thousands of entries built up over 15+ years. it tells FluentCleaner exactly
 what to clean for each app: which temp folders, which cache paths, which registry keys.
 no guessing, no sweeping wildcards across your whole drive.
@@ -77,7 +77,7 @@ the tool back when it was still worth using
 <summary>is it safe?</summary>
 
 it's as safe as what you enable. nothing runs without you selecting it first.
-winapp2.ini entries only target what they're explicitly told to target —
+winapp2.ini entries only target what they're explicitly told to target,
 no broad "delete everything in temp" nonsense.
 that said: it deletes files. take a backup if something feels important
 
