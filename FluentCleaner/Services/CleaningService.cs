@@ -120,7 +120,7 @@ public class CleaningService
         }
         else
         {
-            // No value name — queue the entire key for deletion.
+            // No value name; lets queue the entire key for deletion.
             yield return new RegistryItemToDelete { KeyPath = regKey.KeyPath };
         }
     }
