@@ -122,6 +122,6 @@ if you want more coverage than the default.
 <details>
 <summary>source code?</summary>
 
-coming. still figuring out the license. for now: preview binary, open feedback.
+coming. still figuring out the license. for now: preview binary, open feedback. the current version is almost complete, I just need a few more days for final refactoring of the views
 
 </details>
