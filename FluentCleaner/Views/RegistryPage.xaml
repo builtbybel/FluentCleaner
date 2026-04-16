@@ -1,0 +1,34 @@
+<Page
+    x:Class="FluentCleaner.Views.RegistryPage"
+    NavigationCacheMode="Required"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                Spacing="12" MaxWidth="480">
+
+        <FontIcon Glyph="&#xE7C3;" FontSize="52"
+                  Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                  HorizontalAlignment="Center" />
+
+        <TextBlock Text="Registry Cleaner"
+                   Style="{StaticResource TitleTextBlockStyle}"
+                   HorizontalAlignment="Center" />
+
+        <TextBlock TextAlignment="Center"
+                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                   TextWrapping="WrapWholeWords"
+                   Text="Yeah, this isn't happening." />
+
+        <TextBlock TextAlignment="Center"
+                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   TextWrapping="WrapWholeWords"
+                   Text="This spot is reserved for something actually useful. A registry cleaner isn't it, no serious tool ships one, and the ones that did have been quietly walking it back ever since. Something better is coming here. Eventually." />
+
+    </StackPanel>
+</Page>

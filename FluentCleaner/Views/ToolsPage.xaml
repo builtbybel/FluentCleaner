@@ -1,0 +1,225 @@
+<Page
+    x:Class="FluentCleaner.Views.ToolsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ext="using:FluentCleaner.Tools"
+    mc:Ignorable="d"
+    NavigationCacheMode="Required"
+    Background="Transparent">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- toolbar -->
+            <RowDefinition Height="*" />     <!-- list + detail -->
+            <RowDefinition Height="Auto" />  <!-- output panel -->
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <Border x:Name="borderToolbar" Grid.Row="0"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid Padding="12,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Category filter -->
+                <ComboBox x:Name="comboFilter" Grid.Column="0"
+                          FontSize="12" Height="30" MinWidth="100"
+                          SelectionChanged="comboFilter_SelectionChanged" />
+
+                <AutoSuggestBox Grid.Column="1"
+                               PlaceholderText="Search"
+                               QueryIcon="Find"
+                               FontSize="12"
+                               Margin="16,0"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Center"
+                               TextChanged="SearchBox_TextChanged" />
+
+                <!-- Status text -->
+                <TextBlock x:Name="lblStatus" Grid.Column="2"
+                           FontSize="11"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            </Grid>
+        </Border>
+
+        <!-- Main content: list left, detail right -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1" />
+                <ColumnDefinition Width="1.4*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: extension list + empty state -->
+            <Grid Grid.Column="0">
+
+                <!-- Empty state: no Extensions folder found -->
+                <StackPanel x:Name="panelNoFolder"
+                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Spacing="8" Margin="24"
+                            Visibility="Collapsed">
+                    <FontIcon Glyph="&#xE8F4;" FontSize="36"
+                              Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                              HorizontalAlignment="Center" />
+                    <TextBlock Text="No extensions installed."
+                               FontSize="13" FontWeight="SemiBold"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Extensions are optional. Download the extension pack and place the Extensions folder next to the app."
+                               FontSize="12" TextWrapping="WrapWholeWords" TextAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <HyperlinkButton Content="Get extensions on GitHub"
+                                     Click="btnGitHub_Click"
+                                     HorizontalAlignment="Center"
+                                     FontSize="12" />
+                    <Button Content="Open app folder"
+                            Click="btnOpenFolder_Click"
+                            HorizontalAlignment="Center"
+                            FontSize="12" />
+                </StackPanel>
+
+                <!-- Extension list -->
+                <ListView x:Name="listTools"
+                          SelectionMode="Single"
+                          Margin="0,4,0,0"
+                          SelectionChanged="listTools_SelectionChanged"
+                          Visibility="Collapsed">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="ext:ToolsDefinition">
+                            <StackPanel Orientation="Horizontal" Spacing="8" Padding="0,2">
+                                <TextBlock Text="{x:Bind Icon}" FontSize="14"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Bind Title}" FontSize="12.5"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <!-- Vertical divider -->
+            <Border Grid.Column="1"
+                    Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+            <!-- Right: detail pane -->
+            <Grid Grid.Column="2" Margin="0,8,12,12">
+
+                <!-- Placeholder: nothing selected -->
+                <StackPanel x:Name="panelPlaceholder"
+                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Spacing="8" Opacity="0.45">
+                    <FontIcon Glyph="&#xE7C5;" FontSize="36" HorizontalAlignment="Center" />
+                    <TextBlock Text="Select an extension from the list."
+                               FontSize="13" HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Detail content -->
+                <ScrollViewer x:Name="scrollDetails"
+                              VerticalScrollBarVisibility="Auto"
+                              Visibility="Collapsed">
+                    <StackPanel Spacing="8" Padding="12,0,0,0">
+
+                        <!-- Icon + title -->
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock x:Name="lblIcon" FontSize="22" VerticalAlignment="Center" />
+                            <TextBlock x:Name="lblTitle" FontSize="14" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Description -->
+                        <TextBlock x:Name="lblDescription" FontSize="12" TextWrapping="Wrap"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+                        <!-- Help info bar -->
+                        <InfoBar x:Name="infoHelp" Severity="Informational"
+                                 IsOpen="False" IsClosable="False">
+                            <InfoBar.ActionButton>
+                                <Button x:Name="btnShowHelp" Content="Show help"
+                                        Click="btnShowHelp_Click" FontSize="11" />
+                            </InfoBar.ActionButton>
+                        </InfoBar>
+
+                        <!-- Options dropdown -->
+                        <ComboBox x:Name="comboOptions"
+                                  HorizontalAlignment="Stretch"
+                                  PlaceholderText="Select option"
+                                  Visibility="Collapsed" />
+
+                        <!-- Free-text input -->
+                        <TextBox x:Name="textInput"
+                                 HorizontalAlignment="Stretch"
+                                 PlaceholderText="Enter input (e.g. IDs or raw arguments)"
+                                 Visibility="Collapsed" />
+
+                        <!-- Attribution link -->
+                        <HyperlinkButton x:Name="linkPoweredBy"
+                                         Visibility="Collapsed"
+                                         FontSize="11" Padding="0"
+                                         Click="linkPoweredBy_Click" />
+
+                        <!-- Action buttons -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Button x:Name="btnRun" Content="Run"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    Click="btnRun_Click"
+                                    Visibility="Collapsed" />
+                            <Button x:Name="btnUninstall" Content="Remove"
+                                    Click="btnUninstall_Click"
+                                    Visibility="Collapsed" />
+                            <Button Content="&#xE838;" FontFamily="Segoe MDL2 Assets"
+                                    ToolTipService.ToolTip="Open Extensions folder"
+                                    Click="btnOpenFolder_Click"
+                                    Padding="8,6" />
+                        </StackPanel>
+
+                        <ProgressRing x:Name="progressRing"
+                                      IsActive="False"
+                                      Width="24" Height="24"
+                                      HorizontalAlignment="Left" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- Output panel -->
+        <Border x:Name="borderOutput" Grid.Row="2"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="12,8,12,12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <Grid Grid.Row="0" Margin="0,0,0,4">
+                    <TextBlock Text="Output" FontSize="11" FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <Button x:Name="btnClearLog" Content="Clear"
+                            HorizontalAlignment="Right"
+                            FontSize="11" Padding="8,2"
+                            Click="btnClearLog_Click" />
+                </Grid>
+
+                <!-- Live log output -->
+                <TextBox Grid.Row="1"
+                         x:Name="txtLog"
+                         IsReadOnly="True"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         FontFamily="Consolas"
+                         FontSize="11"
+                         MaxHeight="130"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         PlaceholderText="Extension output will appear here..." />
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
