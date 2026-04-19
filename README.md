@@ -1,5 +1,7 @@
 # FluentCleaner
 
+_i built my own take on a cleaner, inspired by the old CCleaner from back in the 2006 days, just adapted to how things should work today. modern (built with WinUI 3), minimal and focused on actually cleaning what matters (without all the usual nonsense)_
+ 
 i built this because at some point you start noticing a pattern
 
 things that were genuinely good… slowly become worse.
