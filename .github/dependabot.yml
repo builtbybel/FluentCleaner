@@ -1,0 +1,22 @@
+version: 2
+
+# Dependency update strategy:
+#   Dependabot -> GitHub Actions (.github/workflows/)
+#   Renovate   -> NuGet packages
+#
+# Renovate is configured separately in renovate.json at the repo root.
+
+updates:
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
