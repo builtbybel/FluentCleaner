@@ -11,7 +11,7 @@
 
   "pinDigests": true,
 
-  "schedule": ["every day"],
+  "schedule": ["at any time"],
 
   "labels": ["dependencies"],
 
