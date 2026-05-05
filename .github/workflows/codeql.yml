@@ -34,9 +34,6 @@ jobs:
           build-mode: manual
           # Use the security-extended query suite for additional checks
           queries: security-extended
-          # Also install the published C# query pack for broader coverage
-          packs: |
-            codeql/csharp-all@latest
 
       - name: Build
         run: dotnet build FluentCleaner/FluentCleaner.csproj --configuration Release -p:Platform=x64
