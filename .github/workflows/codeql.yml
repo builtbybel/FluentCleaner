@@ -31,12 +31,9 @@ jobs:
         uses: github/codeql-action/init@e46ed2cbd01164d986452f91f178727624ae40d7  # v4.35.3
         with:
           languages: csharp
-          build-mode: manual
+          build-mode: autobuild
           # Use the security-extended query suite for additional checks
           queries: security-extended
-
-      - name: Build
-        run: dotnet build FluentCleaner/FluentCleaner.csproj --configuration Release -p:Platform=x64
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@e46ed2cbd01164d986452f91f178727624ae40d7  # v4.35.3
