@@ -1,17 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
 
-  "description": "Renovate manages NuGet packages for FluentCleaner. GitHub Actions updates are handled by Dependabot.",
+  "description": "Renovate manages all dependencies for FluentCleaner: NuGet packages and GitHub Actions.",
 
   "extends": ["config:recommended"],
 
   "forkProcessing": "enabled",
 
-  "enabledManagers": ["nuget"],
+  "enabledManagers": ["nuget", "github-actions"],
 
-  "schedule": ["on monday"],
+  "pinDigests": true,
 
-  "labels": ["dependencies", "dotnet"],
+  "schedule": ["every day"],
+
+  "labels": ["dependencies"],
 
   "commitMessagePrefix": "deps:",
 
@@ -32,6 +34,12 @@
       "matchPackageNames": [
         "/^CommunityToolkit\\./"
       ]
+    },
+    {
+      "description": "Group GitHub Actions updates into a single PR.",
+      "groupName": "GitHub Actions",
+      "labels": ["dependencies", "ci"],
+      "matchManagers": ["github-actions"]
     },
     {
       "description": "Auto-merge patch updates that pass CI.",
