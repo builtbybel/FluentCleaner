@@ -15,59 +15,64 @@ if ($IsLinux -or $IsMacOS) {
 Write-Host ''
 Write-Host '[FluentCleaner] Checking dependencies...' -ForegroundColor Cyan
 
-function Test-WindowsAppRuntime {
-    # Check multiple ways to detect Windows App Runtime 2.0 or higher
-    
-    # Method 1: Check for WindowsAppRuntime DLL in Program Files
-    $runtimePaths = @(
-        "$env:ProgramFiles\WindowsAppRuntime\*.dll",
-        "${env:ProgramFiles(x86)}\WindowsAppRuntime\*.dll",
-        "$env:LOCALAPPDATA\Microsoft\WindowsAppRuntime\*.dll"
-    )
-    
-    foreach ($pattern in $runtimePaths) {
-        if (Get-Item $pattern -ErrorAction SilentlyContinue) {
-            return $true
-        }
-    }
-    
-    # Method 2: Check registry for Windows App Runtime installation
+function Get-WindowsAppRuntimeVersion {
+    # Method 1: Check via Get-AppxPackage for Microsoft.WindowsAppRuntime
     try {
-        $regPath = 'HKLM:\SOFTWARE\Microsoft\Windows App Runtime'
-        if (Test-Path $regPath) {
-            $version = Get-ItemProperty $regPath -ErrorAction SilentlyContinue
-            if ($version) {
-                return $true
-            }
+        $packages = Get-AppxPackage -Name 'Microsoft.WindowsAppRuntime.*' -ErrorAction SilentlyContinue
+        if ($packages) {
+            $versions = $packages | ForEach-Object {
+                try { [version]$_.Version } catch { $null }
+            } | Where-Object { $_ } | Sort-Object -Descending
+            if ($versions) { return $versions[0] }
         }
-    } catch {
-        # Registry check failed, continue to next method
-    }
-    
-    # Method 3: Check for Windows App Runtime via winget
+    } catch {}
+
+    # Method 2: Check registry subkeys for versioned installations
     try {
-        $installed = winget list --id Microsoft.WindowsAppRuntime 2>$null | Select-String "Microsoft.WindowsAppRuntime"
-        if ($installed) {
-            return $true
+        $regBase = 'HKLM:\SOFTWARE\Microsoft\WindowsAppSDK'
+        if (Test-Path $regBase) {
+            $subkeys = Get-ChildItem $regBase -ErrorAction SilentlyContinue
+            $versions = $subkeys | ForEach-Object {
+                try { [version]$_.PSChildName } catch { $null }
+            } | Where-Object { $_ } | Sort-Object -Descending
+            if ($versions) { return $versions[0] }
         }
-    } catch {
-        # winget query failed, continue
-    }
-    
-    return $false
+    } catch {}
+
+    # Method 3: winget fallback
+    try {
+        $line = winget list --id Microsoft.WindowsAppRuntime 2>$null |
+            Select-String 'Microsoft.WindowsAppRuntime' |
+            Select-Object -First 1
+        if ($line) {
+            $match = [regex]::Match($line, '(\d+\.\d+\.\d+)')
+            if ($match.Success) { return [version]$match.Value }
+        }
+    } catch {}
+
+    return $null
 }
 
-if (-not (Test-WindowsAppRuntime)) {
+$minVersion = [version]'1.8'
+$runtimeVersion = Get-WindowsAppRuntimeVersion
+
+if (-not $runtimeVersion) {
     Write-Host '  Windows App Runtime ..... NOT FOUND' -ForegroundColor Red
     Write-Host ''
-    Write-Host '[FluentCleaner] Windows App Runtime 2 or higher is required to run this application.' -ForegroundColor Yellow
+    Write-Host '[FluentCleaner] Windows App Runtime 1.8 or higher is required.' -ForegroundColor Yellow
     Write-Host '     Download from: https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads' -ForegroundColor Cyan
-    Write-Host ''
     Write-Host '     Or use: https://aka.ms/winappsdk (GitHub)' -ForegroundColor Cyan
     Read-Host 'Press Enter to exit'
     exit 1
+} elseif ($runtimeVersion -lt $minVersion) {
+    Write-Host "  Windows App Runtime ..... v$runtimeVersion (too old)" -ForegroundColor Red
+    Write-Host ''
+    Write-Host "[FluentCleaner] Windows App Runtime $minVersion or higher is required (found v$runtimeVersion)." -ForegroundColor Yellow
+    Write-Host '     Download from: https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads' -ForegroundColor Cyan
+    Read-Host 'Press Enter to exit'
+    exit 1
 } else {
-    Write-Host '  Windows App Runtime ..... OK' -ForegroundColor Green
+    Write-Host "  Windows App Runtime ..... v$runtimeVersion OK" -ForegroundColor Green
 }
 
 $projectRoot = $PSScriptRoot
