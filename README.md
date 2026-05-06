@@ -1,4 +1,9 @@
 # FluentCleaner
+### modern, transparent, no spyware, no scareware, no dark patterns, no upsell garbage, no fake registry magic
+
+
+<img width="1536" height="1024" alt="FluentCleaner" src="https://github.com/user-attachments/assets/81ae4e10-9dde-4cff-9cf0-f8aac851f332" />
+
 
 _i built my own take on a cleaner, inspired by the old CCleaner from back in the 2006 days, just adapted to how things should work today. modern (built with WinUI 3), minimal and focused on actually cleaning what matters (without all the usual nonsense)_
  
@@ -118,12 +123,5 @@ the official database from the winapp2 project lives here:
 https://github.com/MoscaDotTo/Winapp2, it's community-maintained, 
 updated regularly, and covers thousands of apps. a solid starting point
 if you want more coverage than the default.
-
-</details>
-
-<details>
-<summary>source code?</summary>
-
-coming. still figuring out the license. for now: preview binary, open feedback. the current version is almost complete, I just need a few more days for final refactoring of the views
 
 </details>
