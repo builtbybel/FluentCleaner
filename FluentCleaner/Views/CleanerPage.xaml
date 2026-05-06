@@ -8,154 +8,23 @@
     mc:Ignorable="d"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-    <!-- Two rows: fixed top bar + everything else -->
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <!-- two-card layout: left = entry selector, right = analysis results -->
+    <Grid Padding="0">
 
-        <!-- TOP BAR - mirrors the two-panel layout below so the divider lines up.
-             Left half=search box. Right half=results header OR detail header. -->
-        <Border Grid.Row="0"
-                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                BorderThickness="0,0,0,1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="280" MinWidth="200" MaxWidth="420" /> <!-- matches left panel -->
-                    <ColumnDefinition Width="1" />                                 <!-- divider pixel -->
-                    <ColumnDefinition Width="*" />                                 <!-- matches right panel -->
-                </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" MinWidth="200" MaxWidth="420" />
+            <ColumnDefinition Width="1" />    <!-- divider -->
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-                <!-- Search box;I wired here textChanged in code-behind to avoid binding lag -->
-                <AutoSuggestBox Grid.Column="0"
-                                FontSize="13"
-                                Margin="8,5"
-                                VerticalAlignment="Center"
-                                PlaceholderText="Search"
-                                QueryIcon="Find"
-                                Text="{x:Bind ViewModel.SearchText, Mode=OneWay}"
-                                TextChanged="SearchBox_TextChanged" />
+        <!-- vertical divider -->
+        <Rectangle Grid.Column="1"
+                   Width="1"
+                   Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
+                   VerticalAlignment="Stretch" />
 
-                <Border Grid.Column="1"
-                        Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
-
-                <Grid Grid.Column="2" Padding="12,5">
-
-                    <!-- Results header; its visible while the list is showing (not in detail view) -->
-                    <Grid Visibility="{x:Bind ViewModel.IsShowingList, Mode=OneWay,
-                              Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />  <!-- total size badge -->
-                            <ColumnDefinition Width="Auto" />  <!-- [...] actions menu -->
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0"
-                                   Text="Analysis results"
-                                   Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   VerticalAlignment="Center" />
-
-                        <!-- Sum of all scanned entries; empty until Analyze finishes -->
-                        <TextBlock Grid.Column="1"
-                                   Text="{x:Bind ViewModel.TotalSize, Mode=OneWay}"
-                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                   Style="{StaticResource SubtitleTextBlockStyle}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,8,0" />
-
-                        <!-- Global [...] actions: select/sort/expand -->
-                        <Button Grid.Column="2"
-                                Width="28" Height="28" Padding="0"
-                                VerticalAlignment="Center"
-                                ToolTipService.ToolTip="Actions">
-                            <FontIcon Glyph="&#xE712;" FontSize="13" />
-                            <Button.Flyout>
-                                <MenuFlyout Placement="Bottom">
-                                    <MenuFlyoutItem Text="Select all"      Command="{x:Bind ViewModel.SelectAllCommand}" />
-                                    <MenuFlyoutItem Text="Select none"     Command="{x:Bind ViewModel.SelectNoneCommand}" />
-                                    <MenuFlyoutItem Text="Select defaults" Command="{x:Bind ViewModel.SelectDefaultsCommand}" />
-                                    <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem Text="Expand all"   Command="{x:Bind ViewModel.ExpandAllCommand}" />
-                                    <MenuFlyoutItem Text="Collapse all" Command="{x:Bind ViewModel.CollapseAllCommand}" />
-                                    <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem Text="Sort by size ↓" Command="{x:Bind ViewModel.SortResultsDescCommand}" />
-                                    <MenuFlyoutItem Text="Sort by size ↑" Command="{x:Bind ViewModel.SortResultsAscCommand}" />
-                                    <MenuFlyoutSeparator />
-                                    <!-- Reloads Winapp2.ini from disk; also triggered by F5 -->
-                                    <MenuFlyoutItem Text="Refresh" Command="{x:Bind ViewModel.RefreshCommand}">
-                                        <MenuFlyoutItem.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="F5" />
-                                        </MenuFlyoutItem.KeyboardAccelerators>
-                                    </MenuFlyoutItem>
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
-                    </Grid>
-
-                    <!-- Detail header;this replaces results header when a result row is open.
-                         Shows back button + entry name + open-folder + delete buttons. -->
-                    <Grid Visibility="{x:Bind ViewModel.IsShowingDetail, Mode=OneWay,
-                              Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />    <!-- entry name; truncates if too long -->
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Back;so it returns to results list (clears SelectedResultLine) -->
-                        <Button Grid.Column="0"
-                                Command="{x:Bind ViewModel.ClearDetailCommand}"
-                                Width="24" Height="24" Padding="0"
-                                ToolTipService.ToolTip="Back to results">
-                            <FontIcon Glyph="&#xE72B;" FontSize="14" />
-                        </Button>
-
-                        <!-- SelectedAppName = the AppName of whichever result row was clicked -->
-                        <TextBlock Grid.Column="1"
-                                   Text="{x:Bind ViewModel.SelectedAppName, Mode=OneWay}"
-                                   Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   VerticalAlignment="Center"
-                                   Margin="8,0"
-                                   TextTrimming="CharacterEllipsis" />
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
-                            <!-- Opens the folder of the first file in Explorer -->
-                            <Button Command="{x:Bind ViewModel.OpenFolderCommand}"
-                                    Width="28" Height="28" Padding="0"
-                                    ToolTipService.ToolTip="Open folder in Explorer">
-                                <FontIcon Glyph="&#xE838;" FontSize="13" />
-                            </Button>
-                            <!-- Cleans only this single entry without touching the rest -->
-                            <Button Command="{x:Bind ViewModel.CleanSelectedCommand}"
-                                    Width="28" Height="28" Padding="0"
-                                    ToolTipService.ToolTip="Delete these files now">
-                                <FontIcon Glyph="&#xE74D;" FontSize="13" />
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <!-- Indeterminate scan bar; spans full width, sits on top of row 1 while busy -->
-        <ProgressBar Grid.Row="1"
-                     VerticalAlignment="Top"
-                     IsIndeterminate="True"
-                     Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
-                         Converter={StaticResource BoolToVisibilityConverter}}" />
-
-        <!-- MAIN AREA - left 280px = entry tree, 1px divider, right * = results/detail -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280" MinWidth="200" MaxWidth="420" />
-                <ColumnDefinition Width="1" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <!-- LEFT PANEL - entry tree -->
-            <Grid Grid.Column="0">
-
+        <!-- left panel - entry selector -->
+        <Grid Grid.Column="0">
                 <!-- Empty state: nothing loaded yet (IsEmpty = Categories.Count == 0) -->
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -173,20 +42,19 @@
                 <!-- Entry tree: one Expander per category, one row per app inside.
                      Hidden until something is loaded (IsNotEmpty). -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              Margin="0,8,0,0"
-                              Padding="0,0,0,24"
+                              Padding="0,6,0,8"
                               Visibility="{x:Bind ViewModel.IsNotEmpty, Mode=OneWay,
                                   Converter={StaticResource BoolToVisibilityConverter}}">
                     <ItemsControl ItemsSource="{x:Bind ViewModel.Categories, Mode=OneWay}"
-                                  Padding="0,8,0,0">
+                                  Padding="0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:CleanerCategoryViewModel">
 
-                                <!-- One collapsible group per category (e.g. "Google Chrome") -->
+                                <!-- one collapsible group per category (e.g. "Google Chrome") -->
                                 <Expander HorizontalAlignment="Stretch"
                                           HorizontalContentAlignment="Stretch"
                                           IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
-                                          Margin="4,3,4,0"
+                                          Margin="8,3,8,0"
                                           Padding="0">
 
                                     <!-- Category header: name + hover [...] menu -->
@@ -255,7 +123,7 @@
                                                         <ColumnDefinition Width="Auto" /> <!-- [...] button -->
                                                     </Grid.ColumnDefinitions>
 
-                                                    <!-- Checkbox — Warning tooltip from Winapp2.ini Warning= field.
+                                                    <!-- Checkbox; Warning tooltip from Winapp2.ini Warning= field.
                                                          Orange icon appears when HasWarning is true. -->
                                                     <CheckBox Grid.Column="0"
                                                               IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
@@ -312,26 +180,96 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-            </Grid>
+        </Grid>
 
-            <!-- Vertical divider between left and right panels -->
-            <Border Grid.Column="1"
-                    Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
-
-            <!-- RIGHT PANEL - results list + detail view + buttons -->
-            <Grid Grid.Column="2">
+        <!-- right panel;analysis results -->
+        <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />    <!-- results or detail list -->
-                    <RowDefinition Height="Auto" /> <!-- status text -->
-                    <RowDefinition Height="Auto" /> <!-- Analyze/Run Cleaner buttons -->
+                    <RowDefinition Height="Auto" />   <!-- results header OR detail header -->
+                    <RowDefinition Height="*" />       <!-- results list OR detail list -->
+                    <RowDefinition Height="Auto" />    <!-- status text -->
+                    <RowDefinition Height="Auto" />    <!-- Analyze / Run Cleaner buttons -->
                 </Grid.RowDefinitions>
 
-                <!-- Results list — each row is one scanned app.
+                <!-- scan progress bar; clips to card's CornerRadius automatically -->
+                <ProgressBar Grid.RowSpan="4"
+                             VerticalAlignment="Top"
+                             IsIndeterminate="True"
+                             Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
+                                 Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                <!-- Results header; visible while the list is showing (not in detail view) -->
+                <Grid Grid.Row="0"
+                      Padding="12,10,12,10"
+                      Visibility="{x:Bind ViewModel.IsShowingList, Mode=OneWay,
+                          Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />  <!-- total size badge -->
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="Analysis results"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"
+                               VerticalAlignment="Center" />
+
+                    <!-- Sum of all scanned entries; empty until Analyze finishes -->
+                    <TextBlock Grid.Column="1"
+                               Text="{x:Bind ViewModel.TotalSize, Mode=OneWay}"
+                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               VerticalAlignment="Center" />
+                </Grid>
+
+                <!-- Detail header;this replaces results header when a result row is open.
+                     Shows back button + entry name + open-folder + delete buttons. -->
+                <Grid Grid.Row="0"
+                      Padding="12,10,12,10"
+                      Visibility="{x:Bind ViewModel.IsShowingDetail, Mode=OneWay,
+                          Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />    <!-- entry name; truncates if too long -->
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Back;so it returns to results list (clears SelectedResultLine) -->
+                    <Button Grid.Column="0"
+                            Command="{x:Bind ViewModel.ClearDetailCommand}"
+                            Width="24" Height="24" Padding="0"
+                            ToolTipService.ToolTip="Back to results">
+                        <FontIcon Glyph="&#xE72B;" FontSize="14" />
+                    </Button>
+
+                    <!-- SelectedAppName = the AppName of whichever result row was clicked -->
+                    <TextBlock Grid.Column="1"
+                               Text="{x:Bind ViewModel.SelectedAppName, Mode=OneWay}"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"
+                               VerticalAlignment="Center"
+                               Margin="8,0"
+                               TextTrimming="CharacterEllipsis" />
+
+                    <!-- Cleans only this single entry without touching the rest -->
+                    <Button Grid.Column="2"
+                            Command="{x:Bind ViewModel.CleanSelectedCommand}"
+                            Width="28" Height="28" Padding="0"
+                            ToolTipService.ToolTip="Delete these files now">
+                        <FontIcon Glyph="&#xE74D;" FontSize="13" />
+                    </Button>
+                </Grid>
+
+                <!-- Divider below header -->
+                <Border Grid.Row="0"
+                        VerticalAlignment="Bottom"
+                        Height="1"
+                        Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                <!-- Results list; each row is one scanned app.
                      Click a row >> SelectedResultLine is set >> switches to detail view.
                      AppName = entry name (bold); tooltip on it shows the category.
                      CountSummary = "3988 files · 2 registry" (gray, line 2).
                      Size = formatted bytes from the scan (accent, right). -->
-                <ListView Grid.Row="0"
+                <ListView Grid.Row="1"
                           x:Name="ResultsListView"
                           ItemsSource="{x:Bind ViewModel.ResultLines, Mode=OneWay}"
                           SelectionMode="None"
@@ -394,10 +332,12 @@
 
                 <!-- Detail list; flat "header + paths" list for the selected entry.
                      DetailLine.IsHeader = true : accent bold section title ("Files (10)")
-                     DetailLine.IsHeader = false : dimmed path row -->
-                <ListView Grid.Row="0"
+                     DetailLine.IsHeader = false : dimmed path row; click opens folder in Explorer -->
+                <ListView Grid.Row="1"
                           ItemsSource="{x:Bind ViewModel.DetailLines, Mode=OneWay}"
                           SelectionMode="None"
+                          IsItemClickEnabled="True"
+                          ItemClick="DetailList_ItemClick"
                           Padding="0,2"
                           Visibility="{x:Bind ViewModel.IsShowingDetail, Mode=OneWay,
                               Converter={StaticResource BoolToVisibilityConverter}}">
@@ -431,8 +371,8 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <!-- Status text: last status message from the ViewModel (scan progress, errors, done) -->
-                <TextBlock Grid.Row="1"
+                <!-- Status text: last message from the ViewModel (scan progress, errors, done) -->
+                <TextBlock Grid.Row="2"
                            Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
                            FontSize="11"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -440,10 +380,10 @@
                            Padding="12,4,12,0" />
 
                 <!-- Action buttons: Analyze (accent, left) + Run Cleaner (right) -->
-                <Grid Grid.Row="2"
+                <Grid Grid.Row="3"
                       BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                       BorderThickness="0,1,0,0"
-                      Padding="12,8,12,16">
+                      Padding="12,8,12,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -467,7 +407,6 @@
                             MinWidth="120"
                             Height="32" />
                 </Grid>
-            </Grid>
         </Grid>
     </Grid>
 </Page>

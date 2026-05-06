@@ -9,24 +9,47 @@ public partial class SettingsPageViewModel : ObservableObject
 {
     private const string Winapp2Url  = "https://raw.githubusercontent.com/builtbybel/FluentCleaner/master/Winapp2.ini";
     private const string Winapp3Url  = "https://raw.githubusercontent.com/MoscaDotTo/Winapp2/master/Winapp3/Winapp3.ini";
+    private const string WinappxUrl  = "https://raw.githubusercontent.com/builtbybel/FluentCleaner/master/Winappx.ini";
 
-    private static string Winapp3LocalPath => Path.Combine(AppContext.BaseDirectory, "Winapp3.ini");
+    private static string Winapp2LocalPath  => Path.Combine(AppContext.BaseDirectory, "Winapp2.ini");
+    private static string Winapp3LocalPath  => Path.Combine(AppContext.BaseDirectory, "Winapp3.ini");
+    private static string WinappxLocalPath  => Path.Combine(AppContext.BaseDirectory, "Winappx.ini");
 
-    [ObservableProperty] private int    _databaseSourceIndex;  // 0=default 1=custom 2=winapp3
-    [ObservableProperty] private bool   _isDefaultSource = true;
-    [ObservableProperty] private bool   _isCustomSource;
-    [ObservableProperty] private bool   _isWinapp3Source;
-    [ObservableProperty] private string _activePath = "";
-    [ObservableProperty] private string _customPath = "";
-    [ObservableProperty] private string _statusText = "";
-    [ObservableProperty] private bool   _isBusy;
-    [ObservableProperty] private string _fileInfo   = "";
-    [ObservableProperty] private int    _themeIndex;
-    [ObservableProperty] private bool   _restartRequired;
+    // --- Observable state -----------------------------------------------------
+
+    // Database toggles
+    [ObservableProperty] public partial bool   EnableWinapp2 { get; set; } = true;
+    [ObservableProperty] public partial bool   EnableWinapp3 { get; set; }
+    [ObservableProperty] public partial bool   EnableWinappx { get; set; } = true;
+    [ObservableProperty] public partial bool   Winapp3Available { get; set; }    // Winapp3.ini exists on disk
+    [ObservableProperty] public partial bool   Winapp3NotAvailable { get; set; } // inverse; drives the Download button
+    [ObservableProperty] public partial bool   WinappxAvailable { get; set; }    // Winappx.ini exists on disk
+    [ObservableProperty] public partial bool   WinappxNotAvailable { get; set; } // inverse; drives the Download button
+    [ObservableProperty] public partial bool   IsCustomSource { get; set; }      // custom path row has a saved value
+
+    // File-info strings shown below each database row
+    [ObservableProperty] public partial string Winapp2Info { get; set; } = "";
+    [ObservableProperty] public partial string Winapp3Info { get; set; } = "";
+    [ObservableProperty] public partial string WinappxInfo { get; set; } = "";
+
+    // Custom database path
+    [ObservableProperty] public partial string CustomPath { get; set; } = "";
+
+    // Post-clean tasks
+    [ObservableProperty] public partial bool   PostCleanEnabled { get; set; }
+    [ObservableProperty] public partial string PostCleanCommands { get; set; } = "";
+
+    // Shared
+    [ObservableProperty] public partial string StatusText { get; set; } = "";
+    [ObservableProperty] public partial bool   IsBusy { get; set; }             // single ring for all downloads
+    [ObservableProperty] public partial int    ThemeIndex { get; set; }
+    [ObservableProperty] public partial bool   RestartRequired { get; set; }
 
     private bool _refreshing;
 
     public SettingsPageViewModel() => Refresh();
+
+    // --- Theme ----------------------------------------------------------------
 
     partial void OnThemeIndexChanged(int value)
     {
@@ -37,46 +60,63 @@ public partial class SettingsPageViewModel : ObservableObject
         (Microsoft.UI.Xaml.Application.Current as App)?.ApplyTheme(theme);
     }
 
-    partial void OnDatabaseSourceIndexChanged(int value)
+    // --- Database toggles -----------------------------------------------------
+
+    partial void OnEnableWinapp2Changed(bool value)
     {
         if (_refreshing) return;
+        AppSettings.Instance.EnableWinapp2 = value;
+        AppSettings.Instance.Save();
+        RefreshFileInfo();
+    }
 
-        IsDefaultSource = value == 0;
-        IsCustomSource  = value == 1;
-        IsWinapp3Source = value == 2;
+    partial void OnEnableWinapp3Changed(bool value)
+    {
+        if (_refreshing) return;
+        AppSettings.Instance.EnableWinapp3 = value;
+        AppSettings.Instance.Save();
+        StatusText = value && !File.Exists(Winapp3LocalPath)
+            ? "Winapp3 not downloaded yet — click Download."
+            : "";
+        RefreshFileInfo();
+    }
 
-        switch (value)
-        {
-            case 0:
-                AppSettings.Instance.CustomWinapp2Path = null;
-                AppSettings.Instance.Save();
-                ActivePath = AppSettings.Instance.ResolveWinapp2Path();
-                StatusText = "";
-                RefreshFileInfo();
-                break;
-
-            case 2:
-                if (File.Exists(Winapp3LocalPath))
-                {
-                    AppSettings.Instance.CustomWinapp2Path = Winapp3LocalPath;
-                    AppSettings.Instance.Save();
-                    ActivePath = Winapp3LocalPath;
-                    StatusText = "";
-                    RefreshFileInfo();
-                }
-                else
-                {
-                    StatusText = "Winapp3 not downloaded yet — click Download to get started.";
-                }
-                break;
-        }
+    partial void OnEnableWinappxChanged(bool value)
+    {
+        if (_refreshing) return;
+        AppSettings.Instance.EnableWinappx = value;
+        AppSettings.Instance.Save();
+        StatusText = value && !File.Exists(WinappxLocalPath)
+            ? "Winappx not downloaded yet — click Download."
+            : "";
+        RefreshFileInfo();
     }
 
     partial void OnIsBusyChanged(bool value)
     {
         DownloadLatestCommand.NotifyCanExecuteChanged();
         DownloadWinapp3Command.NotifyCanExecuteChanged();
+        DownloadWinappxCommand.NotifyCanExecuteChanged();
     }
+
+    // --- Post-clean tasks -----------------------------------------------------
+
+    // Auto-saves whenever the user edits the text box
+    partial void OnPostCleanEnabledChanged(bool value)
+    {
+        if (_refreshing) return;
+        AppSettings.Instance.PostCleanEnabled = value;
+        AppSettings.Instance.Save();
+    }
+
+    partial void OnPostCleanCommandsChanged(string value)
+    {
+        if (_refreshing) return;
+        AppSettings.Instance.PostCleanCommands = value;
+        AppSettings.Instance.Save();
+    }
+
+    // --- Refresh --------------------------------------------------------------
 
     public void Refresh()
     {
@@ -85,52 +125,82 @@ public partial class SettingsPageViewModel : ObservableObject
 
         _refreshing = true;
 
-        var custom = s.CustomWinapp2Path ?? "";
-        DatabaseSourceIndex = string.IsNullOrEmpty(custom)  ? 0
-            : custom.Equals(Winapp3LocalPath, StringComparison.OrdinalIgnoreCase) ? 2
-            : 1;
-
-        IsDefaultSource = DatabaseSourceIndex == 0;
-        IsCustomSource  = DatabaseSourceIndex == 1;
-        IsWinapp3Source = DatabaseSourceIndex == 2;
-        CustomPath      = custom;
-        ActivePath      = s.ResolveWinapp2Path();
-        ThemeIndex      = s.Theme switch { "Light" => 1, "Dark" => 2, _ => 0 };
+        EnableWinapp2       = s.EnableWinapp2;
+        EnableWinapp3       = s.EnableWinapp3;
+        EnableWinappx       = s.EnableWinappx;
+        Winapp3Available    = File.Exists(Winapp3LocalPath);
+        Winapp3NotAvailable = !Winapp3Available;
+        WinappxAvailable    = File.Exists(WinappxLocalPath);
+        WinappxNotAvailable = !WinappxAvailable;
+        CustomPath          = s.CustomWinapp2Path ?? "";
+        IsCustomSource      = !string.IsNullOrWhiteSpace(s.CustomWinapp2Path);
+        PostCleanEnabled    = s.PostCleanEnabled;
+        PostCleanCommands   = s.PostCleanCommands;
+        ThemeIndex          = s.Theme switch { "Light" => 1, "Dark" => 2, _ => 0 };
 
         _refreshing = false;
         RefreshFileInfo();
     }
 
+    // --- Custom database path -------------------------------------------------
+
     [RelayCommand]
     private void ApplyCustomPath()
     {
         var path = CustomPath.Trim();
-        if (string.IsNullOrEmpty(path)) { DatabaseSourceIndex = 0; return; }
-        if (!File.Exists(path))         { StatusText = $"File not found: {path}"; return; }
+        if (string.IsNullOrEmpty(path))
+        {
+            AppSettings.Instance.CustomWinapp2Path = null;
+            AppSettings.Instance.Save();
+            IsCustomSource = false;
+            StatusText = "";
+            return;
+        }
+        if (!File.Exists(path)) { StatusText = $"File not found: {path}"; return; }
 
         AppSettings.Instance.CustomWinapp2Path = path;
         AppSettings.Instance.Save();
-        Refresh();
+        IsCustomSource = true;
         StatusText = "Custom path saved.";
+        RefreshFileInfo();
     }
 
-    // Downloads latest Winapp2.ini;available when Default source is active
+    [RelayCommand]
+    private void RemoveCustomPath()
+    {
+        CustomPath = "";
+        AppSettings.Instance.CustomWinapp2Path = null;
+        AppSettings.Instance.Save();
+        IsCustomSource = false;
+        StatusText = "";
+        RefreshFileInfo();
+    }
+
+    // --- Downloads ------------------------------------------------------------
+
     [RelayCommand(CanExecute = nameof(CanDownload))]
     private async Task DownloadLatestAsync()
     {
-        var dest = Path.Combine(AppContext.BaseDirectory, "Winapp2.ini");
-        await DownloadFileAsync(Winapp2Url, dest, "Winapp2");
+        await DownloadFileAsync(Winapp2Url, Winapp2LocalPath, "Winapp2");
         Refresh();
     }
 
-    // Downloads Winapp3.ini and immediately switches to it
     [RelayCommand(CanExecute = nameof(CanDownload))]
     private async Task DownloadWinapp3Async()
     {
         await DownloadFileAsync(Winapp3Url, Winapp3LocalPath, "Winapp3");
-        AppSettings.Instance.CustomWinapp2Path = Winapp3LocalPath;
+        AppSettings.Instance.EnableWinapp3 = true;
         AppSettings.Instance.Save();
-        Refresh();
+        Refresh(); // picks up EnableWinapp3 = true from disk
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDownload))]
+    private async Task DownloadWinappxAsync()
+    {
+        await DownloadFileAsync(WinappxUrl, WinappxLocalPath, "Winappx");
+        AppSettings.Instance.EnableWinappx = true;
+        AppSettings.Instance.Save();
+        Refresh(); // picks up EnableWinappx = true from disk
     }
 
     private bool CanDownload() => !IsBusy;
@@ -151,16 +221,24 @@ public partial class SettingsPageViewModel : ObservableObject
         finally              { IsBusy = false; }
     }
 
+    // --- File info helpers ----------------------------------------------------
+
     private void RefreshFileInfo()
+    {
+        Winapp2Info = BuildFileInfo(Winapp2LocalPath);
+        Winapp3Info = BuildFileInfo(Winapp3LocalPath);
+        WinappxInfo = BuildFileInfo(WinappxLocalPath);
+    }
+
+    private static string BuildFileInfo(string path)
     {
         try
         {
-            var path = AppSettings.Instance.ResolveWinapp2Path();
-            if (!File.Exists(path)) { FileInfo = "File not found."; return; }
+            if (!File.Exists(path)) return "Not downloaded";
             var fi    = new FileInfo(path);
             var lines = File.ReadLines(path).Count(l => l.StartsWith('[') && !l.StartsWith("[Winapp2"));
-            FileInfo  = $"{lines} entries  •  {fi.Length / 1024} KB  •  {fi.LastWriteTime:yyyy-MM-dd}";
+            return $"{lines} entries  •  {fi.Length / 1024} KB  •  {fi.LastWriteTime:yyyy-MM-dd}";
         }
-        catch { FileInfo = ""; }
+        catch { return ""; }
     }
 }

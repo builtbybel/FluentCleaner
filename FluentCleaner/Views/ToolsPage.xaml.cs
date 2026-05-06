@@ -9,14 +9,14 @@ using System.Text;
 
 namespace FluentCleaner.Views;
 
-public sealed partial class ToolsPage : Page
+public sealed partial class ToolsPage : Page, ISearchablePage
 {
-    private readonly List<ToolsDefinition>              _allTools     = new();
+    private readonly List<ToolsDefinition> _allTools = new();
     private readonly ObservableCollection<ToolsDefinition> _visibleTools = new();
     private ToolsDefinition? _selectedTool;
 
-    private ToolsCategory _category    = ToolsCategory.All;
-    private string        _searchQuery = "";
+    private ToolsCategory _category = ToolsCategory.All;
+    private string _searchQuery = "";
 
     // Folder name next to the exe that holds .ps1 extension scripts
     private static readonly string ExtensionsDir =
@@ -38,11 +38,8 @@ public sealed partial class ToolsPage : Page
         LoadToolsAsync();
     }
 
-    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
-    {
-        if (e.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-            ApplySearch(sender.Text);
-    }
+    // ── ISearchablePage ───────────────────────────────────────────────────────
+    public void OnSearch(string text) => ApplySearch(text);
 
     public void ApplySearch(string query)
     {
@@ -77,7 +74,7 @@ public sealed partial class ToolsPage : Page
             foreach (var path in files)
             {
                 var title = Path.GetFileNameWithoutExtension(path);
-                var meta  = ReadMetadataFromScript(path);
+                var meta = ReadMetadataFromScript(path);
                 list.Add(new ToolsDefinition(title, PickIconForScript(title), path, meta));
             }
             return list;
@@ -98,12 +95,12 @@ public sealed partial class ToolsPage : Page
     {
         _category = comboFilter.SelectedItem?.ToString() switch
         {
-            "System"  => ToolsCategory.System,
+            "System" => ToolsCategory.System,
             "Privacy" => ToolsCategory.Privacy,
             "Network" => ToolsCategory.Network,
-            "Apps"    => ToolsCategory.Apps,
+            "Apps" => ToolsCategory.Apps,
             "Debloat" => ToolsCategory.Debloat,
-            _         => ToolsCategory.All
+            _ => ToolsCategory.All
         };
         ApplyFilterAndSearch();
     }
@@ -143,10 +140,10 @@ public sealed partial class ToolsPage : Page
         if (tool is null) { ClearDetails(); return; }
 
         panelPlaceholder.Visibility = Visibility.Collapsed;
-        scrollDetails.Visibility    = Visibility.Visible;
+        scrollDetails.Visibility = Visibility.Visible;
 
-        lblIcon.Text        = tool.Icon ?? "";
-        lblTitle.Text       = tool.Title ?? "";
+        lblIcon.Text = tool.Icon ?? "";
+        lblTitle.Text = tool.Title ?? "";
         lblDescription.Text = tool.Description ?? "";
         progressRing.IsActive = false;
 
@@ -167,7 +164,7 @@ public sealed partial class ToolsPage : Page
         // Optional text input
         if (tool.SupportsInput)
         {
-            textInput.Visibility     = Visibility.Visible;
+            textInput.Visibility = Visibility.Visible;
             textInput.PlaceholderText = string.IsNullOrWhiteSpace(tool.InputPlaceholder)
                 ? "Enter input (e.g. IDs or raw arguments)"
                 : tool.InputPlaceholder;
@@ -181,8 +178,8 @@ public sealed partial class ToolsPage : Page
         // Powered-by attribution
         if (!string.IsNullOrWhiteSpace(tool.PoweredByText) && !string.IsNullOrWhiteSpace(tool.PoweredByUrl))
         {
-            linkPoweredBy.Content    = tool.PoweredByText.Trim();
-            linkPoweredBy.Tag        = tool.PoweredByUrl.Trim();
+            linkPoweredBy.Content = tool.PoweredByText.Trim();
+            linkPoweredBy.Tag = tool.PoweredByUrl.Trim();
             linkPoweredBy.Visibility = Visibility.Visible;
         }
         else
@@ -191,12 +188,12 @@ public sealed partial class ToolsPage : Page
         }
 
         // Help info bar
-        bool hasHelp      = tool.Options.Any(o => o.Contains("help", StringComparison.OrdinalIgnoreCase));
-        infoHelp.Title    = "Help available";
+        bool hasHelp = tool.Options.Any(o => o.Contains("help", StringComparison.OrdinalIgnoreCase));
+        infoHelp.Title = "Help available";
         btnShowHelp.Content = "Show help";
-        infoHelp.IsOpen   = hasHelp;
+        infoHelp.IsOpen = hasHelp;
 
-        btnRun.Visibility       = Visibility.Visible;
+        btnRun.Visibility = Visibility.Visible;
         btnUninstall.Visibility = Visibility.Visible;
     }
 
@@ -204,24 +201,24 @@ public sealed partial class ToolsPage : Page
     {
         _selectedTool = null;
 
-        lblIcon.Text        = "";
-        lblTitle.Text       = "";
+        lblIcon.Text = "";
+        lblTitle.Text = "";
         lblDescription.Text = "";
 
         comboOptions.Visibility = Visibility.Collapsed;
         comboOptions.Items.Clear();
 
         textInput.Visibility = Visibility.Collapsed;
-        textInput.Text       = "";
+        textInput.Text = "";
 
         linkPoweredBy.Visibility = Visibility.Collapsed;
-        infoHelp.IsOpen          = false;
-        progressRing.IsActive    = false;
+        infoHelp.IsOpen = false;
+        progressRing.IsActive = false;
 
-        btnRun.Visibility       = Visibility.Collapsed;
+        btnRun.Visibility = Visibility.Collapsed;
         btnUninstall.Visibility = Visibility.Collapsed;
 
-        scrollDetails.Visibility    = Visibility.Collapsed;
+        scrollDetails.Visibility = Visibility.Collapsed;
         panelPlaceholder.Visibility = Visibility.Visible;
     }
 
@@ -237,17 +234,17 @@ public sealed partial class ToolsPage : Page
             return;
         }
 
-        btnRun.IsEnabled       = false;
+        btnRun.IsEnabled = false;
         btnUninstall.IsEnabled = false;
-        progressRing.IsActive  = true;
-        lblStatus.Text         = "Running...";
-        txtLog.Text            = "";
+        progressRing.IsActive = true;
+        lblStatus.Text = "Running...";
+        txtLog.Text = "";
         AppendLog($"── {_selectedTool.Title} ──");
 
         try
         {
             bool useConsole = _selectedTool.UseConsole;
-            bool useLog     = _selectedTool.UseLog;
+            bool useLog = _selectedTool.UseLog;
 
             string? optionArg = null;
             if (comboOptions.Visibility == Visibility.Visible && comboOptions.SelectedItem is not null)
@@ -271,7 +268,7 @@ public sealed partial class ToolsPage : Page
 
             var extra = new StringBuilder();
             if (!string.IsNullOrWhiteSpace(optionArg)) extra.Append(' ').Append(QuoteForPs(optionArg));
-            if (!string.IsNullOrWhiteSpace(inputArg))  extra.Append(' ').Append(QuoteForPs(inputArg));
+            if (!string.IsNullOrWhiteSpace(inputArg)) extra.Append(' ').Append(QuoteForPs(inputArg));
 
             await RunScriptAsync(_selectedTool.ScriptPath, extra.ToString(), useConsole, AppendLog);
 
@@ -283,8 +280,8 @@ public sealed partial class ToolsPage : Page
         }
         finally
         {
-            progressRing.IsActive  = false;
-            btnRun.IsEnabled       = true;
+            progressRing.IsActive = false;
+            btnRun.IsEnabled = true;
             btnUninstall.IsEnabled = true;
         }
     }
@@ -303,11 +300,11 @@ public sealed partial class ToolsPage : Page
 
         var dialog = new ContentDialog
         {
-            Title             = "Remove script",
-            Content           = $"Remove \"{_selectedTool.Title}\" from the Extensions folder?",
+            Title = "Remove script",
+            Content = $"Remove \"{_selectedTool.Title}\" from the Extensions folder?",
             PrimaryButtonText = "Remove",
-            CloseButtonText   = "Cancel",
-            XamlRoot          = XamlRoot
+            CloseButtonText = "Cancel",
+            XamlRoot = XamlRoot
         };
 
         if (await dialog.ShowAsync() != ContentDialogResult.Primary) return;
@@ -345,20 +342,18 @@ public sealed partial class ToolsPage : Page
     private void ShowNoFolder()
     {
         panelNoFolder.Visibility = Visibility.Visible;
-        listTools.Visibility     = Visibility.Collapsed;
+        listTools.Visibility = Visibility.Collapsed;
 
-        // Hide toolbar + output panel if nothing to filter or run
-        borderToolbar.Visibility = Visibility.Collapsed;
-        borderOutput.Visibility  = Visibility.Collapsed;
+        // Hide output panel if nothing to run
+        borderOutput.Visibility = Visibility.Collapsed;
     }
 
     private void ShowList()
     {
         panelNoFolder.Visibility = Visibility.Collapsed;
-        listTools.Visibility     = Visibility.Visible;
+        listTools.Visibility = Visibility.Visible;
 
-        borderToolbar.Visibility = Visibility.Visible;
-        borderOutput.Visibility  = Visibility.Visible;
+        borderOutput.Visibility = Visibility.Visible;
     }
 
     private async void btnShowHelp_Click(object sender, RoutedEventArgs e)
@@ -406,21 +401,21 @@ public sealed partial class ToolsPage : Page
             if (useConsole)
             {
                 Process.Start(new ProcessStartInfo("powershell.exe", "-NoExit " + args)
-                    { UseShellExecute = true });
+                { UseShellExecute = true });
                 return;
             }
 
             var psi = new ProcessStartInfo("powershell.exe", args)
             {
                 RedirectStandardOutput = true,
-                RedirectStandardError  = true,
-                UseShellExecute        = false,
-                CreateNoWindow         = true
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
 
             using var p = new Process { StartInfo = psi };
             p.OutputDataReceived += (_, ev) => { if (!string.IsNullOrEmpty(ev.Data)) onOutput?.Invoke(ev.Data); };
-            p.ErrorDataReceived  += (_, ev) => { if (!string.IsNullOrEmpty(ev.Data)) onOutput?.Invoke("ERR: " + ev.Data); };
+            p.ErrorDataReceived += (_, ev) => { if (!string.IsNullOrEmpty(ev.Data)) onOutput?.Invoke("ERR: " + ev.Data); };
             p.Start();
             p.BeginOutputReadLine();
             p.BeginErrorReadLine();
@@ -438,8 +433,8 @@ public sealed partial class ToolsPage : Page
     private static ScriptMeta ReadMetadataFromScript(string scriptPath)
     {
         string description = "No description available.";
-        var options        = new List<string>();
-        var category       = ToolsCategory.All;
+        var options = new List<string>();
+        var category = ToolsCategory.All;
         bool useConsole = false, useLog = false, inputEnabled = false;
         string inputPh = "", poweredByText = "", poweredByUrl = "";
 
@@ -454,20 +449,20 @@ public sealed partial class ToolsPage : Page
                 else if (line.StartsWith("# Category:", StringComparison.OrdinalIgnoreCase))
                     category = line[11..].Trim().ToLowerInvariant() switch
                     {
-                        "system"  => ToolsCategory.System,
+                        "system" => ToolsCategory.System,
                         "privacy" => ToolsCategory.Privacy,
                         "network" => ToolsCategory.Network,
-                        "apps"    => ToolsCategory.Apps,
+                        "apps" => ToolsCategory.Apps,
                         "debloat" => ToolsCategory.Debloat,
-                        _         => ToolsCategory.All
+                        _ => ToolsCategory.All
                     };
                 else if (line.StartsWith("# Options:", StringComparison.OrdinalIgnoreCase))
                     options = line[10..].Split(';').Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
                 else if (line.StartsWith("# Host:", StringComparison.OrdinalIgnoreCase))
                 {
-                    var raw  = line[7..].Trim().ToLowerInvariant();
+                    var raw = line[7..].Trim().ToLowerInvariant();
                     useConsole = raw == "console";
-                    useLog     = raw == "log";
+                    useLog = raw == "log";
                 }
                 else if (line.StartsWith("# Input:", StringComparison.OrdinalIgnoreCase))
                     inputEnabled = line[8..].Trim().ToLowerInvariant() is "true" or "yes" or "1";
@@ -485,30 +480,39 @@ public sealed partial class ToolsPage : Page
 
         return new ScriptMeta
         {
-            Description      = description,
-            Options          = options,
-            Category         = category,
-            UseConsole       = useConsole,
-            UseLog           = useLog,
-            SupportsInput    = inputEnabled,
+            Description = description,
+            Options = options,
+            Category = category,
+            UseConsole = useConsole,
+            UseLog = useLog,
+            SupportsInput = inputEnabled,
             InputPlaceholder = inputPh,
-            PoweredByText    = poweredByText,
-            PoweredByUrl     = poweredByUrl
+            PoweredByText = poweredByText,
+            PoweredByUrl = poweredByUrl
         };
     }
 
     // Maps keywords in script names to emoji icons
     private static readonly Dictionary<string, string> _iconMap = new()
     {
-        ["debloat"]     = "🧹", ["network"]     = "🌐",
-        ["explorer"]    = "📂", ["update"]      = "🔄",
-        ["context"]     = "📋", ["backup"]      = "💾",
-        ["security"]    = "🛡️",["performance"] = "⚡",
-        ["privacy"]     = "🔒", ["app"]         = "📦",
-        ["setup"]       = "⚙️",["restore"]     = "♻️",
-        ["cache"]       = "🗑️",["defender"]    = "🛡️",
-        ["power"]       = "🔌", ["install"]     = "📥",
-        ["boot"]        = "🚀", ["clean"]       = "🧼"
+        ["debloat"] = "🧹",
+        ["network"] = "🌐",
+        ["explorer"] = "📂",
+        ["update"] = "🔄",
+        ["context"] = "📋",
+        ["backup"] = "💾",
+        ["security"] = "🛡️",
+        ["performance"] = "⚡",
+        ["privacy"] = "🔒",
+        ["app"] = "📦",
+        ["setup"] = "⚙️",
+        ["restore"] = "♻️",
+        ["cache"] = "🗑️",
+        ["defender"] = "🛡️",
+        ["power"] = "🔌",
+        ["install"] = "📥",
+        ["boot"] = "🚀",
+        ["clean"] = "🧼"
     };
 
     private static string PickIconForScript(string name)

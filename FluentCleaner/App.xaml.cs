@@ -2,6 +2,7 @@ using FluentCleaner.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Windows.Graphics;
 
 namespace FluentCleaner;
@@ -15,44 +16,70 @@ public partial class App : Application
         InitializeComponent();
     }
 
+    //Entry point;load settings, build the window, wire everything up.
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        AppSettings.Reload(); // read settings.json from %AppData$
+        AppSettings.Reload();
+
+        // SilentRunner headless clean, no window; /SHUTDOWN shuts down after
+        var cmdArgs = Environment.GetCommandLineArgs();
+        bool isAuto     = cmdArgs.Any(a => a.Equals("/AUTO",     StringComparison.OrdinalIgnoreCase));
+        bool isShutdown = cmdArgs.Any(a => a.Equals("/SHUTDOWN", StringComparison.OrdinalIgnoreCase));
+
+        if (isAuto)
+        {
+            _ = SilentRunner.RunAsync(isShutdown);
+            return;
+        }
+
         MainWindow = new MainWindow();
         SetupTitleBar();
-        ResizeToDefault();
+        RestoreWindowSize();
+        ApplyBackdrop(AppSettings.Instance.Backdrop);
         ApplyTheme(AppSettings.Instance.Theme);
         MainWindow.Activate();
-    }
 
+        //Remember size for next launch
+        MainWindow.Closed += (_, _) =>
+        {
+            var size = MainWindow.AppWindow.Size;
+            AppSettings.Instance.WindowWidth  = size.Width;
+            AppSettings.Instance.WindowHeight = size.Height;
+            AppSettings.Instance.Save();
+        };
+    }
+    // idea from John Gage Faulkner's WinUI3SampleStarterApp
+    // https://github.com/johngagefaulkner/WinUI3SampleStarterApp
+    // remove idle background only;so it lets TitleBar blend with Mica
+    // don't touch hover/pressed, PreferredTheme handles it
+    // overriding all states breaks hover (learned that the hard way)
     private void SetupTitleBar()
     {
-        MainWindow!.ExtendsContentIntoTitleBar = true;
-        MainWindow.SetTitleBar(MainWindow.TitleBarDragRegion);
-
         if (AppWindowTitleBar.IsCustomizationSupported())
         {
-            var bar = MainWindow.AppWindow.TitleBar;
+            var bar = MainWindow!.AppWindow.TitleBar;
             bar.ButtonBackgroundColor         = Colors.Transparent;
             bar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            bar.ButtonHoverBackgroundColor    = Colors.Transparent; // overridden by ApplyTheme
-            bar.ButtonPressedBackgroundColor  = Colors.Transparent;
         }
     }
 
-    private void ResizeToDefault()
+    //Picks up the saved size from settings, falls back to 960x620 on first run
+    private void RestoreWindowSize()
     {
-        MainWindow!.AppWindow.Resize(new SizeInt32(960, 620));
+        var w = AppSettings.Instance.WindowWidth;
+        var h = AppSettings.Instance.WindowHeight;
+        MainWindow!.AppWindow.Resize(new SizeInt32(w, h));
 
         if (DisplayArea.GetFromWindowId(MainWindow.AppWindow.Id, DisplayAreaFallback.Primary) is { } display)
         {
             var area = display.WorkArea;
             MainWindow.AppWindow.Move(new PointInt32(
-                area.X + (area.Width  - 960) / 2,
-                area.Y + (area.Height - 620) / 2));
+                area.X + (area.Width  - w) / 2,
+                area.Y + (area.Height - h) / 2));
         }
     }
 
+    // Switches light/dark/system 
     public void ApplyTheme(string? theme)
     {
         var elementTheme = theme switch
@@ -67,40 +94,23 @@ public partial class App : Application
 
         if (MainWindow is not { } win) return;
 
-        win.NavigationFrame.RequestedTheme = elementTheme;
-
-        // Update titlebar button icon colors; Windows doesn't do this automatically
-        // when RequestedTheme changes on the content, so we sync them manually.
-        if (!AppWindowTitleBar.IsCustomizationSupported()) return;
-
-        // Foreground: white in dark, black in light
-        Windows.UI.Color? fg = elementTheme switch
+        win.AppWindow.TitleBar.PreferredTheme = elementTheme switch
         {
-            ElementTheme.Dark  => Colors.White,
-            ElementTheme.Light => Colors.Black,
-            _                  => null   // system default
+            ElementTheme.Light => TitleBarTheme.Light,
+            ElementTheme.Dark  => TitleBarTheme.Dark,
+            _                  => TitleBarTheme.UseDefaultAppMode
         };
+    }
 
-        // Hover/pressed background: subtle tint matching the theme
-        Windows.UI.Color? hoverBg = elementTheme switch
-        {
-            ElementTheme.Dark  => Windows.UI.Color.FromArgb(0x1F, 0xFF, 0xFF, 0xFF), // ~12% white
-            ElementTheme.Light => Windows.UI.Color.FromArgb(0x0F, 0x00, 0x00, 0x00), // ~6% black
-            _                  => null
-        };
-        Windows.UI.Color? pressedBg = elementTheme switch
-        {
-            ElementTheme.Dark  => Windows.UI.Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF), // ~20% white
-            ElementTheme.Light => Windows.UI.Color.FromArgb(0x18, 0x00, 0x00, 0x00), // ~10% black
-            _                  => null
-        };
+    // Mica by default, acrylic if the user set it via terminal. No Settings UI for this on purpose
+    public void ApplyBackdrop(string? backdrop)
+    {
+        if (MainWindow is null) return;
 
-        var bar = win.AppWindow.TitleBar;
-        bar.ButtonForegroundColor         = fg;
-        bar.ButtonHoverForegroundColor    = fg;
-        bar.ButtonPressedForegroundColor  = fg;
-        bar.ButtonInactiveForegroundColor = fg;
-        bar.ButtonHoverBackgroundColor    = hoverBg;
-        bar.ButtonPressedBackgroundColor  = pressedBg;
+        MainWindow.SystemBackdrop = backdrop?.ToLowerInvariant() switch
+        {
+            "acrylic" => new DesktopAcrylicBackdrop(),
+            _         => new MicaBackdrop()
+        };
     }
 }

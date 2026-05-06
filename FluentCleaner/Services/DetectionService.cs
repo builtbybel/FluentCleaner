@@ -95,7 +95,7 @@ public class DetectionService
             case "DET_EDGE":
                 result = CheckFile(@"%LocalAppData%\Microsoft\Edge\User Data"); return true;
             case "DET_WINSTORE":
-                // Packages folder exists on every Win10+ machine — Store is available
+                // Packages folder exists on every Win10+ machine;Store is available
                 result = CheckFile(@"%LocalAppData%\Packages"); return true;
             default:
                 result = false; return false;

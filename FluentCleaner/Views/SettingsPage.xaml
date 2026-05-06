@@ -8,8 +8,40 @@
     mc:Ignorable="d"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="560" Margin="24,20" Spacing="16" HorizontalAlignment="Left">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <!-- Update banner;shown only when a newer version is available -->
+            <InfoBar x:Name="UpdateBar"
+                     IsOpen="False"
+                     IsClosable="True"
+                     Severity="Error" />
+
+            <!-- Donation banner -->
+            <InfoBar x:Name="DonationBanner"
+                     IsOpen="True"
+                     IsClosable="True"
+                     Severity="Warning"
+                     Title="FluentCleaner is going open source."
+                     Message="Put a lot of work into this — if it helps you and you feel like saying thanks, a donation would really mean a lot. ♥">
+                <InfoBar.Content>
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+                        <Button Content="Support the project"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Click="Link_Donate" />
+                        <Button Content="Maybe later"
+                                Click="DonationBanner_Dismiss" />
+                    </StackPanel>
+                </InfoBar.Content>
+            </InfoBar>
+        </StackPanel>
+
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,26,32,32" Spacing="22" HorizontalAlignment="Stretch">
 
             <StackPanel Spacing="2">
                 <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
@@ -18,21 +50,10 @@
                            Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
 
-            <InfoBar IsOpen="True"
-                     IsClosable="True"
-                     Severity="Warning"
-                     Title="FluentCleaner is going open source."
-    Message="Put a lot of work into this and decided to release it for free. If it ends up helping you and you feel like saying thanks, a donation would really mean a lot. Either way, hope it does the job for you. ♥">
-                <InfoBar.ActionButton>
-                    <HyperlinkButton Content="Support the project"
-                         Click="Link_Donate" />
-                </InfoBar.ActionButton>
-            </InfoBar>
-
             <!-- Theme -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8" Padding="16">
+                    BorderThickness="1" CornerRadius="8" Padding="18,14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -54,116 +75,324 @@
                 </Grid>
             </Border>
 
-            <!-- Database — all Winapp2/3 config in one place -->
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8" Padding="16">
-                <StackPanel Spacing="12">
+            <!-- Database -->
+            <StackPanel Spacing="10">
 
-                    <StackPanel Spacing="2">
-                        <TextBlock Text="Database" FontWeight="SemiBold" />
-                        <TextBlock Text="The entry list used for scanning and cleaning."
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Database" FontWeight="SemiBold" FontSize="16" />
+                    <TextBlock Text="Choose which entry lists are loaded for scanning and cleaning."
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}" />
+                </StackPanel>
+
+                <!-- "Active Databases" label + single shared ProgressRing -->
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Active Databases"
+                               FontSize="12" FontWeight="SemiBold"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <ProgressRing Width="14" Height="14"
+                                      IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
+                                      Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
+                                          Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock Text="Downloading…" FontSize="11"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   VerticalAlignment="Center"
+                                   Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
+                                       Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Database list card -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="8">
+
+                    <!-- Winapp2 row -->
+                    <StackPanel>
+                        <Grid MinHeight="72" Padding="18,0" ColumnSpacing="14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="112" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon -->
+                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
+                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                    Margin="0,0,12,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xEA99;" FontSize="18"
+                                          Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                            </Border>
+
+                            <!-- Name + info -->
+                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                                <TextBlock Text="Winapp2" FontWeight="SemiBold" />
+                                <TextBlock Text="{x:Bind ViewModel.Winapp2Info, Mode=OneWay}"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+
+                            <!-- Update button -->
+                            <Button Grid.Column="2"
+                                    Content="Update"
+                                    Command="{x:Bind ViewModel.DownloadLatestCommand}"
+                                    HorizontalAlignment="Right"
+                                    Visibility="{x:Bind ViewModel.EnableWinapp2, Mode=OneWay,
+                                        Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                            <!-- Toggle -->
+                            <ToggleSwitch Grid.Column="3"
+                                          IsOn="{x:Bind ViewModel.EnableWinapp2, Mode=TwoWay}"
+                                          OnContent="" OffContent=""
+                                          MinWidth="0" Margin="0,0,-8,0"
+                                          VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Divider -->
+                        <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                        <!-- ── Winapp3 row ── -->
+                        <Grid MinHeight="72" Padding="18,0" ColumnSpacing="14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="112" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon -->
+                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
+                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                    Margin="0,0,12,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7BA;" FontSize="18" Foreground="OrangeRed" />
+                            </Border>
+
+                            <!-- Name + info -->
+                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="Winapp3" FontWeight="SemiBold" />
+                                    <Border Background="OrangeRed" CornerRadius="3"
+                                            Padding="4,1" VerticalAlignment="Center">
+                                        <TextBlock Text="experimental" FontSize="10"
+                                                   Foreground="White" />
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                                    <Run Text="{x:Bind ViewModel.Winapp3Info, Mode=OneWay}" />
+                                    <Run Text="  —  more aggressive entries, use at your own risk."
+                                         Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- Download (not yet on disk) / Update (already downloaded) -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                        HorizontalAlignment="Right" Spacing="6">
+                                <Button Content="Download"
+                                        Command="{x:Bind ViewModel.DownloadWinapp3Command}"
+                                        Visibility="{x:Bind ViewModel.Winapp3NotAvailable, Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <Button Content="Update"
+                                        Command="{x:Bind ViewModel.DownloadWinapp3Command}"
+                                        Visibility="{x:Bind ViewModel.Winapp3Available, Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </StackPanel>
+
+                            <!-- Toggle -->
+                            <ToggleSwitch Grid.Column="3"
+                                          IsOn="{x:Bind ViewModel.EnableWinapp3, Mode=TwoWay}"
+                                          OnContent="" OffContent=""
+                                          MinWidth="0" Margin="0,0,-8,0"
+                                          VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Divider -->
+                        <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                        <!-- Winappx row -->
+                        <Grid MinHeight="72" Padding="18,0" ColumnSpacing="14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="112" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon -->
+                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
+                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                    Margin="0,0,12,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE977;" FontSize="18"
+                                          Foreground="{ThemeResource SystemFillColorSuccessBrush}" />
+                            </Border>
+
+                            <!-- Name + info -->
+                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="Winappx" FontWeight="SemiBold" />
+                                    <Border Background="{ThemeResource SystemFillColorSuccessBrush}"
+                                            CornerRadius="3" Padding="4,1" VerticalAlignment="Center">
+                                        <TextBlock Text="bloatware" FontSize="10" Foreground="White" />
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                                    <Run Text="{x:Bind ViewModel.WinappxInfo, Mode=OneWay}" />
+                                    <Run Text="  —  AppX / bloatware entries for the terminal debloater."
+                                         Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- Download (not yet on disk) / Update (already downloaded) -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                        HorizontalAlignment="Right" Spacing="6">
+                                <Button Content="Download"
+                                        Command="{x:Bind ViewModel.DownloadWinappxCommand}"
+                                        Visibility="{x:Bind ViewModel.WinappxNotAvailable, Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <Button Content="Update"
+                                        Command="{x:Bind ViewModel.DownloadWinappxCommand}"
+                                        Visibility="{x:Bind ViewModel.WinappxAvailable, Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </StackPanel>
+
+                            <!-- Toggle -->
+                            <ToggleSwitch Grid.Column="3"
+                                          IsOn="{x:Bind ViewModel.EnableWinappx, Mode=TwoWay}"
+                                          OnContent="" OffContent=""
+                                          MinWidth="0" Margin="0,0,-8,0"
+                                          VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Divider -->
+                        <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                        <!--Status / error text -->
+                        <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                                   FontSize="11" Margin="18,8,18,8"
+                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                   TextWrapping="WrapWholeWords"
+                                   Visibility="{x:Bind ViewModel.StatusText, Mode=OneWay,
+                                       Converter={StaticResource NullToVisibilityConverter}}" />
+
+                        <!-- Divider -->
+                        <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}"
+                                   Visibility="{x:Bind ViewModel.StatusText, Mode=OneWay,
+                                       Converter={StaticResource NullToVisibilityConverter}}" />
+
+                        <!-- Custom path row -->
+                        <Grid MinHeight="76" Padding="18,0" ColumnSpacing="14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon -->
+                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
+                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                    Margin="0,0,12,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE8B7;" FontSize="18"
+                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </Border>
+
+                            <!-- Path input (always visible) -->
+                            <Grid Grid.Column="1" ColumnSpacing="8" VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         PlaceholderText="Custom database path (.ini)"
+                                         Text="{x:Bind ViewModel.CustomPath, Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="12"
+                                         MinWidth="360" />
+                                <Button Grid.Column="1" Content="Browse…"
+                                        Click="BrowseButton_Click" />
+                            </Grid>
+
+                            <!-- Apply / Remove -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                        Spacing="8" VerticalAlignment="Center">
+                                <Button Content="Apply"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        Command="{x:Bind ViewModel.ApplyCustomPathCommand}" />
+                                <Button Command="{x:Bind ViewModel.RemoveCustomPathCommand}"
+                                        Visibility="{x:Bind ViewModel.IsCustomSource, Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                                        ToolTipService.ToolTip="Remove custom database">
+                                    <FontIcon Glyph="&#xE711;" FontSize="12" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Restart notice -->
+                <InfoBar IsOpen="{x:Bind ViewModel.RestartRequired, Mode=OneWay}"
+                         IsClosable="True" Severity="Warning"
+                         Title="Restart required"
+                         Message="Please restart FluentCleaner to load the updated database." />
+
+            </StackPanel>
+
+            <!-- Post-clean tasks  -->
+            <StackPanel Spacing="8">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="2">
+                        <TextBlock Text="Post-clean tasks" FontWeight="SemiBold" FontSize="16" />
+                        <TextBlock Text="One command per line — runs sequentially after every clean pass."
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    Style="{StaticResource CaptionTextBlockStyle}" />
                     </StackPanel>
 
-                    <!-- Source selection -->
-                    <RadioButtons SelectedIndex="{x:Bind ViewModel.DatabaseSourceIndex, Mode=TwoWay}">
-                        <RadioButton Content="Default  —  bundled Winapp2.ini" />
-                        <RadioButton Content="Custom path" />
-                        <RadioButton>
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock Text="Winapp3" />
-                                <FontIcon Glyph="&#xE7BA;" FontSize="11" Foreground="OrangeRed"
-                                          VerticalAlignment="Center" />
-                                <TextBlock Text="experimental" FontSize="11"
-                                           Foreground="OrangeRed" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </RadioButton>
-                    </RadioButtons>
+                    <ToggleSwitch Grid.Column="1"
+                                  IsOn="{x:Bind ViewModel.PostCleanEnabled, Mode=TwoWay}"
+                                  OnContent=""
+                                  OffContent=""
+                                  MinWidth="0"
+                                  Margin="12,0,-8,0"
+                                  VerticalAlignment="Center" />
+                </Grid>
 
-                    <!-- Custom path input — visible only when Custom is selected -->
-                    <Grid ColumnSpacing="8"
-                          Visibility="{x:Bind ViewModel.IsCustomSource, Mode=OneWay,
-                              Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0"
-                                 PlaceholderText="C:\path\to\Winapp2.ini"
-                                 Text="{x:Bind ViewModel.CustomPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 FontSize="12" />
-                        <Button Grid.Column="1" Content="Browse…"
-                                Click="BrowseButton_Click" MinWidth="72" />
-                        <Button Grid.Column="2" Content="Apply"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Command="{x:Bind ViewModel.ApplyCustomPathCommand}"
-                                MinWidth="72" />
-                    </Grid>
-
-                    <!-- Winapp3 warning — visible only when Winapp3 is selected -->
-                    <InfoBar IsOpen="{x:Bind ViewModel.IsWinapp3Source, Mode=OneWay}"
-                             IsClosable="False"
-                             Severity="Warning"
-                             Title="Experimental database"
-                             Message="Winapp3 contains entries too aggressive for the main Winapp2 database — things that could delete files you actually want to keep. Use at your own risk." />
-
-                    <!-- Active path + file info — always visible -->
-                    <StackPanel Spacing="2">
-                        <TextBlock Text="{x:Bind ViewModel.ActivePath, Mode=OneWay}"
-                                   FontFamily="Consolas" FontSize="12"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   TextWrapping="WrapWholeWords" />
-                        <StackPanel Orientation="Horizontal" Spacing="0">
-                            <TextBlock Text="{x:Bind ViewModel.FileInfo, Mode=OneWay}"
-                                       FontSize="11"
-                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                       VerticalAlignment="Center" />
-                            <TextBlock Text=" •"
-                                       FontSize="11"
-                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                       VerticalAlignment="Center" />
-                            <HyperlinkButton Content=" powered by Winapp2 (hardened)"
-                                             NavigateUri="https://github.com/builtbybel/FluentCleaner"
-                                             FontSize="11" Padding="0,0,0,1"
-                                             VerticalAlignment="Center" />
-                        </StackPanel>
-                    </StackPanel>
-
-                    <!-- Download Winapp2 — shown on Default source -->
-                    <StackPanel Orientation="Horizontal" Spacing="8"
-                                Visibility="{x:Bind ViewModel.IsDefaultSource, Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Button Content="Update Winapp2"
-                                Command="{x:Bind ViewModel.DownloadLatestCommand}" />
-                        <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
-                                      Width="20" Height="20" VerticalAlignment="Center" />
-                    </StackPanel>
-
-                    <!-- Download Winapp3 — shown on Winapp3 source -->
-                    <StackPanel Orientation="Horizontal" Spacing="8"
-                                Visibility="{x:Bind ViewModel.IsWinapp3Source, Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Button Content="Download Winapp3"
-                                Command="{x:Bind ViewModel.DownloadWinapp3Command}" />
-                        <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
-                                      Width="20" Height="20" VerticalAlignment="Center" />
-                    </StackPanel>
-
-                    <!-- Restart notice — shown after a successful database download -->
-                    <InfoBar IsOpen="{x:Bind ViewModel.RestartRequired, Mode=OneWay}"
-                             IsClosable="True"
-                             Severity="Warning"
-                             Title="Restart required"
-                             Message="Please restart FluentCleaner to load the updated database." />
-
-                </StackPanel>
-            </Border>
+                <!-- just Plain code-style text box;user types one command per line -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                    <TextBox Text="{x:Bind ViewModel.PostCleanCommands, Mode=TwoWay,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True"
+                             FontFamily="Consolas"
+                             FontSize="12"
+                             MinHeight="116"
+                             IsEnabled="{x:Bind ViewModel.PostCleanEnabled, Mode=OneWay}"
+                             TextWrapping="NoWrap"
+                             BorderThickness="0"
+                             Padding="12"
+                             PlaceholderText="cleanmgr.exe /sageset:1&#x0a;cleanmgr.exe /sagerun:1&#x0a;start &quot;&quot; ms-settings:storagesense&#x0a;taskkill /f /im explorer.exe &amp; start explorer.exe" />
+                </Border>
+            </StackPanel>
+            <!-- End post-clean tasks -->
 
             <!-- About -->
-            <Expander HorizontalAlignment="Stretch"
+            <Expander x:Name="AboutExpander"
+                      HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Stretch">
                 <Expander.Header>
                     <Grid Margin="4,10">
@@ -178,13 +407,22 @@
                                 Width="36" Height="36"
                                 CornerRadius="8"
                                 Margin="0,0,12,0">
-                            <Image Source="ms-appx:///Assets/AppIcon.ico" Stretch="UniformToFill" />
+                            <Image Source="ms-appx:///Assets/AppIconAlt.ico" Stretch="UniformToFill" />
                         </Border>
 
                         <!-- Name + copyright -->
                         <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                 <TextBlock Text="FluentCleaner" FontWeight="SemiBold" />
+                                <Border Visibility="{x:Bind InsiderBadgeVisibility}"
+                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="3" Padding="5,1"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="INSIDER" FontSize="9" FontWeight="SemiBold"
+                                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                </Border>
                             </StackPanel>
                             <TextBlock Text="© 2026 A Belim app creation"
                                        FontSize="11"
@@ -220,15 +458,7 @@
                     </StackPanel>
                 </StackPanel>
             </Expander>
-
-            <!-- Status text; shown when there's something to say -->
-            <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
-                       FontSize="12"
-                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                       TextWrapping="WrapWholeWords"
-                       Visibility="{x:Bind ViewModel.StatusText, Mode=OneWay,
-                           Converter={StaticResource NullToVisibilityConverter}}" />
-
         </StackPanel>
     </ScrollViewer>
+    </Grid>
 </Page>

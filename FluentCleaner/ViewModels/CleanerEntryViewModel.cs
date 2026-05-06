@@ -9,8 +9,8 @@ public partial class CleanerEntryViewModel : ObservableObject
 {
     public CleanerEntry Entry { get; }
 
-    [ObservableProperty] private bool   _isSelected;
-    [ObservableProperty] private string _sizeText = "";
+    [ObservableProperty] public partial bool   IsSelected { get; set; }
+    [ObservableProperty] public partial string SizeText { get; set; } = "";
 
     public string  Name    => Entry.Name;
     public string? Warning => Entry.Warning;
@@ -19,6 +19,6 @@ public partial class CleanerEntryViewModel : ObservableObject
     public CleanerEntryViewModel(CleanerEntry entry)
     {
         Entry      = entry;
-        _isSelected = entry.Default;
+        IsSelected = entry.Default;
     }
 }

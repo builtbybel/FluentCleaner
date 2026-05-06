@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FluentCleaner.Views;
 
-public sealed partial class CleanerPage : Page
+public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
 {
     public CleanerPageViewModel ViewModel { get; } = new();
 
@@ -22,15 +22,36 @@ public sealed partial class CleanerPage : Page
             _loaded = true;
 
             AppSettings.Reload();
-            var path = AppSettings.Instance.ResolveWinapp2Path();
-            await ViewModel.LoadWinapp2Async(path);
+            var paths = AppSettings.Instance.ResolveDatabasePaths().ToList();
+            if (paths.Count == 0) paths.Add(Path.Combine(AppContext.BaseDirectory, "Winapp2.ini"));
+            await ViewModel.LoadWinapp2Async(paths);
         };
     }
 
-    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+    // --- ISearchablePage ----------------------------------------------------------
+    public void OnSearch(string text) => ViewModel.SearchText = text;
+
+    // --- IPageActions ----------------------------------------------------------
+    public void BuildActions(MenuFlyout flyout)
     {
-        if (e.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-            ViewModel.SearchText = sender.Text;
+        void Add(string label, Action action)
+        {
+            var item = new MenuFlyoutItem { Text = label };
+            item.Click += (_, _) => action();
+            flyout.Items.Add(item);
+        }
+
+        Add("Select all",      () => ViewModel.SelectAllCommand.Execute(null));
+        Add("Select none",     () => ViewModel.SelectNoneCommand.Execute(null));
+        Add("Select defaults", () => ViewModel.SelectDefaultsCommand.Execute(null));
+        flyout.Items.Add(new MenuFlyoutSeparator());
+        Add("Expand all",      () => ViewModel.ExpandAllCommand.Execute(null));
+        Add("Collapse all",    () => ViewModel.CollapseAllCommand.Execute(null));
+        flyout.Items.Add(new MenuFlyoutSeparator());
+        Add("Sort by size ↓",  () => ViewModel.SortResultsDescCommand.Execute(null));
+        Add("Sort by size ↑",  () => ViewModel.SortResultsAscCommand.Execute(null));
+        flyout.Items.Add(new MenuFlyoutSeparator());
+        Add("Refresh",         () => ViewModel.RefreshCommand.Execute(null));
     }
 
     // Open the detail view for the clicked result row
@@ -40,7 +61,18 @@ public sealed partial class CleanerPage : Page
             ViewModel.SelectedResultLine = line;
     }
 
-    // Entry flyout — Tag="{x:Bind}" gives us the CleanerEntryViewModel directly
+    // Click a path row in the detail list;just highlight the file in Explorer.
+    // Headers and registry keys are ignored; only real file paths get /select treatment.
+    private void DetailList_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is not DetailLine { IsHeader: false } line) return;
+        var path = line.Text;
+        if (string.IsNullOrWhiteSpace(path) || path.StartsWith("HK", StringComparison.OrdinalIgnoreCase)) return;
+
+        System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
+    }
+
+    // Entry flyout; Tag="{x:Bind}" gives us the CleanerEntryViewModel directly
     private async void EntryAnalyze_Click(object sender, RoutedEventArgs e)
     {
         if (sender is MenuFlyoutItem { Tag: CleanerEntryViewModel vm })
@@ -116,7 +148,7 @@ public sealed partial class CleanerPage : Page
         return await dialog.ShowAsync() == ContentDialogResult.Primary;
     }
 
-    // Show/hide the ... button when hovering over a category header or entry row.
+    // Show/hide the [...] button when hovering over a category header or entry row.
     // the buttons sit at Opacity="0" 
     private void CatHeader_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e) =>
         SetMenuButtonOpacity(sender, 1);

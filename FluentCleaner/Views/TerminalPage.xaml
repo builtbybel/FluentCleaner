@@ -1,0 +1,56 @@
+<Page
+    x:Class="FluentCleaner.Views.TerminalPage"
+    NavigationCacheMode="Required"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+
+    <Grid Padding="12,12,12,12">
+
+        <!-- output + input in one card; suggestion popup stays inside -->
+        <Border CornerRadius="8"
+                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ScrollViewer x:Name="OutputScroller"
+                              Grid.Row="0"
+                              Padding="16"
+                              VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.Output}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <TextBlock Text="{x:Bind}"
+                                           FontFamily="Cascadia Code, Consolas"
+                                           FontSize="12"
+                                           TextWrapping="WrapWholeWords"
+                                           IsTextSelectionEnabled="True"
+                                           Margin="0,1" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <AutoSuggestBox x:Name="InputBox"
+                                Grid.Row="1"
+                                Margin="8,0,8,8"
+                                PlaceholderText="clean firefox  ·  analyze chrome  ·  help"
+                                QueryIcon="Send"
+                                FontFamily="Cascadia Code, Consolas"
+                                FontSize="12"
+                                MaxSuggestionListHeight="200"
+                                IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                                TextChanged="Input_TextChanged"
+                                QuerySubmitted="Input_QuerySubmitted" />
+            </Grid>
+        </Border>
+
+    </Grid>
+</Page>

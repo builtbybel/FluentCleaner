@@ -48,7 +48,18 @@ public class PathExpander
             path = path.Replace(token, value, StringComparison.OrdinalIgnoreCase);
 
         // Let the OS handle any remaining %VAR% tokens we don't know about
-        return Environment.ExpandEnvironmentVariables(path);
+        path = Environment.ExpandEnvironmentVariables(path);
+
+        // %SystemDrive% (and any other bare drive reference) expands to "C:" without a
+        // trailing backslash because BuildVarMap strips it to avoid double-backslashes in
+        // compound paths like "%SystemDrive%\Users".  On Windows "C:" means the CWD of
+        // that drive, NOT the root;so a FileKey like "%SystemDrive%|*.bak|RECURSE" would
+        // silently scan only the app's working directory instead of all of C:\.
+        // Detect and append the separator when the result is a bare drive root.
+        if (path.Length == 2 && char.IsLetter(path[0]) && path[1] == ':')
+            path += Path.DirectorySeparatorChar;
+
+        return path;
     }
 
     // Returns all concrete paths matched by a pattern like

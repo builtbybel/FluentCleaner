@@ -10,29 +10,84 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Drag region with app icon + name -->
-        <Grid x:Name="TitleBarDragArea" Grid.Row="0">
-            <StackPanel Orientation="Horizontal" Spacing="10"
-                        VerticalAlignment="Center" Margin="15,0,0,0">
-                <Image Source="ms-appx:///Assets/AppIcon.ico" Width="16" Height="16"
-                       VerticalAlignment="Center" />
-                <TextBlock Text="FluentCleaner"
-                           FontSize="12" FontWeight="SemiBold"
-                           VerticalAlignment="Center" />
-            </StackPanel>
-        </Grid>
+        <!-- Native TitleBar:icon + title left, search center, [...] right -->
+        <TitleBar x:Name="AppTitleBar"
+                  Grid.Row="0"
+                  Title="FluentCleaner"
+                  Subtitle="{x:Bind InsiderSubtitle}">
+            
+            <TitleBar.IconSource>
+                <ImageIconSource ImageSource="ms-appx:///Assets/AppIconAlt.png" />
+            </TitleBar.IconSource>
 
+            <TitleBar.Content>
+                <Grid>
+                    <!-- Full search -->
+                    <AutoSuggestBox x:Name="TitleSearchBox"
+                        MinWidth="160"
+                        MaxWidth="280"
+                        Width="280"
+                        VerticalAlignment="Center"
+                        PlaceholderText="Search…"
+                        QueryIcon="Find"
+                        TextChanged="TitleSearchBox_TextChanged" />
+
+                    <!-- Compact search icon -->
+                    <Button x:Name="SearchIconButton"
+                        Width="32"
+                        Height="32"
+                        Padding="0"
+                        Visibility="Collapsed"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTipService.ToolTip="Search">
+                        
+                        <FontIcon Glyph="&#xE721;"
+                            FontSize="15" />
+                        <Button.Flyout>
+                            <Flyout Placement="Bottom">
+                                <AutoSuggestBox Width="280"
+                                    PlaceholderText="Search…"
+                                    QueryIcon="Find"
+                                    TextChanged="TitleSearchBox_TextChanged"/>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+            </TitleBar.Content>
+
+            <TitleBar.RightHeader>
+                <Button Width="32" Height="32" Padding="0"
+                        ToolTipService.ToolTip="Page actions">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="ButtonBackground"             Color="Transparent" />
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver"  Color="Transparent" />
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed"      Color="Transparent" />
+                        <SolidColorBrush x:Key="ButtonBorderBrush"            Color="Transparent" />
+                    </Button.Resources>
+                    <FontIcon Glyph="&#xE712;" FontSize="14" />
+                    <Button.Flyout>
+                        <MenuFlyout x:Name="PageActionsFlyout"
+                                    Placement="BottomEdgeAlignedRight"
+                                    Opening="PageActionsFlyout_Opening" />
+                    </Button.Flyout>
+                </Button>
+            </TitleBar.RightHeader>
+        </TitleBar>
+
+        <!-- NavView sits below TitleBar; IsTitleBarAutoPaddingEnabled=False avoids double padding -->
         <NavigationView x:Name="NavView"
                         Grid.Row="1"
-                        PaneDisplayMode="Left"
+                        PaneDisplayMode="LeftCompact"
+                        IsTitleBarAutoPaddingEnabled="False"
                         IsBackButtonVisible="Collapsed"
                         IsSettingsVisible="False"
-                        OpenPaneLength="180"
                         CompactPaneLength="48"
+                        OpenPaneLength="240"
                         SelectionChanged="NavView_SelectionChanged">
 
             <NavigationView.MenuItems>
@@ -41,14 +96,14 @@
                         <FontIcon Glyph="&#xEA99;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Tag="Registry" Content="Registry">
+                <NavigationViewItem Tag="Terminal" Content="Terminal">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7C3;" />
+                        <FontIcon Glyph="&#xE943;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Tag="Tools" Content="Tools">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8F1;" />
+                        <FontIcon Glyph="&#xEA86;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

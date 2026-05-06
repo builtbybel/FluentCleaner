@@ -40,7 +40,7 @@ public static class CategoryResolver
             return category;
 
         if (!string.IsNullOrWhiteSpace(entry.Section))
-            return new CategoryInfo(entry.Section, 1000);
+            return new CategoryInfo(entry.Section, 1000); // If we have a section, use that as the category, but put it after all the known LangSecRef categories.
 
         return new CategoryInfo("Other Applications", 2000);
     }

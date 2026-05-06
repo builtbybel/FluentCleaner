@@ -12,7 +12,7 @@ public partial class CleanerCategoryViewModel : ObservableObject
     public string Name { get; }
     public ObservableCollection<CleanerEntryViewModel> Entries { get; } = new();
 
-    [ObservableProperty] private bool _isExpanded = false;
+    [ObservableProperty] public partial bool IsExpanded { get; set; } = false;
 
     [RelayCommand] private void SelectAll()      => Entries.ToList().ForEach(e => e.IsSelected = true);           // check every entry in this category
     [RelayCommand] private void SelectNone()     => Entries.ToList().ForEach(e => e.IsSelected = false);          // uncheck every entry in this category
