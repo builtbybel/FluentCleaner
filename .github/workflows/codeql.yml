@@ -1,0 +1,41 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '37 3 * * *'  # Daily at 03:37 UTC
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze (csharp)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7  # v5.2.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@e46ed2cbd01164d986452f91f178727624ae40d7  # v4.35.3
+        with:
+          languages: csharp
+          build-mode: autobuild
+          # Use the security-extended query suite for additional checks
+          queries: security-extended
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@e46ed2cbd01164d986452f91f178727624ae40d7  # v4.35.3
+        with:
+          category: /language:csharp

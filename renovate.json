@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  "description": "Renovate manages all dependencies for FluentCleaner: NuGet packages and GitHub Actions.",
+
+  "extends": ["config:recommended"],
+
+  "forkProcessing": "enabled",
+
+  "enabledManagers": ["nuget", "github-actions"],
+
+  "pinDigests": true,
+
+  "schedule": ["at any time"],
+
+  "labels": ["dependencies"],
+
+  "commitMessagePrefix": "deps:",
+
+  "packageRules": [
+    {
+      "description": "Group all Windows App SDK packages into a single PR.",
+      "groupName": "Windows App SDK",
+      "labels": ["dependencies", "dotnet", "winui3"],
+      "matchPackageNames": [
+        "/^Microsoft\\.WindowsAppSDK/",
+        "/^Microsoft\\.Windows\\.SDK/"
+      ]
+    },
+    {
+      "description": "Group CommunityToolkit packages into a single PR.",
+      "groupName": "CommunityToolkit",
+      "labels": ["dependencies", "dotnet"],
+      "matchPackageNames": [
+        "/^CommunityToolkit\\./"
+      ]
+    },
+    {
+      "description": "Group GitHub Actions updates into a single PR.",
+      "groupName": "GitHub Actions",
+      "labels": ["dependencies", "ci"],
+      "matchManagers": ["github-actions"]
+    },
+    {
+      "description": "Auto-merge patch updates that pass CI.",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    }
+  ]
+}
