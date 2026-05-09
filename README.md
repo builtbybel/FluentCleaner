@@ -144,7 +144,6 @@ normal file deletion is correct here. anything else is security theater.
 
 </details>
 
----
 <details>
 <summary>registry cleaner</summary>
 
@@ -160,7 +159,8 @@ ccleaner has one because it's a selling point that *sounds* technical. FluentCle
 if you actually need to clean up after a broken uninstaller;[autoruns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) or a targeted manual edit is the right tool, not a bulk cleaner.
 
 </details>
----
+
+
 <details>
 <summary>general philosophy</summary>
 
