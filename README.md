@@ -126,6 +126,15 @@ if you want more coverage than the default.
 
 </details>
 
+<details>
+<summary>where can i follow development?</summary>
+
+i post insider stuff, early builds and the occasional rant about winui on **[x/twitter](https://x.com/builtbybel)**. if you want to know what's coming before it lands in a release, that's the place.
+
+issues and feature requests go here on github as usual.
+
+</details>
+
 
 <details>
 <summary>why doesn't FluentCleaner have X?</summary>
@@ -170,11 +179,3 @@ fewer features. honest features.
 
 </details>
 
-<details>
-<summary>where can i follow development?</summary>
-
-i post insider stuff, early builds and the occasional rant about winui on **[x/twitter](https://x.com/builtbybel)**. if you want to know what's coming before it lands in a release, that's the place.
-
-issues and feature requests go here on github as usual.
-
-</details>
