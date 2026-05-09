@@ -137,8 +137,8 @@ short answer: it would look impressive and do nothing useful.
 
 secure overwrite made sense in the 90s when hdds were standard and forensic recovery was a real concern. today:
 
-- **ssds** use wear leveling and trim. the controller decides where bits physically land — not your software. you can overwrite a file 35 times and the controller writes to different nand blocks anyway. gutmann himself noted this in an addendum to his own paper.
-- **the files fluentcleaner deletes** are browser cache, temp files and log entries. if someone is forensically recovering your discord cache you have bigger problems than your cleaner's deletion method.
+- **ssds** use wear leveling and trim. the controller decides where bits physically land,not your software. you can overwrite a file 35 times and the controller writes to different nand blocks anyway. gutmann himself noted this in an addendum to his own paper.
+- **the files Fluentcleaner deletes** are browser cache, temp files and log entries. if someone is forensically recovering your discord cache you have bigger problems than your cleaner's deletion method.
 
 normal file deletion is correct here. anything else is security theater.
 
@@ -155,16 +155,16 @@ the premise sounds reasonable ; orphaned keys accumulate, windows slows down, cl
 - windows loads registry keys on demand. ten thousand orphaned uninstaller entries have zero measurable impact on boot time or performance. this has been benchmarked to death.
 - the risk/reward is completely inverted. a registry cleaner that removes the wrong key can break applications or in edge cases the os itself. the upside is placebo. the downside is a broken install.
 
-ccleaner has one because it's a selling point that *sounds* technical. fluentcleaner doesn't have one because shipping a feature that exists to look good rather than do good would be dishonest.
+ccleaner has one because it's a selling point that *sounds* technical. FluentCleaner doesn't have one because shipping a feature that exists to look good rather than do good would be dishonest.
 
-if you actually need to clean up after a broken uninstaller — [autoruns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) or a targeted manual edit is the right tool, not a bulk cleaner.
+if you actually need to clean up after a broken uninstaller;[autoruns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) or a targeted manual edit is the right tool, not a bulk cleaner.
 
 </details>
 ---
 <details>
 <summary>general philosophy</summary>
 
-FluentCleaner targets things that are unambiguously junk — cache files, temp data, leftover logs. it deliberately avoids the feature creep that turned ccleaner from a focused utility into bloatware with a vpn upsell on every launch.
+FluentCleaner targets things that are unambiguously junk;cache files, temp data, leftover logs. it deliberately avoids the feature creep that turned ccleaner from a focused utility into bloatware with a vpn upsell on every launch.
 
 fewer features. honest features.
 
