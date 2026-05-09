@@ -126,9 +126,9 @@ if you want more coverage than the default.
 
 </details>
 
----
+
 <details>
-<summary>why doesn't FluentCleaner have X</summary>
+<summary>why doesn't FluentCleaner have X?</summary>
 
 <details>
 <summary>secure file deletion (dod 7-pass, gutmann 35-pass…)</summary>
