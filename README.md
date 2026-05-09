@@ -126,13 +126,15 @@ if you want more coverage than the default.
 
 </details>
 
-## faq — "why doesn't FluentCleaner have X?"
-
 ---
+<details>
+<summary>why doesn't FluentCleaner have X</summary>
 
-### secure file deletion (dod 7-pass, gutmann 35-pass…)
+<details>
+<summary>secure file deletion (dod 7-pass, gutmann 35-pass…)</summary>
 
 short answer: it would look impressive and do nothing useful.
+
 secure overwrite made sense in the 90s when hdds were standard and forensic recovery was a real concern. today:
 
 - **ssds** use wear leveling and trim. the controller decides where bits physically land — not your software. you can overwrite a file 35 times and the controller writes to different nand blocks anyway. gutmann himself noted this in an addendum to his own paper.
@@ -140,13 +142,15 @@ secure overwrite made sense in the 90s when hdds were standard and forensic reco
 
 normal file deletion is correct here. anything else is security theater.
 
----
+</details>
 
-### registry cleaner
+---
+<details>
+<summary>registry cleaner</summary>
 
 deliberate omission, worth explaining.
 
-the premise sounds reasonable, orphaned keys accumulate, windows slows down, cleaning helps. in practice:
+the premise sounds reasonable ; orphaned keys accumulate, windows slows down, cleaning helps. in practice:
 
 - windows loads registry keys on demand. ten thousand orphaned uninstaller entries have zero measurable impact on boot time or performance. this has been benchmarked to death.
 - the risk/reward is completely inverted. a registry cleaner that removes the wrong key can break applications or in edge cases the os itself. the upside is placebo. the downside is a broken install.
@@ -155,10 +159,13 @@ ccleaner has one because it's a selling point that *sounds* technical. fluentcle
 
 if you actually need to clean up after a broken uninstaller — [autoruns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) or a targeted manual edit is the right tool, not a bulk cleaner.
 
+</details>
 ---
+<details>
+<summary>general philosophy</summary>
 
-### general philosophy
-
-FluentCleaner targets things that are unambiguously junk; cache files, temp data, leftover logs. it deliberately avoids the feature creep that turned ccleaner from a focused utility into bloatware with a vpn upsell on every launch.
+FluentCleaner targets things that are unambiguously junk — cache files, temp data, leftover logs. it deliberately avoids the feature creep that turned ccleaner from a focused utility into bloatware with a vpn upsell on every launch.
 
 fewer features. honest features.
+
+</details>
