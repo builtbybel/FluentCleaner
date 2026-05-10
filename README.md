@@ -135,6 +135,50 @@ issues and feature requests go here on github as usual.
 
 </details>
 
+<details>
+<summary>can i run FluentCleaner without a UI / from Task Scheduler?</summary>
+
+yes.
+
+```powershell
+FluentCleaner.exe /AUTO
+```
+
+Runs a silent cleanup using your currently saved selection and exits immediately.  
+No window, prompts or interaction.
+
+```powershell
+FluentCleaner.exe /AUTO /SHUTDOWN
+```
+
+Same behavior, but shuts Windows down after cleanup finishes.  
+`/SHUTDOWN` alone does nothing.
+
+### Logging
+
+Each automatic run appends a detailed log to:
+
+```txt
+%AppData%\FluentCleaner\auto.log
+```
+
+The log contains:
+- timestamp
+- every deleted path grouped by entry
+- total cleaned size
+
+### Scheduling
+
+To automate cleanup:
+
+1. Open **Windows Task Scheduler**
+2. Create a new task
+3. Add `FluentCleaner.exe`
+4. Use `/AUTO` as argument
+
+No built-in scheduler UI needed.
+
+</details>
 
  ## Optimizer Myths
  
