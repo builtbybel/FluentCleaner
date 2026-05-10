@@ -180,6 +180,32 @@ No built-in scheduler UI needed.
 
 </details>
 
+<details>
+<summary>which Windows versions are supported?</summary>
+
+FluentCleaner officially supports:
+
+- Windows 10 2004 (Build 19041) and later
+- Windows 11
+
+No Windows 11 requirement.
+Despite using WinUI 3, the app is intentionally built to remain compatible with modern Windows 10 systems as well
+
+</details>
+
+<details>
+<summary>can i support development?</summary>
+
+yes,if you'd like to 😄
+
+FluentCleaner is a one-person project, not a multi-million dollar company with investors and a marketing department.
+
+If you want to support development financially, you can do so here:
+[PayPal](https://www.paypal.com/donate/?hosted_button_id=99X8UQJQP96WN)
+
+
+</details>
+
  ## Optimizer Myths
  
 <details>
