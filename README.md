@@ -136,6 +136,8 @@ issues and feature requests go here on github as usual.
 </details>
 
 
+ ## Optimizer Myths
+ 
 <details>
 <summary>why doesn't FluentCleaner have X?</summary>
 
