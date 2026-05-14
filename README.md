@@ -2,7 +2,7 @@
 ### modern, transparent, no spyware, no scareware, no dark patterns, no upsell garbage, no fake registry magic
 
 
-<img width="1536" height="1024" alt="FluentCleaner" src="https://github.com/user-attachments/assets/81ae4e10-9dde-4cff-9cf0-f8aac851f332" />
+<img width="1536" height="1024" alt="FluentCleaner" src="FluentCleaner/Assets/Banner.avif" />
 
 
 _i built my own take on a cleaner, inspired by the old CCleaner from back in the 2006 days, just adapted to how things should work today. modern (built with WinUI 3), minimal and focused on actually cleaning what matters (without all the usual nonsense)_
@@ -10,9 +10,9 @@ _i built my own take on a cleaner, inspired by the old CCleaner from back in the
 i built this because at some point you start noticing a pattern
 
 things that were genuinely good… slowly become worse.
-small devs ship something great, a company buys it, optimizes it into oblivion, and suddenly you're left wondering how a simple tool turned into a "what happened here?" story. CCleaner is basically a case study at this point, everyone knows, nobody needs another paragraph about it
+small devs ship something great, a company buys it, optimizes it into oblivion, and suddenly you're left wondering how a simple tool turned into a "what happened here?" story. Ccleaner is basically a case study at this point, everyone knows, nobody needs another paragraph about it
 
-funny enough, CCleaner only ever really survived because of the community around it, especially things like the [winapp2.ini](https://github.com/moscadotto/winapp2) signatures. that ecosystem did more for the tool than most official decisions ever did.
+funny enough, CrapCleaner only ever really survived because of the community around it, especially things like the [winapp2.ini](https://github.com/moscadotto/winapp2) signatures. that ecosystem did more for the tool than most official decisions ever did.
 
 i was too lazy to rebuild all cleaners natively, so i just wrote a parser for that format instead. turns out its fast. like… surprisingly fast. faster than what i remember from the old piriform implementation (no idea why that was so slow, proprietary formats, overengineering, or just history doing its thing. doesnt matter anymore anyway)
 
@@ -125,3 +125,129 @@ updated regularly, and covers thousands of apps. a solid starting point
 if you want more coverage than the default.
 
 </details>
+
+<details>
+<summary>where can i follow development?</summary>
+
+i post insider stuff, early builds and the occasional rant about winui on **[x/twitter](https://x.com/builtbybel)**. if you want to know what's coming before it lands in a release, that's the place.
+
+issues and feature requests go here on github as usual.
+
+</details>
+
+<details>
+<summary>can i run FluentCleaner without a UI / from Task Scheduler?</summary>
+
+yes.
+
+```powershell
+FluentCleaner.exe /AUTO
+```
+
+Runs a silent cleanup using your currently saved selection and exits immediately.  
+No window, prompts or interaction.
+
+```powershell
+FluentCleaner.exe /AUTO /SHUTDOWN
+```
+
+Same behavior, but shuts Windows down after cleanup finishes.  
+`/SHUTDOWN` alone does nothing.
+
+### Logging
+
+Each automatic run appends a detailed log to:
+
+```txt
+%AppData%\FluentCleaner\auto.log
+```
+
+The log contains:
+- timestamp
+- every deleted path grouped by entry
+- total cleaned size
+
+### Scheduling
+
+To automate cleanup:
+
+1. Open **Windows Task Scheduler**
+2. Create a new task
+3. Add `FluentCleaner.exe`
+4. Use `/AUTO` as argument
+
+No built-in scheduler UI needed.
+
+</details>
+
+<details>
+<summary>which Windows versions are supported?</summary>
+
+FluentCleaner officially supports:
+
+- Windows 10 2004 (Build 19041) and later
+- Windows 11
+
+No Windows 11 requirement.
+Despite using WinUI 3, the app is intentionally built to remain compatible with modern Windows 10 systems as well
+
+</details>
+
+<details>
+<summary>can i support development?</summary>
+
+yes,if you'd like to 😄
+
+FluentCleaner is a one-person project, not a multi-million dollar company with investors and a marketing department.
+
+If you want to support development financially, you can do so here:
+[PayPal](https://www.paypal.com/donate/?hosted_button_id=99X8UQJQP96WN)
+
+
+</details>
+
+ ## Optimizer Myths
+ 
+<details>
+<summary>why doesn't FluentCleaner have X?</summary>
+
+<details>
+<summary>secure file deletion (dod 7-pass, gutmann 35-pass…)</summary>
+
+short answer: it would look impressive and do nothing useful.
+
+secure overwrite made sense in the 90s when hdds were standard and forensic recovery was a real concern. today:
+
+- **ssds** use wear leveling and trim. the controller decides where bits physically land,not your software. you can overwrite a file 35 times and the controller writes to different nand blocks anyway. gutmann himself noted this in an addendum to his own paper.
+- **the files Fluentcleaner deletes** are browser cache, temp files and log entries. if someone is forensically recovering your discord cache you have bigger problems than your cleaner's deletion method.
+
+normal file deletion is correct here. anything else is security theater.
+
+</details>
+
+<details>
+<summary>registry cleaner</summary>
+
+deliberate omission, worth explaining.
+
+the premise sounds reasonable ; orphaned keys accumulate, windows slows down, cleaning helps. in practice:
+
+- windows loads registry keys on demand. ten thousand orphaned uninstaller entries have zero measurable impact on boot time or performance. this has been benchmarked to death.
+- the risk/reward is completely inverted. a registry cleaner that removes the wrong key can break applications or in edge cases the os itself. the upside is placebo. the downside is a broken install.
+
+ccleaner has one because it's a selling point that *sounds* technical. FluentCleaner doesn't have one because shipping a feature that exists to look good rather than do good would be dishonest.
+
+if you actually need to clean up after a broken uninstaller;[autoruns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) or a targeted manual edit is the right tool, not a bulk cleaner.
+
+</details>
+
+
+<details>
+<summary>general philosophy</summary>
+
+FluentCleaner targets things that are unambiguously junk;cache files, temp data, leftover logs. it deliberately avoids the feature creep that turned ccleaner from a focused utility into bloatware with a vpn upsell on every launch.
+
+fewer features. honest features.
+
+</details>
+
