@@ -70,7 +70,7 @@ public partial class CleanerPageViewModel : ObservableObject
         RunCleanerCommand.NotifyCanExecuteChanged();
         RefreshCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanRunCleaner));
-        OnPropertyChanged(nameof(IsNotBusy));   // flips the Analyze ↔ Cancel button pair in the XAML
+        OnPropertyChanged(nameof(IsNotBusy));   // flips the Analyze <> Cancel button pair in the XAML
     }
 
     // --- Commands -----------------------------------------------------------
