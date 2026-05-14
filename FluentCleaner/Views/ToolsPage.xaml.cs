@@ -51,19 +51,18 @@ public sealed partial class ToolsPage : Page, ISearchablePage
 
     private async void LoadToolsAsync()
     {
-        lblStatus.Text = "Loading...";
-
         _allTools.Clear();
         _visibleTools.Clear();
         ClearDetails();
 
-        // Extensions folder is optional
+        // Extensions folder is optional;lets check before showing any status
         if (!Directory.Exists(ExtensionsDir))
         {
             ShowNoFolder();
             return;
         }
 
+        lblStatus.Text = "Loading...";
         ShowList();
 
         string[] files = await Task.Run(() => Directory.GetFiles(ExtensionsDir, "*.ps1"));
@@ -95,12 +94,12 @@ public sealed partial class ToolsPage : Page, ISearchablePage
     {
         _category = comboFilter.SelectedItem?.ToString() switch
         {
-            "System" => ToolsCategory.System,
+            "System"  => ToolsCategory.System,
             "Privacy" => ToolsCategory.Privacy,
             "Network" => ToolsCategory.Network,
-            "Apps" => ToolsCategory.Apps,
+            "Apps"    => ToolsCategory.Apps,
             "Debloat" => ToolsCategory.Debloat,
-            _ => ToolsCategory.All
+            _         => ToolsCategory.All
         };
         ApplyFilterAndSearch();
     }
@@ -341,11 +340,12 @@ public sealed partial class ToolsPage : Page, ISearchablePage
 
     private void ShowNoFolder()
     {
-        panelNoFolder.Visibility = Visibility.Visible;
-        listTools.Visibility = Visibility.Collapsed;
-
-        // Hide output panel if nothing to run
-        borderOutput.Visibility = Visibility.Collapsed;
+        panelNoFolder.Visibility   = Visibility.Visible;
+        panelPlaceholder.Visibility = Visibility.Collapsed;  // don't show both at once
+        listTools.Visibility       = Visibility.Collapsed;
+        borderOutput.Visibility    = Visibility.Collapsed;
+        comboFilter.Visibility      = Visibility.Collapsed;
+        lblStatus.Text             = "";
     }
 
     private void ShowList()

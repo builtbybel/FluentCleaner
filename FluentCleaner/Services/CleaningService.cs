@@ -15,25 +15,24 @@ public class CleaningService
     private readonly PathExpander _expander = new();
 
     // --- Public api --------------------------------------------------
-    public Task<ScanResult> AnalyzeAsync(CleanerEntry entry, IProgress<string>? progress = null) =>
-        Task.Run(() => Analyze(entry, progress));
+    public Task<ScanResult> AnalyzeAsync(CleanerEntry entry, IProgress<string>? progress = null, CancellationToken token = default) =>
+        Task.Run(() => Analyze(entry, progress, token), token);
 
-    public Task<(int count, long bytes)> CleanAsync(ScanResult result, IProgress<string>? progress = null) =>
-        Task.Run(() => Clean(result, progress));
+    public Task<(int count, long bytes)> CleanAsync(ScanResult result, IProgress<string>? progress = null, CancellationToken token = default) =>
+        Task.Run(() => Clean(result, progress, token), token);
 
     // --- Analyze --------------------------------------------------
 
-    /* Walks all FileKeys and RegKeys for one entry, collecting everything that would be deleted.
-       Nothing is modified on disk or in the registry during this phase.
-       Locked files (held open without FILE_SHARE_DELETE) are silently skipped; they would
-       fail at delete time anyway and inflate the reported size for no reason. */
-    private ScanResult Analyze(CleanerEntry entry, IProgress<string>? progress)
+    /* Read-only phase. Walks FileKeys and RegKeys, builds the deletion list, touches nothing.
+       Locked files get skipped here too;they'd fail at delete time anyway and would just
+       inflate the reported size for no reason. */
+    private ScanResult Analyze(CleanerEntry entry, IProgress<string>? progress, CancellationToken token = default)
     {
         var result   = new ScanResult { Entry = entry };
         var excluded = BuildExclusions(entry);
 
         // Wrap the caller's progress so every path report is prefixed with the entry name.
-        // e.g. "Firefox Cache  ›  C:\Users\...\Cache\Cache_Data"
+        // e.g. "Firefox Cache >>C:\Users\...\Cache\Cache_Data"
         // PrefixedProgress delegates to the original Progress<T> which already captured the
         // UI sync context, so the callback still safely lands on the UI thread.
         IProgress<string>? entryProgress = progress is null ? null
@@ -43,12 +42,12 @@ public class CleaningService
         {
             try
             {
-                foreach (var file in FindFiles(fileKey, excluded, entryProgress))
+                foreach (var file in FindFiles(fileKey, excluded, entryProgress, token))
                 {
                     if (result.FilesToDelete.Contains(file)) continue;
 
-                    // open with DELETE access; same as File.Delete() internally.
-                    // returns -1 if another process holds it without FILE_SHARE_DELETE, so we skip.
+                    //open with DELETE access; same as File.Delete() internally.
+                    //returns -1 if another process holds it without FILE_SHARE_DELETE, so we skip.
                     var size = TryGetDeletableSize(file);
                     if (size < 0) continue;
 
@@ -56,6 +55,7 @@ public class CleaningService
                     result.TotalBytes += size;
                 }
             }
+            catch (OperationCanceledException) { throw; }  //cancel must reach the caller, not get swallowed
             catch { }
         }
 
@@ -68,47 +68,59 @@ public class CleaningService
         return result;
     }
 
-    /* Resolves the FileKey path (which may contain wildcards and env vars) to one or more
-       concrete directories, then yields every matching file that is not excluded.
-       Progress is reported once per resolved root directory, then once per subdirectory during recursion. */
-    private IEnumerable<string> FindFiles(FileKeyEntry fileKey, List<ExclusionRule> excluded, IProgress<string>? progress)
+    /* Resolves the FileKey path to real directories and yields every matching file.
+       Patterns get split here upfront so the tree walk only happens once down below. */
+    private IEnumerable<string> FindFiles(FileKeyEntry fileKey, List<ExclusionRule> excluded, IProgress<string>? progress, CancellationToken token = default)
     {
         bool recurse = fileKey.Flag is FileKeyFlag.Recurse or FileKeyFlag.RemoveSelf;
+
+        var patterns = fileKey.Pattern
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
         foreach (var dir in _expander.ResolvePaths(fileKey.Path))
         {
             if (!Directory.Exists(dir)) continue;
-
-            // Report the root directory once, before iterating all patterns.
-            // This avoids N identical reports (one per pattern) for the same folder.
             progress?.Report(dir);
 
-            foreach (var pattern in fileKey.Pattern.Split(';', StringSplitOptions.RemoveEmptyEntries))
-                foreach (var f in EnumerateFilesSafe(dir, pattern.Trim(), recurse, progress))
-                    if (!IsExcluded(f, excluded))
-                        yield return f;
+            foreach (var f in EnumerateFilesSafe(dir, patterns, recurse, progress, token))
+                if (!IsExcluded(f, excluded))
+                    yield return f;
         }
     }
 
-    /* Walks a directory tree safely; one inaccessible folder skips just that folder, not the whole tree
-       Progress is forwarded so the caller sees which subdirectory is being scanned live. */
-    private static IEnumerable<string> EnumerateFilesSafe(string root, string pattern, bool recurse, IProgress<string>? progress = null)
+    /* Walks the tree once; lets the OS match files per pattern (FindFirstFile knows about
+       8.3 short-name aliases,we don't). HashSet drops files that match more than one pattern.
+       Reparse points skipped;Windows ships with fun traps like
+     C:\Users\All Users >> C:\ProgramData >> All Users >>....forever */
+    private static IEnumerable<string> EnumerateFilesSafe(string root, string[] patterns, bool recurse, IProgress<string>? progress = null, CancellationToken token = default)
     {
-        IEnumerable<string> files;
-        try { files = Directory.EnumerateFiles(root, pattern); }
-        catch { files = []; }
-        foreach (var f in files) yield return f;
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var p in patterns)
+        {
+            IEnumerable<string> files;
+            try { files = Directory.EnumerateFiles(root, p); }
+            catch { files = []; }
+            foreach (var f in files)
+                if (seen.Add(f))   //skip if another pattern already matched this file
+                    yield return f;
+        }
 
         if (!recurse) yield break;
 
         IEnumerable<string> dirs;
-        try { dirs = Directory.EnumerateDirectories(root); }
+        //!FIX!Skip reparse points (junctions & symlinks);Windows ships with traps like
+        //C:\Users\All Users >> C:\ProgramData >>> All Users >>...forever ;)
+        //Real content is always reachable via the canonical path;no need to follow aliases
+        try
+        { dirs = Directory.EnumerateDirectories(root)
+                              .Where(d => (File.GetAttributes(d) & FileAttributes.ReparsePoint) == 0); }
         catch { yield break; }
 
         foreach (var sub in dirs)
         {
+            token.ThrowIfCancellationRequested(); //one check per folder is enough; no need to go per-file
             progress?.Report(sub);
-            foreach (var f in EnumerateFilesSafe(sub, pattern, recurse: true, progress))
+            foreach (var f in EnumerateFilesSafe(sub, patterns, recurse: true, progress, token))
                 yield return f;
         }
     }
@@ -138,16 +150,17 @@ public class CleaningService
 
     // --- Clean ----------------------------------------------------
 
-    /* Deletes every file and registry entry collected during Analyze.
-       Files that are in use or already gone are silently skipped.
-       Returns the count of successfully deleted items and the total bytes freed. */
-    private (int count, long bytes) Clean(ScanResult result, IProgress<string>? progress)
+    /* Deletes everything the Analyze phase queued up.
+       Files that are in use or already gone get skipped silently;no point in spamming errors. 
+     Also returns the count of successfully deleted items and the total bytes freed.*/
+    private (int count, long bytes) Clean(ScanResult result, IProgress<string>? progress, CancellationToken token = default)
     {
         int  count = 0;
         long bytes = 0;
 
         foreach (var file in result.FilesToDelete)
         {
+            token.ThrowIfCancellationRequested(); // stop between files so we never delete half an entry
             try
             {
                 var size = new FileInfo(file).Length;
@@ -156,7 +169,7 @@ public class CleaningService
                 bytes += size;
                 progress?.Report($"Deleted: {file}");
             }
-            catch { } // in use or already gone; skip silently
+            catch { } //in use or already gone; skip silently
                       //catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[CleanFail] {file}\n  {ex.GetType().Name}: {ex.Message}"); }
         }
 
@@ -201,8 +214,8 @@ public class CleaningService
         }
     }
 
-    /* Removes empty directories left behind after a REMOVESELF clean.
-       Walks deepest-first so parent directories become empty before we try to delete them.
+    /* Cleans up empty folders left behind by a REMOVESELF clean.
+       Order matters: deepest first, so parent directories become empty before we try to delete them.
        The root folder itself is deleted last if it ends up empty too. */
     private static void TryPruneEmptyDirs(string path)
     {
@@ -216,7 +229,7 @@ public class CleaningService
                     Directory.Delete(sub);
             }
 
-            // Delete the root folder itself if it's now empty
+            //Delete the root folder itself if it's now empty
             if (Directory.GetFileSystemEntries(path).Length == 0)
                 Directory.Delete(path);
         }
@@ -225,9 +238,8 @@ public class CleaningService
 
     // --- Helpers --------------------------------------------------
 
-    /* Builds the list of exclusion rules for a scan.
-       Each rule carries a directory prefix and an optional filename pattern.
-       REG exclusions are not relevant here and are skipped. */
+    /* Turns the entry's ExcludeKey lines into rules we can actually match against during the scan.
+       REG exclusions are skipped here;they don't apply to file paths anyway. */
     private List<ExclusionRule> BuildExclusions(CleanerEntry entry)
     {
         var rules = new List<ExclusionRule>();
@@ -244,13 +256,11 @@ public class CleaningService
         return rules;
     }
 
-    /* Attempts to open the file with Windows DELETE access, this should exactly the access right
-       that File.Delete() requests internally. If another process holds the file open
-       without FILE_SHARE_DELETE (e.g. a system service keeping an event log open),
-       CreateFileW returns INVALID_HANDLE_VALUE and we return -1 to signal "skip this file".
-       On success the handle is closed immediately; the file size is read from FileInfo.
-       FileAccess.ReadWrite cannot be used here because it does not map to DELETE. */
-    // try to open with DELETE access;if it fails the file is locked, skip it
+    // Probe whether a file is deletable right now by requesting DELETE access via CreateFileW.
+    // If another process holds it open without FILE_SHARE_DELETE, this fails and we skip it.
+    // Yes, theres a TOCTOU gap between Analyze and Clean;file state can change in between
+    // Worst case: we report a slightly off size or try to delete something that moved. Both are caught silently.
+    //The goal here is simply to avoid counting files that are already undeletable right now
     private static long TryGetDeletableSize(string path)
     {
         const uint DELETE         = 0x00010000;
@@ -265,7 +275,7 @@ public class CleaningService
         catch { return -1; }
     }
 
-    // Returns true if the given file path is covered by any exclusion rule.
+    // True if any rule matches;short-circuits on the first hit
     private static bool IsExcluded(string path, List<ExclusionRule> rules)
     {
         foreach (var rule in rules)
@@ -294,9 +304,9 @@ public class CleaningService
 
     // --- Nested Types ---------------------------------------------
 
-    /* One exclusion rule built from an ExcludeKeyN= line.
-       DirPrefix always ends with '\' so "Cache\" never accidentally matches "CacheExtra\".
-       Pattern is the optional filename filter (e.g. "*.db", "readme.pdf").
+    /* One rule parsed from an ExcludeKeyN= line.
+       DirPrefix always ends with '\' so "Cache\" doesn't accidentally swallow "CacheExtra\".
+     Pattern is the optional filename filter (e.g. "*.db", "readme.pdf").
        No pattern means the entire directory subtree is excluded. */
     private readonly record struct ExclusionRule(string DirPrefix, string? Pattern)
     {
@@ -324,9 +334,9 @@ public class CleaningService
         }
     }
 
-    /* Thin IProgress<string> wrapper that prepends an entry name to every path report.
-       The inner Progress<T> already captured the UI sync context, so marshalling is handled
-       by it; this wrapper is just a prefix transform, no threading magic needed */
+    /* Tiny wrapper that just prepends the entry name to every progress message.
+       The inner Progress<T> already grabbed the UI sync context, so no threading magic needed here;
+       this is purely a string-prefix transform. */
     private sealed class PrefixedProgress(string prefix, IProgress<string> inner) : IProgress<string>
     {
         public void Report(string path) => inner.Report($"{prefix}  ›  {path}");

@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace FluentCleaner.Services;
 
+public record CleanHistoryEntry(DateTime Date, long BytesFreed, int ItemsRemoved);
+
 public class AppSettings
 {
     // single shared instance, loaded from disk at startup
@@ -37,9 +39,17 @@ public class AppSettings
     // backdrop style;terminal-only tweak, no Settings UI on purpose
     public string Backdrop { get; set; } = "mica";
 
-    // remembered window size; restored on next launch
+    // remembered window size;restored on next launch
     public int WindowWidth  { get; set; } = 960;
     public int WindowHeight { get; set; } = 620;
+
+    //Junk growth tracker;logged after every successful clean run
+    public bool CleanHistoryEnabled { get; set; } = true;
+    public List<CleanHistoryEntry> CleanHistory { get; set; } = [];
+
+    // Groq API key for AI entry explanations; null = not configured
+    public string? GroqApiKey { get; set; }
+
 
     // -----------------------------------------------------------------------
 

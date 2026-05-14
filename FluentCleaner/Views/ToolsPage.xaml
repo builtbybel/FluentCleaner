@@ -9,219 +9,240 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <!-- two-card layout: left = tool list, right = detail + output -->
-    <Grid Padding="0">
-
+    <!-- widget layout: left= active extension card, right= extension switcher -->
+    <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" MinWidth="200" MaxWidth="420" />
-            <ColumnDefinition Width="1" />    <!-- divider -->
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="1" />     <!-- divider -->
+            <ColumnDefinition Width="260" MinWidth="180" MaxWidth="320" />
         </Grid.ColumnDefinitions>
 
-        <!-- vertical divider -->
-        <Rectangle Grid.Column="1"
-                   Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
-                   VerticalAlignment="Stretch" />
 
-        <!-- left panel - tool list -->
+        <!-- LEFT: widget card + output -->
         <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />  <!-- filter + search -->
-                    <RowDefinition Height="*" />      <!-- tool list -->
-                </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />       <!-- widget card -->
+                <RowDefinition Height="Auto" />    <!-- output panel -->
+            </Grid.RowDefinitions>
 
-                <!-- category filter (search moved to TitleBar) -->
-                <ComboBox x:Name="comboFilter" Grid.Row="0"
-                          Margin="8,8,8,6"
-                          FontSize="12" MinWidth="60"
-                          VerticalAlignment="Center"
-                          SelectionChanged="comboFilter_SelectionChanged">
-                    <ComboBox.Resources>
-                        <SolidColorBrush x:Key="ComboBoxBackground"             Color="Transparent" />
-                        <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver"  Color="{ThemeResource SubtleFillColorSecondary}" />
-                        <SolidColorBrush x:Key="ComboBoxBackgroundPressed"      Color="Transparent" />
-                        <SolidColorBrush x:Key="ComboBoxBorderBrush"            Color="Transparent" />
-                        <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="Transparent" />
-                        <SolidColorBrush x:Key="ComboBoxBorderBrushPressed"     Color="Transparent" />
-                    </ComboBox.Resources>
-                </ComboBox>
+            <!-- placeholder: no extensions folder -->
+            <StackPanel x:Name="panelNoFolder" Grid.Row="0"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Spacing="8" Margin="24"
+                        Visibility="Collapsed">
+                <FontIcon Glyph="&#xE8F4;" FontSize="36"
+                          Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                          HorizontalAlignment="Center" />
+                <TextBlock Text="No extensions installed."
+                           FontSize="13" FontWeight="SemiBold"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Extensions are optional. Download the extension pack and place the Extensions folder next to the app."
+                           FontSize="12" TextWrapping="WrapWholeWords" TextAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <HyperlinkButton Content="Get extensions on GitHub"
+                                 Click="btnGitHub_Click"
+                                 HorizontalAlignment="Center"
+                                 FontSize="12" />
+                <Button Content="Open app folder"
+                        Click="btnOpenFolder_Click"
+                        HorizontalAlignment="Center"
+                        FontSize="12" />
+            </StackPanel>
 
-                <!-- empty state: no Extensions folder -->
-                <StackPanel x:Name="panelNoFolder" Grid.Row="1"
-                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                            Spacing="8" Margin="24"
-                            Visibility="Collapsed">
-                    <FontIcon Glyph="&#xE8F4;" FontSize="36"
-                              Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                              HorizontalAlignment="Center" />
-                    <TextBlock Text="No extensions installed."
-                               FontSize="13" FontWeight="SemiBold"
-                               HorizontalAlignment="Center" />
-                    <TextBlock Text="Extensions are optional. Download the extension pack and place the Extensions folder next to the app."
-                               FontSize="12" TextWrapping="WrapWholeWords" TextAlignment="Center"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                    <HyperlinkButton Content="Get extensions on GitHub"
-                                     Click="btnGitHub_Click"
-                                     HorizontalAlignment="Center"
-                                     FontSize="12" />
-                    <Button Content="Open app folder"
-                            Click="btnOpenFolder_Click"
-                            HorizontalAlignment="Center"
-                            FontSize="12" />
-                </StackPanel>
+            <!-- placeholder: nothing selected yet -->
+            <StackPanel x:Name="panelPlaceholder" Grid.Row="0"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Spacing="8" Opacity="0.45">
+                <FontIcon Glyph="&#xE7C5;" FontSize="36" HorizontalAlignment="Center" />
+                <TextBlock Text="Select an extension from the list."
+                           FontSize="13" HorizontalAlignment="Center" />
+            </StackPanel>
 
-                <!-- tool list -->
-                <ListView x:Name="listTools" Grid.Row="1"
-                          SelectionMode="Single"
-                          Margin="0,4,0,4"
-                          SelectionChanged="listTools_SelectionChanged"
+            <!-- widget card: active extension -->
+            <ScrollViewer x:Name="scrollDetails" Grid.Row="0"
+                          VerticalScrollBarVisibility="Auto"
                           Visibility="Collapsed">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="ext:ToolsDefinition">
-                            <StackPanel Orientation="Horizontal" Spacing="8" Padding="0,2">
-                                <TextBlock Text="{x:Bind Icon}" FontSize="14"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="{x:Bind Title}" FontSize="12.5"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-        </Grid>
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="12"
+                        Margin="20,16" Padding="24,16,24,20">
+                    <StackPanel Spacing="14">
 
-        <!-- right panel - detail + output -->
-        <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />  <!-- status header -->
-                    <RowDefinition Height="*" />      <!-- detail pane -->
-                    <RowDefinition Height="Auto" />   <!-- output panel -->
-                </Grid.RowDefinitions>
-
-                <!-- status: "20 extensions loaded." -->
-                <Grid Grid.Row="0" Padding="12,10,12,10">
-                    <TextBlock x:Name="lblStatus"
-                               FontSize="11"
-                               VerticalAlignment="Center"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                </Grid>
-
-                <!-- divider below header -->
-                <Border Grid.Row="0"
-                        VerticalAlignment="Bottom"
-                        Height="1"
-                        Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
-
-                <!-- RIGHT PANEL - detail pane -->
-                <Grid Grid.Row="1">
-
-                    <!-- placeholder: nothing selected -->
-                    <StackPanel x:Name="panelPlaceholder"
-                                VerticalAlignment="Center" HorizontalAlignment="Center"
-                                Spacing="8" Opacity="0.45">
-                        <FontIcon Glyph="&#xE7C5;" FontSize="36" HorizontalAlignment="Center" />
-                        <TextBlock Text="Select an extension from the list."
-                                   FontSize="13" HorizontalAlignment="Center" />
-                    </StackPanel>
-
-                    <!-- detail content -->
-                    <ScrollViewer x:Name="scrollDetails"
-                                  VerticalScrollBarVisibility="Auto"
-                                  Visibility="Collapsed">
-                        <StackPanel Spacing="8" Padding="12,8,12,0">
-
-                            <!-- icon + title -->
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock x:Name="lblIcon" FontSize="22" VerticalAlignment="Center" />
-                                <TextBlock x:Name="lblTitle" FontSize="14" FontWeight="SemiBold"
+                        <!-- widget header: icon + title left, folder button right -->
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <TextBlock x:Name="lblIcon" FontSize="18" VerticalAlignment="Center" />
+                                <TextBlock x:Name="lblTitle" FontSize="13" FontWeight="SemiBold"
                                            VerticalAlignment="Center" TextWrapping="Wrap" />
                             </StackPanel>
-
-                            <TextBlock x:Name="lblDescription" FontSize="12" TextWrapping="Wrap"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-
-                            <!-- help info bar -->
-                            <InfoBar x:Name="infoHelp" Severity="Warning"
-                                     IsOpen="False" IsClosable="False">
-                                <InfoBar.ActionButton>
-                                    <Button x:Name="btnShowHelp" Content="Show help"
-                                            Click="btnShowHelp_Click" FontSize="11" />
-                                </InfoBar.ActionButton>
-                            </InfoBar>
-
-                            <!-- options dropdown -->
-                            <ComboBox x:Name="comboOptions"
-                                      HorizontalAlignment="Stretch"
-                                      PlaceholderText="Select option"
-                                      Visibility="Collapsed" />
-
-                            <!-- free-text input -->
-                            <TextBox x:Name="textInput"
-                                     HorizontalAlignment="Stretch"
-                                     PlaceholderText="Enter input (e.g. IDs or raw arguments)"
-                                     Visibility="Collapsed" />
-
-                            <!-- attribution link -->
-                            <HyperlinkButton x:Name="linkPoweredBy"
-                                             Visibility="Collapsed"
-                                             FontSize="11" Padding="0"
-                                             Click="linkPoweredBy_Click" />
-
-                            <!-- action buttons -->
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Button x:Name="btnRun" Content="Run"
-                                        Style="{StaticResource AccentButtonStyle}"
-                                        Click="btnRun_Click"
-                                        Visibility="Collapsed" />
-                                <Button x:Name="btnUninstall" Content="Remove"
-                                        Click="btnUninstall_Click"
-                                        Visibility="Collapsed" />
-                                <Button Content="&#xE838;" FontFamily="Segoe MDL2 Assets"
-                                        ToolTipService.ToolTip="Open Extensions folder"
-                                        Click="btnOpenFolder_Click"
-                                        Padding="8,6" />
-                            </StackPanel>
-
-                            <ProgressRing x:Name="progressRing"
-                                          IsActive="False"
-                                          Width="24" Height="24"
-                                          HorizontalAlignment="Left" />
-                        </StackPanel>
-                    </ScrollViewer>
-                </Grid>
-
-                <!-- output panel -->
-                <Border x:Name="borderOutput" Grid.Row="2"
-                        BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                        BorderThickness="0,1,0,0"
-                        Padding="12,8,12,12">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <Grid Grid.Row="0" Margin="0,0,0,4">
-                            <TextBlock Text="Output" FontSize="11" FontWeight="SemiBold"
-                                       VerticalAlignment="Center" />
-                            <Button x:Name="btnClearLog" Content="Clear"
-                                    HorizontalAlignment="Right"
-                                    FontSize="11" Padding="8,2"
-                                    Click="btnClearLog_Click" />
+                            <Button HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    ToolTipService.ToolTip="Open Extensions folder"
+                                    Click="btnOpenFolder_Click"
+                                    Padding="6">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackground"            Color="Transparent" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{ThemeResource SubtleFillColorSecondary}" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="{ThemeResource SubtleFillColorTertiary}" />
+                                    <SolidColorBrush x:Key="ButtonBorderBrush"           Color="Transparent" />
+                                </Button.Resources>
+                                <FontIcon Glyph="&#xE8A7;" FontSize="14" />
+                            </Button>
                         </Grid>
 
-                        <!-- live log output -->
-                        <TextBox Grid.Row="1"
-                                 x:Name="txtLog"
+                        <!-- description -->
+                        <TextBlock x:Name="lblDescription" FontSize="13" TextWrapping="Wrap"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+                        <!-- help info bar -->
+                        <InfoBar x:Name="infoHelp" Severity="Warning"
+                                 IsOpen="False" IsClosable="False">
+                            <InfoBar.ActionButton>
+                                <Button x:Name="btnShowHelp" Content="Show help"
+                                        Click="btnShowHelp_Click" FontSize="11" />
+                            </InfoBar.ActionButton>
+                        </InfoBar>
+
+                        <!-- options dropdown -->
+                        <ComboBox x:Name="comboOptions"
+                                  HorizontalAlignment="Stretch"
+                                  PlaceholderText="Select option"
+                                  Visibility="Collapsed" />
+
+                        <!-- free-text input -->
+                        <TextBox x:Name="textInput"
+                                 HorizontalAlignment="Stretch"
+                                 PlaceholderText="Enter input (e.g. IDs or raw arguments)"
+                                 Visibility="Collapsed" />
+
+                        <!-- attribution link -->
+                        <HyperlinkButton x:Name="linkPoweredBy"
+                                         Visibility="Collapsed"
+                                         FontSize="11" Padding="0"
+                                         Click="linkPoweredBy_Click" />
+
+                        <!-- action buttons -->
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button x:Name="btnRun" Content="Run"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    Click="btnRun_Click"
+                                    Visibility="Collapsed" />
+                            <Button x:Name="btnUninstall" Content="Remove"
+                                    Click="btnUninstall_Click"
+                                    Visibility="Collapsed" />
+                        </StackPanel>
+
+                        <ProgressRing x:Name="progressRing"
+                                      IsActive="False"
+                                      Width="24" Height="24"
+                                      HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+
+            <!-- output widget card -->
+            <Border x:Name="borderOutput" Grid.Row="1"
+                    Margin="20,0,20,16">
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="12"
+                        Padding="20,14">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE756;" FontSize="14"
+                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Text="Output" FontSize="13" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                            <!-- more-options flyout (...) -->
+                            <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    Width="32" Height="32" Padding="0"
+                                    ToolTipService.ToolTip="More options">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackground"            Color="Transparent" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{ThemeResource SubtleFillColorSecondary}" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="{ThemeResource SubtleFillColorTertiary}" />
+                                    <SolidColorBrush x:Key="ButtonBorderBrush"           Color="Transparent" />
+                                </Button.Resources>
+                                <FontIcon Glyph="&#xE712;" FontSize="14" />
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                        <MenuFlyoutItem x:Name="btnClearLog"
+                                                        Text="Clear output"
+                                                        Click="btnClearLog_Click">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE74D;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                        </Grid>
+                        <TextBox x:Name="txtLog"
                                  IsReadOnly="True"
                                  AcceptsReturn="True"
                                  TextWrapping="Wrap"
                                  FontFamily="Consolas"
                                  FontSize="11"
-                                 MaxHeight="130"
+                                 MaxHeight="120"
+                                 BorderThickness="0"
+                                 Background="Transparent"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                                  PlaceholderText="Extension output will appear here..." />
-                    </Grid>
+                    </StackPanel>
                 </Border>
+            </Border>
         </Grid>
+
+        <!-- RIGHT: extension switcher widget card -->
+        <Border Grid.Column="2"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1" CornerRadius="12"
+                Margin="8,16,16,16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />   <!-- widget header -->
+                    <RowDefinition Height="Auto" />   <!-- divider -->
+                    <RowDefinition Height="*" />       <!-- list -->
+                </Grid.RowDefinitions>
+
+                <!-- widget header: title + status left, category filter right -->
+                <Grid Grid.Row="0" Margin="16,12,8,10">
+                    <StackPanel VerticalAlignment="Center" Spacing="1">
+                        <TextBlock Text="Extensions" FontSize="13" FontWeight="SemiBold" />
+                        <TextBlock x:Name="lblStatus" FontSize="11"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    </StackPanel>
+                    <ComboBox x:Name="comboFilter"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              FontSize="11"
+                              SelectionChanged="comboFilter_SelectionChanged">
+                    </ComboBox>
+                </Grid>
+
+                <!-- extension list -->
+                <ListView x:Name="listTools" Grid.Row="2"
+                          SelectionMode="Single"
+                          Padding="4,4,4,8"
+                          SelectionChanged="listTools_SelectionChanged"
+                          Visibility="Collapsed">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="ext:ToolsDefinition">
+                            <StackPanel Orientation="Horizontal" Spacing="10" Padding="0,3">
+                                <TextBlock Text="{x:Bind Icon}" FontSize="16"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Bind Title}" FontSize="12.5"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Border>
+
     </Grid>
 </Page>

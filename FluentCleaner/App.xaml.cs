@@ -19,6 +19,7 @@ public partial class App : Application
     //Entry point;load settings, build the window, wire everything up.
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
+
         AppSettings.Reload();
 
         // SilentRunner headless clean, no window; /SHUTDOWN shuts down after

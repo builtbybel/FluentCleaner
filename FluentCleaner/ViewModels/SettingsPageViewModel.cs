@@ -1,9 +1,13 @@
+using FluentCleaner.Models;
 using FluentCleaner.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 
 namespace FluentCleaner.ViewModels;
+
+public record HistoryRow(string Date, string Amount, string Bar, string Items);
 
 public partial class SettingsPageViewModel : ObservableObject
 {
@@ -36,8 +40,13 @@ public partial class SettingsPageViewModel : ObservableObject
     [ObservableProperty] public partial string CustomPath { get; set; } = "";
 
     // Post-clean tasks
-    [ObservableProperty] public partial bool   PostCleanEnabled { get; set; }
+    [ObservableProperty] public partial bool   PostCleanEnabled  { get; set; }
     [ObservableProperty] public partial string PostCleanCommands { get; set; } = "";
+
+    // History
+    [ObservableProperty] public partial bool   CleanHistoryEnabled { get; set; } = true;
+    [ObservableProperty] public partial string HistorySummary { get; set; } = "";
+    public ObservableCollection<HistoryRow> HistoryRows { get; } = [];
 
     // Shared
     [ObservableProperty] public partial string StatusText { get; set; } = "";
@@ -116,6 +125,52 @@ public partial class SettingsPageViewModel : ObservableObject
         AppSettings.Instance.Save();
     }
 
+    partial void OnCleanHistoryEnabledChanged(bool value)
+    {
+        if (_refreshing) return;
+        AppSettings.Instance.CleanHistoryEnabled = value;
+        AppSettings.Instance.Save();
+    }
+
+    // --- Junk Growth Tracker / Clean History -------------------------------------------------------------
+
+    [RelayCommand]
+    private void ClearHistory()
+    {
+        AppSettings.Instance.CleanHistory.Clear();
+        AppSettings.Instance.Save();
+        BuildHistoryRows();
+    }
+
+    private void BuildHistoryRows()
+    {
+        var history = AppSettings.Instance.CleanHistory;
+        HistoryRows.Clear();
+
+        if (history.Count == 0)
+        {
+            HistorySummary = "no runs recorded yet";
+            return;
+        }
+
+        var totalFreed = history.Sum(e => e.BytesFreed);
+        HistorySummary = $"{history.Count} runs · {ScanResult.FormatBytes(totalFreed)} total freed";
+
+        var maxBytes  = history.Max(e => e.BytesFreed);
+        const int w   = 20;
+
+        foreach (var e in history.OrderByDescending(e => e.Date))
+        {
+            var filled = maxBytes > 0 ? (int)(e.BytesFreed * w / (double)maxBytes) : 0;
+            HistoryRows.Add(new HistoryRow(
+                Date:   e.Date.ToString("dd.MM.yyyy  HH:mm"),
+                Amount: ScanResult.FormatBytes(e.BytesFreed),
+                Bar:    new string('█', filled) + new string('░', w - filled),
+                Items:  $"{e.ItemsRemoved} items"
+            ));
+        }
+    }
+
     // --- Refresh --------------------------------------------------------------
 
     public void Refresh()
@@ -136,9 +191,11 @@ public partial class SettingsPageViewModel : ObservableObject
         IsCustomSource      = !string.IsNullOrWhiteSpace(s.CustomWinapp2Path);
         PostCleanEnabled    = s.PostCleanEnabled;
         PostCleanCommands   = s.PostCleanCommands;
+        CleanHistoryEnabled = s.CleanHistoryEnabled;
         ThemeIndex          = s.Theme switch { "Light" => 1, "Dark" => 2, _ => 0 };
 
         _refreshing = false;
+        BuildHistoryRows();
         RefreshFileInfo();
     }
 

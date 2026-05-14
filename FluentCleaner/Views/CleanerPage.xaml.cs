@@ -90,6 +90,33 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         }
     }
 
+    // Ask Groq to explain the entry;result is cached so repeated opens are instant
+    private async void EntryExplain_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuFlyoutItem { Tag: CleanerEntryViewModel vm }) return;
+
+        var textBlock = new TextBlock
+        {
+            Text = "Thinking…",
+            TextWrapping = TextWrapping.Wrap,
+            MaxWidth = 400
+        };
+
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            Title = vm.Name,
+            CloseButtonText = "Close",
+            Content = textBlock
+        };
+
+        // Show the dialog immediately (don't await), then fill in the answer
+        var showTask = dialog.ShowAsync().AsTask();
+        textBlock.Text = await AiExplainer.ExplainAsync(vm.Entry);
+        await showTask;
+    }
+
+
     // Category flyout; same trick with CleanerCategoryViewModel
     private async void CatAnalyze_Click(object sender, RoutedEventArgs e)
     {

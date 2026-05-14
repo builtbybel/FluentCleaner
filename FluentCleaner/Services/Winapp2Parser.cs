@@ -29,7 +29,7 @@ public class Winapp2Parser
                 if (current is not null && IsValid(current)) entries.Add(current);
 
                 var name = line[1..^1].Trim();
-                // Skip the file's own header block
+                //Skip the files own header block
                 if (name.StartsWith("Winapp2", StringComparison.OrdinalIgnoreCase) ||
                     name.StartsWith("version",  StringComparison.OrdinalIgnoreCase))
                 {
@@ -37,7 +37,7 @@ public class Winapp2Parser
                     continue;
                 }
 
-                // Strip the trailing " *" Winapp2 uses to mark community entries
+                //Strip the trailing " *" Winapp2 uses to mark community entries
                 current = new CleanerEntry { Name = name.TrimEnd('*').TrimEnd() };
                 continue;
             }

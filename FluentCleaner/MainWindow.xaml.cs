@@ -17,46 +17,43 @@ public sealed partial class MainWindow : Window
         SetTitleBar(AppTitleBar);
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
 
-        NavView.SelectedItem = NavView.MenuItems[0];
-        ContentFrame.Navigate(typeof(CleanerPage));
         SyncSearchState();                           //enable/disable search for initial page
         SizeChanged += MainWindow_SizeChanged;       //watch for window resize; compact search
         UpdateTitleSearch(AppWindow.Size.Width);     //apply correct search mode on first load
     }
 
+    // --- TitleBar pane toggle -------------------------------------------------
+
+    private void TitleBar_PaneToggleRequested(TitleBar sender, object args) =>
+        NavView.IsPaneOpen = !NavView.IsPaneOpen;
+
     // --- Navigation -----------------------------------------------------------
 
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
-        if (args.SelectedItem is not NavigationViewItem item) return;
-
-        // Reset search on every page change
         TitleSearchBox.Text = "";
-        if (ContentFrame.Content is ISearchablePage old)
+        if (NavFrame.Content is ISearchablePage old)
             old.OnSearch("");
 
-        Type? page = item.Tag?.ToString() switch
-        {
-            "Cleaner" => typeof(CleanerPage),
-            "Terminal" => typeof(TerminalPage),
-            "Tools" => typeof(ToolsPage),
-            "Settings" => typeof(SettingsPage),
-            _ => null
-        };
+        var transition = new DrillInNavigationTransitionInfo();//zoom in transition
 
-        if (page is not null)
-            ContentFrame.Navigate(page, null, new DrillInNavigationTransitionInfo());//zoom in transition 
+        if (args.IsSettingsSelected)
+        {
+            NavFrame.Navigate(typeof(SettingsPage), null, transition);
+        }
+        else if (args.SelectedItem is NavigationViewItem item)
+        {
+            switch (item.Tag)
+            {
+                case "Cleaner":  NavFrame.Navigate(typeof(CleanerPage),  null, transition); break;
+                case "Terminal": NavFrame.Navigate(typeof(TerminalPage), null, transition); break;
+                case "Tools":    NavFrame.Navigate(typeof(ToolsPage),    null, transition); break;
+            }
+        }
 
         SyncSearchState();
     }
 
-    // disable search controls on pages that don't support it
-    private void SyncSearchState()
-    {
-        bool searchable = ContentFrame.Content is ISearchablePage;
-        TitleSearchBox.IsEnabled = searchable;
-        SearchIconButton.IsEnabled = searchable;
-    }
 
     // --- Page actions flyout --------------------------------------------------
 
@@ -65,7 +62,7 @@ public sealed partial class MainWindow : Window
     {
         PageActionsFlyout.Items.Clear();
 
-        if (ContentFrame.Content is IPageActions provider)
+        if (NavFrame.Content is IPageActions provider)
             provider.BuildActions(PageActionsFlyout);
         else
         {
@@ -79,10 +76,18 @@ public sealed partial class MainWindow : Window
 
     // --- Search ---------------------------------------------------------------
 
+    // disable search controls on pages that don't support it
+    private void SyncSearchState()
+    {
+        bool searchable = NavFrame.Content is ISearchablePage;
+        TitleSearchBox.IsEnabled = searchable;
+        SearchIconButton.IsEnabled = searchable;
+    }
+
     private void TitleSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
     {
         if (e.Reason == AutoSuggestionBoxTextChangeReason.UserInput
-            && ContentFrame.Content is ISearchablePage page)
+            && NavFrame.Content is ISearchablePage page)
             page.OnSearch(sender.Text);
     }
 
@@ -91,7 +96,7 @@ public sealed partial class MainWindow : Window
     private void MainWindow_SizeChanged(object sender, WindowSizeChangedEventArgs args) =>
         UpdateTitleSearch(args.Size.Width);
 
-    //below 560 px:collapse to icon + flyout; between 560-700: shrink box; above: full width
+    //below 560 px:collapse to icon + flyout; between 560-700:shrink box; above:full width
     private void UpdateTitleSearch(double width)
     {
         bool compact = width < 560;

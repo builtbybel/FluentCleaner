@@ -43,15 +43,13 @@
     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="32,26,32,32" Spacing="22" HorizontalAlignment="Stretch">
 
-            <StackPanel Spacing="2">
-                <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
-                <TextBlock Text="App preferences and database source."
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}" />
-            </StackPanel>
+            <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
 
-            <!-- Theme -->
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            <!-- Appearance -->
+            <StackPanel Spacing="10">
+                <TextBlock Text="Appearance" FontSize="13" FontWeight="SemiBold" />
+
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="18,14">
                 <Grid>
@@ -74,29 +72,20 @@
                     </ComboBox>
                 </Grid>
             </Border>
+            </StackPanel>
 
             <!-- Database -->
             <StackPanel Spacing="10">
 
                 <StackPanel Spacing="2">
-                    <TextBlock Text="Database" FontWeight="SemiBold" FontSize="16" />
+                    <TextBlock Text="Database" FontSize="13" FontWeight="SemiBold" />
                     <TextBlock Text="Choose which entry lists are loaded for scanning and cleaning."
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}" />
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 </StackPanel>
 
-                <!-- "Active Databases" label + single shared ProgressRing -->
-                <Grid Margin="0,4,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0"
-                               Text="Active Databases"
-                               FontSize="12" FontWeight="SemiBold"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               VerticalAlignment="Center" />
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <!-- ProgressRing shown while downloading -->
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="6">
                         <ProgressRing Width="14" Height="14"
                                       IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
                                       Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
@@ -106,8 +95,7 @@
                                    VerticalAlignment="Center"
                                    Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
                                        Converter={StaticResource BoolToVisibilityConverter}}" />
-                    </StackPanel>
-                </Grid>
+                </StackPanel>
 
                 <!-- Database list card -->
                 <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -355,10 +343,10 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="2">
-                        <TextBlock Text="Post-clean tasks" FontWeight="SemiBold" FontSize="16" />
+                        <TextBlock Text="Post-clean tasks" FontSize="13" FontWeight="SemiBold" />
                         <TextBlock Text="One command per line — runs sequentially after every clean pass."
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}" />
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                     </StackPanel>
 
                     <ToggleSwitch Grid.Column="1"
@@ -390,7 +378,162 @@
             </StackPanel>
             <!-- End post-clean tasks -->
 
-            <!-- About -->
+            <!-- History -->
+            <StackPanel Spacing="10">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="History" FontSize="13" FontWeight="SemiBold" />
+                    <TextBlock Text="Track how much junk accumulates over time."
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+
+                <Expander HorizontalAlignment="Stretch"
+                          HorizontalContentAlignment="Stretch">
+                    <Expander.Header>
+                        <Grid Margin="4,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Clean history" FontSize="13" />
+                                <TextBlock Text="{x:Bind ViewModel.HistorySummary, Mode=OneWay}"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1"
+                                          IsOn="{x:Bind ViewModel.CleanHistoryEnabled, Mode=TwoWay}"
+                                          OnContent="" OffContent="" MinWidth="0" />
+                        </Grid>
+                    </Expander.Header>
+
+                    <!-- history table -->
+                    <StackPanel Spacing="0">
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.HistoryRows, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:HistoryRow">
+                                    <Grid Padding="4,8"
+                                          BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                          BorderThickness="0,0,0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="130" />
+                                            <ColumnDefinition Width="70" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="70" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{x:Bind Date}"
+                                                   FontSize="12"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="{x:Bind Amount}"
+                                                   FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Bar}"
+                                                   FontFamily="Consolas" FontSize="11"
+                                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="3" Text="{x:Bind Items}"
+                                                   FontSize="11"
+                                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Button Content="Clear history"
+                                Command="{x:Bind ViewModel.ClearHistoryCommand}"
+                                Margin="0,12,0,4" />
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+            
+                <!-- AI explanations -->
+                <StackPanel Spacing="8">
+                    <StackPanel Spacing="6">
+
+                        <!-- title + AI badge -->
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="AI explanations" FontSize="13" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
+                            <Border Background="{ThemeResource SystemFillColorSuccessBrush}"
+                                    CornerRadius="3" Padding="4,1" VerticalAlignment="Center">
+                                <TextBlock Text="opt-in" FontSize="10" Foreground="White" />
+                            </Border>
+                            <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                    CornerRadius="3" Padding="4,1" VerticalAlignment="Center">
+                                <TextBlock Text="preview" FontSize="10" Foreground="White" />
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock TextWrapping="Wrap"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   FontSize="12">
+                            <Run>Right-click any entry on the Cleaner page → </Run>
+                            <Run FontWeight="SemiBold">Explain with AI.</Run>
+                            <Run> Powered by Groq (llama-3.3-70b) — free, no billing. Nothing is sent without your explicit action. Requires your own API key.</Run>
+                        </TextBlock>
+
+                        <HyperlinkButton Content="Thoughts? Join the discussion →"
+                                         NavigateUri="https://github.com/builtbybel/FluentCleaner/discussions/31"
+                                         Padding="0" FontSize="12" />
+                    </StackPanel>
+
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="18,14">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE899;" FontSize="18"
+                                      Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                            </Border>
+
+                            <PasswordBox Grid.Column="1"
+                                     x:Name="ApiKeyBox"
+                                     PlaceholderText="gsk_..."
+                                     FontFamily="Consolas"
+                                     FontSize="12"
+                                     VerticalAlignment="Center" />
+
+                            <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                        Spacing="6" VerticalAlignment="Center">
+                                <Button Content="Save"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        Click="ApiKeySave_Click" />
+                                <Button x:Name="btnTestKey" Content="Test"
+                                        Click="ApiKeyTest_Click" />
+                            </StackPanel>
+
+                            <HyperlinkButton Grid.Column="3"
+                                         Content="Get key"
+                                         NavigateUri="https://console.groq.com/keys"
+                                         VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!-- test result -->
+                    <TextBlock x:Name="lblApiTestResult"
+                               FontSize="12" TextWrapping="Wrap"
+                               Margin="0,6,0,0"
+                               Visibility="Collapsed"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+
+                <!-- About -->
+            <StackPanel Spacing="10">
+                <TextBlock Text="About" FontSize="13" FontWeight="SemiBold" />
+
             <Expander x:Name="AboutExpander"
                       HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Stretch">
@@ -441,23 +584,25 @@
 
                 <StackPanel Spacing="2" Margin="0,4,0,8">
                     <HyperlinkButton Content="GitHub"
-                                     Click="Link_GitHub" />
+                                     Click="Link_GitHub"
+                                     FontSize="13" />
                     <HyperlinkButton Content="Report an issue"
-                                     Click="Link_Issues" />
-                    <HyperlinkButton Content="What's new"
-                                     Click="Link_Releases" />
-                    <StackPanel Orientation="Horizontal" Spacing="4" Margin="11,4,0,0">
-                        <TextBlock Text="App icon by"
-                                   FontSize="12"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   VerticalAlignment="Center" />
-                        <HyperlinkButton Content="naderi"
-                                         NavigateUri="https://github.com/naderi"
-                                         FontSize="12" Padding="0,0,0,1"
-                                         VerticalAlignment="Center" />
-                    </StackPanel>
+                                     Click="Link_Issues"
+                                     FontSize="13" />
+                    <HyperlinkButton Content="App icon by naderi"
+                                     Click="Link_IconCredit"
+                                     FontSize="13" />
                 </StackPanel>
             </Expander>
+
+            <!-- faq below About-->
+            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                <HyperlinkButton Content="FAQ"
+                                 Click="Link_Faq"
+                                 FontSize="13" />
+            </StackPanel>
+
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
     </Grid>

@@ -16,9 +16,10 @@ public partial class CleanerPageViewModel : ObservableObject
     private readonly CleaningService  _cleaner   = new();
 
     private readonly List<ScanResult> _lastScan = [];       // hand-off between "Analyze" and "Clean"
-    private List<CleanerEntry> _loadedEntries = [];         // kept so search can rebuild the left pane without re-parsing
-    private List<string> _lastPaths = [];                    // stored so Refresh can reload without the paths being passed again
+    private List<CleanerEntry> _loadedEntries    = [];      // entries from the databases that passed IsInstalled
+    private List<string> _lastPaths = [];                   // stored so Refresh can reload without the paths being passed again
     private bool _suppressSave;                             // prevents N disk writes when SelectAll/SelectNone fires per-entry callbacks
+    private CancellationTokenSource? _cts;                  // lives only during an active scan or clean; null = nothing running
 
     // --- Observable state ---------------------------------------------------
     [ObservableProperty] public partial ObservableCollection<CleanerCategoryViewModel> Categories { get; set; } = [];    // left panel: category tree
@@ -38,6 +39,7 @@ public partial class CleanerPageViewModel : ObservableObject
     public bool   IsShowingList    => SelectedResultLine is null;                  // right panel: normal results list after Analyze
     public string SelectedAppName  => SelectedResultLine?.AppName ?? "";           // name of the open entry shown in the detail header
     public bool   CanRunCleaner    => !IsBusy && Categories.Count > 0;            // bound to IsEnabled on Run Cleaner: Click handler can't disable the button itself
+    public bool   IsNotBusy        => !IsBusy;                                     // flips the Analyze/Cancel button: true =show Analyze, false =show Cancel
 
     // --- Property change hooks ----------------------------------------------
 
@@ -54,6 +56,7 @@ public partial class CleanerPageViewModel : ObservableObject
     partial void OnSearchTextChanged(string value)
     {
         RebuildVisibleCategories();
+        if (!string.IsNullOrWhiteSpace(value)) SetAllExpanded(true); //results are useless if they're all collapsed
         RefreshCategoryState();
         StatusText = Categories.Count > 0
             ? $"Showing {CountVisibleEntries()} matching entries."
@@ -67,16 +70,16 @@ public partial class CleanerPageViewModel : ObservableObject
         RunCleanerCommand.NotifyCanExecuteChanged();
         RefreshCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanRunCleaner));
+        OnPropertyChanged(nameof(IsNotBusy));   // flips the Analyze ↔ Cancel button pair in the XAML
     }
 
     // --- Commands -----------------------------------------------------------
-
+    [RelayCommand] private void Cancel() => _cts?.Cancel();  // Abort the active scan or clean; the running async method catches OperationCanceledException and resets IsBusy
     [RelayCommand] private void SelectAll()      => SetAllSelected(true);
     [RelayCommand] private void SelectNone()     => SetAllSelected(false);
     [RelayCommand] private void SelectDefaults() => SetAllDefaults();
     [RelayCommand] private void ExpandAll()   => SetAllExpanded(true);
     [RelayCommand] private void CollapseAll() => SetAllExpanded(false);
-
     [RelayCommand] private void SortResultsDesc() => SortResultLinesBySize(descending: true);
     [RelayCommand] private void SortResultsAsc()  => SortResultLinesBySize(descending: false);
 
@@ -133,20 +136,35 @@ public partial class CleanerPageViewModel : ObservableObject
 
         BeginResultsRun("Scanning...");
 
-        long totalBytes = 0; int totalFiles = 0; int totalReg = 0;
-        var progress = new Progress<string>(msg => StatusText = msg);
+        using var cts = new CancellationTokenSource();
+        _cts = cts;
 
-        foreach (var entry in selected)
+        try
         {
-            var result = await AnalyzeEntryInternalAsync(entry, progress, keepDetailSelection: false);
-            totalBytes += result.TotalBytes;
-            totalFiles += result.FilesToDelete.Count;
-            totalReg   += result.RegistryToDelete.Count;
-        }
+            long totalBytes = 0; int totalFiles = 0; int totalReg = 0;
+            var progress = new Progress<string>(msg => StatusText = msg);
 
-        TotalSize  = ScanResult.FormatBytes(totalBytes);
-        StatusText = $"Scan complete - {totalFiles} files, {totalReg} registry items ({TotalSize})";
-        IsBusy     = false;
+            foreach (var entry in selected)
+            {
+                var result = await AnalyzeEntryInternalAsync(entry, progress, keepDetailSelection: false, cts.Token);//heavy lifting
+                totalBytes += result.TotalBytes;
+                totalFiles += result.FilesToDelete.Count;
+                totalReg   += result.RegistryToDelete.Count;
+            }
+
+            TotalSize  = ScanResult.FormatBytes(totalBytes);
+            StatusText = $"Scan complete - {totalFiles} files, {totalReg} registry items ({TotalSize})";
+        }
+        catch (OperationCanceledException)
+        {
+            StatusText = "Scan cancelled.";
+            TotalSize  = "";
+        }
+        finally
+        {
+            _cts   = null;
+            IsBusy = false;
+        }
     }
 
     // Analyze is only useful once we actually have something loaded.
@@ -161,25 +179,57 @@ public partial class CleanerPageViewModel : ObservableObject
         if (_lastScan.Count == 0)
             await AnalyzeAsync();
 
+        // If analyze was cancelled (or found nothing), bail out before we start deleting.
+        if (_lastScan.Count == 0) return;
+
         IsBusy             = true;
         SelectedResultLine = null;
         StatusText         = "Cleaning...";
 
-        var scannedBytes              = _lastScan.Sum(r => r.TotalBytes);
-        var (removed, freedBytes)     = await CleanResultsAsync(_lastScan.ToList(), new Progress<string>(msg => StatusText = msg));
-        var skippedBytes              = scannedBytes - freedBytes;
+        using var cts = new CancellationTokenSource();
+        _cts = cts;
 
-        _lastScan.Clear();
-        ResultLines.Clear();
-        ResultLines.Add(new ScanResultLine("Done", removed, 0, "", null));
-        ClearAllEntrySizes();
+        long freedBytes = 0;
+        int  removed    = 0;
+        try
+        {
+            var scannedBytes          = _lastScan.Sum(r => r.TotalBytes);
+            (removed, freedBytes)     = await CleanResultsAsync(_lastScan.ToList(), new Progress<string>(msg => StatusText = msg), cts.Token);
+            var skippedBytes          = scannedBytes - freedBytes;
 
-        TotalSize  = "";
-        StatusText = skippedBytes > 0
-            ? $"Finished — {ScanResult.FormatBytes(freedBytes)} freed · {ScanResult.FormatBytes(skippedBytes)} skipped (files in use)"
-            : $"Finished — {removed} items removed · {ScanResult.FormatBytes(freedBytes)} freed.";
-        IsBusy = false;
+            _lastScan.Clear();
+            ResultLines.Clear();
+            ResultLines.Add(new ScanResultLine("Done", removed, 0, "", null));
+            ClearAllEntrySizes();
 
+            TotalSize  = "";
+            StatusText = skippedBytes > 0
+                ? $"Finished — {ScanResult.FormatBytes(freedBytes)} freed · {ScanResult.FormatBytes(skippedBytes)} skipped (files in use)"
+                : $"Finished — {removed} items removed · {ScanResult.FormatBytes(freedBytes)} freed.";
+        }
+        catch (OperationCanceledException)
+        {
+            //Partial clean is fine;whatever got deleted is gone.
+            //just leaving the remaining results in the list so the user can see what was not cleaned yet
+            UpdateTotalsFromLastScan();
+            StatusText = freedBytes > 0
+                ? $"Clean cancelled — {ScanResult.FormatBytes(freedBytes)} freed so far."
+                : "Clean cancelled.";
+        }
+        finally
+        {
+            _cts   = null;
+            IsBusy = false;
+        }
+
+        // Log the clean run in HISTORY so the user can track their junk growth over time if they want
+        if (AppSettings.Instance.CleanHistoryEnabled && freedBytes > 0)
+        {
+            AppSettings.Instance.CleanHistory.Add(new CleanHistoryEntry(DateTime.Now, freedBytes, removed));
+            AppSettings.Instance.Save();
+        }
+
+        // After the clean run, if the user configured any post-clean commands
         await RunPostCleanTasksAsync();
     }
 
@@ -227,12 +277,26 @@ public partial class CleanerPageViewModel : ObservableObject
         IsBusy             = true;
         SelectedResultLine = null;
 
-        var result = await AnalyzeEntryInternalAsync(entryVm.Entry,
-            new Progress<string>(msg => StatusText = msg), keepDetailSelection: true);
+        using var cts = new CancellationTokenSource();
+        _cts = cts;
 
-        StatusText = $"{entryVm.Name}: {result.FilesToDelete.Count} files, {result.RegistryToDelete.Count} registry items";
-        UpdateTotalsFromLastScan();
-        IsBusy     = false;
+        try
+        {
+            var result = await AnalyzeEntryInternalAsync(entryVm.Entry,
+                new Progress<string>(msg => StatusText = msg), keepDetailSelection: true, cts.Token);
+
+            StatusText = $"{entryVm.Name}: {result.FilesToDelete.Count} files, {result.RegistryToDelete.Count} registry items";
+            UpdateTotalsFromLastScan();
+        }
+        catch (OperationCanceledException)
+        {
+            StatusText = "Scan cancelled.";
+        }
+        finally
+        {
+            _cts   = null;
+            IsBusy = false;
+        }
     }
 
     // Clean one entry. If it was never scanned, we scan it on the fly first
@@ -243,21 +307,35 @@ public partial class CleanerPageViewModel : ObservableObject
         IsBusy             = true;
         SelectedResultLine = null;
 
-        var result = await EnsureEntryScanAsync(entryVm, new Progress<string>(msg => StatusText = msg));
-        if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0)
+        using var cts = new CancellationTokenSource();
+        _cts = cts;
+
+        try
         {
-            StatusText = $"{entryVm.Name}: nothing to clean.";
-            IsBusy = false;
-            return;
+            var result = await EnsureEntryScanAsync(entryVm, new Progress<string>(msg => StatusText = msg));
+            if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0)
+            {
+                StatusText = $"{entryVm.Name}: nothing to clean.";
+                return;
+            }
+
+            var (removed, freedBytes) = await _cleaner.CleanAsync(result, new Progress<string>(msg => StatusText = msg), cts.Token);
+            RemoveScanResult(result);
+            entryVm.SizeText = "";
+
+            UpdateTotalsFromLastScan();
+            StatusText = $"{entryVm.Name}: {removed} items removed · {ScanResult.FormatBytes(freedBytes)} freed.";
         }
-
-        var (removed, freedBytes) = await _cleaner.CleanAsync(result, new Progress<string>(msg => StatusText = msg));
-        RemoveScanResult(result);
-        entryVm.SizeText = "";
-
-        UpdateTotalsFromLastScan();
-        StatusText = $"{entryVm.Name}: {removed} items removed · {ScanResult.FormatBytes(freedBytes)} freed.";
-        IsBusy     = false;
+        catch (OperationCanceledException)
+        {
+            UpdateTotalsFromLastScan();
+            StatusText = "Clean cancelled.";
+        }
+        finally
+        {
+            _cts   = null;
+            IsBusy = false;
+        }
     }
 
     // Batch scan for one whole category.
@@ -418,12 +496,12 @@ public partial class CleanerPageViewModel : ObservableObject
 
     // Central scan method;called by single-entry, category, and full analyze flows.
     // !keepDetailSelection!: if true, opens the detail view for this entry after scanning.
-    private async Task<ScanResult> AnalyzeEntryInternalAsync(CleanerEntry entry, IProgress<string> progress, bool keepDetailSelection)
+    private async Task<ScanResult> AnalyzeEntryInternalAsync(CleanerEntry entry, IProgress<string> progress, bool keepDetailSelection, CancellationToken token = default)
     {
         // Re-analyzing an entry should replace the old result, not stack duplicates forever.
         RemoveScanResult(entry);
 
-        var result = await _cleaner.AnalyzeAsync(entry, progress);
+        var result = await _cleaner.AnalyzeAsync(entry, progress, token);
         _lastScan.Add(result);
         UpdateEntrySize(entry, result.FormattedSize);
 
@@ -452,13 +530,13 @@ public partial class CleanerPageViewModel : ObservableObject
     }
 
     // Shared clean loop so the single-entry and category flows do not drift apart over time.
-    private async Task<(int count, long bytes)> CleanResultsAsync(List<ScanResult> results, IProgress<string> progress)
+    private async Task<(int count, long bytes)> CleanResultsAsync(List<ScanResult> results, IProgress<string> progress, CancellationToken token = default)
     {
         int  count = 0;
         long bytes = 0;
         foreach (var result in results)
         {
-            var (c, b) = await _cleaner.CleanAsync(result, progress);
+            var (c, b) = await _cleaner.CleanAsync(result, progress, token);
             count += c;
             bytes += b;
             RemoveScanResult(result);

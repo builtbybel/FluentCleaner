@@ -23,7 +23,7 @@
                    Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
                    VerticalAlignment="Stretch" />
 
-        <!-- left panel - entry selector -->
+        <!-- left panel;entry selector -->
         <Grid Grid.Column="0">
                 <!-- Empty state: nothing loaded yet (IsEmpty = Categories.Count == 0) -->
                 <StackPanel HorizontalAlignment="Center"
@@ -168,7 +168,10 @@
                                                                 <MenuFlyoutItem Text="Clean"
                                                                                 Tag="{x:Bind}"
                                                                                 Click="EntryClean_Click" />
-                                                            </MenuFlyout>
+                                                              <MenuFlyoutItem Text="Explain with AI"
+                                                                                Tag="{x:Bind}"
+                                                                                Click="EntryExplain_Click" />
+                                                        </MenuFlyout>
                                                         </Button.Flyout>
                                                     </Button>
                                                 </Grid>
@@ -390,15 +393,26 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Analyze: runs CleaningService.AnalyzeAsync for all checked entries -->
+                    <!-- Analyze:visible when idle; morphs into Cancel once a scan/clean starts -->
                     <Button Grid.Column="0"
                             Content="Analyze"
                             Command="{x:Bind ViewModel.AnalyzeCommand}"
                             Style="{StaticResource AccentButtonStyle}"
+                            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}"
                             MinWidth="110"
                             Height="32" />
 
-                    <!-- Run Cleaner: uses Click+code-behind because of the warning dialog flow.
+                    <!-- Cancel:same slot, only visible during an active scan or clean -->
+                    <Button Grid.Column="0"
+                            Content="Cancel"
+                            Command="{x:Bind ViewModel.CancelCommand}"
+                            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}"
+                            MinWidth="110"
+                            Height="32" />
+
+                    <!-- Run Cleaner:uses Click+code-behind because of the warning dialog flow.
                          IsEnabled bound separately since Click bypasses Command.CanExecute. -->
                     <Button Grid.Column="2"
                             Content="Run Cleaner"
