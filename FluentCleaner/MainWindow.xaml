@@ -34,7 +34,7 @@
                         MaxWidth="280"
                         Width="280"
                         VerticalAlignment="Center"
-                        PlaceholderText="Search…"
+                        PlaceholderText="Search"
                         QueryIcon="Find"
                         TextChanged="TitleSearchBox_TextChanged" />
 
