@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ============================================================
+       TRANSLATOR CREDIT
+       Leave the value empty in the source (en-US) file.
+       Each translator fills this in their own Strings\{lang}\Resources.resw,
+       e.g.: Translation: Jane Doe · jane.example.com
+  ============================================================ -->
+  <data name="LblTranslatorCredit"><value>Traduzione: garf02</value></data>
+
+  <!-- ============================================================
+       MAIN WINDOW
+  ============================================================ -->
+  <data name="NavCleaner.Content"><value>Pulitore</value></data>
+  <data name="NavTerminal.Content"><value>Terminale</value></data>
+  <data name="NavCustom.Content"><value>Personalizzato</value></data>
+  <data name="SearchBox.PlaceholderText"><value>Cerca</value></data>
+  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Azioni della Pagina</value></data>
+  <!-- Main Window — donation TeachingTip -->
+  <data name="DonationBanner.Title"><value>Ti piace FluentCleaner?</value></data>
+  <data name="DonationBanner.Subtitle"><value>If this app saves you time, consider supporting its development.</value></data>
+  <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
+  <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
+  <data name="BtnDonateGitHub.Content"><value>Star su GitHub</value></data>
+  <data name="BtnDonateLater.Content"><value>Forse più tardi</value></data>
+  <data name="St_NoActions"><value>Nessuna azione per questa pagina</value></data>
+
+  <!-- ============================================================
+       CLEANER PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CleanerHint.Text"><value>Winapp2.ini si carica automaticamente all'avvio.</value></data>
+  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Categoria delle azioni</value></data>
+  <data name="MenuSelectAll.Text"><value>Seleziona Tutto</value></data>
+  <data name="MenuSelectNone.Text"><value>Deseleziona Tutto</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Seleziona Predefiniti</value></data>
+  <data name="MenuAnalyzeCategory.Text"><value>Analizza categoria</value></data>
+  <data name="MenuCleanCategory.Text"><value>Pulisci categoria</value></data>
+  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Azioni di ingresso</value></data>
+  <data name="MenuAnalyzeEntry.Text"><value>Analizza</value></data>
+  <data name="MenuCleanEntry.Text"><value>Pulisci</value></data>
+  <data name="MenuExplainEntry.Text"><value>Spiega con l'IA</value></data>
+  <data name="LblAIDesc.Text"><value>Fai clic con il pulsante destro del mouse su qualsiasi voce nella pagina Pulizia → Spiega con l'IA. Basato su Groq (llama-3.3-70b) — gratuito, senza addebito. Nulla viene inviato senza la tua esplicita autorizzazione. Richiede la tua chiave API.</value></data>
+  <data name="ResultsHeader.Text"><value>Risultati</value></data>
+  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Torna ai risultati</value></data>
+  <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Elimina quassti file ora</value></data>
+  <data name="MenuExcludeFile.Text"><value>Escludi file</value></data>
+  <data name="MenuExcludeFolder.Text"><value>Escludi cartella</value></data>
+  <data name="BtnAnalyze.Content"><value>Analizza</value></data>
+  <data name="BtnCancel.Content"><value>Annulla</value></data>
+  <data name="BtnRunCleaner.Content"><value>Avvia Pulitore</value></data>
+
+  <!-- Cleaner Page — IPageActions (built in code) -->
+  <data name="St_MenuSelectAll"><value>Seleziona Tutto</value></data>
+  <data name="St_MenuSelectNone"><value>Select none</value></data>
+  <data name="St_MenuSelectDefaults"><value>Seleziona predefiniti</value></data>
+  <data name="St_MenuExpandAll"><value>Espandi tutto</value></data>
+  <data name="St_MenuCollapseAll"><value>Riduci tutto</value></data>
+  <data name="St_MenuSortDesc"><value>Ordina per dimensione ↓</value></data>
+  <data name="St_MenuSortAsc"><value>Ordina per dimensione ↑</value></data>
+  <data name="St_MenuRefresh"><value>Aggiorna</value></data>
+
+  <!-- Cleaner Page — detail view labels -->
+  <data name="DetailHeaderFiles.Text"><value>File</value></data>
+  <data name="DetailHeaderRegistry.Text"><value>Registro</value></data>
+
+  <!-- Cleaner Page — result line suffixes (used in code) -->
+  <data name="SuffixFiles"><value>file</value></data>
+  <data name="SuffixRegistry"><value>registro</value></data>
+  <data name="SuffixFilesSingular"><value>file</value></data>
+  <data name="SuffixRegistryItems"><value>voce(i) di registro</value></data>
+  <data name="LabelCleaningComplete"><value>Pulizia completata.</value></data>
+
+  <!-- Cleaner Page — dialogs -->
+  <data name="DlgBrowsersTitle"><value>Browser in esecuzione</value></data>
+  <data name="DlgBrowsersContinue"><value>Continua comunque</value></data>
+  <data name="DlgBrowsersCancel"><value>Annulla</value></data>
+  <data name="DlgBrowsersMessage"><value>Chiudi queste app per ottenere risultati migliori:\n{0}\n\nI browser aperti bloccano i file di cache e cronologia, verranno ignorati durante la pulizia..</value></data>
+  <data name="DlgWarningTitle"><value>Avviso di pulizia</value></data>
+  <data name="DlgWarningContinue"><value>Continua</value></data>
+  <data name="DlgWarningCancel"><value>Annulla</value></data>
+  <data name="DlgWarningMessage"><value>Le voci in Winapp2 selezionate includono i seguenti avvisi:</value></data>
+  <data name="DlgExplainThinking"><value>Pensiero…</value></data>
+  <data name="DlgExplainClose"><value>Chiudi</value></data>
+  <data name="DlgRestartTitle"><value>Riavvio richiesto</value></data>
+  <data name="DlgRestartMessage"><value>FluentCleaner deve essere riavviato per applicare la nuova lingua.</value></data>
+  <data name="DlgRestartNow"><value>Riavvia ora</value></data>
+  <data name="DlgRestartLater"><value>Dopo</value></data>
+
+  <!-- ============================================================
+       STATUS MESSAGES — CleanerPageViewModel (format strings)
+  ============================================================ -->
+  <data name="St_Loading"><value>Caricamento di Winapp2.ini...</value></data>
+  <data name="St_SearchFound"><value>Visualizzazione di {0} risultati corrispondenti.</value></data>
+  <data name="St_SearchNone"><value>Nessuna corrispondenza trovata.</value></data>
+  <data name="St_ParsingDatabases"><value>Analisi dei database...</value></data>
+  <data name="St_AnalysisReady"><value>Analisi pronta — {0} app trovate in {1} voci.</value></data>
+  <data name="St_NothingSelected"><value>Nessuna selezione.</value></data>
+  <data name="St_Scanning"><value>Scansione...</value></data>
+  <data name="St_ScanComplete"><value>Scansione completata — {0} file, {1} voci di registro ({2})</value></data>
+  <data name="St_ScanCancelled"><value>Scansione annullata.</value></data>
+  <data name="St_Cleaning"><value>Pulitura...</value></data>
+  <data name="St_CleanDone"><value>Completato — {0} liberati · {1} saltati (file in uso)</value></data>
+  <data name="St_CleanDoneSimple"><value>Finito — {0} elementi rimossi · {1} liberato.</value></data>
+  <data name="St_CleanCancelledBytes"><value>Pulizia annullata — {0} liberati finora.</value></data>
+  <data name="St_CleanCancelled"><value>Pulizia annullata.</value></data>
+  <data name="St_EntryScanned"><value>{0}: {1} file, {2} voci di registro</value></data>
+  <data name="St_EntryNothingToClean"><value>{0}: nulla da pulire.</value></data>
+  <data name="St_EntryCleanDone"><value>{0}: {1} elementi rimossi · {2} liberati.</value></data>
+  <data name="St_CategoryScanning"><value>Scansione {0}...</value></data>
+  <data name="St_CategoryScanned"><value>{0} scansionati — {1} elementi.</value></data>
+  <data name="St_CategoryCleaning"><value>Puliti {0}...</value></data>
+  <data name="St_CategoryCleanDone"><value>{0}: {1} Elementi rimossi · {2} liberati.</value></data>
+  <data name="St_EntryScanningProgress"><value>Scanssione {0}...</value></data>
+  <data name="St_ExcludedFile"><value>Esclusi: {0}</value></data>
+  <data name="St_ExcludedFolder"><value>Esclusi: {0}</value></data>
+
+  <!-- CleaningService progress messages -->
+  <data name="Prog_Deleted"><value>Eliminati: {0}</value></data>
+  <data name="Prog_Registry"><value>Registro: {0}</value></data>
+
+  <!-- ============================================================
+       SETTINGS PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="SettingsTitle.Text"><value>Impostazioni</value></data>
+  <!-- Settings Page — donation InfoBar -->
+  <data name="DonationBar.Title"><value>FluentCleaner diventa open source.</value></data>
+  <data name="DonationBar.Message"><value>Ci ho messo tanto impegno: se ti è utile e ti va di ringraziare, una donazione sarebbe davvero molto apprezzata.. ♥</value></data>
+  <data name="BtnDonate.Content"><value>Supporta il progetto</value></data>
+  <data name="MenuDonatePayPal.Text"><value>Dona via PayPal</value></data>
+  <data name="MenuDonateKoFi.Text"><value>Dona via Ko-fi</value></data>
+  <data name="SectionAppearance.Text"><value>Asspetto</value></data>
+  <data name="LblTheme.Text"><value>Tema dell'App</value></data>
+  <data name="LblThemeDesc.Text"><value>Scegli l'aspetto di FluentCleaner sul tuo dispositivo..</value></data>
+  <data name="ThemeSystem.Content"><value>Predefinito dal sistema</value></data>
+  <data name="ThemeLight.Content"><value>Chiaro</value></data>
+  <data name="ThemeDark.Content"><value>Scuro</value></data>
+  <data name="LblLanguage.Text"><value>Lingua</value></data>
+  <data name="LblLanguageDesc.Text"><value>Sovrascrivi la lingua di visualizzazione. È necessario riavviare il sistema per applicare le modifiche..</value></data>
+  <data name="St_LangAuto"><value>Predefinita dal sisstema</value></data>
+  <data name="SectionDatabase.Text"><value>Database</value></data>
+  <data name="LblDatabaseDesc.Text"><value>Scegli quali elenchi di voci caricare per la scansione e la pulizia.</value></data>
+  <data name="LblWinapp2.Text"><value>Winapp2</value></data>
+  <data name="BtnUpdateWinapp2.Content"><value>Aggiorna</value></data>
+  <data name="LblWinapp3.Text"><value>Winapp3</value></data>
+  <data name="LblWinapp3Tag.Text"><value>sperimentale</value></data>
+  <data name="LblWinapp3Desc.Text"><value>  —  voci più aggressive, utilizzare a proprio rischio.</value></data>
+  <data name="BtnDownloadWinapp3.Content"><value>Download</value></data>
+  <data name="BtnUpdateWinapp3.Content"><value>Aggiorna</value></data>
+  <data name="LblWinappx.Text"><value>Winappx</value></data>
+  <data name="LblWinappxTag.Text"><value>bloatware</value></data>
+  <data name="LblWinappxDesc.Text"><value>  —  AppX / voci relative al bloatware per il programma di debloatware del terminale.</value></data>
+  <data name="BtnDownloadWinappx.Content"><value>Download</value></data>
+  <data name="BtnUpdateWinappx.Content"><value>Aggiorna</value></data>
+  <data name="TxtCustomPath.PlaceholderText"><value>Percorso del database personalizzato (.ini)</value></data>
+  <data name="BtnBrowse.Content"><value>Sfoglia…</value></data>
+  <data name="BtnApplyPath.Content"><value>Applica</value></data>
+  <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Rimuovi il database personalizzato</value></data>
+  <data name="RestartBar.Title"><value>Riavvio richiesto</value></data>
+  <data name="RestartBar.Message"><value>Riavvia FluentCleaner per caricare il database aggiornato.</value></data>
+  <data name="SectionPostClean.Text"><value>Attività post-pulizia</value></data>
+  <data name="LblPostCleanDesc.Text"><value>Un comando per riga: viene eseguito in sequenza dopo ogni passaggio di pulizia.</value></data>
+  <data name="SectionExclusions.Text"><value>Esclusioni globali</value></data>
+  <data name="LblExclusionsDesc.Text"><value>I percorsi elencati qui non vengono mai puliti — queste regole prevalgono su tutte le altre regole del database..</value></data>
+  <data name="SectionHistory.Text"><value>Cronologia</value></data>
+  <data name="LblHistoryDesc.Text"><value>Monitora la quantità di spazzatura che si accumula nel tempo..</value></data>
+  <data name="LblCleanHistory.Text"><value>Pulisci la cronologia</value></data>
+  <data name="BtnClearHistory.Content"><value>Cancella la cronolgia</value></data>
+  <data name="SectionAI.Text"><value>Spiegazioni sull'IA</value></data>
+  <data name="LblAIOptIn.Text"><value>opt-in</value></data>
+  <data name="LblAIPreview.Text"><value>anteprima</value></data>
+  <data name="BtnAIDiscussion.Content"><value>Opinioni? Partecipa alla discussione →</value></data>
+  <data name="BtnSaveApiKey.Content"><value>Salva</value></data>
+  <data name="BtnTestApiKey.Content"><value>Test</value></data>
+  <data name="BtnGetApiKey.Content"><value>Ottieni chiave</value></data>
+  <data name="SectionBackup.Text"><value>Backup</value></data>
+  <data name="LblBackupDesc.Text"><value>Esporta o importa le tue impostazioni come file JSON. Trascina il file settings.json nella stessa cartella del file eseguibile (.exe) per avviare la modalità portatile..</value></data>
+  <data name="BtnExport.Content"><value>Esporta</value></data>
+  <data name="BtnImport.Content"><value>Importa</value></data>
+  <data name="LblPortableActive.Text"><value>📦 Modalità portatile attiva: le impostazioni vengono memorizzate accanto al file .exe.</value></data>
+  <data name="SectionAbout.Text"><value>Informazioni</value></data>
+  <data name="LblCopyright.Text"><value>© 2026 A Belim app creation</value></data>
+  <!-- (LblTranslatorCredit is defined at the top of this file) -->
+  <data name="BtnGitHub.Content"><value>GitHub</value></data>
+  <data name="BtnReportIssue.Content"><value>Segnala un problema</value></data>
+  <data name="BtnIconCredit.Content"><value>Icona app realizzata da naderi</value></data>
+  <data name="BtnFAQ.Content"><value>FAQ</value></data>
+  <data name="LblInsiderBadge.Text"><value>INSIDER</value></data>
+
+  <!-- Settings Page — code strings -->
+  <data name="St_Winapp3NotDownloaded"><value>Winapp3 non è ancora stato scaricato — clicca su Scarica.</value></data>
+  <data name="St_WinappxNotDownloaded"><value>Winappx non è ancora stato scaricato — clicca su Scarica.</value></data>
+  <data name="St_HistoryNone"><value>nessun avvio registrato finora</value></data>
+  <data name="St_HistorySummary"><value>{0} avvii · {1} totale liberati</value></data>
+  <data name="St_HistoryItems"><value>{0} elementi</value></data>
+  <data name="St_FileNotFound"><value>File non trovato: {0}</value></data>
+  <data name="St_CustomPathSaved"><value>Percorso personalizzato salvato.</value></data>
+  <data name="St_Download"><value>Download</value></data>
+  <data name="St_Downloading"><value>Scaricati {0}…</value></data>
+  <data name="St_Downloaded"><value>{0} scaricati — {1} KB</value></data>
+  <data name="St_DownloadFailed"><value>Download non riusciti: {0}</value></data>
+  <data name="St_FileInfoNotDownloaded"><value>Non scaricato</value></data>
+  <data name="St_FileInfo"><value>{0} elementi  •  {1} KB  •  {2}</value></data>
+  <data name="St_UpdateAvailable"><value>Aggiornamento disponibile — {0}</value></data>
+  <data name="St_UpdateMessage"><value>È disponibile per il download una nuova versione di FluentCleaner..</value></data>
+  <data name="St_UpToDate"><value>Sei aggiornato</value></data>
+  <data name="St_UpToDateMessage"><value>La versione {0} è l'attuale.</value></data>
+  <data name="St_MenuUpdate"><value>⬆  Aggiornamento disponibile — {0}</value></data>
+  <data name="St_MenuCheckUpdates"><value>Controlla gli aggiornamenti</value></data>
+  <data name="St_ApiKeyMissing"><value>⚠ Inserisci prima una chiave API.</value></data>
+  <data name="St_ApiKeyTesting"><value>Testing…</value></data>
+  <data name="St_ExportSuccess"><value>Impostazioni esportate in {0}</value></data>
+  <data name="St_ExportFailed"><value>Esportazione non riuscita: {0}</value></data>
+  <data name="St_ImportSuccess"><value>Impostazioni importate da {0}</value></data>
+  <data name="St_ImportFailed"><value>Importazione fallita: {0}</value></data>
+
+  <!-- ============================================================
+       CUSTOM PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CustomTitle.Text"><value>Pulitori Personalizzati</value></data>
+  <data name="CustomEmptyHint.Text"><value>Ancora nessun pulitore personalizzato.</value></data>
+  <data name="CustomEmptyHint2.Text"><value>Crea un nuovo pulitore — apparirà qui automaticamente.</value></data>
+  <data name="MenuEditEntry.Text"><value>Modifica</value></data>
+  <data name="MenuDeleteEntry.Text"><value>Cacnella</value></data>
+  <data name="MenuRunEntry.Text"><value>Avvia</value></data>
+  <data name="BtnNewCleaner.Content"><value>+ Nuovo Pulitore</value></data>
+  <data name="BtnRunScript.Text"><value>Avvia</value></data>
+
+  <!-- Custom Page — code strings -->
+  <data name="St_CustomStatus"><value>{0} pulitori · {1} attivati</value></data>
+  <data name="St_CustomStatusScripts"><value>{0} script</value></data>
+  <data name="St_CustomMenuNew"><value>Nuovo pulitore personalizzato</value></data>
+  <data name="St_CustomMenuOpenFolder"><value>Apri cartella Personalizzata</value></data>
+  <data name="St_CustomMenuReddit"><value>Chiedi su Reddit</value></data>
+  <data name="St_CustomMenuNeowin"><value>Neowin forum</value></data>
+  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
+  <data name="St_CustomMenuShare"><value>Condividi pulitore su GitHub</value></data>
+  <data name="St_CustomToggleFailed"><value>Il passaggio non è riuscito: {0}</value></data>
+  <data name="St_CustomDeleteTitle"><value>Rimuovere "{0}"?</value></data>
+  <data name="St_CustomDeleteMessage"><value>Questo rimuove definitivamente il programma di pulizia personalizzato.</value></data>
+  <data name="St_CustomDeleteConfirm"><value>Rimuovi</value></data>
+  <data name="St_CustomDeleteCancel"><value>Annulla</value></data>
+  <data name="St_CustomRunning"><value>Avviato {0}...</value></data>
+  <data name="St_CustomScriptError"><value>{0}: Impossibile leggere lo script — {1}</value></data>
+  <data name="St_CustomCompleted"><value>{0}: completato con successo.</value></data>
+  <data name="St_CustomFailed"><value>{0}: fallito (uscita {1}).</value></data>
+  <data name="St_CustomEntryNone"><value>nessuna voce analizzata</value></data>
+  <data name="St_CustomEntryOne"><value>1 elemento · {0}</value></data>
+  <data name="St_CustomEntryMany"><value>{0} elementi· {1}</value></data>
+  <data name="St_CustomEntryEnabled"><value>abilitato</value></data>
+  <data name="St_CustomEntryDisabled"><value>disabilitato</value></data>
+
+  <!-- New Cleaner Dialog -->
+  <data name="DlgNewCleanerSave"><value>Salva</value></data>
+  <data name="DlgNewCleanerCancel"><value>Annulla</value></data>
+  <data name="DlgNewCleanerTypeIni.Content"><value>Elementi in Winapp2 (.ini)</value></data>
+  <data name="DlgNewCleanerTypePs1.Content"><value>Script PowerShell (.ps1)</value></data>
+  <data name="DlgNewCleanerNameHeader"><value>Nome</value></data>
+  <data name="DlgNewCleanerNamePlaceholder"><value>Mio Pulitore</value></data>
+  <data name="DlgNewCleanerAiPlaceholder"><value>Genera con l'IA: descrivi cosa pulire (i risultati possono variare)</value></data>
+  <data name="DlgNewCleanerGenerate.Content"><value>Genera</value></data>
+  <data name="DlgNewCleanerContentLabel"><value>Contenuto</value></data>
+  <data name="DlgNewCleanerLoadTemplate.Content"><value>Carica modello</value></data>
+  <data name="DlgNewCleanerTitleNew"><value>Nuovo pulitore personalizzato</value></data>
+  <data name="DlgNewCleanerTitleEdit"><value>Modifica — {0}</value></data>
+  <data name="DlgNewCleanerGenerating"><value>…</value></data>
+
+  <!-- ============================================================
+       AI EXPLAINER
+  ============================================================ -->
+  <data name="AI_NoKey"><value>Nessuna chiave API configurata. Vai su Impostazioni → Spiegazioni IA per aggiungere la tua chiave API Groq (gratuita su console.groq.com).</value></data>
+  <data name="AI_ApiError"><value>Errore API Groq: {0}</value></data>
+  <data name="AI_NoResponse"><value>Nessuna risposta ricevuta.</value></data>
+  <data name="AI_NetworkError"><value>Impossibile raggiungere l'API di Groq: {0}</value></data>
+  <data name="AI_NoKeyShort"><value>Nessuna chiave API configurata: vai su Impostazioni → Spiegazioni IA.</value></data>
+
+  <!-- ============================================================
+       TERMINAL / CLI
+  ============================================================ -->
+  <data name="TerminalPlaceholder.PlaceholderText"><value>pulisci firefox  ·  analizza chrome  ·  aiuto</value></data>
+  <data name="CLI_Welcome"><value>FluentCleaner Terminale online.</value></data>
+  <data name="CLI_Databases"><value>Database: {0} attivi — {1} elementi rilevati</value></data>
+  <data name="CLI_HelpHint"><value>Digitare 'help' per i comandi.</value></data>
+  <data name="CLI_Version"><value>  FluentCleaner {0}</value></data>
+  <data name="CLI_UnknownCommand"><value>  Comando sconosciuto '{0}'. Digita 'help'.</value></data>
+  <data name="CLI_NoDrives"><value>  Nessuna unità trovata.</value></data>
+  <data name="CLI_ThemeUsage"><value>  Utilizzo: theme dark | light | system</value></data>
+  <data name="CLI_ThemeSet"><value>  Tema impostato come '{0}'.</value></data>
+  <data name="CLI_BackdropUsage"><value>  Utilizzo: backdrop mica | acrylic</value></data>
+  <data name="CLI_BackdropSet"><value>  Trasparenza impostata su '{0}'.</value></data>
+  <data name="CLI_NoMatch"><value>  Nessuna corrispondenza trovata '{0}'.</value></data>
+  <data name="CLI_CleanEntry"><value>  {0}: {1} elementi · {2}</value></data>
+  <data name="CLI_CleanDone"><value>  Completato — {0} elementi rimossi · {1} liberati.</value></data>
+  <data name="CLI_NothingToClean"><value>  Nulla da pulire.</value></data>
+  <data name="CLI_AnalyzeEntry"><value>  {0}: {1} file · {2} registro · {3}</value></data>
+  <data name="CLI_AnalyzeTotal"><value>  Totale: {0} trovati.</value></data>
+  <data name="CLI_NothingFound"><value>  Nessun risultato trovato.</value></data>
+  <data name="CLI_ListEntries"><value>  — {0} elementi.</value></data>
+  <data name="CLI_ListCategories"><value>  — {0} categorie.</value></data>
+  <data name="CLI_AppxUsage"><value>  Utilizzo: appx list | appx scan | appx remove &lt;name&gt; | appx remove all</value></data>
+  <data name="CLI_AppxListStart"><value>  Elenco di tutti i pacchetti AppX installati...</value></data>
+  <data name="CLI_AppxNoPackages"><value>  Nessun pacchetto trovato.</value></data>
+  <data name="CLI_AppxListDone"><value>  — {0} pacchetto(i) installato(i). Utilizza 'appx remove &lt;name&gt;' per disinstallarlo.</value></data>
+  <data name="CLI_AppxScanStart"><value>  Scansione dei pacchetti installati...</value></data>
+  <data name="CLI_AppxNothingFound"><value>  Nessun risultato trovato: il sistema sembra pulito..</value></data>
+  <data name="CLI_AppxScanDone"><value>  — {0} pacchetto(i) trovato(i). Utilizza 'appx remove &lt;name&gt;' oppure 'appx remove all'.</value></data>
+  <data name="CLI_AppxRemoveUsage"><value>  Utilizzo: appx remove &lt;name&gt; | appx remove all</value></data>
+  <data name="CLI_AppxRemoveScanStart"><value>  Ricerca dei pacchetti installati...</value></data>
+  <data name="CLI_AppxNothingToRemove"><value>  Niente da rimuovere.</value></data>
+  <data name="CLI_AppxRemoving"><value>  Rimozione di {0}...</value></data>
+  <data name="CLI_AppxRemoveOk"><value>  OK  {0} rimosso.</value></data>
+  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — fallito (potrebbe non essere installato o richiede un'elevazione).</value></data>
+  <data name="CLI_AppxRemoveDone"><value>  Completato — {0} pacchetto(i) rimosso(i).</value></data>
+  <data name="CLI_AppxNothingRemoved"><value>  Non è stato rimosso nulla..</value></data>
+  <data name="CLI_AppxDisabled"><value>  Il database Winappx è disabilitato — abilitalo nelle Impostazioni..</value></data>
+  <data name="CLI_AppxNotFound"><value>  Winappx.ini non trovato — scaricalo dalle Impostazioni.</value></data>
+
+</root>
