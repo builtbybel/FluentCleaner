@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ============================================================
+       TRANSLATOR CREDIT
+       Leave the value empty in the source (en-US) file.
+       Each translator fills this in their own Strings\{lang}\Resources.resw,
+       e.g.: Translation: Jane Doe · jane.example.com
+  ============================================================ -->
+  <data name="LblTranslatorCredit"><value>380R</value></data>
+
+  <!-- ============================================================
+       MAIN WINDOW
+  ============================================================ -->
+  <data name="NavCleaner.Content"><value>Очистка</value></data>
+  <data name="NavTerminal.Content"><value>Терминал</value></data>
+  <data name="NavCustom.Content"><value>Пользовательские</value></data>
+  <data name="SearchBox.PlaceholderText"><value>Поиск</value></data>
+  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Действия страницы</value></data>
+  <!-- Main Window — donation TeachingTip -->
+  <data name="DonationBanner.Title"><value>Нравится FluentCleaner?</value></data>
+  <data name="DonationBanner.Subtitle"><value>Если это приложение экономит ваше время, подумайте о поддержке его разработки.</value></data>
+  <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
+  <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
+  <data name="BtnDonateGitHub.Content"><value>Поставить звезду на GitHub</value></data>
+  <data name="BtnDonateLater.Content"><value>Может быть, позже</value></data>
+  <data name="St_NoActions"><value>Нет действий для этой страницы</value></data>
+
+  <!-- ============================================================
+       CLEANER PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CleanerHint.Text"><value>Winapp2.ini загружается автоматически при запуске.</value></data>
+  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Действия категории</value></data>
+  <data name="MenuSelectAll.Text"><value>Выбрать все</value></data>
+  <data name="MenuSelectNone.Text"><value>Снять все</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Выбрать по умолчанию</value></data>
+  <data name="MenuAnalyzeCategory.Text"><value>Анализировать категорию</value></data>
+  <data name="MenuCleanCategory.Text"><value>Очистить категорию</value></data>
+  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Действия записи</value></data>
+  <data name="MenuAnalyzeEntry.Text"><value>Анализировать</value></data>
+  <data name="MenuCleanEntry.Text"><value>Очистить</value></data>
+  <data name="MenuExplainEntry.Text"><value>Объяснить с помощью ИИ</value></data>
+  <data name="LblAIDesc.Text"><value>Щелкните правой кнопкой мыши любую запись на странице «Очистка» → «Объяснить с помощью ИИ». Работает на Groq (llama-3.3-70b) — бесплатно, без счетов. Ничего не отправляется без вашего явного действия. Требуется ваш собственный ключ API.</value></data>
+  <data name="ResultsHeader.Text"><value>Результаты</value></data>
+  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Назад к результатам</value></data>
+  <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Удалить эти файлы сейчас</value></data>
+  <data name="MenuExcludeFile.Text"><value>Исключить файл</value></data>
+  <data name="MenuExcludeFolder.Text"><value>Исключить папку</value></data>
+  <data name="BtnAnalyze.Content"><value>Анализировать</value></data>
+  <data name="BtnCancel.Content"><value>Отмена</value></data>
+  <data name="BtnRunCleaner.Content"><value>Запустить очистку</value></data>
+
+  <!-- Cleaner Page — IPageActions (built in code) -->
+  <data name="St_MenuSelectAll"><value>Выбрать все</value></data>
+  <data name="St_MenuSelectNone"><value>Снять все</value></data>
+  <data name="St_MenuSelectDefaults"><value>Выбрать по умолчанию</value></data>
+  <data name="St_MenuExpandAll"><value>Развернуть все</value></data>
+  <data name="St_MenuCollapseAll"><value>Свернуть все</value></data>
+  <data name="St_MenuSortDesc"><value>Сортировать по размеру ↓</value></data>
+  <data name="St_MenuSortAsc"><value>Сортировать по размеру ↑</value></data>
+  <data name="St_MenuRefresh"><value>Обновить</value></data>
+
+  <!-- Cleaner Page — detail view labels -->
+  <data name="DetailHeaderFiles.Text"><value>Файлы</value></data>
+  <data name="DetailHeaderRegistry.Text"><value>Реестр</value></data>
+
+  <!-- Cleaner Page — result line suffixes (used in code) -->
+  <data name="SuffixFiles"><value>файлов</value></data>
+  <data name="SuffixRegistry"><value>реестр</value></data>
+  <data name="SuffixFilesSingular"><value>файл(ов)</value></data>
+  <data name="SuffixRegistryItems"><value>элемент(ов) реестра</value></data>
+  <data name="LabelCleaningComplete"><value>Очистка завершена.</value></data>
+
+  <!-- Cleaner Page — dialogs -->
+  <data name="DlgBrowsersTitle"><value>Запущены браузеры</value></data>
+  <data name="DlgBrowsersContinue"><value>Продолжить в любом случае</value></data>
+  <data name="DlgBrowsersCancel"><value>Отмена</value></data>
+  <data name="DlgBrowsersMessage"><value>Закройте эти приложения для лучшего результата:\n{0}\n\nОткрытые браузеры блокируют файлы кэша и истории — они будут пропущены при очистке.</value></data>
+  <data name="DlgWarningTitle"><value>Предупреждение очистки</value></data>
+  <data name="DlgWarningContinue"><value>Продолжить</value></data>
+  <data name="DlgWarningCancel"><value>Отмена</value></data>
+  <data name="DlgWarningMessage"><value>Выбранные записи Winapp2 содержат следующие предупреждения:</value></data>
+  <data name="DlgExplainThinking"><value>Думаю…</value></data>
+  <data name="DlgExplainClose"><value>Закрыть</value></data>
+
+  <!-- ============================================================
+       STATUS MESSAGES — CleanerPageViewModel (format strings)
+  ============================================================ -->
+  <data name="St_Loading"><value>Загрузка Winapp2.ini...</value></data>
+  <data name="St_SearchFound"><value>Показано {0} совпадающих записей.</value></data>
+  <data name="St_SearchNone"><value>Совпадающих записей нет.</value></data>
+  <data name="St_ParsingDatabases"><value>Анализ баз данных...</value></data>
+  <data name="St_AnalysisReady"><value>Анализ готов — найдено {0} приложений в {1} записях.</value></data>
+  <data name="St_NothingSelected"><value>Ничего не выбрано.</value></data>
+  <data name="St_Scanning"><value>Сканирование...</value></data>
+  <data name="St_ScanComplete"><value>Сканирование завершено — {0} файлов, {1} элементов реестра ({2})</value></data>
+  <data name="St_ScanCancelled"><value>Сканирование отменено.</value></data>
+  <data name="St_Cleaning"><value>Очистка...</value></data>
+  <data name="St_CleanDone"><value>Завершено — освобождено {0} · пропущено {1} (файлы используются)</value></data>
+  <data name="St_CleanDoneSimple"><value>Завершено — удалено {0} элементов · освобождено {1}.</value></data>
+  <data name="St_CleanCancelledBytes"><value>Очистка отменена — освобождено {0}.</value></data>
+  <data name="St_CleanCancelled"><value>Очистка отменена.</value></data>
+  <data name="St_EntryScanned"><value>{0}: {1} файлов, {2} элементов реестра</value></data>
+  <data name="St_EntryNothingToClean"><value>{0}: нечего очищать.</value></data>
+  <data name="St_EntryCleanDone"><value>{0}: удалено {1} элементов · освобождено {2}.</value></data>
+  <data name="St_CategoryScanning"><value>Сканирование {0}...</value></data>
+  <data name="St_CategoryScanned"><value>{0} просканировано — {1} записей.</value></data>
+  <data name="St_CategoryCleaning"><value>Очистка {0}...</value></data>
+  <data name="St_CategoryCleanDone"><value>{0}: удалено {1} элементов · освобождено {2}.</value></data>
+  <data name="St_EntryScanningProgress"><value>Сканирование {0}...</value></data>
+  <data name="St_ExcludedFile"><value>Исключено: {0}</value></data>
+  <data name="St_ExcludedFolder"><value>Исключено: {0}</value></data>
+
+  <!-- CleaningService progress messages -->
+  <data name="Prog_Deleted"><value>Удалено: {0}</value></data>
+  <data name="Prog_Registry"><value>Реестр: {0}</value></data>
+
+  <!-- ============================================================
+       SETTINGS PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="SettingsTitle.Text"><value>Настройки</value></data>
+  <!-- Settings Page — donation InfoBar -->
+  <data name="DonationBar.Title"><value>FluentCleaner становится открытым исходным кодом.</value></data>
+  <data name="DonationBar.Message"><value>Вложено много работы — если это помогает вам и вы хотите сказать спасибо, пожертвование будет очень значимым. ♥</value></data>
+  <data name="BtnDonate.Content"><value>Поддержать проект</value></data>
+  <data name="MenuDonatePayPal.Text"><value>Пожертвовать через PayPal</value></data>
+  <data name="MenuDonateKoFi.Text"><value>Пожертвовать через Ko-fi</value></data>
+  <data name="SectionAppearance.Text"><value>Внешний вид</value></data>
+  <data name="LblTheme.Text"><value>Тема приложения</value></data>
+  <data name="LblThemeDesc.Text"><value>Выберите, как FluentCleaner выглядит на вашем устройстве.</value></data>
+  <data name="ThemeSystem.Content"><value>Системная</value></data>
+  <data name="ThemeLight.Content"><value>Светлая</value></data>
+  <data name="ThemeDark.Content"><value>Тёмная</value></data>
+  <data name="LblLanguage.Text"><value>Язык</value></data>
+  <data name="LblLanguageDesc.Text"><value>Переопределить язык интерфейса. Требуется перезапуск для применения.</value></data>
+  <data name="St_LangAuto"><value>Системный</value></data>
+  <data name="SectionDatabase.Text"><value>База данных</value></data>
+  <data name="LblDatabaseDesc.Text"><value>Выберите, какие списки записей загружать для сканирования и очистки.</value></data>
+  <data name="LblWinapp2.Text"><value>Winapp2</value></data>
+  <data name="BtnUpdateWinapp2.Content"><value>Обновить</value></data>
+  <data name="LblWinapp3.Text"><value>Winapp3</value></data>
+  <data name="LblWinapp3Tag.Text"><value>экспериментальный</value></data>
+  <data name="LblWinapp3Desc.Text"><value>  —  более агрессивные записи, используйте на свой страх и риск.</value></data>
+  <data name="BtnDownloadWinapp3.Content"><value>Скачать</value></data>
+  <data name="BtnUpdateWinapp3.Content"><value>Обновить</value></data>
+  <data name="LblWinappx.Text"><value>Winappx</value></data>
+  <data name="LblWinappxTag.Text"><value>благоустройство (bloatware)</value></data>
+  <data name="LblWinappxDesc.Text"><value>  —  записи AppX / bloatware для терминального деблоатера.</value></data>
+  <data name="BtnDownloadWinappx.Content"><value>Скачать</value></data>
+  <data name="BtnUpdateWinappx.Content"><value>Обновить</value></data>
+  <data name="TxtCustomPath.PlaceholderText"><value>Путь к пользовательской базе данных (.ini)</value></data>
+  <data name="BtnBrowse.Content"><value>Обзор…</value></data>
+  <data name="BtnApplyPath.Content"><value>Применить</value></data>
+  <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Удалить пользовательскую базу данных</value></data>
+  <data name="RestartBar.Title"><value>Требуется перезапуск</value></data>
+  <data name="RestartBar.Message"><value>Пожалуйста, перезапустите FluentCleaner для загрузки обновлённой базы данных.</value></data>
+  <data name="SectionPostClean.Text"><value>Задачи после очистки</value></data>
+  <data name="LblPostCleanDesc.Text"><value>Одна команда в строке — выполняется последовательно после каждого прохода очистки.</value></data>
+  <data name="SectionExclusions.Text"><value>Глобальные исключения</value></data>
+  <data name="LblExclusionsDesc.Text"><value>Пути, указанные здесь, никогда не очищаются — переопределяют все правила баз данных.</value></data>
+  <data name="SectionHistory.Text"><value>История</value></data>
+  <data name="LblHistoryDesc.Text"><value>Отслеживайте, сколько мусора накапливается со временем.</value></data>
+  <data name="LblCleanHistory.Text"><value>Очистить историю</value></data>
+  <data name="BtnClearHistory.Content"><value>Очистить историю</value></data>
+  <data name="SectionAI.Text"><value>Объяснения ИИ</value></data>
+  <data name="LblAIOptIn.Text"><value>добровольное</value></data>
+  <data name="LblAIPreview.Text"><value>предварительный просмотр</value></data>
+  <data name="BtnAIDiscussion.Content"><value>Есть мысли? Присоединяйтесь к обсуждению →</value></data>
+  <data name="BtnSaveApiKey.Content"><value>Сохранить</value></data>
+  <data name="BtnTestApiKey.Content"><value>Проверить</value></data>
+  <data name="BtnGetApiKey.Content"><value>Получить ключ</value></data>
+  <data name="SectionBackup.Text"><value>Резервное копирование</value></data>
+  <data name="LblBackupDesc.Text"><value>Экспортируйте или импортируйте свои настройки в виде JSON-файла. Поместите settings.json рядом с exe-файлом для портативного режима.</value></data>
+  <data name="BtnExport.Content"><value>Экспорт</value></data>
+  <data name="BtnImport.Content"><value>Импорт</value></data>
+  <data name="LblPortableActive.Text"><value>📦 Портативный режим активен — настройки хранятся рядом с exe</value></data>
+  <data name="SectionAbout.Text"><value>О программе</value></data>
+  <data name="LblCopyright.Text"><value>© 2026 Создание приложения Belim</value></data>
+  <!-- (LblTranslatorCredit is defined at the top of this file) -->
+  <data name="BtnGitHub.Content"><value>GitHub</value></data>
+  <data name="BtnReportIssue.Content"><value>Сообщить о проблеме</value></data>
+  <data name="BtnIconCredit.Content"><value>Иконка приложения от naderi</value></data>
+  <data name="BtnFAQ.Content"><value>Часто задаваемые вопросы</value></data>
+  <data name="LblInsiderBadge.Text"><value>INSIDER</value></data>
+
+  <!-- Settings Page — code strings -->
+  <data name="St_Winapp3NotDownloaded"><value>Winapp3 ещё не скачан — нажмите «Скачать».</value></data>
+  <data name="St_WinappxNotDownloaded"><value>Winappx ещё не скачан — нажмите «Скачать».</value></data>
+  <data name="St_HistoryNone"><value>записей о запусках пока нет</value></data>
+  <data name="St_HistorySummary"><value>{0} запусков · всего освобождено {1}</value></data>
+  <data name="St_HistoryItems"><value>{0} элементов</value></data>
+  <data name="St_FileNotFound"><value>Файл не найден: {0}</value></data>
+  <data name="St_CustomPathSaved"><value>Пользовательский путь сохранён.</value></data>
+  <data name="St_Download"><value>Скачать</value></data>
+  <data name="St_Downloading"><value>Загрузка {0}…</value></data>
+  <data name="St_Downloaded"><value>{0} загружен — {1} КБ</value></data>
+  <data name="St_DownloadFailed"><value>Ошибка загрузки: {0}</value></data>
+  <data name="St_FileInfoNotDownloaded"><value>Не загружено</value></data>
+  <data name="St_FileInfo"><value>{0} записей  •  {1} КБ  •  {2}</value></data>
+  <data name="St_UpdateAvailable"><value>Доступно обновление — {0}</value></data>
+  <data name="St_UpdateMessage"><value>Новая версия FluentCleaner готова к загрузке.</value></data>
+  <data name="St_UpToDate"><value>У вас последняя версия</value></data>
+  <data name="St_UpToDateMessage"><value>Версия {0} — последняя.</value></data>
+  <data name="St_MenuUpdate"><value>⬆  Доступно обновление — {0}</value></data>
+  <data name="St_MenuCheckUpdates"><value>Проверить обновления</value></data>
+  <data name="St_ApiKeyMissing"><value>⚠ Сначала введите ключ API.</value></data>
+  <data name="St_ApiKeyTesting"><value>Проверка…</value></data>
+  <data name="St_ExportSuccess"><value>Настройки экспортированы в {0}</value></data>
+  <data name="St_ExportFailed"><value>Ошибка экспорта: {0}</value></data>
+  <data name="St_ImportSuccess"><value>Настройки импортированы из {0}</value></data>
+  <data name="St_ImportFailed"><value>Ошибка импорта: {0}</value></data>
+
+  <!-- ============================================================
+       CUSTOM PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CustomTitle.Text"><value>Пользовательские очистители</value></data>
+  <data name="CustomEmptyHint.Text"><value>Пользовательских очистителей пока нет.</value></data>
+  <data name="CustomEmptyHint2.Text"><value>Создайте новый очиститель — он появится здесь автоматически.</value></data>
+  <data name="MenuEditEntry.Text"><value>Изменить</value></data>
+  <data name="MenuDeleteEntry.Text"><value>Удалить</value></data>
+  <data name="MenuRunEntry.Text"><value>Выполнить</value></data>
+  <data name="BtnNewCleaner.Content"><value>+ Новый очиститель</value></data>
+  <data name="BtnRunScript.Text"><value>Выполнить</value></data>
+
+  <!-- Custom Page — code strings -->
+  <data name="St_CustomStatus"><value>{0} очиститель · {1} включено</value></data>
+  <data name="St_CustomStatusScripts"><value>{0} скрипт(ов)</value></data>
+  <data name="St_CustomMenuNew"><value>Новый пользовательский очиститель</value></data>
+  <data name="St_CustomMenuOpenFolder"><value>Открыть папку Custom</value></data>
+  <data name="St_CustomMenuReddit"><value>Спросить на Reddit</value></data>
+  <data name="St_CustomMenuNeowin"><value>Форумы Neowin</value></data>
+  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
+  <data name="St_CustomMenuShare"><value>Опубликовать очиститель на GitHub</value></data>
+  <data name="St_CustomToggleFailed"><value>Ошибка переключения: {0}</value></data>
+  <data name="St_CustomDeleteTitle"><value>Удалить «{0}»?</value></data>
+  <data name="St_CustomDeleteMessage"><value>Это приведёт к безвозвратному удалению пользовательского очистителя.</value></data>
+  <data name="St_CustomDeleteConfirm"><value>Удалить</value></data>
+  <data name="St_CustomDeleteCancel"><value>Отмена</value></data>
+  <data name="St_CustomRunning"><value>Выполнение {0}...</value></data>
+  <data name="St_CustomScriptError"><value>{0}: не удалось прочитать скрипт — {1}</value></data>
+  <data name="St_CustomCompleted"><value>{0}: успешно завершено.</value></data>
+  <data name="St_CustomFailed"><value>{0}: ошибка (код {1}).</value></data>
+  <data name="St_CustomEntryNone"><value>записей не найдено</value></data>
+  <data name="St_CustomEntryOne"><value>1 запись · {0}</value></data>
+  <data name="St_CustomEntryMany"><value>{0} записей · {1}</value></data>
+  <data name="St_CustomEntryEnabled"><value>включено</value></data>
+  <data name="St_CustomEntryDisabled"><value>отключено</value></data>
+
+  <!-- New Cleaner Dialog -->
+  <data name="DlgNewCleanerSave"><value>Сохранить</value></data>
+  <data name="DlgNewCleanerCancel"><value>Отмена</value></data>
+  <data name="DlgNewCleanerTypeIni.Content"><value>Запись Winapp2 (.ini)</value></data>
+  <data name="DlgNewCleanerTypePs1.Content"><value>Скрипт PowerShell (.ps1)</value></data>
+  <data name="DlgNewCleanerNameHeader"><value>Имя</value></data>
+  <data name="DlgNewCleanerNamePlaceholder"><value>Мой очиститель</value></data>
+  <data name="DlgNewCleanerAiPlaceholder"><value>Сгенерировать с ИИ — опишите, что нужно очистить (результаты могут различаться)</value></data>
+  <data name="DlgNewCleanerGenerate.Content"><value>Сгенерировать</value></data>
+  <data name="DlgNewCleanerContentLabel"><value>Содержимое</value></data>
+  <data name="DlgNewCleanerLoadTemplate.Content"><value>Загрузить шаблон</value></data>
+  <data name="DlgNewCleanerTitleNew"><value>Новый пользовательский очиститель</value></data>
+  <data name="DlgNewCleanerTitleEdit"><value>Редактирование — {0}</value></data>
+  <data name="DlgNewCleanerGenerating"><value>…</value></data>
+
+  <!-- ============================================================
+       AI EXPLAINER
+  ============================================================ -->
+  <data name="AI_NoKey"><value>Ключ API не настроен. Перейдите в «Настройки» → «Объяснения ИИ», чтобы добавить ваш ключ Groq API (бесплатно на console.groq.com).</value></data>
+  <data name="AI_ApiError"><value>Ошибка Groq API: {0}</value></data>
+  <data name="AI_NoResponse"><value>Ответ не получен.</value></data>
+  <data name="AI_NetworkError"><value>Не удалось связаться с Groq API: {0}</value></data>
+  <data name="AI_NoKeyShort"><value>Ключ API не настроен — перейдите в «Настройки» → «Объяснения ИИ».</value></data>
+
+  <!-- ============================================================
+       TERMINAL / CLI
+  ============================================================ -->
+  <data name="TerminalPlaceholder.PlaceholderText"><value>clean firefox  ·  analyze chrome  ·  help</value></data>
+  <data name="CLI_Welcome"><value>Терминал FluentCleaner онлайн.</value></data>
+  <data name="CLI_Databases"><value>Базы данных: {0} активны — обнаружено {1} записей</value></data>
+  <data name="CLI_HelpHint"><value>Введите 'help' для списка команд.</value></data>
+  <data name="CLI_Version"><value>  FluentCleaner {0}</value></data>
+  <data name="CLI_UnknownCommand"><value>  Неизвестная команда '{0}'. Введите 'help'.</value></data>
+  <data name="CLI_NoDrives"><value>  Диски не найдены.</value></data>
+  <data name="CLI_ThemeUsage"><value>  Использование: theme dark | light | system</value></data>
+  <data name="CLI_ThemeSet"><value>  Тема установлена на '{0}'.</value></data>
+  <data name="CLI_BackdropUsage"><value>  Использование: backdrop mica | acrylic</value></data>
+  <data name="CLI_BackdropSet"><value>  Фон установлен на '{0}'.</value></data>
+  <data name="CLI_NoMatch"><value>  Записей, соответствующих '{0}', не найдено.</value></data>
+  <data name="CLI_CleanEntry"><value>  {0}: {1} элементов · {2}</value></data>
+  <data name="CLI_CleanDone"><value>  Готово — удалено {0} элементов · освобождено {1}.</value></data>
+  <data name="CLI_NothingToClean"><value>  Нечего очищать.</value></data>
+  <data name="CLI_AnalyzeEntry"><value>  {0}: {1} файлов · {2} записей реестра · {3}</value></data>
+  <data name="CLI_AnalyzeTotal"><value>  Всего: {0} найдено.</value></data>
+  <data name="CLI_NothingFound"><value>  Ничего не найдено.</value></data>
+  <data name="CLI_ListEntries"><value>  — {0} записей.</value></data>
+  <data name="CLI_ListCategories"><value>  — {0} категорий.</value></data>
+  <data name="CLI_AppxUsage"><value>  Использование: appx list | appx scan | appx remove &lt;имя&gt; | appx remove all</value></data>
+  <data name="CLI_AppxListStart"><value>  Список всех установленных пакетов AppX...</value></data>
+  <data name="CLI_AppxNoPackages"><value>  Пакетов не найдено.</value></data>
+  <data name="CLI_AppxListDone"><value>  — {0} пакет(ов) установлено. Используйте 'appx remove &lt;имя&gt;' для удаления.</value></data>
+  <data name="CLI_AppxScanStart"><value>  Сканирование установленных пакетов...</value></data>
+  <data name="CLI_AppxNothingFound"><value>  Ничего не найдено — система чистая.</value></data>
+  <data name="CLI_AppxScanDone"><value>  — {0} пакет(ов) найдено. Используйте 'appx remove &lt;имя&gt;' или 'appx remove all'.</value></data>
+  <data name="CLI_AppxRemoveUsage"><value>  Использование: appx remove &lt;имя&gt; | appx remove all</value></data>
+  <data name="CLI_AppxRemoveScanStart"><value>  Сканирование установленных пакетов...</value></data>
+  <data name="CLI_AppxNothingToRemove"><value>  Нечего удалять.</value></data>
+  <data name="CLI_AppxRemoving"><value>  Удаление {0}...</value></data>
+  <data name="CLI_AppxRemoveOk"><value>  OK  {0} удалён.</value></data>
+  <data name="CLI_AppxRemoveErr"><value>  ОШИБКА {0} — не удалось (возможно, не установлен или требует прав администратора).</value></data>
+  <data name="CLI_AppxRemoveDone"><value>  Готово — удалено {0} пакет(ов).</value></data>
+  <data name="CLI_AppxNothingRemoved"><value>  Ничего не было удалено.</value></data>
+  <data name="CLI_AppxDisabled"><value>  База данных Winappx отключена — включите её в «Настройках».</value></data>
+  <data name="CLI_AppxNotFound"><value>  Winappx.ini не найден — скачайте его в «Настройках».</value></data>
+
+</root>
