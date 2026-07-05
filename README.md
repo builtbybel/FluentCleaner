@@ -1,4 +1,7 @@
 # FluentCleaner
+
+**English** | [简体中文](README_zh_CN.md) | [繁體中文](README_zh_TW.md)
+
 ### modern, transparent, no spyware, no scareware, no dark patterns, no upsell garbage, no fake registry magic
 
 
