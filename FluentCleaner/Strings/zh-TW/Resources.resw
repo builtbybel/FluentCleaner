@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ============================================================
+       TRANSLATOR CREDIT
+       Leave the value empty in the source (en-US) file.
+       Each translator fills this in their own Strings\{lang}\Resources.resw,
+       e.g.: Translation: Jane Doe · jane.example.com
+  ============================================================ -->
+  <data name="LblTranslatorCredit"><value>翻譯：雲林散人</value></data>
+
+  <!-- ============================================================
+       MAIN WINDOW
+  ============================================================ -->
+  <data name="NavCleaner.Content"><value>清理工具</value></data>
+  <data name="NavTerminal.Content"><value>終端機</value></data>
+  <data name="NavCustom.Content"><value>自訂</value></data>
+  <data name="SearchBox.PlaceholderText"><value>搜索</value></data>
+  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>頁面操作</value></data>
+  <!-- Main Window — donation TeachingTip -->
+  <data name="DonationBanner.Title"><value>喜歡 FluentCleaner 嗎？</value></data>
+  <data name="DonationBanner.Subtitle"><value>如果這款應用程式為你節省了時間，不妨支持開發者。</value></data>
+  <data name="BtnDonatePayPal.Content"><value>PayPal 捐贈</value></data>
+  <data name="BtnDonateKoFi.Content"><value>Ko-fi 贊助</value></data>
+  <data name="BtnDonateGitHub.Content"><value>GitHub 點亮星標</value></data>
+  <data name="BtnDonateLater.Content"><value>稍後再說</value></data>
+  <data name="St_NoActions"><value>此頁面暫無可用操作</value></data>
+
+  <!-- ============================================================
+       CLEANER PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CleanerHint.Text"><value>程式啟動時將自動加載 Winapp2.ini 檔案。</value></data>
+  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>分類操作</value></data>
+  <data name="MenuSelectAll.Text"><value>全選</value></data>
+  <data name="MenuSelectNone.Text"><value>取消全選</value></data>
+  <data name="MenuSelectDefaults.Text"><value>選擇預設項</value></data>
+  <data name="MenuAnalyzeCategory.Text"><value>掃描該分類</value></data>
+  <data name="MenuCleanCategory.Text"><value>清理該分類</value></data>
+  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>條目操作</value></data>
+  <data name="MenuAnalyzeEntry.Text"><value>掃描</value></data>
+  <data name="MenuCleanEntry.Text"><value>清理</value></data>
+  <data name="MenuExplainEntry.Text"><value>AI 解讀</value></data>
+  <data name="LblAIDesc.Text"><value>在清理頁面右鍵任意條目 → AI 解讀。由 Groq (llama-3.3-70b) 提供支持，完全免費、無需付費。僅在你主動操作時才會傳送數據。需要自行填寫 API 金鑰。</value></data>
+  <data name="ResultsHeader.Text"><value>掃描結果</value></data>
+  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>返回掃描結果</value></data>
+  <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>立即刪除這些檔案</value></data>
+  <data name="MenuExcludeFile.Text"><value>排除此檔案</value></data>
+  <data name="MenuExcludeFolder.Text"><value>排除此資料夾</value></data>
+  <data name="BtnAnalyze.Content"><value>開始掃描</value></data>
+  <data name="BtnCancel.Content"><value>取消</value></data>
+  <data name="BtnRunCleaner.Content"><value>執行清理</value></data>
+
+  <!-- Cleaner Page — IPageActions (built in code) -->
+  <data name="St_MenuSelectAll"><value>全選</value></data>
+  <data name="St_MenuSelectNone"><value>取消全選</value></data>
+  <data name="St_MenuSelectDefaults"><value>選擇預設項</value></data>
+  <data name="St_MenuExpandAll"><value>全部展開</value></data>
+  <data name="St_MenuCollapseAll"><value>全部摺疊</value></data>
+  <data name="St_MenuSortDesc"><value>按大小遞減 ↓</value></data>
+  <data name="St_MenuSortAsc"><value>按大小遞增 ↑</value></data>
+  <data name="St_MenuRefresh"><value>重新整理</value></data>
+
+  <!-- Cleaner Page — detail view labels -->
+  <data name="DetailHeaderFiles.Text"><value>檔案</value></data>
+  <data name="DetailHeaderRegistry.Text"><value>登錄檔</value></data>
+
+  <!-- Cleaner Page — result line suffixes (used in code) -->
+  <data name="SuffixFiles"><value>個檔案</value></data>
+  <data name="SuffixRegistry"><value>項登錄檔內容</value></data>
+  <data name="SuffixFilesSingular"><value>檔案</value></data>
+  <data name="SuffixRegistryItems"><value>登錄檔項目</value></data>
+  <data name="LabelCleaningComplete"><value>清理完成。</value></data>
+
+  <!-- Cleaner Page — dialogs -->
+  <data name="DlgBrowsersTitle"><value>偵測到瀏覽器正在執行</value></data>
+  <data name="DlgBrowsersContinue"><value>仍繼續清理</value></data>
+  <data name="DlgBrowsersCancel"><value>取消</value></data>
+  <data name="DlgBrowsersMessage"><value>請關閉以下程式以獲得完整清理效果：\n{0}\n\n瀏覽器開啟時會鎖定快取與歷程記錄檔案，相关内容將被跳過清理。</value></data>
+  <data name="DlgWarningTitle"><value>清理風險提示</value></data>
+  <data name="DlgWarningContinue"><value>繼續</value></data>
+  <data name="DlgWarningCancel"><value>取消</value></data>
+  <data name="DlgWarningMessage"><value>你選中的 Winapp2 清理條目包含以下風險警告：</value></data>
+  <data name="DlgExplainThinking"><value>AI 分析中…</value></data>
+  <data name="DlgExplainClose"><value>關閉</value></data>
+
+  <!-- ============================================================
+       STATUS MESSAGES — CleanerPageViewModel (format strings)
+  ============================================================ -->
+  <data name="St_Loading"><value>正在加載 Winapp2.ini...</value></data>
+  <data name="St_SearchFound"><value>共找到 {0} 個符合條目。</value></data>
+  <data name="St_SearchNone"><value>未找到符合條目。</value></data>
+  <data name="St_ParsingDatabases"><value>正在解析資料庫...</value></data>
+  <data name="St_AnalysisReady"><value>分析完成 — 在 {1} 個條目中識別到 {0} 款應用程式。</value></data>
+  <data name="St_NothingSelected"><value>未選中任何項目。</value></data>
+  <data name="St_Scanning"><value>正在掃描...</value></data>
+  <data name="St_ScanComplete"><value>掃描完成 — {0} 個檔案，{1} 條登錄檔項目（共 {2}）</value></data>
+  <data name="St_ScanCancelled"><value>掃描已取消。</value></data>
+  <data name="St_Cleaning"><value>正在清理...</value></data>
+  <data name="St_CleanDone"><value>清理完成 — 釋放 {0} 空間 · {1} 項因檔案佔用已跳過</value></data>
+  <data name="St_CleanDoneSimple"><value>清理完成 — 刪除 {0} 個項目 · 釋放 {1} 空間。</value></data>
+  <data name="St_CleanCancelledBytes"><value>清理已取消 — 目前已釋放 {0} 空間。</value></data>
+  <data name="St_CleanCancelled"><value>清理已取消。</value></data>
+  <data name="St_EntryScanned"><value>{0}：{1} 個檔案，{2} 條登錄檔項目</value></data>
+  <data name="St_EntryNothingToClean"><value>{0}：無需要清理的内容。</value></data>
+  <data name="St_EntryCleanDone"><value>{0}：刪除 {1} 個項目 · 釋放 {2} 空間。</value></data>
+  <data name="St_CategoryScanning"><value>正在掃描 {0}...</value></data>
+  <data name="St_CategoryScanned"><value>{0} 掃描完畢 — 共 {1} 個條目。</value></data>
+  <data name="St_CategoryCleaning"><value>正在清理 {0}...</value></data>
+  <data name="St_CategoryCleanDone"><value>{0}：刪除 {1} 個項目 · 釋放 {2} 空間。</value></data>
+  <data name="St_EntryScanningProgress"><value>正在掃描 {0}...</value></data>
+  <data name="St_ExcludedFile"><value>已排除檔案：{0}</value></data>
+  <data name="St_ExcludedFolder"><value>已排除資料夾：{0}</value></data>
+
+  <!-- CleaningService progress messages -->
+  <data name="Prog_Deleted"><value>已刪除：{0}</value></data>
+  <data name="Prog_Registry"><value>登錄檔項目：{0}</value></data>
+
+  <!-- ============================================================
+       SETTINGS PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="SettingsTitle.Text"><value>設定</value></data>
+  <!-- Settings Page — donation InfoBar -->
+  <data name="DonationBar.Title"><value>FluentCleaner 是開源的。</value></data>
+  <data name="DonationBar.Message"><value>這款軟體耗費了大量開發精力，如果它对你有所說明，若願意表达支持，捐贈將是对開發者莫大的鼓勵。♥</value></data>
+  <data name="BtnDonate.Content"><value>支持本項目</value></data>
+  <data name="MenuDonatePayPal.Text"><value>通過 PayPal 捐贈</value></data>
+  <data name="MenuDonateKoFi.Text"><value>通過 Ko-fi 贊助</value></data>
+  <data name="SectionAppearance.Text"><value>外觀設定</value></data>
+  <data name="LblTheme.Text"><value>應用程式主題</value></data>
+  <data name="LblThemeDesc.Text"><value>自訂 FluentCleaner 在裝置上的顯示樣式。</value></data>
+  <data name="ThemeSystem.Content"><value>跟隨系統</value></data>
+  <data name="ThemeLight.Content"><value>淺色模式</value></data>
+  <data name="ThemeDark.Content"><value>深色模式</value></data>
+  <data name="LblLanguage.Text"><value>語言</value></data>
+  <data name="LblLanguageDesc.Text"><value>自訂介面顯示語言，修改後需要重新啟動軟體才會生效。</value></data>
+  <data name="St_LangAuto"><value>跟隨系統</value></data>
+  <data name="SectionDatabase.Text"><value>清理資料庫</value></data>
+  <data name="LblDatabaseDesc.Text"><value>選擇要載入的清理條目清單，用於掃描與垃圾清理。</value></data>
+  <data name="LblWinapp2.Text"><value>Winapp2</value></data>
+  <data name="BtnUpdateWinapp2.Content"><value>更新</value></data>
+  <data name="LblWinapp3.Text"><value>Winapp3</value></data>
+  <data name="LblWinapp3Tag.Text"><value>實驗性功能</value></data>
+  <data name="LblWinapp3Desc.Text"><value>  — 清理規則更激進，請自行承擔使用風險。</value></data>
+  <data name="BtnDownloadWinapp3.Content"><value>下載</value></data>
+  <data name="BtnUpdateWinapp3.Content"><value>更新</value></data>
+  <data name="LblWinappx.Text"><value>Winappx</value></data>
+  <data name="LblWinappxTag.Text"><value>預裝軟體清理</value></data>
+  <data name="LblWinappxDesc.Text"><value>  — 終端機解除安裝預裝應用程式專用 AppX 清理條目。</value></data>
+  <data name="BtnDownloadWinappx.Content"><value>下載</value></data>
+  <data name="BtnUpdateWinappx.Content"><value>更新</value></data>
+  <data name="TxtCustomPath.PlaceholderText"><value>自訂資料庫路徑（.ini 檔案）</value></data>
+  <data name="BtnBrowse.Content"><value>瀏覽…</value></data>
+  <data name="BtnApplyPath.Content"><value>套用</value></data>
+  <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>移除自訂資料庫</value></data>
+  <data name="RestartBar.Title"><value>需要重新啟動軟體</value></data>
+  <data name="RestartBar.Message"><value>請重新啟動 FluentCleaner，以載入更新後的資料庫。</value></data>
+  <data name="SectionPostClean.Text"><value>清理後執行任務</value></data>
+  <data name="LblPostCleanDesc.Text"><value>每行一條命令，每次清理完成後按順序自動執行。</value></data>
+  <data name="SectionExclusions.Text"><value>全局排除項</value></data>
+  <data name="LblExclusionsDesc.Text"><value>清單内路徑永遠不會被清理，優先級高於所有資料庫規則。</value></data>
+  <data name="SectionHistory.Text"><value>清理記錄</value></data>
+  <data name="LblHistoryDesc.Text"><value>記錄垃圾檔案隨時間累積的佔用數據。</value></data>
+  <data name="LblCleanHistory.Text"><value>清理歷程記錄</value></data>
+  <data name="BtnClearHistory.Content"><value>清空記錄</value></data>
+  <data name="SectionAI.Text"><value>AI 條目解讀</value></data>
+  <data name="LblAIOptIn.Text"><value>手動啟用</value></data>
+  <data name="LblAIPreview.Text"><value>预覽版功能</value></data>
+  <data name="BtnAIDiscussion.Content"><value>有建議？前往討論區 →</value></data>
+  <data name="BtnSaveApiKey.Content"><value>儲存</value></data>
+  <data name="BtnTestApiKey.Content"><value>測試金鑰</value></data>
+  <data name="BtnGetApiKey.Content"><value>取得金鑰</value></data>
+  <data name="SectionBackup.Text"><value>設定備份</value></data>
+  <data name="LblBackupDesc.Text"><value>將設定匯出/匯入為 JSON 檔案；將 settings.json 放在程式同目錄即可開啟可攜模式。</value></data>
+  <data name="BtnExport.Content"><value>匯出</value></data>
+  <data name="BtnImport.Content"><value>匯入</value></data>
+  <data name="LblPortableActive.Text"><value>📦 已啟用可攜模式 — 設定檔存放於程式同目錄</value></data>
+  <data name="SectionAbout.Text"><value>关於</value></data>
+  <data name="LblCopyright.Text"><value>© 2026 A Belim app creation</value></data>
+  <!-- (LblTranslatorCredit is defined at the top of this file) -->
+  <data name="BtnGitHub.Content"><value>GitHub</value></data>
+  <data name="BtnReportIssue.Content"><value>回報問題</value></data>
+  <data name="BtnIconCredit.Content"><value>應用程式圖示由 naderi 設計</value></data>
+  <data name="BtnFAQ.Content"><value>常見問題</value></data>
+  <data name="LblInsiderBadge.Text"><value>內測版</value></data>
+
+  <!-- Settings Page — code strings -->
+  <data name="St_Winapp3NotDownloaded"><value>尚未下載 Winapp3，點擊下載按鈕取得。</value></data>
+  <data name="St_WinappxNotDownloaded"><value>尚未下載 Winappx，點擊下載按鈕取得。</value></data>
+  <data name="St_HistoryNone"><value>暫無清理記錄</value></data>
+  <data name="St_HistorySummary"><value>共 {0} 次清理 · 累計釋放 {1} 空間</value></data>
+  <data name="St_HistoryItems"><value>{0}個清理項</value></data>
+  <data name="St_FileNotFound"><value>未找到檔案：{0}</value></data>
+  <data name="St_CustomPathSaved"><value>自訂路徑已儲存。</value></data>
+  <data name="St_Download"><value>下載</value></data>
+  <data name="St_Downloading"><value>正在下載 {0}…</value></data>
+  <data name="St_Downloaded"><value>{0} 下載完成 — 大小 {1} KB</value></data>
+  <data name="St_DownloadFailed"><value>下載失敗：{0}</value></data>
+  <data name="St_FileInfoNotDownloaded"><value>未下載</value></data>
+  <data name="St_FileInfo"><value>{0} 條規則  •  {1} KB  •  {2}</value></data>
+  <data name="St_UpdateAvailable"><value>有新版本可用 — {0}</value></data>
+  <data name="St_UpdateMessage"><value>FluentCleaner 新版本已就緒，可下載更新。</value></data>
+  <data name="St_UpToDate"><value>目前已是最新版本</value></data>
+  <data name="St_UpToDateMessage"><value>{0} 為目前最新版本。</value></data>
+  <data name="St_MenuUpdate"><value>⬆ 發現更新 — {0}</value></data>
+  <data name="St_MenuCheckUpdates"><value>檢查更新</value></data>
+  <data name="St_ApiKeyMissing"><value>⚠ 請先填寫 API 金鑰。</value></data>
+  <data name="St_ApiKeyTesting"><value>正在測試連線…</value></data>
+  <data name="St_ExportSuccess"><value>設定已匯出至 {0}</value></data>
+  <data name="St_ExportFailed"><value>匯出失敗：{0}</value></data>
+  <data name="St_ImportSuccess"><value>已從 {0} 匯入設定</value></data>
+  <data name="St_ImportFailed"><value>匯入失敗：{0}</value></data>
+
+  <!-- ============================================================
+       CUSTOM PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CustomTitle.Text"><value>自訂清理規則</value></data>
+  <data name="CustomEmptyHint.Text"><value>暫無自訂清理規則。</value></data>
+  <data name="CustomEmptyHint2.Text"><value>新建清理規則，創建後會自動顯示在此處。</value></data>
+  <data name="MenuEditEntry.Text"><value>編輯</value></data>
+  <data name="MenuDeleteEntry.Text"><value>刪除</value></data>
+  <data name="MenuRunEntry.Text"><value>執行</value></data>
+  <data name="BtnNewCleaner.Content"><value>+ 新增清理規則</value></data>
+  <data name="BtnRunScript.Text"><value>執行</value></data>
+
+  <!-- Custom Page — code strings -->
+  <data name="St_CustomStatus"><value>共 {0} 套規則 · {1} 套已啟用</value></data>
+  <data name="St_CustomStatusScripts"><value>{0} 條執行指令碼</value></data>
+  <data name="St_CustomMenuNew"><value>新建自訂清理規則</value></data>
+  <data name="St_CustomMenuOpenFolder"><value>打開自訂規則資料夾</value></data>
+  <data name="St_CustomMenuReddit"><value>前往 Reddit 提問交流</value></data>
+  <data name="St_CustomMenuNeowin"><value>Neowin 論壇</value></data>
+  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de 論壇</value></data>
+  <data name="St_CustomMenuShare"><value>在 GitHub 分享清理規則</value></data>
+  <data name="St_CustomToggleFailed"><value>切換啟用狀態失敗：{0}</value></data>
+  <data name="St_CustomDeleteTitle"><value>確定刪除「{0}」嗎？</value></data>
+  <data name="St_CustomDeleteMessage"><value>此操作會永久移除該自訂清理規則。</value></data>
+  <data name="St_CustomDeleteConfirm"><value>刪除</value></data>
+  <data name="St_CustomDeleteCancel"><value>取消</value></data>
+  <data name="St_CustomRunning"><value>正在執行 {0}...</value></data>
+  <data name="St_CustomScriptError"><value>{0}：無法讀取指令碼檔案 — {1}</value></data>
+  <data name="St_CustomCompleted"><value>{0}：執行完成。</value></data>
+  <data name="St_CustomFailed"><value>{0}：執行失敗（退出代碼 {1}）。</value></data>
+  <data name="St_CustomEntryNone"><value>未解析到任何清理條目</value></data>
+  <data name="St_CustomEntryOne"><value>1條清理項 · {0}</value></data>
+  <data name="St_CustomEntryMany"><value>{0} 條清理項 · {1}</value></data>
+  <data name="St_CustomEntryEnabled"><value>已啟用</value></data>
+  <data name="St_CustomEntryDisabled"><value>已停用</value></data>
+
+  <!-- New Cleaner Dialog -->
+  <data name="DlgNewCleanerSave"><value>儲存</value></data>
+  <data name="DlgNewCleanerCancel"><value>取消</value></data>
+  <data name="DlgNewCleanerTypeIni.Content"><value>Winapp2 清理條目 (.ini)</value></data>
+  <data name="DlgNewCleanerTypePs1.Content"><value>PowerShell 指令碼 (.ps1)</value></data>
+  <data name="DlgNewCleanerNameHeader"><value>名稱</value></data>
+  <data name="DlgNewCleanerNamePlaceholder"><value>自訂清理規則</value></data>
+  <data name="DlgNewCleanerAiPlaceholder"><value>AI 自動產生 - 描述需要清理的內容（產生效果僅供參考）</value></data>
+  <data name="DlgNewCleanerGenerate.Content"><value>產生</value></data>
+  <data name="DlgNewCleanerContentLabel"><value>内容</value></data>
+  <data name="DlgNewCleanerLoadTemplate.Content"><value>加載範本</value></data>
+  <data name="DlgNewCleanerTitleNew"><value>新建自訂清理規則</value></data>
+  <data name="DlgNewCleanerTitleEdit"><value>編輯 — {0}</value></data>
+  <data name="DlgNewCleanerGenerating"><value>產生中…</value></data>
+
+  <!-- ============================================================
+       AI EXPLAINER
+  ============================================================ -->
+  <data name="AI_NoKey"><value>尚未設定 API 金鑰。請前往設定 → AI 條目解讀頁面填寫 Groq 金鑰（可在 console.groq.com 免費取得）。</value></data>
+  <data name="AI_ApiError"><value>Groq API 請求錯誤：{0}</value></data>
+  <data name="AI_NoResponse"><value>未收到服務返回數據。</value></data>
+  <data name="AI_NetworkError"><value>無法連線至 Groq API：{0}</value></data>
+  <data name="AI_NoKeyShort"><value>尚未設定 API 金鑰，請前往設定 → AI 條目解讀。</value></data>
+
+  <!-- ============================================================
+       TERMINAL / CLI
+  ============================================================ -->
+  <data name="TerminalPlaceholder.PlaceholderText"><value>clean firefox  ·  analyze chrome  ·  help</value></data>
+  <data name="CLI_Welcome"><value>FluentCleaner 終端機已就緒。</value></data>
+  <data name="CLI_Databases"><value>已啟用資料庫：{0} 個 — 共偵測 {1} 條清理規則</value></data>
+  <data name="CLI_HelpHint"><value>輸入 help 查看全部可用命令。</value></data>
+  <data name="CLI_Version"><value>  FluentCleaner {0}</value></data>
+  <data name="CLI_UnknownCommand"><value>  未知命令「{0}」，輸入 help 查看說明。</value></data>
+  <data name="CLI_NoDrives"><value>  未偵測到磁碟分割區。</value></data>
+  <data name="CLI_ThemeUsage"><value>  使用格式：theme dark | light | system</value></data>
+  <data name="CLI_ThemeSet"><value>  主題已切換為「{0}」。</value></data>
+  <data name="CLI_BackdropUsage"><value>  使用格式：backdrop mica | acrylic</value></data>
+  <data name="CLI_BackdropSet"><value>  視窗材質已切換為「{0}」。</value></data>
+  <data name="CLI_NoMatch"><value>  未找到符合「{0}」的清理條目。</value></data>
+  <data name="CLI_CleanEntry"><value>  {0}：{1} 個項目 · 釋放 {2} 空間</value></data>
+  <data name="CLI_CleanDone"><value>  執行完成 — 刪除 {0} 項 · 釋放 {1} 空間。</value></data>
+  <data name="CLI_NothingToClean"><value>  無需要清理的内容。</value></data>
+  <data name="CLI_AnalyzeEntry"><value>  {0}：{1} 個檔案 · {2} 條登錄檔項目 · 合計 {3}</value></data>
+  <data name="CLI_AnalyzeTotal"><value>  總計掃描到：{0} 項垃圾。</value></data>
+  <data name="CLI_NothingFound"><value>  未掃描到垃圾檔案。</value></data>
+  <data name="CLI_ListEntries"><value>  — 共 {0} 條清理條目。</value></data>
+  <data name="CLI_ListCategories"><value>  — 共 {0} 個分類。</value></data>
+  <data name="CLI_AppxUsage"><value>  使用格式：appx list | appx scan | appx remove &lt;名稱&gt; | appx remove all</value></data>
+  <data name="CLI_AppxListStart"><value>  正在列出所有已安裝的 AppX 應用程式套件...</value></data>
+  <data name="CLI_AppxNoPackages"><value>  未偵測到任何應用程式套件。</value></data>
+  <data name="CLI_AppxListDone"><value>  — 已安裝 {0} 個應用程式套件。執行 appx remove &lt;名稱&gt; 即可解除安裝。</value></data>
+  <data name="CLI_AppxScanStart"><value>  正在掃描預裝垃圾應用程式套件...</value></data>
+  <data name="CLI_AppxNothingFound"><value>  未發現預裝垃圾應用程式，系统乾淨。</value></data>
+  <data name="CLI_AppxScanDone"><value>  — 找到 {0} 個預裝應用程式套件。可執行 appx remove &lt;名稱&gt; 或 appx remove all 批次解除安裝。</value></data>
+  <data name="CLI_AppxRemoveUsage"><value>  使用格式：appx remove &lt;名稱&gt; | appx remove all</value></data>
+  <data name="CLI_AppxRemoveScanStart"><value>  正在檢索可解除安裝應用程式套件...</value></data>
+  <data name="CLI_AppxNothingToRemove"><value>  無待解除安裝的應用程式。</value></data>
+  <data name="CLI_AppxRemoving"><value>  正在解除安裝 {0}...</value></data>
+  <data name="CLI_AppxRemoveOk"><value>  成功  已解除安裝 {0}。</value></data>
+  <data name="CLI_AppxRemoveErr"><value>  失敗 {0} — 解除安裝出錯（應用程式不存在或需要系統管理員權限）。</value></data>
+  <data name="CLI_AppxRemoveDone"><value>  操作完成 — 共解除安裝 {0} 個應用程式套件。</value></data>
+  <data name="CLI_AppxNothingRemoved"><value>  未解除安裝任何應用程式。</value></data>
+  <data name="CLI_AppxDisabled"><value>Winappx 資料庫已停用，請前往設定頁面啟用。</value></data>
+  <data name="CLI_AppxNotFound"><value>找不到 Winappx.ini 檔案，請在設定頁面下載該資料庫。</value></data>
+
+</root>
