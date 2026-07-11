@@ -43,6 +43,12 @@ public partial class App : Application
         //Remember size for next launch
         MainWindow.Closed += (_, _) =>
         {
+            // Do not persist the maximized work-area size as a normal window
+            // size; restoring it on a different DPI/display can crop content.
+            if (MainWindow.AppWindow.Presenter is OverlappedPresenter presenter &&
+                presenter.State == OverlappedPresenterState.Maximized)
+                return;
+
             var size = MainWindow.AppWindow.Size;
             AppSettings.Instance.WindowWidth  = size.Width;
             AppSettings.Instance.WindowHeight = size.Height;
@@ -67,17 +73,43 @@ public partial class App : Application
     //Picks up the saved size from settings, falls back to 960x620 on first run
     private void RestoreWindowSize()
     {
-        var w = AppSettings.Instance.WindowWidth;
-        var h = AppSettings.Instance.WindowHeight;
-        MainWindow!.AppWindow.Resize(new SizeInt32(w, h));
-
-        if (DisplayArea.GetFromWindowId(MainWindow.AppWindow.Id, DisplayAreaFallback.Primary) is { } display)
+        if (DisplayArea.GetFromWindowId(MainWindow!.AppWindow.Id, DisplayAreaFallback.Primary) is { } display)
         {
             var area = display.WorkArea;
+
+            // AppWindow sizes are restored from the previous session, but the
+            // saved size may belong to a different monitor or DPI scale. Clamp
+            // it to the current work area so the bottom/right edge never lands
+            // outside the visible screen.
+            const int minWidth = 760;
+            const int minHeight = 520;
+            var maxWidth = Math.Max(minWidth, area.Width - 32);
+            var maxHeight = Math.Max(minHeight, area.Height - 48);
+            var savedWidth = AppSettings.Instance.WindowWidth;
+            var savedHeight = AppSettings.Instance.WindowHeight;
+
+            // A previous build could persist a maximized/near-maximized size.
+            // Treat that as stale and start with the intended compact default.
+            if (savedWidth >= area.Width - 64 && savedHeight >= area.Height - 80)
+            {
+                savedWidth = 960;
+                savedHeight = 620;
+            }
+
+            var w = Math.Clamp(savedWidth, minWidth, maxWidth);
+            var h = Math.Clamp(savedHeight, minHeight, maxHeight);
+
+            MainWindow.AppWindow.Resize(new SizeInt32(w, h));
             MainWindow.AppWindow.Move(new PointInt32(
                 area.X + (area.Width  - w) / 2,
                 area.Y + (area.Height - h) / 2));
+
+            return;
         }
+
+        MainWindow.AppWindow.Resize(new SizeInt32(
+            Math.Max(760, AppSettings.Instance.WindowWidth),
+            Math.Max(520, AppSettings.Instance.WindowHeight)));
     }
 
     // Switches light/dark/system 
