@@ -9,7 +9,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
     <!-- two-card layout: left = entry selector, right = analysis results -->
-    <Grid Padding="0">
+    <Grid Padding="0" MinHeight="0" MinWidth="0">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" MinWidth="200" MaxWidth="420" />
@@ -24,7 +24,7 @@
                    VerticalAlignment="Stretch" />
 
         <!-- left panel;entry selector -->
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="0" MinHeight="0" MinWidth="0">
                 <!-- Empty state: nothing loaded yet (IsEmpty = Categories.Count == 0) -->
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -42,6 +42,7 @@
                 <!-- Entry tree: one Expander per category, one row per app inside.
                      Hidden until something is loaded (IsNotEmpty). -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              MinHeight="0"
                               Padding="0,6,0,8"
                               Visibility="{x:Bind ViewModel.IsNotEmpty, Mode=OneWay,
                                   Converter={StaticResource BoolToVisibilityConverter}}">
@@ -186,7 +187,7 @@
         </Grid>
 
         <!-- right panel;analysis results -->
-        <Grid Grid.Column="2">
+        <Grid Grid.Column="2" MinHeight="0" MinWidth="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />   <!-- results header OR detail header -->
                     <RowDefinition Height="*" />       <!-- results list OR detail list -->
@@ -280,10 +281,11 @@
                 <!-- Results list; each row is one scanned app.
                      Click a row >> SelectedResultLine is set >> switches to detail view.
                      AppName = entry name (bold); tooltip on it shows the category.
-                     CountSummary = "3988 files · 2 registry" (gray, line 2).
+                     CountSummary = "3988 files 路 2 registry" (gray, line 2).
                      Size = formatted bytes from the scan (accent, right). -->
                 <ListView Grid.Row="1"
                           x:Name="ResultsListView"
+                          MinHeight="0"
                           ItemsSource="{x:Bind ViewModel.ResultLines, Mode=OneWay}"
                           SelectionMode="None"
                           IsItemClickEnabled="True"
@@ -318,7 +320,7 @@
                                            FontWeight="SemiBold"
                                            TextTrimming="CharacterEllipsis" />
 
-                                <!-- "3988 files · 2 registry" -->
+                                <!-- "3988 files 路 2 registry" -->
                                 <TextBlock Grid.Row="1" Grid.Column="0"
                                            Text="{x:Bind CountSummary}"
                                            FontSize="11"
@@ -348,6 +350,7 @@
                      DetailLine.IsHeader = false : dimmed path row; click opens folder in Explorer -->
                 <ListView Grid.Row="1"
                           ItemsSource="{x:Bind ViewModel.DetailLines, Mode=OneWay}"
+                          MinHeight="0"
                           SelectionMode="None"
                           IsItemClickEnabled="True"
                           ItemClick="DetailList_ItemClick"
@@ -394,9 +397,11 @@
 
                 <!-- Action buttons: Analyze (accent, left) + Run Cleaner (right) -->
                 <Grid Grid.Row="3"
+                      MinHeight="52"
+                      VerticalAlignment="Bottom"
                       BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                       BorderThickness="0,1,0,0"
-                      Padding="12,8,12,12">
+                      Padding="12,8,12,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -411,7 +416,8 @@
                             Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay,
                                 Converter={StaticResource BoolToVisibilityConverter}}"
                             MinWidth="110"
-                            Height="32" />
+                            MinHeight="40"
+                            Padding="18,8" />
 
                     <!-- Cancel:same slot, only visible during an active scan or clean -->
                     <Button Grid.Column="0"
@@ -420,7 +426,8 @@
                             Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
                                 Converter={StaticResource BoolToVisibilityConverter}}"
                             MinWidth="110"
-                            Height="32" />
+                            MinHeight="40"
+                            Padding="18,8" />
 
                     <!-- Run Cleaner:uses Click+code-behind because of the warning dialog flow.
                          IsEnabled bound separately since Click bypasses Command.CanExecute. -->
@@ -429,7 +436,8 @@
                             Click="RunCleaner_Click"
                             IsEnabled="{x:Bind ViewModel.CanRunCleaner, Mode=OneWay}"
                             MinWidth="120"
-                            Height="32" />
+                            MinHeight="40"
+                            Padding="18,8" />
                 </Grid>
         </Grid>
     </Grid>
