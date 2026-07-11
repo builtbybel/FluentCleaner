@@ -53,7 +53,7 @@
                         <Button.Flyout>
                             <Flyout Placement="Bottom">
                                 <AutoSuggestBox Width="280"
-                                    PlaceholderText="Search…"
+                                    PlaceholderText="Search鈥?
                                     QueryIcon="Find"
                                     TextChanged="TitleSearchBox_TextChanged" />
                             </Flyout>
@@ -85,6 +85,8 @@
         <NavigationView x:Name="NavView"
                         Grid.Row="1"
                         PaneDisplayMode="LeftCompact"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
                         IsTitleBarAutoPaddingEnabled="False"
                         IsBackButtonVisible="Collapsed"
                         IsPaneToggleButtonVisible="False"
@@ -110,7 +112,9 @@
                 </NavigationViewItem>
             </NavigationView.MenuItems>
 
-            <Frame x:Name="NavFrame" />
+            <Frame x:Name="NavFrame"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch" />
         </NavigationView>
         <!-- donation prompt; anchored to the [...] button -->
         <TeachingTip x:Name="DonationTip"
