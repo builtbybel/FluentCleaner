@@ -31,6 +31,13 @@ here's a first preview so you can get a feel for the direction. i might end up f
 
 if you like it, cool. if not, also fair
 
+## 🚀 Download Latest Stable
+
+[⬇ Download Latest FluentCleaner](https://github.com/builtbybel/FluentCleaner/releases/latest/download/FluentCleaner-win-x64.zip)
+
+Older versions are available below.
+https://github.com/builtbybel/FluentCleaner/releases
+
 ## FAQ
 
 <details>
