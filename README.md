@@ -152,9 +152,9 @@ issues and feature requests go here on github as usual.
 
 </details>
 
+<a id="task-scheduler"></a>
 <details>
-<summary>can i run FluentCleaner without a UI / from Task Scheduler?</summary>
-
+<summary>Can I run FluentCleaner without a UI / from Task Scheduler?</summary>
 yes.
 
 ```powershell
