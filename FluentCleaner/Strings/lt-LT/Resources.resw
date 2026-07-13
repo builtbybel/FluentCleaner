@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ============================================================
+       TRANSLATOR CREDIT
+       Leave the value empty in the source (en-US) file.
+       Each translator fills this in their own Strings\{lang}\Resources.resw,
+       e.g.: Translation: Jane Doe · jane.example.com
+  ============================================================ -->
+  <data name="LblTranslatorCredit"><value>Vertimas: Dalius Gužauskas (aka Tichij) · tichij AT mail DOT com</value></data>
+
+  <!-- ============================================================
+       MAIN WINDOW
+  ============================================================ -->
+  <data name="NavCleaner.Content"><value>Valytojas</value></data>
+  <data name="NavTerminal.Content"><value>Terminalas</value></data>
+  <data name="NavCustom.Content"><value>Pasirinktiniai</value></data>
+  <data name="SearchBox.PlaceholderText"><value>Paieška</value></data>
+  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Veiksmai puslapyje</value></data>
+  <!-- Main Window — donation TeachingTip -->
+  <data name="DonationBanner.Title"><value>Patinka „FluentCleaner“?</value></data>
+  <data name="DonationBanner.Subtitle"><value>Jei ši programa padeda jums sutaupyti laiko, apsvarstykite galimybę paremti jos kūrimą.</value></data>
+  <data name="BtnDonatePayPal.Content"><value>„PayPal“</value></data>
+  <data name="BtnDonateKoFi.Content"><value>„Ko-fi“</value></data>
+  <data name="BtnDonateGitHub.Content"><value>Pažymėti žvaigždute „GitHub“</value></data>
+  <data name="BtnDonateLater.Content"><value>Gal vėliau</value></data>
+  <data name="St_NoActions"><value>Šiam puslapiui nėra jokių veiksmų</value></data>
+
+  <!-- ============================================================
+       CLEANER PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CleanerHint.Text"><value>„Winapp2.ini“ failas įkeliamas automatiškai paleidžiant sistemą.</value></data>
+  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Veiksmai kategorijoje</value></data>
+  <data name="MenuSelectAll.Text"><value>Pažymėti viską</value></data>
+  <data name="MenuSelectNone.Text"><value>Nuimti pažymėjimą</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Pažymėti numatytuosius</value></data>
+  <data name="MenuAnalyzeCategory.Text"><value>Analizuoti kategoriją</value></data>
+  <data name="MenuCleanCategory.Text"><value>Valyti kategoriją</value></data>
+  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Veiksmai įraše</value></data>
+  <data name="MenuAnalyzeEntry.Text"><value>Analizuoti</value></data>
+  <data name="MenuCleanEntry.Text"><value>Valyti</value></data>
+  <data name="MenuExplainEntry.Text"><value>Paaiškinti naudojant DI</value></data>
+  <data name="LblAIDesc.Text"><value>Dešiniuoju pelės mygtuku spustelėkite bet kurį įrašą „Valytojo“ puslapyje → Paaiškinimai naudojant DI. Naudoja „Groq“ (llama-3.3-70b) — nemokamai, jokių sąskaitų. Nieko nesiunčia be jūsų aiškaus veiksmo. Reikalauja asmeninio API rakto.</value></data>
+  <data name="LblAICustomHint.Text"><value>💡 Išsaugojus raktą, DI funkcija tampa prieinama ir puslapyje „Pasirinktiniai valymai“ – apibūdinkite, ką reikia išvalyti, ir ji jums sukurs parengtą naudoti „Winapp2“ įrašą arba „PowerShell“ scenarijų.</value></data>
+  <data name="ResultsHeader.Text"><value>Rezultatai</value></data>
+  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Grįžti prie rezultatų</value></data>
+  <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Pašalinti šiuos failus dabar</value></data>
+  <data name="MenuExcludeFile.Text"><value>Neįtraukti failo</value></data>
+  <data name="MenuExcludeFolder.Text"><value>Neįtraukti aplanko</value></data>
+  <data name="BtnAnalyze.Content"><value>Analizuoti</value></data>
+  <data name="BtnCancel.Content"><value>Atšaukti</value></data>
+  <data name="BtnRunCleaner.Content"><value>Paleisti valymą</value></data>
+
+  <!-- Cleaner Page — IPageActions (built in code) -->
+  <data name="St_MenuSelectAll"><value>Pažymėti viską</value></data>
+  <data name="St_MenuSelectNone"><value>Nuimti pažymėjimą</value></data>
+  <data name="St_MenuSelectDefaults"><value>Pažymėti numatytuosius</value></data>
+  <data name="St_MenuExpandAll"><value>Išskleisti viską</value></data>
+  <data name="St_MenuCollapseAll"><value>Suskleisti viską</value></data>
+  <data name="St_MenuSortDesc"><value>Rikiuoti pagal dydį ↓</value></data>
+  <data name="St_MenuSortAsc"><value>Rikiuoti pagal dydį ↑</value></data>
+  <data name="St_MenuRefresh"><value>Atnaujinti</value></data>
+
+  <!-- Cleaner Page — detail view labels -->
+  <data name="DetailHeaderFiles.Text"><value>Failai</value></data>
+  <data name="DetailHeaderRegistry.Text"><value>Registras</value></data>
+
+  <!-- Cleaner Page — result line suffixes (used in code) -->
+  <data name="SuffixFiles"><value>failas(-ų)</value></data>
+  <data name="SuffixRegistry"><value>registras</value></data>
+  <data name="SuffixFilesSingular"><value>failas(-ų)</value></data>
+  <data name="SuffixRegistryItems"><value>registro elementas(-ų)</value></data>
+  <data name="LabelCleaningComplete"><value>Valymas baigtas.</value></data>
+
+  <!-- Cleaner Page — dialogs -->
+  <data name="DlgBrowsersTitle"><value>Naršyklės veikia</value></data>
+  <data name="DlgBrowsersContinue"><value>Vis tiek tęsti</value></data>
+  <data name="DlgBrowsersCancel"><value>Atšaukti</value></data>
+  <data name="DlgBrowsersMessage"><value>Uždarykite šias programas, kad pasiekti geresnių rezultatų:\n{0}\n\nVeikiančios naršyklės užrakina talpyklos ir istorijos failus – jie bus praleisti valant.</value></data>
+  <data name="DlgWarningTitle"><value>Valymo perspėjimas</value></data>
+  <data name="DlgWarningContinue"><value>Tęsti</value></data>
+  <data name="DlgWarningCancel"><value>Atšaukti</value></data>
+  <data name="DlgWarningMessage"><value>Pasirinktuose „Winapp2“ įrašuose yra šie įspėjimai:</value></data>
+  <data name="DlgExplainThinking"><value>Galvoju…</value></data>
+  <data name="DlgExplainClose"><value>Uždaryti</value></data>
+  <data name="DlgRestartTitle"><value>Reikia paleisti iš naujo</value></data>
+  <data name="DlgRestartMessage"><value>Kad būtų naudojama nauja kalba, „FluentCleaner“ reikia paleisti iš naujo.</value></data>
+  <data name="DlgRestartNow"><value>Paleisti iš naujo</value></data>
+  <data name="DlgRestartLater"><value>Vėliau</value></data>
+
+  <!-- ============================================================
+       STATUS MESSAGES — CleanerPageViewModel (format strings)
+  ============================================================ -->
+  <data name="St_Loading"><value>Įkeliamas Winapp2.ini...</value></data>
+  <data name="St_SearchFound"><value>Rodomas(-i) {0} atitinkantis(-ys) įrašas(-ai).</value></data>
+  <data name="St_SearchNone"><value>Nėra atitinkančių įrašų.</value></data>
+  <data name="St_ParsingDatabases"><value>Analizuojamos duomenų bazės...</value></data>
+  <data name="St_AnalysisReady"><value>Analizė paruošta — {0} programa(-os) rasta(-os) {1} įraše(-uose).</value></data>
+  <data name="St_NothingSelected"><value>Nieko nepasirinkta.</value></data>
+  <data name="St_Scanning"><value>Skenuojama...</value></data>
+  <data name="St_ScanComplete"><value>Skenavimas baigtas — {0} failas(-ų), {1} registro elementas(-ai) ({2})</value></data>
+  <data name="St_ScanCancelled"><value>Skenavimas atšauktas.</value></data>
+  <data name="St_Cleaning"><value>Valymas...</value></data>
+  <data name="St_CleanDone"><value>Baigtas — {0} atlaisvintas(-i) · {1} praleistas(-i) (naudojami failai)</value></data>
+  <data name="St_CleanDoneSimple"><value>Baigtas — {0} elementas(-ai) pašalintas(-i) · {1} atlaisvintas(-i).</value></data>
+  <data name="St_CleanCancelledBytes"><value>Valymas atšauktas — {0} atlaisvintas(-i) iki to.</value></data>
+  <data name="St_CleanCancelled"><value>Valymas atšauktas.</value></data>
+  <data name="St_EntryScanned"><value>{0}: {1} failas(-ai), {2} registro įrašas(-ai)</value></data>
+  <data name="St_EntryNothingToClean"><value>{0}: nėra ką valyti.</value></data>
+  <data name="St_EntryCleanDone"><value>{0}: {1} elementas(-ai) pašalintas(-i) · {2} atlaisvintas(-i).</value></data>
+  <data name="St_CategoryScanning"><value>Skenuojama {0}...</value></data>
+  <data name="St_CategoryScanned"><value>{0} skenuotas — {1} įrašas(-ų).</value></data>
+  <data name="St_CategoryCleaning"><value>Valoma {0}...</value></data>
+  <data name="St_CategoryCleanDone"><value>{0}: {1} elementas(-ai) pašalintas(-i) · {2} atlaisvintas(-i).</value></data>
+  <data name="St_EntryScanningProgress"><value>Skenuojama {0}...</value></data>
+  <data name="St_ExcludedFile"><value>Praleista: {0}</value></data>
+  <data name="St_ExcludedFolder"><value>Praleista: {0}</value></data>
+
+  <!-- CleaningService progress messages -->
+  <data name="Prog_Deleted"><value>Ištrinta: {0}</value></data>
+  <data name="Prog_Registry"><value>Registras: {0}</value></data>
+
+  <!-- ============================================================
+       SETTINGS PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="SettingsTitle.Text"><value>Parametrai</value></data>
+  <!-- Settings Page — donation InfoBar -->
+  <data name="DonationBar.Title"><value>„FluentCleaner“ tampa atvirojo kodo projektu.</value></data>
+  <data name="DonationBar.Message"><value>Į tai įdėjau daug darbo — jei tai jums padeda ir norite padėkoti, auka man tikrai labai daug reikštų. ♥</value></data>
+  <data name="BtnDonate.Content"><value>Paremti projektą</value></data>
+  <data name="MenuDonatePayPal.Text"><value>Paremti per „PayPal“</value></data>
+  <data name="MenuDonateKoFi.Text"><value>Paremti per „Ko-fi“</value></data>
+  <data name="SectionAppearance.Text"><value>Išvaizda</value></data>
+  <data name="LblTheme.Text"><value>Programos tema</value></data>
+  <data name="LblThemeDesc.Text"><value>Pasirinkite, kaip „FluentCleaner“ atrodys jūsų įrenginyje.</value></data>
+  <data name="ThemeSystem.Content"><value>Kaip sistemos</value></data>
+  <data name="ThemeLight.Content"><value>Įviesi</value></data>
+  <data name="ThemeDark.Content"><value>Tamsi</value></data>
+  <data name="LblLanguage.Text"><value>Kalba</value></data>
+  <data name="LblLanguageDesc.Text"><value>Pakeisti sąsajos kalbą. Kad pakeitimai įsigaliotų, reikia iš naujo paleisti sistemą.</value></data>
+  <data name="St_LangAuto"><value>Kaip sistemos</value></data>
+  <data name="SectionDatabase.Text"><value>Duomenų bazė</value></data>
+  <data name="LblDatabaseDesc.Text"><value>Pasirinkite, kurie įrašų sąrašai bus įkelti skenavimui ir valymui.</value></data>
+  <data name="LblWinapp2.Text"><value>„Winapp2“</value></data>
+  <data name="BtnUpdateWinapp2.Content"><value>Atnaujinti</value></data>
+  <data name="LblWinapp3.Text"><value>„Winapp3“</value></data>
+  <data name="LblWinapp3Tag.Text"><value>ekperimentinė</value></data>
+  <data name="LblWinapp3Desc.Text"><value>  —  agresyvesni įrašai – naudokite atsargiai.</value></data>
+  <data name="BtnDownloadWinapp3.Content"><value>Atsisiųsti</value></data>
+  <data name="BtnUpdateWinapp3.Content"><value>Atnaujinti</value></data>
+  <data name="LblWinappx.Text"><value>„Winappx“</value></data>
+  <data name="LblWinappxTag.Text"><value>nereikalinga („bloatware“)</value></data>
+  <data name="LblWinappxDesc.Text"><value>  —  „AppX“ / „bloatware“ įrašai terminaliniam šalintojui („debloater“).</value></data>
+  <data name="BtnDownloadWinappx.Content"><value>Atsisiųsti</value></data>
+  <data name="BtnUpdateWinappx.Content"><value>Atnaujinti</value></data>
+  <data name="TxtCustomPath.PlaceholderText"><value>Kelias iki naudotojo DB (.ini)</value></data>
+  <data name="BtnBrowse.Content"><value>Naršyti…</value></data>
+  <data name="BtnApplyPath.Content"><value>Taikyti</value></data>
+  <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Pašalinti naudotojo DB</value></data>
+  <data name="RestartBar.Title"><value>Reikia paleisti iš naujo</value></data>
+  <data name="RestartBar.Message"><value>Paleiskite „FluentCleaner“ iš naujo, kad įkelti atnaujintą duomenų bazę.</value></data>
+  <data name="SectionPostClean.Text"><value>Veiksmai po valymo</value></data>
+  <data name="LblPostCleanDesc.Text"><value>Viena komanda eilutėje — vykdoma paeiliui po kiekvieno valymo ciklo.</value></data>
+  <data name="SectionExclusions.Text"><value>Globalios išimtys</value></data>
+  <data name="LblExclusionsDesc.Text"><value>Čia išvardyti keliai nebus valomi — tai turi viršenybę prieš visas DB taisykles.</value></data>
+  <data name="SectionHistory.Text"><value>Istorija</value></data>
+  <data name="LblHistoryDesc.Text"><value>Stebėkite, kiek šiukšlių susikaupia laikui bėgant.</value></data>
+  <data name="LblCleanHistory.Text"><value>Valyti istoriją</value></data>
+  <data name="BtnClearHistory.Content"><value>Pašalinti istoriją</value></data>
+  <data name="SectionAI.Text"><value>DI paaiškinimai</value></data>
+  <data name="LblAIOptIn.Text"><value>sutikimas</value></data>
+  <data name="LblAIPreview.Text"><value>peržiūra</value></data>
+  <data name="BtnAIDiscussion.Content"><value>Turit minčių? Prisijunkite prie diskusijos →</value></data>
+  <data name="BtnSaveApiKey.Content"><value>Išsaugoti</value></data>
+  <data name="BtnTestApiKey.Content"><value>Testuoti</value></data>
+  <data name="BtnGetApiKey.Content"><value>Gauti raktą</value></data>
+  <data name="SectionBackup.Text"><value>Atsarginė kopija</value></data>
+  <data name="LblBackupDesc.Text"><value>Eksportuokite ar importuokite savo parametrus kaip JSON failą. Norėdami naudoti nešiojamąjį režimą, įrašykite „settings.json“ failą šalia „exe“ failo.</value></data>
+  <data name="BtnExport.Content"><value>Eksportuoti</value></data>
+  <data name="BtnImport.Content"><value>Importuoti</value></data>
+  <data name="LblPortableActive.Text"><value>📦 Įjungtas nešiojamasis režimas — parametrai, saugomi šalia „exe“ failo</value></data>
+  <data name="SectionAbout.Text"><value>Apie</value></data>
+  <data name="LblCopyright.Text"><value>© 2026 A Belim app creation</value></data>
+  <!-- (LblTranslatorCredit is defined at the top of this file) -->
+  <data name="BtnGitHub.Content"><value>„GitHub“</value></data>
+  <data name="BtnReportIssue.Content"><value>Pranešti apie problemą</value></data>
+  <data name="BtnIconCredit.Content"><value>Piktogramos autorius naderi</value></data>
+  <data name="BtnFAQ.Content"><value>DUK</value></data>
+  <data name="LblInsiderBadge.Text"><value>INSIDER</value></data>
+
+  <!-- Settings Page — code strings -->
+  <data name="St_Winapp3NotDownloaded"><value>„Winapp3“ dar neatsisiųsta — spustelėkite „Atsisiųsti“.</value></data>
+  <data name="St_WinappxNotDownloaded"><value>„Winappx“ dar neatsisiųsta — spustelėkite „Atsisiųsti“.</value></data>
+  <data name="St_HistoryNone"><value>dar jokių įrašų apie vykdymus</value></data>
+  <data name="St_HistorySummary"><value>{0} vykdymų · {1} iš viso atlaisvinta</value></data>
+  <data name="St_HistoryItems"><value>{0} elementų</value></data>
+  <data name="St_FileNotFound"><value>Failas nerastas: {0}</value></data>
+  <data name="St_CustomPathSaved"><value>Naudotojo kelias išsaugotas.</value></data>
+  <data name="St_Download"><value>Atsisiųsti</value></data>
+  <data name="St_Downloading"><value>Atsisiunčiama {0}…</value></data>
+  <data name="St_Downloaded"><value>{0} atsisiųsta — {1} KB</value></data>
+  <data name="St_DownloadFailed"><value>Atsisiuntimas nepavyko: {0}</value></data>
+  <data name="St_FileInfoNotDownloaded"><value>Neatsisiųsta</value></data>
+  <data name="St_FileInfo"><value>{0} įrašai  •  {1} KB  •  {2}</value></data>
+  <data name="St_UpdateAvailable"><value>Yra atnaujinimas — {0}</value></data>
+  <data name="St_UpdateMessage"><value>Nauja „FluentCleaner“ versija parengta atsisiųsti.</value></data>
+  <data name="St_UpToDate"><value>Naudojate naujausią versiją</value></data>
+  <data name="St_UpToDateMessage"><value>{0} versija yra naujausia.</value></data>
+  <data name="St_MenuUpdate"><value>⬆  Yra atnaujinimas — {0}</value></data>
+  <data name="St_MenuCheckUpdates"><value>Tikrinti, ar yra naujinimų</value></data>
+  <data name="St_ApiKeyMissing"><value>⚠ Pirmiausia įveskite API raktą.</value></data>
+  <data name="St_ApiKeyTesting"><value>Testuojama…</value></data>
+  <data name="St_ExportSuccess"><value>Parametrai eksportuoti į {0}</value></data>
+  <data name="St_ExportFailed"><value>Eksportas nepavyko: {0}</value></data>
+  <data name="St_ImportSuccess"><value>Parametrai importuoti iš {0}</value></data>
+  <data name="St_ImportFailed"><value>Importas nepavyko: {0}</value></data>
+
+  <!-- ============================================================
+       CUSTOM PAGE — static XAML strings (x:Uid)
+  ============================================================ -->
+  <data name="CustomTitle.Text"><value>Naudotojo valytuvai</value></data>
+  <data name="CustomEmptyHint.Text"><value>Dar nėra naudotojo valytuvų.</value></data>
+  <data name="CustomEmptyHint2.Text"><value>Sukurkite naują valytuvą – jis bus rodomas čia automatiškai.</value></data>
+  <data name="MenuEditEntry.Text"><value>Redaguoti</value></data>
+  <data name="MenuDeleteEntry.Text"><value>Pašalinti</value></data>
+  <data name="MenuRunEntry.Text"><value>Vykdyti</value></data>
+  <data name="BtnNewCleaner.Content"><value>+ Naujas valytuvas</value></data>
+  <data name="BtnRunScript.Text"><value>Vykdyti</value></data>
+
+  <!-- Custom Page — code strings -->
+  <data name="St_CustomStatus"><value>{0} valytuvas · {1} įjungta</value></data>
+  <data name="St_CustomStatusScripts"><value>{0} skriptas(-ai)</value></data>
+  <data name="St_CustomMenuNew"><value>Naujas naudotojo valytuvas</value></data>
+  <data name="St_CustomMenuOpenFolder"><value>Atverti pasirinktinį aplanką</value></data>
+  <data name="St_CustomMenuReddit"><value>Klausti „Reddit“</value></data>
+  <data name="St_CustomMenuNeowin"><value>„Neowin“ forumai</value></data>
+  <data name="St_CustomMenuDeskmodder"><value>„Deskmodder.de“</value></data>
+  <data name="St_CustomMenuShare"><value>Pasidalinti valytuvu „GitHub“</value></data>
+  <data name="St_CustomToggleFailed"><value>Perjungti nepavyko: {0}</value></data>
+  <data name="St_CustomDeleteTitle"><value>Pašalinti „{0}“?</value></data>
+  <data name="St_CustomDeleteMessage"><value>Tai visam laikui pašalins naudotojo valytuvą.</value></data>
+  <data name="St_CustomDeleteConfirm"><value>Pašalinti</value></data>
+  <data name="St_CustomDeleteCancel"><value>Atšaukti</value></data>
+  <data name="St_CustomRunning"><value>Vykdoma {0}...</value></data>
+  <data name="St_CustomScriptError"><value>{0}: nepavyko perskaityti scenarijaus — {1}</value></data>
+  <data name="St_CustomCompleted"><value>{0}: sėkmingai užbaigta.</value></data>
+  <data name="St_CustomFailed"><value>{0}: nepavyko (kodas {1}).</value></data>
+  <data name="St_CustomEntryNone"><value>nėra išanalizuotų įrašų</value></data>
+  <data name="St_CustomEntryOne"><value>1 įrašas · {0}</value></data>
+  <data name="St_CustomEntryMany"><value>{0} įrašų · {1}</value></data>
+  <data name="St_CustomEntryEnabled"><value>įjungta</value></data>
+  <data name="St_CustomEntryDisabled"><value>išjungta</value></data>
+
+  <!-- New Cleaner Dialog -->
+  <data name="DlgNewCleanerSave"><value>Išsaugoti</value></data>
+  <data name="DlgNewCleanerCancel"><value>Atšaukti</value></data>
+  <data name="DlgNewCleanerTypeIni.Content"><value>„Winapp2“ įrašas (.ini)</value></data>
+  <data name="DlgNewCleanerTypePs1.Content"><value>„PowerShell“ skriptas (.ps1)</value></data>
+  <data name="DlgNewCleanerNameHeader"><value>Pavadinimas</value></data>
+  <data name="DlgNewCleanerNamePlaceholder"><value>Mano valytuvas</value></data>
+  <data name="DlgNewCleanerAiPlaceholder"><value>Generuoti su DI - aprašykite, ką valyti (rezultatai gali skirtis)</value></data>
+  <data name="DlgNewCleanerGenerate.Content"><value>Generuoti</value></data>
+  <data name="DlgNewCleanerContentLabel"><value>Turinys</value></data>
+  <data name="DlgNewCleanerLoadTemplate.Content"><value>Įkelti šabloną</value></data>
+  <data name="DlgNewCleanerTitleNew"><value>Naujas custom cleaner</value></data>
+  <data name="DlgNewCleanerTitleEdit"><value>Redaguoti — {0}</value></data>
+  <data name="DlgNewCleanerGenerating"><value>…</value></data>
+
+  <!-- ============================================================
+       AI EXPLAINER
+  ============================================================ -->
+  <data name="AI_NoKey"><value>Nesukonfigūruotas API raktas. Eikite į Parametrai → DI paaiškinimai ir pridėkite „Groq API“ raktą (gaunamas nemokamai puslapyje console.groq.com).</value></data>
+  <data name="AI_ApiError"><value>„Groq API“ klaida: {0}</value></data>
+  <data name="AI_NoResponse"><value>Negautas atsakymas.</value></data>
+  <data name="AI_NetworkError"><value>Nepavyko pasiekti „Groq API“: {0}</value></data>
+  <data name="AI_NoKeyShort"><value>Nesukonfigūruotas API raktas – eikite į Parametrai → DI paaiškinimai.</value></data>
+
+  <!-- ============================================================
+       TERMINAL / CLI
+  ============================================================ -->
+  <data name="TerminalPlaceholder.PlaceholderText"><value>clean firefox  ·  analyze chrome  ·  help</value></data>
+  <data name="CLI_Welcome"><value>„FluentCleaner“ online terminalas.</value></data>
+  <data name="CLI_Databases"><value>Duomenų bazės: {0} aktyvi(-ių) — {1} aptikti įrašai</value></data>
+  <data name="CLI_HelpHint"><value>Įveskite „help“ komandų sąrašui.</value></data>
+  <data name="CLI_Version"><value>  „FluentCleaner“ {0}</value></data>
+  <data name="CLI_UnknownCommand"><value>  Nežinoma komanda „{0}“. Įveskite „help“.</value></data>
+  <data name="CLI_NoDrives"><value>  Diskų nerasta.</value></data>
+  <data name="CLI_ThemeUsage"><value>  Naudojimas: theme dark | light | system</value></data>
+  <data name="CLI_ThemeSet"><value>  Pasirinkta tema „{0}“.</value></data>
+  <data name="CLI_BackdropUsage"><value>  Naudojimas: backdrop mica | acrylic</value></data>
+  <data name="CLI_BackdropSet"><value>  Pasirinktas fonas „{0}“.</value></data>
+  <data name="CLI_NoMatch"><value>  Nėra atitinkančių įrašų „{0}“.</value></data>
+  <data name="CLI_CleanEntry"><value>  {0}: {1} įrašas(-ai) · {2}</value></data>
+  <data name="CLI_CleanDone"><value>  Atlikta — {0} įrašų pašalintas(-a) · {1} atlaisvintas(-a).</value></data>
+  <data name="CLI_NothingToClean"><value>  Nėra ką valyti.</value></data>
+  <data name="CLI_AnalyzeEntry"><value>  {0}: {1} failas(-ai) · {2} registras · {3}</value></data>
+  <data name="CLI_AnalyzeTotal"><value>  Iš viso: {0} rasta.</value></data>
+  <data name="CLI_NothingFound"><value>  Nieko nerasta.</value></data>
+  <data name="CLI_ListEntries"><value>  — {0} įrašas(-ai).</value></data>
+  <data name="CLI_ListCategories"><value>  — {0} kategorija(-os).</value></data>
+  <data name="CLI_AppxUsage"><value>  Naudojimas: appx list | appx scan | appx remove &lt;name&gt; | appx remove all</value></data>
+  <data name="CLI_AppxListStart"><value>  Kuriamas įdiegtų AppX paketų sarąšas...</value></data>
+  <data name="CLI_AppxNoPackages"><value>  Paketų nerasta.</value></data>
+  <data name="CLI_AppxListDone"><value>  — {0} paketas(-ų) įdiegtas(-a). Naudokite „appx remove &lt;name&gt;“ išdiegimui.</value></data>
+  <data name="CLI_AppxScanStart"><value>  Ieškoma įdiegtų paketų...</value></data>
+  <data name="CLI_AppxNothingFound"><value>  Nieko nerasta — sistema atrodo švari.</value></data>
+  <data name="CLI_AppxScanDone"><value>  — {0} paketas(-ų) rastas(-a). Naudokite „appx remove &lt;name&gt;“ ar „appx remove all“.</value></data>
+  <data name="CLI_AppxRemoveUsage"><value>  Naudojimas: appx remove &lt;name&gt; | appx remove all</value></data>
+  <data name="CLI_AppxRemoveScanStart"><value>  Ieškoma įdiegtų paketų...</value></data>
+  <data name="CLI_AppxNothingToRemove"><value>  Nėra ką pašalinti.</value></data>
+  <data name="CLI_AppxRemoving"><value>  Šalinama {0}...</value></data>
+  <data name="CLI_AppxRemoveOk"><value>  OK  {0} pašalintas(-a).</value></data>
+  <data name="CLI_AppxRemoveErr"><value>  KLAIDA {0} — nepavyko (gali būti neįdiegta arba reikia administratoriaus teisių).</value></data>
+  <data name="CLI_AppxRemoveDone"><value>  Baigta — {0} paketas(-ų) pašalintas(-a).</value></data>
+  <data name="CLI_AppxNothingRemoved"><value>  Nieko nepašalinta.</value></data>
+  <data name="CLI_AppxDisabled"><value>  „Winappx“ DB išjungta – įjunkite ją parametruose.</value></data>
+  <data name="CLI_AppxNotFound"><value>  „Winappx.ini“ nerastas — atsisiųskite jį parametruose.</value></data>
+
+</root>
