@@ -39,6 +39,8 @@ Older versions are available below.
 https://github.com/builtbybel/FluentCleaner/releases
 
 ### Requirements
+The Windows App SDK runtime is the only thing it needs. It's a native WinUI app, so that runtime is the foundation it runs on (like .net framework back in the day). install it once and you're good, the rest ships inside FluentCleaner
+
 - Windows 10 2004 (Build 19041) or later
 - [Windows App SDK 2.0.1 ](https://aka.ms/windowsappsdk/2.0/2.0.1/windowsappruntimeinstall-x64.exe) this needs to be installed separately
 
