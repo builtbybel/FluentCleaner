@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -44,6 +44,7 @@
   <data name="MenuAnalyzeEntry.Text"><value>Analyze</value></data>
   <data name="MenuCleanEntry.Text"><value>Clean</value></data>
   <data name="MenuExplainEntry.Text"><value>Explain with AI</value></data>
+  <data name="MenuShowSource.Text"><value>Show source</value></data>
   <data name="LblAIDesc.Text"><value>Right-click any entry on the Cleaner page → Explain with AI. Powered by Groq (llama-3.3-70b) — free, no billing. Nothing is sent without your explicit action. Requires your own API key.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Once your key is saved, the Custom Cleaners page also unlocks AI — describe what to clean and it generates a ready-to-use Winapp2 entry or PowerShell script for you.</value></data>
   <data name="ResultsHeader.Text"><value>Results</value></data>
@@ -87,8 +88,20 @@
   <data name="DlgWarningMessage"><value>The selected Winapp2 entries include the following warnings:</value></data>
   <data name="DlgExplainThinking"><value>Thinking…</value></data>
   <data name="DlgExplainClose"><value>Close</value></data>
+  <data name="DlgSourceCopy"><value>Copy</value></data>
+  <data name="DlgSourceReport"><value>Report entry</value></data>
+  <data name="DlgSourceDryRun"><value>Dry Run</value></data>
+  <data name="RuleLabTitle"><value>Rule Lab — {0}</value></data>
+  <data name="DlgSourceHint"><value>Edit the rules, then Dry Run to preview the hits.</value></data>
+  <data name="DlgSourceScanning"><value>Scanning…</value></data>
+  <data name="DlgSourceNoEntry"><value>No valid entry — needs a Detect and a FileKey.</value></data>
+  <data name="DlgSourceFound"><value>{0} files · {1}</value></data>
+  <data name="DlgSourceMore"><value>… and {0} more</value></data>
+  <data name="DlgSourceError"><value>Scan failed: {0}</value></data>
+  <data name="DlgSourceCancel"><value>Cancel</value></data>
+  <data name="DlgSourceCancelled"><value>Cancelled.</value></data>
   <data name="DlgRestartTitle"><value>Restart required</value></data>
-  <data name="DlgRestartMessage"><value>FluentCleaner needs to restart to apply the new language.</value></data>
+  <data name="DlgRestartMessage"><value>FluentCleaner needs to restart to apply the changes.</value></data>
   <data name="DlgRestartNow"><value>Restart now</value></data>
   <data name="DlgRestartLater"><value>Later</value></data>
 
@@ -167,6 +180,9 @@
   <data name="LblPostCleanDesc.Text"><value>One command per line — runs sequentially after every clean pass.</value></data>
   <data name="SectionExclusions.Text"><value>Global exclusions</value></data>
   <data name="LblExclusionsDesc.Text"><value>Paths listed here are never cleaned — overrides all database rules.</value></data>
+  <data name="LnkProtectedPaths.Content"><value>View protected paths</value></data>
+  <data name="DlgProtectedTitle"><value>Protected paths</value></data>
+  <data name="DlgProtectedDesc"><value>These are always skipped, no matter what the database says. They hold browser extension data that some apps (password managers, ad blockers) break without.</value></data>
   <data name="SectionHistory.Text"><value>History</value></data>
   <data name="LblHistoryDesc.Text"><value>Track how much junk accumulates over time.</value></data>
   <data name="LblCleanHistory.Text"><value>Clean history</value></data>
@@ -227,6 +243,7 @@
   <data name="CustomEmptyHint2.Text"><value>Create a new cleaner — it will appear here automatically.</value></data>
   <data name="MenuEditEntry.Text"><value>Edit</value></data>
   <data name="MenuDeleteEntry.Text"><value>Delete</value></data>
+  <data name="MenuTestEntry.Text"><value>Test in Rule Lab</value></data>
   <data name="MenuRunEntry.Text"><value>Run</value></data>
   <data name="BtnNewCleaner.Content"><value>+ New Cleaner</value></data>
   <data name="BtnRunScript.Text"><value>Run</value></data>
@@ -264,7 +281,9 @@
   <data name="DlgNewCleanerNamePlaceholder"><value>My Cleaner</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generate with AI - describe what to clean (results may vary)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Generate</value></data>
+  <data name="DlgNewCleanerGenerateBtn"><value>Generate</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Content</value></data>
+  <data name="DlgNewCleanerTest"><value>Test in Rule Lab</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Load template</value></data>
   <data name="DlgNewCleanerTitleNew"><value>New custom cleaner</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Edit — {0}</value></data>

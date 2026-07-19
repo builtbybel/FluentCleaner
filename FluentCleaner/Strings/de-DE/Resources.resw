@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -43,6 +43,7 @@
   <data name="MenuAnalyzeEntry.Text"><value>Analysieren</value></data>
   <data name="MenuCleanEntry.Text"><value>Bereinigen</value></data>
   <data name="MenuExplainEntry.Text"><value>Mit KI erklären</value></data>
+  <data name="MenuShowSource.Text"><value>Quelle anzeigen</value></data>
   <data name="LblAIDesc.Text"><value>Rechtsklick auf einen Eintrag auf der Cleaner-Seite → Mit KI erklären. Powered by Groq (llama-3.3-70b) — kostenlos, keine Abrechnung. Es wird nichts ohne deine ausdrückliche Aktion gesendet. Erfordert einen eigenen API-Schlüssel.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Sobald dein Schlüssel gespeichert ist, schaltet die Seite „Eigene Reiniger" ebenfalls KI frei — beschreibe was bereinigt werden soll und sie generiert direkt einen fertigen Winapp2-Eintrag oder ein PowerShell-Skript.</value></data>
   <data name="ResultsHeader.Text"><value>Ergebnisse</value></data>
@@ -82,8 +83,20 @@
   <data name="DlgWarningMessage"><value>Die ausgewählten Winapp2-Einträge enthalten folgende Warnungen:</value></data>
   <data name="DlgExplainThinking"><value>Analysiere…</value></data>
   <data name="DlgExplainClose"><value>Schließen</value></data>
+  <data name="DlgSourceCopy"><value>Kopieren</value></data>
+  <data name="DlgSourceReport"><value>Eintrag melden</value></data>
+  <data name="DlgSourceDryRun"><value>Testlauf</value></data>
+  <data name="RuleLabTitle"><value>Rule Lab — {0}</value></data>
+  <data name="DlgSourceHint"><value>Regeln anpassen, dann Testlauf für die Vorschau.</value></data>
+  <data name="DlgSourceScanning"><value>Scanne…</value></data>
+  <data name="DlgSourceNoEntry"><value>Kein gültiger Eintrag — braucht ein Detect und einen FileKey.</value></data>
+  <data name="DlgSourceFound"><value>{0} Dateien · {1}</value></data>
+  <data name="DlgSourceMore"><value>… und {0} weitere</value></data>
+  <data name="DlgSourceError"><value>Scan fehlgeschlagen: {0}</value></data>
+  <data name="DlgSourceCancel"><value>Abbrechen</value></data>
+  <data name="DlgSourceCancelled"><value>Abgebrochen.</value></data>
   <data name="DlgRestartTitle"><value>Neustart erforderlich</value></data>
-  <data name="DlgRestartMessage"><value>FluentCleaner muss neu gestartet werden, um die neue Sprache zu laden.</value></data>
+  <data name="DlgRestartMessage"><value>Um die Änderungen anzuwenden, muss FluentCleaner neu gestartet werden.</value></data>
   <data name="DlgRestartNow"><value>Jetzt neu starten</value></data>
   <data name="DlgRestartLater"><value>Später</value></data>
 
@@ -158,6 +171,9 @@
   <data name="LblPostCleanDesc.Text"><value>Ein Befehl pro Zeile — wird nach jedem Bereinigungsvorgang ausgeführt.</value></data>
   <data name="SectionExclusions.Text"><value>Globale Ausschlüsse</value></data>
   <data name="LblExclusionsDesc.Text"><value>Pfade hier werden nie bereinigt — überschreibt alle Datenbankregeln.</value></data>
+  <data name="LnkProtectedPaths.Content"><value>Geschützte Pfade anzeigen</value></data>
+  <data name="DlgProtectedTitle"><value>Geschützte Pfade</value></data>
+  <data name="DlgProtectedDesc"><value>Diese werden immer übersprungen, egal was die Datenbank sagt. Sie enthalten Browser-Erweiterungsdaten, ohne die manche Apps (Passwort-Manager, Werbeblocker) kaputtgehen.</value></data>
   <data name="SectionHistory.Text"><value>Verlauf</value></data>
   <data name="LblHistoryDesc.Text"><value>Verfolge, wie viel Junk sich im Laufe der Zeit ansammelt.</value></data>
   <data name="LblCleanHistory.Text"><value>Bereinigungsverlauf</value></data>
@@ -217,6 +233,7 @@
   <data name="CustomEmptyHint2.Text"><value>Erstelle einen neuen Reiniger — er erscheint automatisch hier.</value></data>
   <data name="MenuEditEntry.Text"><value>Bearbeiten</value></data>
   <data name="MenuDeleteEntry.Text"><value>Löschen</value></data>
+  <data name="MenuTestEntry.Text"><value>Im Rule Lab testen</value></data>
   <data name="MenuRunEntry.Text"><value>Ausführen</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Neuer Reiniger</value></data>
   <data name="BtnRunScript.Text"><value>Ausführen</value></data>
@@ -252,7 +269,9 @@
   <data name="DlgNewCleanerNamePlaceholder"><value>Mein Reiniger</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Mit KI generieren – beschreibe, was bereinigt werden soll</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Generieren</value></data>
+  <data name="DlgNewCleanerGenerateBtn"><value>Generieren</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Inhalt</value></data>
+  <data name="DlgNewCleanerTest"><value>Im Rule Lab testen</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Vorlage laden</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Neuer eigener Reiniger</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Bearbeiten — {0}</value></data>
