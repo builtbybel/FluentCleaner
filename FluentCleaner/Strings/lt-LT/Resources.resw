@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -90,8 +90,18 @@
   <data name="DlgExplainClose"><value>Uždaryti</value></data>
   <data name="DlgSourceCopy"><value>Kopijuoti</value></data>
   <data name="DlgSourceReport"><value>Pranešti apie įrašą</value></data>
+  <data name="DlgSourceDryRun"><value>Bandomasis paleidimas</value></data>
+  <data name="RuleLabTitle"><value>Taisyklių laboratorija — {0}</value></data>
+  <data name="DlgSourceHint"><value>Redaguokite taisykles, panaudokite funkciją „Bandomasis paleidimas“, kad peržiūrėtumėte atitikimus.</value></data>
+  <data name="DlgSourceScanning"><value>Skenuojama…</value></data>
+  <data name="DlgSourceNoEntry"><value>Nėra galiojančio įrašo — reikia „Detect“ ir „FileKey“.</value></data>
+  <data name="DlgSourceFound"><value>{0} failas(-ų) · {1}</value></data>
+  <data name="DlgSourceMore"><value>… ir {0} daugiau</value></data>
+  <data name="DlgSourceError"><value>Skenavimas nepavyko: {0}</value></data>
+  <data name="DlgSourceCancel"><value>Atšaukti</value></data>
+  <data name="DlgSourceCancelled"><value>Atšaukta.</value></data>
   <data name="DlgRestartTitle"><value>Reikia paleisti iš naujo</value></data>
-  <data name="DlgRestartMessage"><value>Kad būtų naudojama nauja kalba, „FluentCleaner“ reikia paleisti iš naujo.</value></data>
+  <data name="DlgRestartMessage"><value>Kad pakeitimai įsigaliotų, reikia iš naujo paleisti „FluentCleaner“.</value></data>
   <data name="DlgRestartNow"><value>Paleisti iš naujo</value></data>
   <data name="DlgRestartLater"><value>Vėliau</value></data>
 
@@ -141,7 +151,7 @@
   <data name="LblTheme.Text"><value>Programos tema</value></data>
   <data name="LblThemeDesc.Text"><value>Pasirinkite, kaip „FluentCleaner“ atrodys jūsų įrenginyje.</value></data>
   <data name="ThemeSystem.Content"><value>Kaip sistemos</value></data>
-  <data name="ThemeLight.Content"><value>Įviesi</value></data>
+  <data name="ThemeLight.Content"><value>Šviesi</value></data>
   <data name="ThemeDark.Content"><value>Tamsi</value></data>
   <data name="LblLanguage.Text"><value>Kalba</value></data>
   <data name="LblLanguageDesc.Text"><value>Pakeisti sąsajos kalbą. Kad pakeitimai įsigaliotų, reikia iš naujo paleisti sistemą.</value></data>
@@ -170,6 +180,9 @@
   <data name="LblPostCleanDesc.Text"><value>Viena komanda eilutėje — vykdoma paeiliui po kiekvieno valymo ciklo.</value></data>
   <data name="SectionExclusions.Text"><value>Globalios išimtys</value></data>
   <data name="LblExclusionsDesc.Text"><value>Čia išvardyti keliai nebus valomi — tai turi viršenybę prieš visas DB taisykles.</value></data>
+  <data name="LnkProtectedPaths.Content"><value>Peržiūrėti apsaugotus kelius</value></data>
+  <data name="DlgProtectedTitle"><value>Apsaugoti keliai</value></data>
+  <data name="DlgProtectedDesc"><value>Jie visada praleidžiami, nepriklausomai nuo to, ką rodo duomenų bazė. Juose saugomi naršyklės plėtinių duomenys, be kurių kai kurios programos (slaptažodžių tvarkyklės, reklamų blokatoriai) neveikia.</value></data>
   <data name="SectionHistory.Text"><value>Istorija</value></data>
   <data name="LblHistoryDesc.Text"><value>Stebėkite, kiek šiukšlių susikaupia laikui bėgant.</value></data>
   <data name="LblCleanHistory.Text"><value>Valyti istoriją</value></data>
@@ -230,6 +243,7 @@
   <data name="CustomEmptyHint2.Text"><value>Sukurkite naują valytuvą – jis bus rodomas čia automatiškai.</value></data>
   <data name="MenuEditEntry.Text"><value>Redaguoti</value></data>
   <data name="MenuDeleteEntry.Text"><value>Pašalinti</value></data>
+  <data name="MenuTestEntry.Text"><value>Tikrinti Taisyklių laboratorijoje</value></data>
   <data name="MenuRunEntry.Text"><value>Vykdyti</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Naujas valytuvas</value></data>
   <data name="BtnRunScript.Text"><value>Vykdyti</value></data>
@@ -267,7 +281,9 @@
   <data name="DlgNewCleanerNamePlaceholder"><value>Mano valytuvas</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generuoti su DI - aprašykite, ką valyti (rezultatai gali skirtis)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Generuoti</value></data>
+  <data name="DlgNewCleanerGenerateBtn"><value>Generuoti</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Turinys</value></data>
+  <data name="DlgNewCleanerTest"><value>Tikrinti Taisyklių laboratorijoje</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Įkelti šabloną</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Naujas custom cleaner</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Redaguoti — {0}</value></data>
