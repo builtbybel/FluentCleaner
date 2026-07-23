@@ -1,3 +1,15 @@
+> [!CAUTION]
+> ## ⚠️ Beware of Fake FluentCleaner Websites
+>
+> **FluentCleaner has no affiliation with `fluentcleaner.org`.**
+>
+> The **only official source** for FluentCleaner is **this GitHub repository**. I do not own, operate, or endorse that website or any other third-party download site.
+>
+> **For your safety, only download FluentCleaner from the official releases published here on GitHub.**
+>
+> A polished website doesn't make it official, **always verify the source. 🛡️**
+---
+
 # FluentCleaner
 ### modern, transparent, no spyware, no scareware, no dark patterns, no upsell garbage, no fake registry magic
 
