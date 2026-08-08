@@ -134,7 +134,7 @@
   <data name="St_ExcludedFolder"><value>Praleista: {0}</value></data>
 
   <!-- CleaningService progress messages -->
-  <data name="Prog_Deleted"><value>Ištrinta: {0}</value></data>
+  <data name="Prog_Deleted"><value>Pašalinta: {0}</value></data>
   <data name="Prog_Registry"><value>Registras: {0}</value></data>
 
   <!-- ============================================================
@@ -154,7 +154,7 @@
   <data name="ThemeLight.Content"><value>Šviesi</value></data>
   <data name="ThemeDark.Content"><value>Tamsi</value></data>
   <data name="LblLanguage.Text"><value>Kalba</value></data>
-  <data name="LblLanguageDesc.Text"><value>Pakeisti sąsajos kalbą. Kad pakeitimai įsigaliotų, reikia iš naujo paleisti sistemą.</value></data>
+  <data name="LblLanguageDesc.Text"><value>Pakeisti sąsajos kalbą. Kad pakeitimai įsigaliotų, reikia iš naujo paleisti programą.</value></data>
   <data name="St_LangAuto"><value>Kaip sistemos</value></data>
   <data name="SectionDatabase.Text"><value>Duomenų bazė</value></data>
   <data name="LblDatabaseDesc.Text"><value>Pasirinkite, kurie įrašų sąrašai bus įkelti skenavimui ir valymui.</value></data>
@@ -246,7 +246,7 @@
   <data name="Scheduler_StatusInactive"><value>✗ Nesuplanuota.</value></data>
   <data name="Scheduler_Applying"><value>Pritaikoma…</value></data>
   <data name="Scheduler_ErrorExecutablePath"><value>Nepavyko nustatyti kelio iki „FluentCleaner“ vykdomojo failo.</value></data>
-  <data name="Scheduler_ResultCreated"><value>Supalnuota užduotis sukurta.</value></data>
+  <data name="Scheduler_ResultCreated"><value>Suplanuota užduotis sukurta.</value></data>
   <data name="Scheduler_ResultNothingToRemove"><value>Nėra ką pašalinti.</value></data>
   <data name="Scheduler_ResultRemoved"><value>Suplanuota užduotis pašalinta.</value></data>
   <data name="Scheduler_ErrorSchtasks"><value>„Windows“ užduočių planavimo priemonės klaida.</value></data>
@@ -258,28 +258,28 @@
   <!-- ============================================================
        CUSTOM PAGE — static XAML strings (x:Uid)
   ============================================================ -->
-  <data name="CustomTitle.Text"><value>Naudotojo valytuvai</value></data>
-  <data name="CustomEmptyHint.Text"><value>Dar nėra naudotojo valytuvų.</value></data>
-  <data name="CustomEmptyHint2.Text"><value>Sukurkite naują valytuvą – jis bus rodomas čia automatiškai.</value></data>
+  <data name="CustomTitle.Text"><value>Naudotojo valytojai</value></data>
+  <data name="CustomEmptyHint.Text"><value>Dar nėra naudotojo valytojų.</value></data>
+  <data name="CustomEmptyHint2.Text"><value>Sukurkite naują valytoją – jis bus rodomas čia automatiškai.</value></data>
   <data name="MenuEditEntry.Text"><value>Redaguoti</value></data>
   <data name="MenuDeleteEntry.Text"><value>Pašalinti</value></data>
   <data name="MenuTestEntry.Text"><value>Tikrinti Taisyklių laboratorijoje</value></data>
   <data name="MenuRunEntry.Text"><value>Vykdyti</value></data>
-  <data name="BtnNewCleaner.Content"><value>+ Naujas valytuvas</value></data>
+  <data name="BtnNewCleaner.Content"><value>+ Naujas valytojas</value></data>
   <data name="BtnRunScript.Text"><value>Vykdyti</value></data>
 
   <!-- Custom Page — code strings -->
-  <data name="St_CustomStatus"><value>{0} valytuvas(-ai) · {1} įjungta</value></data>
+  <data name="St_CustomStatus"><value>{0} valytojas(-ai) · {1} įjungta</value></data>
   <data name="St_CustomStatusScripts"><value>{0} skriptas(-ai)</value></data>
-  <data name="St_CustomMenuNew"><value>Naujas naudotojo valytuvas</value></data>
+  <data name="St_CustomMenuNew"><value>Naujas naudotojo valytojas</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Atverti pasirinktinį aplanką</value></data>
   <data name="St_CustomMenuReddit"><value>Klausti „Reddit“</value></data>
   <data name="St_CustomMenuNeowin"><value>„Neowin“ forumai</value></data>
   <data name="St_CustomMenuDeskmodder"><value>„Deskmodder.de“</value></data>
-  <data name="St_CustomMenuShare"><value>Pasidalinti valytuvu „GitHub“</value></data>
+  <data name="St_CustomMenuShare"><value>Pasidalinti valytoju „GitHub“</value></data>
   <data name="St_CustomToggleFailed"><value>Perjungti nepavyko: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Pašalinti „{0}“?</value></data>
-  <data name="St_CustomDeleteMessage"><value>Tai visam laikui pašalins naudotojo valytuvą.</value></data>
+  <data name="St_CustomDeleteMessage"><value>Tai visam laikui pašalins naudotojo valytoją.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Pašalinti</value></data>
   <data name="St_CustomDeleteCancel"><value>Atšaukti</value></data>
   <data name="St_CustomRunning"><value>Vykdoma {0}...</value></data>
@@ -298,14 +298,14 @@
   <data name="DlgNewCleanerTypeIni.Content"><value>„Winapp2“ įrašas (.ini)</value></data>
   <data name="DlgNewCleanerTypePs1.Content"><value>„PowerShell“ skriptas (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Pavadinimas</value></data>
-  <data name="DlgNewCleanerNamePlaceholder"><value>Mano valytuvas</value></data>
+  <data name="DlgNewCleanerNamePlaceholder"><value>Mano valytojas</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generuoti su DI - aprašykite, ką valyti (rezultatai gali skirtis)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Generuoti</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Generuoti</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Turinys</value></data>
   <data name="DlgNewCleanerTest"><value>Tikrinti Taisyklių laboratorijoje</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Įkelti šabloną</value></data>
-  <data name="DlgNewCleanerTitleNew"><value>Naujas custom cleaner</value></data>
+  <data name="DlgNewCleanerTitleNew"><value>Naujas naudotojo valytojas</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Redaguoti — {0}</value></data>
   <data name="DlgNewCleanerGenerating"><value>…</value></data>
 
