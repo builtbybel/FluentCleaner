@@ -67,10 +67,7 @@ public class DetectionService
     {
         try
         {
-            var expanded = _expander.ExpandVariables(rawPath);
-            if (expanded.Contains('*') || expanded.Contains('?'))
-                return _expander.ResolvePaths(rawPath).Count > 0;
-            return File.Exists(expanded) || Directory.Exists(expanded);
+            return _expander.ResolvePaths(rawPath).Any(p => File.Exists(p) || Directory.Exists(p));
         }
         catch { return false; }
     }
