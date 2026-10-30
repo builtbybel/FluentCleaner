@@ -24,6 +24,7 @@
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Gostando do FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Se este aplicativo está lhe ajudando, apoie o seu desenvolvimento.</value></data>
+  <data name="Donation_OtherAmount"><value>Outro valor…</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
   <data name="BtnDonateGitHub.Content"><value>Estrela no GitHub</value></data>
@@ -187,10 +188,19 @@
   <data name="LblHistoryDesc.Text"><value>Acompanhe quanto lixo se acumula ao longo do tempo.</value></data>
   <data name="LblCleanHistory.Text"><value>Histórico de limpeza</value></data>
   <data name="BtnClearHistory.Content"><value>Limpar histórico</value></data>
+  <data name="SectionScheduler.Text"><value>Limpeza programada</value></data>
+  <data name="LblSchedulerDesc.Text"><value>Executa a mesma limpeza que /AUTO através do agendador de tarefas do Windows. A tarefa é executada apenas enquanto você estiver logado e não requer direitos de administrador.</value></data>
+  <data name="SchedulerEnabled.Header"><value>Ativar limpeza agendada</value></data>
+  <data name="SchedulerFrequency.Header"><value>Frequência</value></data>
+  <data name="SchedulerTime.Header"><value>Horário</value></data>
+  <data name="SchedulerShutdown.Content"><value>Desligar o PC depois</value></data>
+  <data name="SchedulerApply.Content"><value>Aplicar</value></data>
+  <data name="SchedulerOpen.Content"><value>Abrir Agendador de Tarefas do Windows</value></data>
   <data name="SectionAI.Text"><value>Explicações da IA</value></data>
   <data name="LblAIOptIn.Text"><value>aceitar</value></data>
   <data name="LblAIPreview.Text"><value>prévia</value></data>
   <data name="BtnAIDiscussion.Content"><value>Ideias? Participe da discussão →</value></data>
+  <data name="CboAIProvider.Header"><value>Provedor</value></data>
   <data name="BtnSaveApiKey.Content"><value>Salvar</value></data>
   <data name="BtnTestApiKey.Content"><value>Testar</value></data>
   <data name="BtnGetApiKey.Content"><value>Obter chave</value></data>
@@ -230,6 +240,17 @@
   <data name="St_MenuCheckUpdates"><value>Verificar atualizações</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Insira uma chave API primeiro.</value></data>
   <data name="St_ApiKeyTesting"><value>Testando…</value></data>
+  <data name="Scheduler_FreqDaily"><value>Diariamente</value></data>
+  <data name="Scheduler_FreqWeekly"><value>Semanalmente (segunda-feira)</value></data>
+  <data name="Scheduler_FreqLogon"><value>No logon</value></data>
+  <data name="Scheduler_StatusActive"><value>✓ A tarefa agendada está ativa.</value></data>
+  <data name="Scheduler_StatusInactive"><value>✗ Não agendado.</value></data>
+  <data name="Scheduler_Applying"><value>Aplicando…</value></data>
+  <data name="Scheduler_ErrorExecutablePath"><value>Não foi possível resolver o caminho do executável do FluentCleaner.</value></data>
+  <data name="Scheduler_ResultCreated"><value>Tarefa agendada criada.</value></data>
+  <data name="Scheduler_ResultNothingToRemove"><value>Nada para remover.</value></data>
+  <data name="Scheduler_ResultRemoved"><value>Tarefa agendada removida.</value></data>
+  <data name="Scheduler_ErrorSchtasks"><value>Agendador de Tarefas do Windows falhou.</value></data>
   <data name="St_ExportSuccess"><value>Configurações exportadas para {0}</value></data>
   <data name="St_ExportFailed"><value>Falha ao exportar: {0}</value></data>
   <data name="St_ImportSuccess"><value>Configurações importadas de {0}</value></data>
@@ -283,8 +304,8 @@
   <data name="DlgNewCleanerGenerate.Content"><value>Gerar</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Gerar</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Conteúdo</value></data>
-  <data name="DlgNewCleanerLoadTemplate.Content"><value>Carregar modelo</value></data>
   <data name="DlgNewCleanerTest"><value>Testar no Laboratório de Regras</value></data>
+  <data name="DlgNewCleanerLoadTemplate.Content"><value>Carregar modelo</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Novo limpador personalizado</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Editar — {0}</value></data>
   <data name="DlgNewCleanerGenerating"><value>…</value></data>
@@ -338,5 +359,32 @@
   <data name="CLI_AppxNothingRemoved"><value>  Nada foi removido.</value></data>
   <data name="CLI_AppxDisabled"><value>  O banco de dados Winappx está desativado — ative-o em Configurações.</value></data>
   <data name="CLI_AppxNotFound"><value>  Winappx.ini não encontrado — baixe-o em Configurações.</value></data>
+
+  <!-- Settings navigator / Cookie Manager -->
+  <data name="SettingsNavGeneral.Content"><value>Geral</value></data>
+  <data name="SettingsNavCookies.Content"><value>Cookies</value></data>
+  <data name="SettingsNavExclusions.Content"><value>Exclusões</value></data>
+  <data name="SettingsNavTasks.Content"><value>Tarefas pós-limpeza</value></data>
+  <data name="SettingsNavHistory.Content"><value>Histórico</value></data>
+  <data name="SettingsNavAI.Content"><value>IA</value></data>
+  <data name="SettingsNavScheduler.Content"><value>Agendador</value></data>
+  <data name="SettingsNavAbout.Content"><value>Sobre</value></data>
+  <data name="Cookies_Title"><value>Cookies</value></data>
+  <data name="Cookies_Subtitle"><value>Selecionar os cookies de sites que serão mantidos pela limpeza do navegador</value></data>
+  <data name="Cookies_Available"><value>Cookies encontrados</value></data>
+  <data name="Cookies_Kept"><value>Cookies para manter</value></data>
+  <data name="Cookies_Search"><value>Pesquisar</value></data>
+  <data name="Cookies_Refresh"><value>Atualizar</value></data>
+  <data name="Cookies_Scanning"><value>Lendo cookies do navegador…</value></data>
+  <data name="Cookies_Status"><value>{0} sites encontrados em {1} perfis de navegador.</value></data>
+  <data name="Cookies_StatusUnavailable"><value>{0} sites encontrados em {1} perfis do navegador · {2} indisponíveis. Feche os navegadores e atualize.</value></data>
+  <data name="Cookies_DeleteUnavailable"><value>{0} perfis do navegador não puderam ser alterados. Feche os navegadores e tente novamente.</value></data>
+  <data name="Cookies_MiKeep"><value>Manter</value></data>
+  <data name="Cookies_MiDelete"><value>Excluir</value></data>
+  <data name="Cookies_MiRemove"><value>Remover</value></data>
+  <data name="Cookies_MiImport"><value>Importar...</value></data>
+  <data name="Cookies_MiExport"><value>Exportar...</value></data>
+  <data name="Cookies_TextFiles"><value>Arquivos de texto</value></data>
+  <data name="Cleaning_CleanedCookies"><value>{0} cookies limpos: {1}</value></data>
 
 </root>
