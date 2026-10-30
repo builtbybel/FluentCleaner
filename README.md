@@ -1,3 +1,5 @@
+[<a href="README.md">English</a>]| [<a href="README-PL.md">Polski</a>]
+
 > [!CAUTION]
 > ## ⚠️ Beware of Fake FluentCleaner Websites
 >
