@@ -185,7 +185,7 @@
   <data name="DlgProtectedTitle"><value>受保护路径</value></data>
   <data name="DlgProtectedDesc"><value>无论数据库如何设定，这些路径始终会被跳过。它们包含浏览器扩展程序的数据；若缺少这些数据，某些应用程序（如密码管理器、广告拦截器）可能会无法正常运行。</value></data>
   <data name="SectionHistory.Text"><value>历史记录</value></data>
-  <data name="LblHistoryDe​​sc.Text"><value>追踪随时间推移积累的垃圾文件量。</value></data>
+  <data name="LblHistoryDesc.Text"><value>追踪随时间推移积累的垃圾文件量。</value></data>
   <data name="LblCleanHistory.Text"><value>清理历史记录</value></data>
   <data name="BtnClearHistory.Content"><value>清除历史记录</value></data>
   <data name="SectionScheduler.Text"><value>计划清理</value></data>
@@ -224,7 +224,7 @@
   <data name="St_HistoryNone"><value>尚无运行记录</value></data>
   <data name="St_HistorySummary"><value>{0} 次运行 · 共释放 {1}</value></data>
   <data name="St_HistoryItems"><value>{0} 个项目</value></data>
-  <data name="St_FileNotFound">​​<value>找不到文件：{0}</value></data>
+  <data name="St_FileNotFound"><value>找不到文件：{0}</value></data>
   <data name="St_CustomPathSaved"><value>自定义路径已保存。</value></data>
   <data name="St_Download"><value>下载</value></data>
   <data name="St_Downloading"><value>正在下载 {0}…</value></data>
@@ -238,7 +238,7 @@
   <data name="St_UpToDateMessage"><value>版本 {0} 为最新版本。</value></data>
   <data name="St_MenuUpdate"><value>⬆ 有可用更新 — {0}</value></data>
   <data name="St_MenuCheckUpdates"><value>检查更新</value></data>
-  <data name="St_ApiKeyMissing"><value>⚠ 请先输入 API 密钥。</value>
+  <data name="St_ApiKeyMissing"><value>⚠ 请先输入 API 密钥。</value></data>
   <data name="St_ApiKeyTesting"><value>正在测试...</value></data>
   <data name="Scheduler_FreqDaily"><value>每天</value></data>
   <data name="Scheduler_FreqWeekly"><value>每周（周一）</value></data>
