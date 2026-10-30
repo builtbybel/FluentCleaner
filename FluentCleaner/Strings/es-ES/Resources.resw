@@ -1,0 +1,1096 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LblTranslatorCredit" xml:space="preserve">
+    <value>Traducción: Damián Roig (España)</value>
+  </data>
+  <data name="NavCleaner.Content" xml:space="preserve">
+    <value>Limpiador</value>
+  </data>
+  <data name="NavTerminal.Content" xml:space="preserve">
+    <value>Terminal</value>
+  </data>
+  <data name="NavCustom.Content" xml:space="preserve">
+    <value>Personalizado</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Acciones (página)</value>
+  </data>
+  <data name="DonationBanner.Title" xml:space="preserve">
+    <value>¿Le gusta FluentCleaner?</value>
+  </data>
+  <data name="DonationBanner.Subtitle" xml:space="preserve">
+    <value>Si esta aplicación le ahorra tiempo, considere la posibilidad de apoyar su desarrollo.</value>
+  </data>
+  <data name="BtnDonatePayPal.Content" xml:space="preserve">
+    <value>PayPal</value>
+  </data>
+  <data name="BtnDonateKoFi.Content" xml:space="preserve">
+    <value>Ko-fi</value>
+  </data>
+  <data name="BtnDonateGitHub.Content" xml:space="preserve">
+    <value>Estrella en GitHub</value>
+  </data>
+  <data name="BtnDonateLater.Content" xml:space="preserve">
+    <value>Quizá más tarde</value>
+  </data>
+  <data name="St_NoActions" xml:space="preserve">
+    <value>No hay acciones para esta página.</value>
+  </data>
+  <data name="CleanerHint.Text" xml:space="preserve">
+    <value>Winapp2.ini se carga automáticamente al iniciar el sistema.</value>
+  </data>
+  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Acciones (categoría)</value>
+  </data>
+  <data name="MenuSelectAll.Text" xml:space="preserve">
+    <value>Seleccionar todo</value>
+  </data>
+  <data name="MenuSelectNone.Text" xml:space="preserve">
+    <value>No seleccionar nada</value>
+  </data>
+  <data name="MenuSelectDefaults.Text" xml:space="preserve">
+    <value>Seleccionar predeterminados</value>
+  </data>
+  <data name="MenuAnalyzeCategory.Text" xml:space="preserve">
+    <value>Analizar categoría</value>
+  </data>
+  <data name="MenuCleanCategory.Text" xml:space="preserve">
+    <value>Limpiar categoría</value>
+  </data>
+  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Acciones (entrada)</value>
+  </data>
+  <data name="MenuAnalyzeEntry.Text" xml:space="preserve">
+    <value>Analizar</value>
+  </data>
+  <data name="MenuCleanEntry.Text" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="MenuExplainEntry.Text" xml:space="preserve">
+    <value>Explicar con IA</value>
+  </data>
+  <data name="MenuShowSource.Text" xml:space="preserve">
+    <value>Mostrar fuente (regla)</value>
+  </data>
+  <data name="LblAIDesc.Text" xml:space="preserve">
+    <value>Clic → botón […] → Explicar con IA, en cualquier entrada de la página Limpiador.
+Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del usuario. Requiere clave API propia.</value>
+  </data>
+  <data name="LblAICustomHint.Text" xml:space="preserve">
+    <value>💡 Una vez guardada la clave, la página Limpiadores personalizados también activa la IA — describir lo que se desea limpiar y 'Generar' una entrada Winapp2 o un script de PowerShell listo para usar.</value>
+  </data>
+  <data name="ResultsHeader.Text" xml:space="preserve">
+    <value>Resultados</value>
+  </data>
+  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Volver a resultados</value>
+  </data>
+  <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Eliminar archivos</value>
+  </data>
+  <data name="MenuExcludeFile.Text" xml:space="preserve">
+    <value>Excluir archivo</value>
+  </data>
+  <data name="MenuExcludeFolder.Text" xml:space="preserve">
+    <value>Excluir carpeta</value>
+  </data>
+  <data name="BtnAnalyze.Content" xml:space="preserve">
+    <value>Analizar</value>
+  </data>
+  <data name="BtnCancel.Content" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="BtnRunCleaner.Content" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="St_MenuSelectAll" xml:space="preserve">
+    <value>Seleccionar todo</value>
+  </data>
+  <data name="St_MenuSelectNone" xml:space="preserve">
+    <value>No seleccionar nada</value>
+  </data>
+  <data name="St_MenuSelectDefaults" xml:space="preserve">
+    <value>Seleccionar predeterminados</value>
+  </data>
+  <data name="St_MenuExpandAll" xml:space="preserve">
+    <value>Expandir todo</value>
+  </data>
+  <data name="St_MenuCollapseAll" xml:space="preserve">
+    <value>Colapsar todo</value>
+  </data>
+  <data name="St_MenuSortDesc" xml:space="preserve">
+    <value>Ordenar por tamaño ↓</value>
+  </data>
+  <data name="St_MenuSortAsc" xml:space="preserve">
+    <value>Ordenar por tamaño ↑</value>
+  </data>
+  <data name="St_MenuRefresh" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="DetailHeaderFiles.Text" xml:space="preserve">
+    <value>Archivos</value>
+  </data>
+  <data name="DetailHeaderRegistry.Text" xml:space="preserve">
+    <value>Registro</value>
+  </data>
+  <data name="SuffixFiles" xml:space="preserve">
+    <value>archivos</value>
+  </data>
+  <data name="SuffixRegistry" xml:space="preserve">
+    <value>registro</value>
+  </data>
+  <data name="SuffixFilesSingular" xml:space="preserve">
+    <value>archivo(s)</value>
+  </data>
+  <data name="SuffixRegistryItems" xml:space="preserve">
+    <value>entrada(s) del Registro</value>
+  </data>
+  <data name="LabelCleaningComplete" xml:space="preserve">
+    <value>Limpieza finalizada.</value>
+  </data>
+  <data name="DlgBrowsersTitle" xml:space="preserve">
+    <value>Navegadores en ejecución</value>
+  </data>
+  <data name="DlgBrowsersContinue" xml:space="preserve">
+    <value>Continuar de todos modos</value>
+  </data>
+  <data name="DlgBrowsersCancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="DlgBrowsersMessage" xml:space="preserve">
+    <value>Cerrar estas aplicaciones para obtener mejores resultados:\n{0}\n\nLos navegadores abiertos bloquean los archivos de caché e historial — estos se omitirán durante la limpieza.</value>
+  </data>
+  <data name="DlgWarningTitle" xml:space="preserve">
+    <value>Advertencia de limpieza</value>
+  </data>
+  <data name="DlgWarningContinue" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="DlgWarningCancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="DlgWarningMessage" xml:space="preserve">
+    <value>Las entradas seleccionadas de Winapp2 incluyen las siguientes advertencias:</value>
+  </data>
+  <data name="DlgExplainThinking" xml:space="preserve">
+    <value>Pensando…</value>
+  </data>
+  <data name="DlgExplainClose" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="DlgSourceCopy" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="DlgSourceReport" xml:space="preserve">
+    <value>Informar</value>
+  </data>
+  <data name="DlgSourceDryRun" xml:space="preserve">
+    <value>Prueba</value>
+  </data>
+  <data name="RuleLabTitle" xml:space="preserve">
+    <value>Laboratorio de reglas — {0}</value>
+  </data>
+  <data name="DlgSourceHint" xml:space="preserve">
+    <value>Editar reglas, en su caso, y luego ejecutar 'Prueba' para detectar los elementos afectados.</value>
+  </data>
+  <data name="DlgSourceScanning" xml:space="preserve">
+    <value>Analizando…</value>
+  </data>
+  <data name="DlgSourceNoEntry" xml:space="preserve">
+    <value>Entrada/Regla no válida — se necesitan claves tipo Detect y FileKey.</value>
+  </data>
+  <data name="DlgSourceFound" xml:space="preserve">
+    <value>{0} archivos · {1}</value>
+  </data>
+  <data name="DlgSourceMore" xml:space="preserve">
+    <value>… y {0} más</value>
+  </data>
+  <data name="DlgSourceError" xml:space="preserve">
+    <value>Error de análisis: {0}</value>
+  </data>
+  <data name="DlgSourceCancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="DlgSourceCancelled" xml:space="preserve">
+    <value>Cancelado.</value>
+  </data>
+  <data name="DlgRestartTitle" xml:space="preserve">
+    <value>Reinicio requerido</value>
+  </data>
+  <data name="DlgRestartMessage" xml:space="preserve">
+    <value>Reiniciar FluentCleaner para para aplicar los cambios.</value>
+  </data>
+  <data name="DlgRestartNow" xml:space="preserve">
+    <value>Reiniciar ahora</value>
+  </data>
+  <data name="DlgRestartLater" xml:space="preserve">
+    <value>Más tarde</value>
+  </data>
+  <data name="St_Loading" xml:space="preserve">
+    <value>Cargando Winapp2.ini...</value>
+  </data>
+  <data name="St_SearchFound" xml:space="preserve">
+    <value>{0} entradas coincidentes.</value>
+  </data>
+  <data name="St_SearchNone" xml:space="preserve">
+    <value>No hay entradas coincidentes.</value>
+  </data>
+  <data name="St_ParsingDatabases" xml:space="preserve">
+    <value>Analizando bases de datos...</value>
+  </data>
+  <data name="St_AnalysisReady" xml:space="preserve">
+    <value>Análisis listo — {0} aplicaciones encontradas en {1} entradas.</value>
+  </data>
+  <data name="St_NothingSelected" xml:space="preserve">
+    <value>No hay nada seleccionado.</value>
+  </data>
+  <data name="St_Scanning" xml:space="preserve">
+    <value>Analizando...</value>
+  </data>
+  <data name="St_ScanComplete" xml:space="preserve">
+    <value>Análisis finalizado — {0} archivos, {1} entradas del Registro ({2})</value>
+  </data>
+  <data name="St_ScanCancelled" xml:space="preserve">
+    <value>Análisis cancelado.</value>
+  </data>
+  <data name="St_Cleaning" xml:space="preserve">
+    <value>Limpiando...</value>
+  </data>
+  <data name="St_CleanDone" xml:space="preserve">
+    <value>Finalizado — {0} liberados · {1} omitidos (archivos en uso)</value>
+  </data>
+  <data name="St_CleanDoneSimple" xml:space="preserve">
+    <value>Finalizado — {0} elementos eliminados · {1} liberados.</value>
+  </data>
+  <data name="St_CleanCancelledBytes" xml:space="preserve">
+    <value>Limpieza cancelada — {0} liberados hasta ahora.</value>
+  </data>
+  <data name="St_CleanCancelled" xml:space="preserve">
+    <value>Limpieza cancelada.</value>
+  </data>
+  <data name="St_EntryScanned" xml:space="preserve">
+    <value>{0}: {1} archivos, {2} entradas del Registro</value>
+  </data>
+  <data name="St_EntryNothingToClean" xml:space="preserve">
+    <value>{0}: nada que limpiar.</value>
+  </data>
+  <data name="St_EntryCleanDone" xml:space="preserve">
+    <value>{0}: {1} elementos eliminados · {2} liberados.</value>
+  </data>
+  <data name="St_CategoryScanning" xml:space="preserve">
+    <value>Analizando {0}...</value>
+  </data>
+  <data name="St_CategoryScanned" xml:space="preserve">
+    <value>{0} analizado — {1} entradas.</value>
+  </data>
+  <data name="St_CategoryCleaning" xml:space="preserve">
+    <value>Limpiando {0}...</value>
+  </data>
+  <data name="St_CategoryCleanDone" xml:space="preserve">
+    <value>{0}: {1} elementos eliminados · {2} liberados.</value>
+  </data>
+  <data name="St_EntryScanningProgress" xml:space="preserve">
+    <value>Analizando {0}...</value>
+  </data>
+  <data name="St_ExcludedFile" xml:space="preserve">
+    <value>Excluidos: {0}</value>
+  </data>
+  <data name="St_ExcludedFolder" xml:space="preserve">
+    <value>Excluidos: {0}</value>
+  </data>
+  <data name="Prog_Deleted" xml:space="preserve">
+    <value>Eliminado: {0}</value>
+  </data>
+  <data name="Prog_Registry" xml:space="preserve">
+    <value>Registro: {0}</value>
+  </data>
+  <data name="SettingsTitle.Text" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="DonationBar.Title" xml:space="preserve">
+    <value>Apoyar a FluentCleaner</value>
+  </data>
+  <data name="DonationBar.Message" xml:space="preserve">
+    <value>Elegir cantidad y divisa para PayPal, o apoyar el proyecto a través de Ko-fi. ♥</value>
+  </data>
+  <data name="BtnDonate.Content" xml:space="preserve">
+    <value>Apoyar el proyecto</value>
+  </data>
+  <data name="MenuDonatePayPal.Text" xml:space="preserve">
+    <value>Donar a través de PayPal</value>
+  </data>
+  <data name="MenuDonateKoFi.Text" xml:space="preserve">
+    <value>Donar a través de Ko-fi</value>
+  </data>
+  <data name="SectionAppearance.Text" xml:space="preserve">
+    <value>Apariencia</value>
+  </data>
+  <data name="LblTheme.Text" xml:space="preserve">
+    <value>Tema de la aplicación</value>
+  </data>
+  <data name="LblThemeDesc.Text" xml:space="preserve">
+    <value>Elegir el aspecto que tendrá FluentCleaner en el dispositivo.</value>
+  </data>
+  <data name="ThemeSystem.Content" xml:space="preserve">
+    <value>Predeterminado del sistema</value>
+  </data>
+  <data name="ThemeLight.Content" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="ThemeDark.Content" xml:space="preserve">
+    <value>Oscuro</value>
+  </data>
+  <data name="LblLanguage.Text" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="LblLanguageDesc.Text" xml:space="preserve">
+    <value>Elegir el idioma de visualización. Es necesario reiniciar para aplicar.</value>
+  </data>
+  <data name="St_LangAuto" xml:space="preserve">
+    <value>Predeterminado del sistema</value>
+  </data>
+  <data name="SectionDatabase.Text" xml:space="preserve">
+    <value>Base de datos</value>
+  </data>
+  <data name="LblDatabaseDesc.Text" xml:space="preserve">
+    <value>Seleccionar qué listas de entrada cargar para las rutinas de análisis y limpieza.</value>
+  </data>
+  <data name="LblWinapp2.Text" xml:space="preserve">
+    <value>Winapp2</value>
+  </data>
+  <data name="BtnUpdateWinapp2.Content" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="LblWinapp3.Text" xml:space="preserve">
+    <value>Winapp3</value>
+  </data>
+  <data name="LblWinapp3Tag.Text" xml:space="preserve">
+    <value>experimental</value>
+  </data>
+  <data name="LblWinapp3Desc.Text" xml:space="preserve">
+    <value>  —  entradas más agresivas, utilizar bajo su propio riesgo.</value>
+  </data>
+  <data name="BtnDownloadWinapp3.Content" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="BtnUpdateWinapp3.Content" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="LblWinappx.Text" xml:space="preserve">
+    <value>Winappx</value>
+  </data>
+  <data name="LblWinappxTag.Text" xml:space="preserve">
+    <value>bloatware</value>
+  </data>
+  <data name="LblWinappxDesc.Text" xml:space="preserve">
+    <value>  —  AppX / entradas de bloatware para desinstalar en terminal debloater.</value>
+  </data>
+  <data name="BtnDownloadWinappx.Content" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="BtnUpdateWinappx.Content" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="TxtCustomPath.PlaceholderText" xml:space="preserve">
+    <value>Ruta de base de datos personalizada (.ini)</value>
+  </data>
+  <data name="BtnBrowse.Content" xml:space="preserve">
+    <value>Buscar…</value>
+  </data>
+  <data name="BtnApplyPath.Content" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Borrar base de datos personalizada</value>
+  </data>
+  <data name="RestartBar.Title" xml:space="preserve">
+    <value>Reinicio requerido</value>
+  </data>
+  <data name="RestartBar.Message" xml:space="preserve">
+    <value>Reiniciar FluentCleaner para cargar la base de datos actualizada.</value>
+  </data>
+  <data name="SectionPostClean.Text" xml:space="preserve">
+    <value>Tareas posteriores a la limpieza</value>
+  </data>
+  <data name="LblPostCleanDesc.Text" xml:space="preserve">
+    <value>Un comando por línea — se ejecuta secuencialmente después de cada limpieza.</value>
+  </data>
+  <data name="SectionExclusions.Text" xml:space="preserve">
+    <value>Exclusiones globales</value>
+  </data>
+  <data name="LblExclusionsDesc.Text" xml:space="preserve">
+    <value>Las rutas listadas aquí nunca se limpian — prevalecen sobre cualquier regla de la base de datos.</value>
+  </data>
+  <data name="LnkProtectedPaths.Content" xml:space="preserve">
+    <value>Ver rutas protegidas</value>
+  </data>
+  <data name="DlgProtectedTitle" xml:space="preserve">
+    <value>Rutas protegidas</value>
+  </data>
+  <data name="DlgProtectedDesc" xml:space="preserve">
+    <value>Siempre se omiten, independientemente de lo que indique la base de datos. Contienen datos de extensiones del navegador sin los cuales algunas aplicaciones (gestores de contraseñas, bloqueadores de anuncios) dejan de funcionar.</value>
+  </data>
+  <data name="SectionHistory.Text" xml:space="preserve">
+    <value>Historial</value>
+  </data>
+  <data name="LblHistoryDesc.Text" xml:space="preserve">
+    <value>Realiza un seguimiento de la cantidad de basura que se acumula con el tiempo.</value>
+  </data>
+  <data name="LblCleanHistory.Text" xml:space="preserve">
+    <value>Historial de limpieza</value>
+  </data>
+  <data name="BtnClearHistory.Content" xml:space="preserve">
+    <value>Limpiar historial</value>
+  </data>
+  <data name="SectionScheduler.Text" xml:space="preserve">
+    <value>Limpieza programada</value>
+  </data>
+  <data name="LblSchedulerDesc.Text" xml:space="preserve">
+    <value>Realiza la misma limpieza que /AUTO a través del Programador de tareas de Windows. Solo se ejecuta mientras se esté conectado y no se necesitan derechos de administrador.</value>
+  </data>
+  <data name="SchedulerEnabled.Header" xml:space="preserve">
+    <value>Activar limpieza programada</value>
+  </data>
+  <data name="SchedulerFrequency.Header" xml:space="preserve">
+    <value>Frecuencia</value>
+  </data>
+  <data name="SchedulerTime.Header" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="SchedulerShutdown.Content" xml:space="preserve">
+    <value>Apagar el equipo al finalizar</value>
+  </data>
+  <data name="SchedulerApply.Content" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="SchedulerOpen.Content" xml:space="preserve">
+    <value>Abrir Programador de tareas de Windows</value>
+  </data>
+  <data name="SectionAI.Text" xml:space="preserve">
+    <value>Explicaciones con IA</value>
+  </data>
+  <data name="LblAIOptIn.Text" xml:space="preserve">
+    <value>suscripción</value>
+  </data>
+  <data name="LblAIPreview.Text" xml:space="preserve">
+    <value>preliminar</value>
+  </data>
+  <data name="BtnAIDiscussion.Content" xml:space="preserve">
+    <value>¿Opinión? Participar en el debate →</value>
+  </data>
+  <data name="CboAIProvider.Header" xml:space="preserve">
+    <value>Proveedor</value>
+  </data>
+  <data name="BtnSaveApiKey.Content" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="BtnTestApiKey.Content" xml:space="preserve">
+    <value>Probar</value>
+  </data>
+  <data name="BtnGetApiKey.Content" xml:space="preserve">
+    <value>Obtener clave</value>
+  </data>
+  <data name="SectionBackup.Text" xml:space="preserve">
+    <value>Copia de seguridad</value>
+  </data>
+  <data name="LblBackupDesc.Text" xml:space="preserve">
+    <value>Exportar o importar configuración como un archivo JSON. Colocar el archivo settings.json junto al archivo exe para utilizar el modo portable.</value>
+  </data>
+  <data name="BtnExport.Content" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="BtnImport.Content" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="LblPortableActive.Text" xml:space="preserve">
+    <value>📦 Modo portable activo — configuración guardada junto al archivo exe</value>
+  </data>
+  <data name="SectionAbout.Text" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="LblCopyright.Text" xml:space="preserve">
+    <value>© 2026 Una aplicación creación de Belim</value>
+  </data>
+  <data name="BtnGitHub.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="BtnReportIssue.Content" xml:space="preserve">
+    <value>Informar de un problema</value>
+  </data>
+  <data name="BtnIconCredit.Content" xml:space="preserve">
+    <value>Icono de la aplicación realizado por naderi</value>
+  </data>
+  <data name="BtnFAQ.Content" xml:space="preserve">
+    <value>Preguntas frecuentes</value>
+  </data>
+  <data name="LblInsiderBadge.Text" xml:space="preserve">
+    <value>INSIDER</value>
+  </data>
+  <data name="St_Winapp3NotDownloaded" xml:space="preserve">
+    <value>Winapp3 aún no se ha descargado — pulsar en Descargar.</value>
+  </data>
+  <data name="St_WinappxNotDownloaded" xml:space="preserve">
+    <value>Winappx aún no se ha descargado — pulsar en Descargar.</value>
+  </data>
+  <data name="St_HistoryNone" xml:space="preserve">
+    <value>aún no se ha registrado ninguna ejecución</value>
+  </data>
+  <data name="St_HistorySummary" xml:space="preserve">
+    <value>{0} ejecuciones · {1} total liberado</value>
+  </data>
+  <data name="St_HistoryItems" xml:space="preserve">
+    <value>{0} elementos</value>
+  </data>
+  <data name="St_FileNotFound" xml:space="preserve">
+    <value>Archivo no encontrado: {0}</value>
+  </data>
+  <data name="St_CustomPathSaved" xml:space="preserve">
+    <value>Ruta personalizada guardada.</value>
+  </data>
+  <data name="St_Download" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="St_Downloading" xml:space="preserve">
+    <value>Descargando {0}…</value>
+  </data>
+  <data name="St_Downloaded" xml:space="preserve">
+    <value>{0} descargado — {1} KB</value>
+  </data>
+  <data name="St_DownloadFailed" xml:space="preserve">
+    <value>Error al descargar: {0}</value>
+  </data>
+  <data name="St_FileInfoNotDownloaded" xml:space="preserve">
+    <value>No se ha descargado</value>
+  </data>
+  <data name="St_FileInfo" xml:space="preserve">
+    <value>{0} entradas  •  {1} KB  •  {2}</value>
+  </data>
+  <data name="St_UpdateAvailable" xml:space="preserve">
+    <value>Actualización disponible — {0}</value>
+  </data>
+  <data name="St_UpdateMessage" xml:space="preserve">
+    <value>Una nueva versión de FluentCleaner está lista para descargar.</value>
+  </data>
+  <data name="St_UpToDate" xml:space="preserve">
+    <value>Aplicación actualizada</value>
+  </data>
+  <data name="St_UpToDateMessage" xml:space="preserve">
+    <value>La versión {0} es la más reciente.</value>
+  </data>
+  <data name="St_MenuUpdate" xml:space="preserve">
+    <value>⬆  Actualización disponible — {0}</value>
+  </data>
+  <data name="St_MenuCheckUpdates" xml:space="preserve">
+    <value>Buscar actualizaciones</value>
+  </data>
+  <data name="St_ApiKeyMissing" xml:space="preserve">
+    <value>⚠ Introducir primero una clave API</value>
+  </data>
+  <data name="St_ApiKeyTesting" xml:space="preserve">
+    <value>Probando…</value>
+  </data>
+  <data name="Scheduler_FreqDaily" xml:space="preserve">
+    <value>Diariamente</value>
+  </data>
+  <data name="Scheduler_FreqWeekly" xml:space="preserve">
+    <value>Semanalmente (Lunes)</value>
+  </data>
+  <data name="Scheduler_FreqLogon" xml:space="preserve">
+    <value>Al iniciar sesión</value>
+  </data>
+  <data name="Scheduler_StatusActive" xml:space="preserve">
+    <value>✓ La tarea programada está activa.</value>
+  </data>
+  <data name="Scheduler_StatusInactive" xml:space="preserve">
+    <value>✗ No hay nada programado.</value>
+  </data>
+  <data name="Scheduler_Applying" xml:space="preserve">
+    <value>Aplicando…</value>
+  </data>
+  <data name="Scheduler_ErrorExecutablePath" xml:space="preserve">
+    <value>No se ha podido determinar la ruta del ejecutable de FluentCleaner.</value>
+  </data>
+  <data name="Scheduler_ResultCreated" xml:space="preserve">
+    <value>Tarea programada creada.</value>
+  </data>
+  <data name="Scheduler_ResultNothingToRemove" xml:space="preserve">
+    <value>No hay nada que eliminar.</value>
+  </data>
+  <data name="Scheduler_ResultRemoved" xml:space="preserve">
+    <value>Tarea programada eliminada.</value>
+  </data>
+  <data name="Scheduler_ErrorSchtasks" xml:space="preserve">
+    <value>Error en Programador de tareas de Windows.</value>
+  </data>
+  <data name="St_ExportSuccess" xml:space="preserve">
+    <value>Configuración exportada a {0}</value>
+  </data>
+  <data name="St_ExportFailed" xml:space="preserve">
+    <value>Error al exportar: {0}</value>
+  </data>
+  <data name="St_ImportSuccess" xml:space="preserve">
+    <value>Configuración importada desde {0}</value>
+  </data>
+  <data name="St_ImportFailed" xml:space="preserve">
+    <value>Error al importar: {0}</value>
+  </data>
+  <data name="CustomTitle.Text" xml:space="preserve">
+    <value>Limpiadores personalizados</value>
+  </data>
+  <data name="CustomEmptyHint.Text" xml:space="preserve">
+    <value>Aún no hay limpiadores personalizados.</value>
+  </data>
+  <data name="CustomEmptyHint2.Text" xml:space="preserve">
+    <value>Crear un nuevo limpiador — aparecerá aquí automáticamente.</value>
+  </data>
+  <data name="MenuEditEntry.Text" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="MenuDeleteEntry.Text" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="MenuTestEntry.Text" xml:space="preserve">
+    <value>Probar en laboratorio de reglas</value>
+  </data>
+  <data name="MenuRunEntry.Text" xml:space="preserve">
+    <value>Ejecutar</value>
+  </data>
+  <data name="BtnNewCleaner.Content" xml:space="preserve">
+    <value>+ Nuevo limpiador</value>
+  </data>
+  <data name="BtnRunScript.Text" xml:space="preserve">
+    <value>Ejecutar</value>
+  </data>
+  <data name="St_CustomStatus" xml:space="preserve">
+    <value>{0} limpiador(es) · {1} activado(s)</value>
+  </data>
+  <data name="St_CustomStatusScripts" xml:space="preserve">
+    <value>{0} script(s)</value>
+  </data>
+  <data name="St_CustomMenuNew" xml:space="preserve">
+    <value>Nuevo limpiador personalizado</value>
+  </data>
+  <data name="St_CustomMenuOpenFolder" xml:space="preserve">
+    <value>Abrir carpeta Custom</value>
+  </data>
+  <data name="St_CustomMenuReddit" xml:space="preserve">
+    <value>Preguntar en Reddit</value>
+  </data>
+  <data name="St_CustomMenuNeowin" xml:space="preserve">
+    <value>Foros de Neowin</value>
+  </data>
+  <data name="St_CustomMenuDeskmodder" xml:space="preserve">
+    <value>Deskmodder.de</value>
+  </data>
+  <data name="St_CustomMenuShare" xml:space="preserve">
+    <value>Compartir limpiador en GitHub</value>
+  </data>
+  <data name="St_CustomToggleFailed" xml:space="preserve">
+    <value>Error al conmutar: {0}</value>
+  </data>
+  <data name="St_CustomDeleteTitle" xml:space="preserve">
+    <value>¿Eliminar "{0}"?</value>
+  </data>
+  <data name="St_CustomDeleteMessage" xml:space="preserve">
+    <value>Esta acción elimina el limpiador personalizado permanentemente.</value>
+  </data>
+  <data name="St_CustomDeleteConfirm" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="St_CustomDeleteCancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="St_CustomRunning" xml:space="preserve">
+    <value>Ejecutando {0}...</value>
+  </data>
+  <data name="St_CustomScriptError" xml:space="preserve">
+    <value>{0}: no se ha podido leer el script — {1}</value>
+  </data>
+  <data name="St_CustomCompleted" xml:space="preserve">
+    <value>{0}: finalizado correctamente.</value>
+  </data>
+  <data name="St_CustomFailed" xml:space="preserve">
+    <value>{0}: error (salida {1}).</value>
+  </data>
+  <data name="St_CustomEntryNone" xml:space="preserve">
+    <value>no hay entradas analizadas</value>
+  </data>
+  <data name="St_CustomEntryOne" xml:space="preserve">
+    <value>1 entrada · {0}</value>
+  </data>
+  <data name="St_CustomEntryMany" xml:space="preserve">
+    <value>{0} entradas · {1}</value>
+  </data>
+  <data name="St_CustomEntryEnabled" xml:space="preserve">
+    <value>activado</value>
+  </data>
+  <data name="St_CustomEntryDisabled" xml:space="preserve">
+    <value>desactivado</value>
+  </data>
+  <data name="DlgNewCleanerSave" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="DlgNewCleanerCancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="DlgNewCleanerTypeIni.Content" xml:space="preserve">
+    <value>Entrada Winapp2 (.ini)</value>
+  </data>
+  <data name="DlgNewCleanerTypePs1.Content" xml:space="preserve">
+    <value>Script PowerShell (.ps1)</value>
+  </data>
+  <data name="DlgNewCleanerNameHeader" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="DlgNewCleanerNamePlaceholder" xml:space="preserve">
+    <value>Mi Limpiador</value>
+  </data>
+  <data name="DlgNewCleanerAiPlaceholder" xml:space="preserve">
+    <value>Generar con IA - describir qué limpiar (el resultado puede variar)</value>
+  </data>
+  <data name="DlgNewCleanerGenerate.Content" xml:space="preserve">
+    <value>Generar</value>
+  </data>
+  <data name="DlgNewCleanerGenerateBtn" xml:space="preserve">
+    <value>Generar</value>
+  </data>
+  <data name="DlgNewCleanerContentLabel" xml:space="preserve">
+    <value>Contenido</value>
+  </data>
+  <data name="DlgNewCleanerTest" xml:space="preserve">
+    <value>Probar en Laboratorio de reglas</value>
+  </data>
+  <data name="DlgNewCleanerLoadTemplate.Content" xml:space="preserve">
+    <value>Cargar plantilla</value>
+  </data>
+  <data name="DlgNewCleanerTitleNew" xml:space="preserve">
+    <value>Nuevo limpiador personalizado</value>
+  </data>
+  <data name="DlgNewCleanerTitleEdit" xml:space="preserve">
+    <value>Editar — {0}</value>
+  </data>
+  <data name="DlgNewCleanerGenerating" xml:space="preserve">
+    <value>…</value>
+  </data>
+  <data name="AI_NoKey" xml:space="preserve">
+    <value>No hay clave API configurada para el proveedor seleccionado. Ir a Configuración → IA → Explicaciones con IA para agregar una.</value>
+  </data>
+  <data name="AI_ApiError" xml:space="preserve">
+    <value>{0} error de API: {1}</value>
+  </data>
+  <data name="AI_NoResponse" xml:space="preserve">
+    <value>No se ha recibido respuesta.</value>
+  </data>
+  <data name="AI_NetworkError" xml:space="preserve">
+    <value>No se ha podido contactar con {0}: {1}</value>
+  </data>
+  <data name="AI_NoKeyShort" xml:space="preserve">
+    <value>No hay clave API configurada — ir a Configuración → IA → Explicaciones con IA.</value>
+  </data>
+  <data name="TerminalPlaceholder.PlaceholderText" xml:space="preserve">
+    <value>clean firefox  ·  analyze chrome  ·  help</value>
+  </data>
+  <data name="CLI_Welcome" xml:space="preserve">
+    <value>Terminal en línea de FluentCleaner.</value>
+  </data>
+  <data name="CLI_Databases" xml:space="preserve">
+    <value>Base de datos: {0} activa(s) — {1} entradas detectadas</value>
+  </data>
+  <data name="CLI_HelpHint" xml:space="preserve">
+    <value>Escribir 'help' para mostrar comandos.</value>
+  </data>
+  <data name="CLI_Version" xml:space="preserve">
+    <value>  FluentCleaner {0}</value>
+  </data>
+  <data name="CLI_UnknownCommand" xml:space="preserve">
+    <value>  Comando desconocido '{0}'. Escribir 'help'.</value>
+  </data>
+  <data name="CLI_NoDrives" xml:space="preserve">
+    <value>  No se han encontrado unidades.</value>
+  </data>
+  <data name="CLI_ThemeUsage" xml:space="preserve">
+    <value>  Utilizar: theme dark | light | system</value>
+  </data>
+  <data name="CLI_ThemeSet" xml:space="preserve">
+    <value>  Tema establecido en '{0}'.</value>
+  </data>
+  <data name="CLI_BackdropUsage" xml:space="preserve">
+    <value>  Utilizar: backdrop mica | acrylic</value>
+  </data>
+  <data name="CLI_BackdropSet" xml:space="preserve">
+    <value>  Trasfondo (backdrop) establecido en '{0}'.</value>
+  </data>
+  <data name="CLI_NoMatch" xml:space="preserve">
+    <value>  No hay entradas coincidentes con '{0}'.</value>
+  </data>
+  <data name="CLI_CleanEntry" xml:space="preserve">
+    <value>  {0}: {1} elementos · {2}</value>
+  </data>
+  <data name="CLI_CleanDone" xml:space="preserve">
+    <value>  Hecho — {0} elementos borrados · {1} liberado.</value>
+  </data>
+  <data name="CLI_NothingToClean" xml:space="preserve">
+    <value>  No hay nada que limpiar.</value>
+  </data>
+  <data name="CLI_AnalyzeEntry" xml:space="preserve">
+    <value>  {0}: {1} archivo(s) · {2} registro(s) · {3}</value>
+  </data>
+  <data name="CLI_AnalyzeTotal" xml:space="preserve">
+    <value>  Total encontrado: {0}.</value>
+  </data>
+  <data name="CLI_NothingFound" xml:space="preserve">
+    <value>  No se ha encontrado nada.</value>
+  </data>
+  <data name="CLI_ListEntries" xml:space="preserve">
+    <value>  — {0} entradas.</value>
+  </data>
+  <data name="CLI_ListCategories" xml:space="preserve">
+    <value>  — {0} categorias.</value>
+  </data>
+  <data name="CLI_AppxUsage" xml:space="preserve">
+    <value>  Utilizar: appx list | appx scan | appx remove &lt;nombre&gt; | appx remove all</value>
+  </data>
+  <data name="CLI_AppxListStart" xml:space="preserve">
+    <value>  Listando todos los paquetes AppX instalados...</value>
+  </data>
+  <data name="CLI_AppxNoPackages" xml:space="preserve">
+    <value>  No se han encontrado paquetes.</value>
+  </data>
+  <data name="CLI_AppxListDone" xml:space="preserve">
+    <value>  — {0} paquete(s) instalado(s). Utilizar 'appx remove &lt;nombre&gt;' para desinstalar.</value>
+  </data>
+  <data name="CLI_AppxScanStart" xml:space="preserve">
+    <value>  Analizando paquetes instalados...</value>
+  </data>
+  <data name="CLI_AppxNothingFound" xml:space="preserve">
+    <value>  No se ha encontrado nada — el sistema parece estar limpio.</value>
+  </data>
+  <data name="CLI_AppxScanDone" xml:space="preserve">
+    <value>  — {0} paquete(s) encontrado(s). Utilizar 'appx remove &lt;nombre&gt;' o 'appx remove all'.</value>
+  </data>
+  <data name="CLI_AppxRemoveUsage" xml:space="preserve">
+    <value>  Utilizar: appx remove &lt;nombre&gt; | appx remove all</value>
+  </data>
+  <data name="CLI_AppxRemoveScanStart" xml:space="preserve">
+    <value>  Analizando paquetes instalados...</value>
+  </data>
+  <data name="CLI_AppxNothingToRemove" xml:space="preserve">
+    <value>  No hay nada que eliminar.</value>
+  </data>
+  <data name="CLI_AppxRemoving" xml:space="preserve">
+    <value>  Eliminando {0}...</value>
+  </data>
+  <data name="CLI_AppxRemoveOk" xml:space="preserve">
+    <value>  CORRECTO  {0} eliminado.</value>
+  </data>
+  <data name="CLI_AppxRemoveErr" xml:space="preserve">
+    <value>  ERROR {0} — error (puede que no esté instalado o que requiera privilegios de administrador).</value>
+  </data>
+  <data name="CLI_AppxRemoveDone" xml:space="preserve">
+    <value>  Hecho — {0} paquete(s) eliminado(s).</value>
+  </data>
+  <data name="CLI_AppxNothingRemoved" xml:space="preserve">
+    <value>  No se ha eliminado nada.</value>
+  </data>
+  <data name="CLI_AppxDisabled" xml:space="preserve">
+    <value>  La base de datos Winappx está desactivada — activar en Configuración.</value>
+  </data>
+  <data name="CLI_AppxNotFound" xml:space="preserve">
+    <value>  No se ha encontrado Winappx.ini — descargar en Configuración .</value>
+  </data>
+  <data name="SettingsNavGeneral.Content" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsNavCookies.Content" xml:space="preserve">
+    <value>Cookies</value>
+  </data>
+  <data name="SettingsNavExclusions.Content" xml:space="preserve">
+    <value>Exclusiones</value>
+  </data>
+  <data name="SettingsNavTasks.Content" xml:space="preserve">
+    <value>Post-limpieza</value>
+  </data>
+  <data name="SettingsNavHistory.Content" xml:space="preserve">
+    <value>Historial</value>
+  </data>
+  <data name="SettingsNavAI.Content" xml:space="preserve">
+    <value>IA</value>
+  </data>
+  <data name="SettingsNavScheduler.Content" xml:space="preserve">
+    <value>Programador</value>
+  </data>
+  <data name="SettingsNavAbout.Content" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="Cookies_Title" xml:space="preserve">
+    <value>Cookies</value>
+  </data>
+  <data name="Cookies_Subtitle" xml:space="preserve">
+    <value>Seleccionar las cookies de sitios web que deben conservarse tras la limpieza del navegador</value>
+  </data>
+  <data name="Cookies_Available" xml:space="preserve">
+    <value>Cookies encontradas</value>
+  </data>
+  <data name="Cookies_Kept" xml:space="preserve">
+    <value>Cookies a mantener</value>
+  </data>
+  <data name="Cookies_Search" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="Cookies_Refresh" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="Cookies_Scanning" xml:space="preserve">
+    <value>Leyendo cookies de navegadores…</value>
+  </data>
+  <data name="Cookies_Status" xml:space="preserve">
+    <value>{0} sitios web encontrados en {1} perfiles de navegador.</value>
+  </data>
+  <data name="Cookies_StatusUnavailable" xml:space="preserve">
+    <value>{0} sitios web encontrados en {1} perfiles de navegador · {2} no disponibles. Cerrar navegadores y actualizar.</value>
+  </data>
+  <data name="Cookies_DeleteUnavailable" xml:space="preserve">
+    <value>{0} perfiles de navegador no se han podido modificar. Cerrar navegadores e intentar de nuevo.</value>
+  </data>
+  <data name="Cookies_MiKeep" xml:space="preserve">
+    <value>Mantener</value>
+  </data>
+  <data name="Cookies_MiDelete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Cookies_MiRemove" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="Cookies_MiImport" xml:space="preserve">
+    <value>Importar...</value>
+  </data>
+  <data name="Cookies_MiExport" xml:space="preserve">
+    <value>Exportar...</value>
+  </data>
+  <data name="Cookies_TextFiles" xml:space="preserve">
+    <value>Archivos de texto</value>
+  </data>
+  <data name="Cleaning_CleanedCookies" xml:space="preserve">
+    <value>Eliminadas {0} cookies: {1}</value>
+  </data>
+</root>
