@@ -226,7 +226,7 @@
                                 <TextBlock FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                     <Run Text="{x:Bind ViewModel.Winapp3Info, Mode=OneWay}" />
-                                    <Run Text="  —  more aggressive entries, use at your own risk."
+                                    <Run x:Uid="LblWinapp3Desc"
                                          Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                                 </TextBlock>
                             </StackPanel>
@@ -284,7 +284,7 @@
                                 <TextBlock FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                     <Run Text="{x:Bind ViewModel.WinappxInfo, Mode=OneWay}" />
-                                    <Run Text="  —  AppX / bloatware entries for the terminal debloater."
+                                    <Run x:Uid="LblWinappxDesc"
                                          Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                                 </TextBlock>
                             </StackPanel>
