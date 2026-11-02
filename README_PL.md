@@ -1,4 +1,4 @@
-[<a href="README.md">English</a>]| [<a href="README_ID.md">Bahasa Indonesia</a>]| [<a href="README_PL.md">Polski</a>]
+[<a href="README.md">English</a>]| [<a href="README_ID.md">Indonesia</a>]| [<a href="README_PL.md">Polski</a>]
 
 > [!UWAGA]
 > ## ⚠️ Ostrzegam przed fałszywymi stronami internetowymi FluentCleaner
