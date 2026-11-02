@@ -20,7 +20,7 @@
   <data name="NavTerminal.Content"><value>Terminal</value></data>
   <data name="NavCustom.Content"><value>Kustom</value></data>
   <data name="SearchBox.PlaceholderText"><value>Cari</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Halaman tindakan</value></data>
+  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Tindakan halaman</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Suka pakai FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Jika aplikasi ini menghemat waktu Anda, pertimbangkan untuk mendukung pengembangannya.</value></data>
@@ -34,10 +34,10 @@
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini otomatis dimuat saat startup.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Kategori tindakan</value></data>
+  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Tindakan kategori</value></data>
   <data name="MenuSelectAll.Text"><value>Pilih semua</value></data>
-  <data name="MenuSelectNone.Text"><value>Pilih tidak ada</value></data>
-  <data name="MenuSelectDefaults.Text"><value>Pilih default</value></data>
+  <data name="MenuSelectNone.Text"><value>Batal pilih semua</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Pilih bawaan</value></data>
   <data name="MenuAnalyzeCategory.Text"><value>Analisis kategori</value></data>
   <data name="MenuCleanCategory.Text"><value>Bersihkan kategori</value></data>
   <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Tindakan entri</value></data>
@@ -45,7 +45,7 @@
   <data name="MenuCleanEntry.Text"><value>Bersihkan</value></data>
   <data name="MenuExplainEntry.Text"><value>Jelaskan dengan AI</value></data>
   <data name="MenuShowSource.Text"><value>Lihat sumber</value></data>
-  <data name="LblAIDesc.Text"><value>Klik kanan entri apa pun di halaman Pembersih → Jelaskan dengan AI. Pilih Groq, OpenAI, atau Anthropic. Tidak ada data yang dikirim tanpa tindakan eksplisit Anda. Memerlukan API key Anda sendiri.</value></data>
+  <data name="LblAIDesc.Text"><value>Klik kanan entri apa pun di halaman Pembersih → Jelaskan dengan AI. Pilih Groq, OpenAI, atau Anthropic. Tidak ada data yang dikirim tanpa tindakan eksplisit Anda. Memerlukan kunci API Anda sendiri.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Setelah kunci API disimpan, halaman Pembersih Kustom juga mengaktifkan AI — jelaskan apa yang ingin dibersihkan dan AI akan menghasilkan entri Winapp2 atau skrip PowerShell yang siap digunakan.</value></data>
   <data name="ResultsHeader.Text"><value>Hasil</value></data>
   <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Kembali ke hasil</value></data>
@@ -58,10 +58,10 @@
 
   <!-- Cleaner Page — IPageActions (built in code) -->
   <data name="St_MenuSelectAll"><value>Pilih semua</value></data>
-  <data name="St_MenuSelectNone"><value>Pilih tidak ada</value></data>
-  <data name="St_MenuSelectDefaults"><value>Pilih default</value></data>
+  <data name="St_MenuSelectNone"><value>Batal pilih semua</value></data>
+  <data name="St_MenuSelectDefaults"><value>Pilih bawaan</value></data>
   <data name="St_MenuExpandAll"><value>Perluas semua</value></data>
-  <data name="St_MenuCollapseAll"><value>Tutup semua</value></data>
+  <data name="St_MenuCollapseAll"><value>Ciutkan semua</value></data>
   <data name="St_MenuSortDesc"><value>Urutkan berdasarkan ukuran ↓</value></data>
   <data name="St_MenuSortAsc"><value>Urutkan berdasarkan ukuran ↑</value></data>
   <data name="St_MenuRefresh"><value>Segarkan</value></data>
@@ -79,7 +79,7 @@
 
   <!-- Cleaner Page — dialogs -->
   <data name="DlgBrowsersTitle"><value>Browser sedang berjalan</value></data>
-  <data name="DlgBrowsersContinue"><value>Lanjutkan saja</value></data>
+  <data name="DlgBrowsersContinue"><value>Tetap lanjutkan</value></data>
   <data name="DlgBrowsersCancel"><value>Batal</value></data>
   <data name="DlgBrowsersMessage"><value>Tutup aplikasi ini untuk hasil terbaik:\n{0}\n\nBrowser yang terbuka mengunci cache dan file riwayat — file tersebut akan dilewati saat pembersihan.</value></data>
   <data name="DlgWarningTitle"><value>Peringatan pembersihan</value></data>
@@ -94,15 +94,15 @@
   <data name="RuleLabTitle"><value>Rule Lab — {0}</value></data>
   <data name="DlgSourceHint"><value>Edit aturan, lalu klik Uji Coba untuk melihat pratinjau hasil.</value></data>
   <data name="DlgSourceScanning"><value>Memindai…</value></data>
-  <data name="DlgSourceNoEntry"><value>Bukan entri valid — memerlukan Detect dan FileKey.</value></data>
+  <data name="DlgSourceNoEntry"><value>Entri tidak valid — memerlukan Detect dan FileKey.</value></data>
   <data name="DlgSourceFound"><value>{0} file · {1}</value></data>
   <data name="DlgSourceMore"><value>… dan {0} lainnya</value></data>
   <data name="DlgSourceError"><value>Pemindaian gagal: {0}</value></data>
   <data name="DlgSourceCancel"><value>Batal</value></data>
   <data name="DlgSourceCancelled"><value>Dibatalkan.</value></data>
-  <data name="DlgRestartTitle"><value>Restart diperlukan</value></data>
-  <data name="DlgRestartMessage"><value>FluentCleaner perlu direstart untuk menerapkan perubahan.</value></data>
-  <data name="DlgRestartNow"><value>Restart sekarang</value></data>
+  <data name="DlgRestartTitle"><value>Perlu mulai ulang</value></data>
+  <data name="DlgRestartMessage"><value>FluentCleaner perlu dimulai ulang untuk menerapkan perubahan.</value></data>
+  <data name="DlgRestartNow"><value>Mulai ulang sekarang</value></data>
   <data name="DlgRestartLater"><value>Nanti</value></data>
 
   <!-- ============================================================
@@ -134,7 +134,7 @@
   <data name="St_ExcludedFolder"><value>Dikecualikan: {0}</value></data>
 
   <!-- CleaningService progress messages -->
-  <data name="Prog_Deleted"><value>Terhapus: {0}</value></data>
+  <data name="Prog_Deleted"><value>Dihapus: {0}</value></data>
   <data name="Prog_Registry"><value>Registri: {0}</value></data>
 
   <!-- ============================================================
@@ -149,12 +149,12 @@
   <data name="MenuDonateKoFi.Text"><value>Donasi lewat Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Tampilan</value></data>
   <data name="LblTheme.Text"><value>Tema aplikasi</value></data>
-  <data name="LblThemeDesc.Text"><value>Pilih bagaimana FluentCleaner terlihat di perangkat Anda.</value></data>
+  <data name="LblThemeDesc.Text"><value>Pilih tema tampilan FluentCleaner di perangkat Anda.</value></data>
   <data name="ThemeSystem.Content"><value>Bawaan sistem</value></data>
   <data name="ThemeLight.Content"><value>Terang</value></data>
   <data name="ThemeDark.Content"><value>Gelap</value></data>
   <data name="LblLanguage.Text"><value>Bahasa</value></data>
-  <data name="LblLanguageDesc.Text"><value>Ganti bahasa tampilan. Restart diperlukan untuk menerapkan.</value></data>
+  <data name="LblLanguageDesc.Text"><value>Ubah bahasa tampilan. Perlu mulai ulang untuk menerapkan perubahan.</value></data>
   <data name="St_LangAuto"><value>Bawaan sistem</value></data>
   <data name="SectionDatabase.Text"><value>Database</value></data>
   <data name="LblDatabaseDesc.Text"><value>Pilih daftar entri yang dimuat untuk pemindaian dan pembersihan.</value></data>
@@ -174,21 +174,21 @@
   <data name="BtnBrowse.Content"><value>Telusuri…</value></data>
   <data name="BtnApplyPath.Content"><value>Terapkan</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Hapus database kustom</value></data>
-  <data name="RestartBar.Title"><value>Restart diperlukan</value></data>
-  <data name="RestartBar.Message"><value>Silakan restart FluentCleaner untuk memuat database terbaru.</value></data>
+  <data name="RestartBar.Title"><value>Perlu mulai ulang</value></data>
+  <data name="RestartBar.Message"><value>Silakan mulai ulang FluentCleaner untuk memuat database terbaru.</value></data>
   <data name="SectionPostClean.Text"><value>Tugas setelah pembersihan</value></data>
   <data name="LblPostCleanDesc.Text"><value>Satu perintah per baris — dijalankan berurutan setelah setiap pembersihan.</value></data>
   <data name="SectionExclusions.Text"><value>Pengecualian global</value></data>
   <data name="LblExclusionsDesc.Text"><value>Jalur yang tercantum di sini tidak akan pernah dibersihkan — menggantikan semua aturan database.</value></data>
   <data name="LnkProtectedPaths.Content"><value>Lihat jalur yang dilindungi</value></data>
   <data name="DlgProtectedTitle"><value>Jalur yang dilindungi</value></data>
-  <data name="DlgProtectedDesc"><value>Jalur ini selalu dilewati, apa pun yang ditentukan database. Jalur ini menyimpan data ekstensi peramban yang krusial bagi beberapa aplikasi (pengelola kata sandi, pemblokir iklan).</value></data>
+  <data name="DlgProtectedDesc"><value>Jalur ini selalu dilewati, apa pun yang ditentukan database. Jalur ini menyimpan data ekstensi browser yang krusial bagi beberapa aplikasi (pengelola kata sandi, pemblokir iklan).</value></data>
   <data name="SectionHistory.Text"><value>Riwayat</value></data>
-  <data name="LblHistoryDesc.Text"><value>Lacak seberapa banyak sampah yang terakumulasi seiring waktu.</value></data>
+  <data name="LblHistoryDesc.Text"><value>Pantau penumpukan file sampah dari waktu ke waktu.</value></data>
   <data name="LblCleanHistory.Text"><value>Riwayat pembersihan</value></data>
-  <data name="BtnClearHistory.Content"><value>Bersihkan riwayat</value></data>
+  <data name="BtnClearHistory.Content"><value>Hapus riwayat</value></data>
   <data name="SectionScheduler.Text"><value>Pembersihan terjadwal</value></data>
-  <data name="LblSchedulerDesc.Text"><value>Menjalankan pembersihan yang sama seperti /AUTO melalui Windows Task Scheduler. Tugas ini hanya berjalan saat Anda masuk log dan tidak memerlukan hak administrator.</value></data>
+  <data name="LblSchedulerDesc.Text"><value>Menjalankan pembersihan yang sama seperti /AUTO melalui Windows Task Scheduler. Tugas ini hanya berjalan saat Anda login dan tidak memerlukan hak administrator.</value></data>
   <data name="SchedulerEnabled.Header"><value>Aktifkan pembersihan terjadwal</value></data>
   <data name="SchedulerFrequency.Header"><value>Frekuensi</value></data>
   <data name="SchedulerTime.Header"><value>Waktu</value></data>
@@ -204,7 +204,7 @@
   <data name="BtnTestApiKey.Content"><value>Uji</value></data>
   <data name="BtnGetApiKey.Content"><value>Dapatkan kunci</value></data>
   <data name="SectionBackup.Text"><value>Cadangan</value></data>
-  <data name="LblBackupDesc.Text"><value>Ekspor atau impor pengaturan Anda sebagai file JSON. Taruh settings.json di samping exe untuk mode portabel.</value></data>
+  <data name="LblBackupDesc.Text"><value>Ekspor atau impor pengaturan Anda sebagai file JSON. Tempatkan settings.json di folder yang sama dengan file exe untuk mode portabel.</value></data>
   <data name="BtnExport.Content"><value>Ekspor</value></data>
   <data name="BtnImport.Content"><value>Impor</value></data>
   <data name="LblPortableActive.Text"><value>📦 Mode portabel aktif — pengaturan disimpan di samping exe</value></data>
@@ -233,7 +233,7 @@
   <data name="St_FileInfo"><value>{0} entri  •  {1} KB  •  {2}</value></data>
   <data name="St_UpdateAvailable"><value>Pembaruan tersedia — {0}</value></data>
   <data name="St_UpdateMessage"><value>Versi baru FluentCleaner siap untuk diunduh.</value></data>
-  <data name="St_UpToDate"><value>Kamu menggunakan versi terbaru</value></data>
+  <data name="St_UpToDate"><value>Anda sudah menggunakan versi terbaru</value></data>
   <data name="St_UpToDateMessage"><value>Versi {0} adalah yang terbaru.</value></data>
   <data name="St_MenuUpdate"><value>⬆  Pembaruan tersedia — {0}</value></data>
   <data name="St_MenuCheckUpdates"><value>Periksa pembaruan</value></data>
@@ -241,7 +241,7 @@
   <data name="St_ApiKeyTesting"><value>Menguji…</value></data>
   <data name="Scheduler_FreqDaily"><value>Harian</value></data>
   <data name="Scheduler_FreqWeekly"><value>Mingguan (Senin)</value></data>
-  <data name="Scheduler_FreqLogon"><value>Saat masuk log</value></data>
+  <data name="Scheduler_FreqLogon"><value>Saat login</value></data>
   <data name="Scheduler_StatusActive"><value>✓ Tugas terjadwal aktif.</value></data>
   <data name="Scheduler_StatusInactive"><value>✗ Tidak dijadwalkan.</value></data>
   <data name="Scheduler_Applying"><value>Menerapkan…</value></data>
@@ -304,7 +304,7 @@
   <data name="DlgNewCleanerGenerateBtn"><value>Buat</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Konten</value></data>
   <data name="DlgNewCleanerTest"><value>Uji di Rule Lab</value></data>
-  <data name="DlgNewCleanerLoadTemplate.Content"><value>Muat template</value></data>
+  <data name="DlgNewCleanerLoadTemplate.Content"><value>Muat templat</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Pembersih kustom baru</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Edit — {0}</value></data>
   <data name="DlgNewCleanerGenerating"><value>…</value></data>
@@ -369,21 +369,21 @@
   <data name="SettingsNavScheduler.Content"><value>Penjadwal</value></data>
   <data name="SettingsNavAbout.Content"><value>Tentang</value></data>
   <data name="Cookies_Title"><value>Cookie</value></data>
-  <data name="Cookies_Subtitle"><value>Pilih cookie situs web yang tetap dipertahankan saat peramban dibersihkan</value></data>
+  <data name="Cookies_Subtitle"><value>Pilih cookie situs web yang ingin tetap dipertahankan saat browser dibersihkan</value></data>
   <data name="Cookies_Available"><value>Cookie ditemukan</value></data>
   <data name="Cookies_Kept"><value>Cookie yang disimpan</value></data>
   <data name="Cookies_Search"><value>Cari</value></data>
   <data name="Cookies_Refresh"><value>Segarkan</value></data>
-  <data name="Cookies_Scanning"><value>Membaca cookie peramban…</value></data>
-  <data name="Cookies_Status"><value>{0} situs web ditemukan dalam {1} profil peramban.</value></data>
-  <data name="Cookies_StatusUnavailable"><value>{0} situs web ditemukan dalam {1} profil peramban · {2} tidak tersedia. Tutup peramban dan segarkan.</value></data>
-  <data name="Cookies_DeleteUnavailable"><value>{0} profil peramban tidak dapat diubah. Tutup peramban dan coba lagi.</value></data>
+  <data name="Cookies_Scanning"><value>Membaca cookie browser…</value></data>
+  <data name="Cookies_Status"><value>{0} situs web ditemukan dalam {1} profil browser.</value></data>
+  <data name="Cookies_StatusUnavailable"><value>{0} situs web ditemukan dalam {1} profil browser · {2} tidak tersedia. Tutup browser dan segarkan.</value></data>
+  <data name="Cookies_DeleteUnavailable"><value>{0} profil browser tidak dapat diubah. Tutup browser dan coba lagi.</value></data>
   <data name="Cookies_MiKeep"><value>Simpan</value></data>
   <data name="Cookies_MiDelete"><value>Hapus</value></data>
   <data name="Cookies_MiRemove"><value>Keluarkan</value></data>
   <data name="Cookies_MiImport"><value>Impor...</value></data>
   <data name="Cookies_MiExport"><value>Ekspor...</value></data>
   <data name="Cookies_TextFiles"><value>File teks</value></data>
-  <data name="Cleaning_CleanedCookies"><value>Membersihkan {0} cookie: {1}</value></data>
+  <data name="Cleaning_CleanedCookies"><value>{0} cookie dibersihkan: {1}</value></data>
 
 </root>
