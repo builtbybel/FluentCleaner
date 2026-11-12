@@ -498,7 +498,8 @@ public partial class CleanerPageViewModel : ObservableObject
             .OrderBy(g => g.Key.Order)
             .ThenBy(g => g.Key.Name, StringComparer.OrdinalIgnoreCase);
 
-        var saved = AppSettings.Instance.SelectedEntries;
+        var settings = AppSettings.Instance;
+        var saved = settings.SelectedEntries;
 
         foreach (var group in groups)
         {
@@ -507,7 +508,7 @@ public partial class CleanerPageViewModel : ObservableObject
             {
                 var entryVm = new CleanerEntryViewModel(item.Entry);
 
-                entryVm.IsSelected = saved.Count > 0
+                entryVm.IsSelected = settings.HasSavedCleanerSelection
                     ? saved.Contains(item.Entry.Name)
                     : item.Entry.Default;
 
@@ -708,6 +709,7 @@ public partial class CleanerPageViewModel : ObservableObject
             .Where(e => e.IsSelected)
             .Select(e => e.Name)
             .ToHashSet();
+        AppSettings.Instance.CleanerSelectionInitialized = true;
         AppSettings.Instance.Save();
     }
 
@@ -721,9 +723,8 @@ public partial class CleanerPageViewModel : ObservableObject
     {
         if (_suppressSave) return;
 
-        //No custom selection saved yet >> seed from Winapp2 defaults so the first
-        //manual toggle doesn't wipe every entry that was on by default
-        var selected = AppSettings.Instance.SelectedEntries.Count > 0
+        // Seed from defaults only until the user saves a selection for the first time.
+        var selected = AppSettings.Instance.HasSavedCleanerSelection
             ? AppSettings.Instance.SelectedEntries.ToHashSet(StringComparer.OrdinalIgnoreCase)
             : _loadedEntries.Where(e => e.Default).Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
@@ -731,6 +732,7 @@ public partial class CleanerPageViewModel : ObservableObject
         else                  selected.Remove(entry.Name);
 
         AppSettings.Instance.SelectedEntries = selected;
+        AppSettings.Instance.CleanerSelectionInitialized = true;
         AppSettings.Instance.Save();
     }
 }

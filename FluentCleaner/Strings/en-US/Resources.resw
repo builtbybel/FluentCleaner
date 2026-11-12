@@ -24,6 +24,7 @@
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Enjoying FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>If this app saves you time, consider supporting its development.</value></data>
+  <data name="Donation_OtherAmount"><value>Other amount…</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
   <data name="BtnDonateGitHub.Content"><value>Star on GitHub</value></data>

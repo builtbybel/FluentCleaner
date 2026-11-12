@@ -30,7 +30,9 @@
                      Severity="Warning">
                 <InfoBar.Content>
                     <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
-                        <ComboBox x:Name="DonationAmountBox" Width="86" />
+                        <ComboBox x:Name="DonationAmountBox"
+                                  Width="120"
+                                  SelectionChanged="DonationAmountBox_SelectionChanged" />
                         <ComboBox x:Name="DonationCurrencyBox"
                                   Width="86"
                                   SelectionChanged="DonationCurrencyBox_SelectionChanged" />
@@ -226,7 +228,7 @@
                                 <TextBlock FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                     <Run Text="{x:Bind ViewModel.Winapp3Info, Mode=OneWay}" />
-                                    <Run x:Uid="LblWinapp3Desc"
+                                    <Run Text="  —  more aggressive entries, use at your own risk."
                                          Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                                 </TextBlock>
                             </StackPanel>
@@ -284,7 +286,7 @@
                                 <TextBlock FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                     <Run Text="{x:Bind ViewModel.WinappxInfo, Mode=OneWay}" />
-                                    <Run x:Uid="LblWinappxDesc"
+                                    <Run Text="  —  AppX / bloatware entries for the terminal debloater."
                                          Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                                 </TextBlock>
                             </StackPanel>

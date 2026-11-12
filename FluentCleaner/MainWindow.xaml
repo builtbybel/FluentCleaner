@@ -52,8 +52,8 @@
                             FontSize="15" />
                         <Button.Flyout>
                             <Flyout Placement="Bottom">
-                                <AutoSuggestBox x:Uid="SearchBox"
-                                    Width="280"
+                                <AutoSuggestBox Width="280"
+                                    PlaceholderText="Search…"
                                     QueryIcon="Find"
                                     TextChanged="TitleSearchBox_TextChanged" />
                             </Flyout>

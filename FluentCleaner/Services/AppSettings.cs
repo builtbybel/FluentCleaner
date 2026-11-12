@@ -41,6 +41,13 @@ public class AppSettings
     public string? Theme             { get; set; }
     public HashSet<string> SelectedEntries { get; set; } = [];
 
+    // Keeps an intentional empty selection distinct from first-run defaults.
+    public bool CleanerSelectionInitialized { get; set; }
+
+    [JsonIgnore]
+    public bool HasSavedCleanerSelection =>
+        CleanerSelectionInitialized || SelectedEntries.Count > 0;
+
     // which built-in databases to load on startup
     public bool EnableWinapp2 { get; set; } = true;
     public bool EnableWinapp3 { get; set; } = false;

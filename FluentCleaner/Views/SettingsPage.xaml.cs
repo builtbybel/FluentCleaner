@@ -175,15 +175,27 @@ public sealed partial class SettingsPage : Page, IPageActions
     {
         if (DonationCurrencyBox.SelectedItem is not string currency) return;
 
-        DonationAmountBox.ItemsSource = DonationAmounts[currency];
+        DonationAmountBox.ItemsSource = DonationAmounts[currency]
+            .Cast<object>()
+            .Append(ResourceService.Get("Donation_OtherAmount"))
+            .ToArray();
         DonationAmountBox.SelectedIndex = 1; // sensible second tier for every currency
     }
+
+    private void DonationAmountBox_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+        DonationCurrencyBox.IsEnabled = DonationAmountBox.SelectedItem is int;
 
     private async void Link_GitHub(object sender, RoutedEventArgs e)   => await AppLinks.OpenAsync(AppLinks.GitHub);
     private async void Link_Issues(object sender, RoutedEventArgs e)   => await AppLinks.OpenAsync(AppLinks.Issues);
     private async void Link_Releases(object sender, RoutedEventArgs e) => await AppLinks.OpenAsync(AppLinks.Releases);
     private async void Link_Donate(object sender, RoutedEventArgs e)
     {
+        if (DonationAmountBox.SelectedItem is string)
+        {
+            await AppLinks.OpenAsync(AppLinks.Donate);
+            return;
+        }
+
         if (DonationAmountBox.SelectedItem is not int amount ||
             DonationCurrencyBox.SelectedItem is not string currency)
             return;

@@ -141,9 +141,10 @@ public class CliCleanerModule
 
         if (name.Equals("selected", StringComparison.OrdinalIgnoreCase))
         {
-            var saved = AppSettings.Instance.SelectedEntries;
+            var settings = AppSettings.Instance;
+            var saved = settings.SelectedEntries;
             return _entries
-                .Where(e => saved.Count > 0 ? saved.Contains(e.Name) : e.Default)
+                .Where(e => settings.HasSavedCleanerSelection ? saved.Contains(e.Name) : e.Default)
                 .ToList();
         }
 
