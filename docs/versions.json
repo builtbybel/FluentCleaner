@@ -1,10 +1,10 @@
 {
   "classic": {
-    "version": "1.18.250",
+    "version": "1.19.269",
     "downloadUrl": "https://github.com/builtbybel/FluentCleaner/releases/latest/download/FluentCleaner-Classic-net48.zip"
   },
   "modern": {
-    "version": "26.09.01",
+    "version": "26.11.02",
     "downloadUrl": "https://github.com/builtbybel/FluentCleaner/releases/latest/download/FluentCleaner-win-x64.zip"
   }
 }
