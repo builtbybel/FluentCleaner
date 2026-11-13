@@ -34,6 +34,25 @@
        CLEANER PAGE
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini wird beim Start automatisch geladen.</value></data>
+
+  <!-- Cleaner Page — Spaltenüberschriften in Ergebnis- und Detailansicht -->
+  <data name="ColName.Text"><value>Name</value></data>
+  <data name="ColContents.Text"><value>Inhalt</value></data>
+  <data name="ColSize.Text"><value>Größe</value></data>
+  <data name="ColPath.Text"><value>Pfad</value></data>
+  <data name="ColType.Text"><value>Typ</value></data>
+  <data name="BtnRestartElevated.Content"><value>Als Administrator neu starten</value></data>
+
+  <!-- Cleaner Page — Kategoriebezeichnungen. Nur die generischen aus dem
+       CategoryResolver; Markennamen (Firefox, Spotify, …) und Sektionsnamen aus
+       Winapp2 selbst bleiben so, wie die Datenbank sie liefert. -->
+  <data name="Cat_Applications"><value>Anwendungen</value></data>
+  <data name="Cat_Internet"><value>Internet</value></data>
+  <data name="Cat_Multimedia"><value>Multimedia</value></data>
+  <data name="Cat_Utilities"><value>Dienstprogramme</value></data>
+  <data name="Cat_Windows"><value>Windows</value></data>
+  <data name="Cat_OtherApplications"><value>Weitere Anwendungen</value></data>
+
   <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Kategorieaktionen</value></data>
   <data name="MenuSelectAll.Text"><value>Alle auswählen</value></data>
   <data name="MenuSelectNone.Text"><value>Keine auswählen</value></data>
@@ -104,6 +123,15 @@
   <!-- Status Messages -->
   <data name="St_Loading"><value>Lade Winapp2.ini...</value></data>
   <data name="St_SearchFound"><value>{0} passende Einträge gefunden.</value></data>
+
+  <!-- Cleaner Page — Statusleiste (wird im Code aus diesen Teilen gebaut) -->
+  <data name="St_StatusCategories"><value>{0} Kategorien</value></data>
+  <data name="St_StatusEntries"><value>{0} Einträge</value></data>
+  <data name="St_StatusSelected"><value>{0} ausgewählt</value></data>
+  <data name="St_StatusFound"><value>{0} gefunden</value></data>
+  <data name="St_Administrator"><value>Administrator</value></data>
+  <data name="St_StandardUser"><value>Standardbenutzer</value></data>
+
   <data name="St_SearchNone"><value>Keine passenden Einträge.</value></data>
   <data name="St_ParsingDatabases"><value>Datenbanken werden geladen...</value></data>
   <data name="St_AnalysisReady"><value>Analyse bereit — {0} Apps in {1} Einträgen gefunden.</value></data>
@@ -133,6 +161,9 @@
        SETTINGS PAGE
   ============================================================ -->
   <data name="SettingsTitle.Text"><value>Einstellungen</value></data>
+
+  <!-- Settings Page — Fortschritt beim Datenbank-Download -->
+  <data name="LblDownloading.Text"><value>Wird heruntergeladen…</value></data>
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>FluentCleaner unterstützen</value></data>
   <data name="DonationBar.Message"><value>Wähle für PayPal einen Betrag und eine Währung oder unterstütze das Projekt über Ko-fi. ♥</value></data>
@@ -375,4 +406,11 @@
   <data name="Cookies_TextFiles"><value>Textdateien</value></data>
   <data name="Cleaning_CleanedCookies"><value>{0} Cookies bereinigt: {1}</value></data>
 
+  <!-- Main Window — Tableiste und Adressleiste (x:Uid) -->
+  <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Neuer Tab</value></data>
+  <data name="BtnAddressBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Zurück</value></data>
+  <data name="BtnAddressReload.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Neu laden</value></data>
+  <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Suchen</value></data>
+  <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Einstellungen</value></data>
+  <data name="SearchFlyoutBox.PlaceholderText"><value>Suchen…</value></data>
 </root>

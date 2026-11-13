@@ -21,6 +21,14 @@
   <data name="NavCustom.Content"><value>Custom</value></data>
   <data name="SearchBox.PlaceholderText"><value>Search</value></data>
   <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Page actions</value></data>
+
+  <!-- Main Window — tab strip and address bar (x:Uid) -->
+  <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>New tab</value></data>
+  <data name="BtnAddressBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Back</value></data>
+  <data name="BtnAddressReload.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Reload</value></data>
+  <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Search</value></data>
+  <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Settings</value></data>
+  <data name="SearchFlyoutBox.PlaceholderText"><value>Search…</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Enjoying FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>If this app saves you time, consider supporting its development.</value></data>
@@ -35,6 +43,25 @@
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini loads automatically at startup.</value></data>
+
+  <!-- Cleaner Page — result and detail column headers -->
+  <data name="ColName.Text"><value>Name</value></data>
+  <data name="ColContents.Text"><value>Contents</value></data>
+  <data name="ColSize.Text"><value>Size</value></data>
+  <data name="ColPath.Text"><value>Path</value></data>
+  <data name="ColType.Text"><value>Type</value></data>
+  <data name="BtnRestartElevated.Content"><value>Restart as administrator</value></data>
+
+  <!-- Cleaner Page — category labels. Only the generic ones CategoryResolver
+       defines are listed; brand names (Firefox, Spotify, …) and section names that
+       come from Winapp2 itself keep whatever the database calls them. -->
+  <data name="Cat_Applications"><value>Applications</value></data>
+  <data name="Cat_Internet"><value>Internet</value></data>
+  <data name="Cat_Multimedia"><value>Multimedia</value></data>
+  <data name="Cat_Utilities"><value>Utilities</value></data>
+  <data name="Cat_Windows"><value>Windows</value></data>
+  <data name="Cat_OtherApplications"><value>Other Applications</value></data>
+
   <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Category actions</value></data>
   <data name="MenuSelectAll.Text"><value>Select all</value></data>
   <data name="MenuSelectNone.Text"><value>Select none</value></data>
@@ -111,6 +138,15 @@
   ============================================================ -->
   <data name="St_Loading"><value>Loading Winapp2.ini...</value></data>
   <data name="St_SearchFound"><value>Showing {0} matching entries.</value></data>
+
+  <!-- Cleaner Page — status bar (built in code from these parts) -->
+  <data name="St_StatusCategories"><value>{0} categories</value></data>
+  <data name="St_StatusEntries"><value>{0} entries</value></data>
+  <data name="St_StatusSelected"><value>{0} selected</value></data>
+  <data name="St_StatusFound"><value>{0} found</value></data>
+  <data name="St_Administrator"><value>Administrator</value></data>
+  <data name="St_StandardUser"><value>Standard user</value></data>
+
   <data name="St_SearchNone"><value>No matching entries.</value></data>
   <data name="St_ParsingDatabases"><value>Parsing databases...</value></data>
   <data name="St_AnalysisReady"><value>Analysis ready — {0} apps found in {1} entries.</value></data>
@@ -142,6 +178,9 @@
        SETTINGS PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="SettingsTitle.Text"><value>Settings</value></data>
+
+  <!-- Settings Page — database download progress -->
+  <data name="LblDownloading.Text"><value>Downloading…</value></data>
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>Support FluentCleaner</value></data>
   <data name="DonationBar.Message"><value>Choose an amount and currency for PayPal, or support the project through Ko-fi. ♥</value></data>
