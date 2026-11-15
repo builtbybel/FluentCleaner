@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -162,11 +162,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  より積極的に項目を削除します。自己責任で使用してください。</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>ダウンロード</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>更新</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>不要アプリ</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  ターミナルの不要アプリ削除機能で使うAppXエントリです。</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>ダウンロード</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>更新</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>カスタムデータベースのパス（.ini）</value></data>
   <data name="BtnBrowse.Content"><value>参照…</value></data>
   <data name="BtnApplyPath.Content"><value>適用</value></data>
@@ -216,7 +211,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3はまだダウンロードされていません — ［ダウンロード］をクリックしてください。</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappxはまだダウンロードされていません — ［ダウンロード］をクリックしてください。</value></data>
   <data name="St_HistoryNone"><value>実行履歴はまだありません</value></data>
   <data name="St_HistorySummary"><value>実行回数: {0}回 · 解放した合計容量: {1}</value></data>
   <data name="St_HistoryItems"><value>{0}項目</value></data>
@@ -338,22 +332,5 @@
   <data name="CLI_NothingFound"><value>  何も見つかりませんでした。</value></data>
   <data name="CLI_ListEntries"><value>  — {0}件のエントリ。</value></data>
   <data name="CLI_ListCategories"><value>  — {0}件のカテゴリー。</value></data>
-  <data name="CLI_AppxUsage"><value>  使用方法: appx list | appx scan | appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  インストール済みのAppXパッケージを一覧表示しています...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  パッケージが見つかりません。</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0}個のパッケージがインストールされています。アンインストールするには「appx remove &lt;name&gt;」を使用してください。</value></data>
-  <data name="CLI_AppxScanStart"><value>  インストール済みのパッケージをスキャン中...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  何も見つかりませんでした — システムはクリーンです。</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0}個のパッケージが見つかりました。「appx remove &lt;name&gt;」または「appx remove all」を使用してください。</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  使用方法: appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  インストール済みのパッケージをスキャン中...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  削除する項目はありません。</value></data>
-  <data name="CLI_AppxRemoving"><value>  {0}を削除中...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0}を削除しました。</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — 失敗しました（未インストール、または管理者権限が必要な可能性があります）。</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  完了 — {0}個のパッケージを削除しました。</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  何も削除されませんでした。</value></data>
-  <data name="CLI_AppxDisabled"><value>  Winappxデータベースが無効です — ［設定］で有効にしてください。</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.iniが見つかりません — ［設定］でダウンロードしてください。</value></data>
 
 </root>

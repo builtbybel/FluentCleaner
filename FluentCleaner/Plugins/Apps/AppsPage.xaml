@@ -1,0 +1,200 @@
+<Page x:Class="FluentCleaner.Plugins.Apps.AppsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:FluentCleaner.Plugins.Apps"
+    NavigationCacheMode="Required"
+    Background="Transparent">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- progress -->
+            <RowDefinition Height="Auto" />
+            <!-- outcome -->
+            <RowDefinition Height="Auto" />
+            <!-- filters -->
+            <RowDefinition Height="Auto" />
+            <!-- column headers -->
+            <RowDefinition Height="*" />
+            <!-- rows -->
+            <RowDefinition Height="Auto" />
+            <!-- actions -->
+        </Grid.RowDefinitions>
+
+        <ProgressBar Grid.Row="0"
+                     Height="2"
+                     Maximum="100"
+                     VerticalAlignment="Top"
+                     IsIndeterminate="{x:Bind ViewModel.Indeterminate, Mode=OneWay}"
+                     Value="{x:Bind ViewModel.Progress, Mode=OneWay}"
+                     Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
+                         Converter={StaticResource BoolToVisibilityConverter}}" />
+
+        <InfoBar Grid.Row="1"
+                 Margin="10,6,22,0"
+                 IsOpen="{x:Bind ViewModel.InfoOpen, Mode=TwoWay}"
+                 Severity="{x:Bind ViewModel.InfoSeverity, Mode=OneWay}"
+                 Title="{x:Bind ViewModel.InfoTitle, Mode=OneWay}"
+                 Message="{x:Bind ViewModel.InfoMessage, Mode=OneWay}" />
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    Spacing="10"
+                    Padding="10,8,22,8"
+                    VerticalAlignment="Center">
+            <ComboBox x:Uid="CmbSafety"
+                      MinWidth="180"
+                      Height="30"
+                      ItemsSource="{x:Bind ViewModel.SafetyFilters}"
+                      SelectedItem="{x:Bind ViewModel.SafetyFilter, Mode=TwoWay}" />
+            <CheckBox x:Uid="ChkOnlyRemovable"
+                      MinWidth="0"
+                      VerticalAlignment="Center"
+                      IsChecked="{x:Bind ViewModel.OnlyRemovable, Mode=TwoWay}" />
+        </StackPanel>
+
+        <!-- Leading 28 px mirrors the tick box column of the rows. -->
+        <Grid Grid.Row="3" Padding="10,0,22,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="28" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="110" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="1" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColApp" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Button>
+            <Button Grid.Column="2" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColPublisher" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Button>
+            <Button Grid.Column="3" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColKind" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Button>
+            <Button Grid.Column="4" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColSafety" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            </Button>
+        </Grid>
+
+        <Border Grid.Row="3" VerticalAlignment="Bottom" Height="1"
+                Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+        <StackPanel Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8"
+                    Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay,
+                        Converter={StaticResource BoolToVisibilityConverter}}">
+            <FontIcon Glyph="&#xECAA;" FontSize="32"
+                      Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+            <TextBlock x:Uid="AppsHint"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       TextAlignment="Center" />
+        </StackPanel>
+
+        <!-- IsItemClickEnabled only for the hover state: a ListView draws none without it.
+             No real selection, or it would mark a different row than the context menu acts on. -->
+        <ListView Grid.Row="4"
+                  ItemsSource="{x:Bind ViewModel.Rows, Mode=OneWay}"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True"
+                  Padding="0,2,0,0">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="MinHeight" Value="0" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="CornerRadius" Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:AppRowViewModel">
+                    <!-- RightTapped rather than a ContextFlyout in the template: one menu for
+                         the page instead of one per row. -->
+                    <!-- Transparent, or the gaps between the columns are not hit testable. -->
+                    <Grid Height="30" Padding="10,0,22,0"
+                          Background="Transparent"
+                          Opacity="{x:Bind RowOpacity, Mode=OneWay}"
+                          RightTapped="Row_RightTapped">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="110" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Box without a label, as in the tweak list: a CheckBox carrying the
+                             name claims every click on it. Disabled for anything Windows needs,
+                             so the row stays readable but cannot be ticked. -->
+                        <CheckBox Grid.Column="0"
+                                  IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind CanRemove, Mode=OneWay}"
+                                  MinWidth="0"
+                                  Padding="0"
+                                  VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Column="1"
+                                   Text="{x:Bind Name}"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock Grid.Column="2"
+                                   Text="{x:Bind Publisher}"
+                                   FontSize="11"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock Grid.Column="3"
+                                   Text="{x:Bind Kind}"
+                                   FontSize="11"
+                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                   VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Column="4"
+                                   Text="{x:Bind SafetyLabel, Mode=OneWay}"
+                                   FontSize="11"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Grid Grid.Row="5"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,1,0,0"
+              Padding="10,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Uid="BtnAppsScan"
+                    Grid.Column="0"
+                    Command="{x:Bind ViewModel.ScanCommand}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                    MinWidth="104" Height="30" />
+
+            <TextBlock Grid.Column="1"
+                       Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                       FontSize="12"
+                       Margin="12,0"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+            <!-- Click, not Command: uninstalling cannot be undone, so the page asks first. -->
+            <Button x:Uid="BtnAppsRemove"
+                    Grid.Column="2"
+                    Click="Remove_Click"
+                    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                    MinWidth="112" Height="30" />
+        </Grid>
+    </Grid>
+</Page>

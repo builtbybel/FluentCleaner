@@ -166,11 +166,6 @@
   <data name="LblWinapp3Desc.Text"><value>  — 清理规则更激进，请自行承担使用风险。</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>下载</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>更新</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>预装软件清理</value></data>
-  <data name="LblWinappxDesc.Text"><value>  — 终端卸载预装应用专用 AppX 清理条目。</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>下载</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>更新</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>自定义数据库路径（.ini 文件）</value></data>
   <data name="BtnBrowse.Content"><value>浏览…</value></data>
   <data name="BtnApplyPath.Content"><value>应用</value></data>
@@ -220,7 +215,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 尚未下载 — 请点击“下载”。</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx 尚未下载 — 请点击“下载”。</value></data>
   <data name="St_HistoryNone"><value>尚无运行记录</value></data>
   <data name="St_HistorySummary"><value>{0} 次运行 · 共释放 {1}</value></data>
   <data name="St_HistoryItems"><value>{0} 个项目</value></data>
@@ -342,23 +336,6 @@
   <data name="CLI_NothingFound"><value>  未扫描到垃圾文件。</value></data>
   <data name="CLI_ListEntries"><value>  — 共 {0} 条清理条目。</value></data>
   <data name="CLI_ListCategories"><value>  — 共 {0} 个分类。</value></data>
-  <data name="CLI_AppxUsage"><value>  使用格式：appx list | appx scan | appx remove &lt;名称&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  正在列出所有已安装AppX应用包...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  未检测到任何应用包。</value></data>
-  <data name="CLI_AppxListDone"><value>  — 已安装 {0} 个应用包。执行 appx remove &lt;名称&gt; 即可卸载。</value></data>
-  <data name="CLI_AppxScanStart"><value>  正在扫描预装垃圾应用包...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  未发现预装垃圾应用，系统干净。</value></data>
-  <data name="CLI_AppxScanDone"><value>  — 找到 {0} 个预装应用包。可执行 appx remove &lt;名称&gt; 或 appx remove all 批量卸载。</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  使用格式：appx remove &lt;名称&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  正在检索可卸载应用包...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  无待卸载应用。</value></data>
-  <data name="CLI_AppxRemoving"><value>  正在卸载 {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  成功  已卸载 {0}。</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  失败 {0} — 卸载出错（应用不存在或需要管理员权限）。</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  操作完成 — 共卸载 {0} 个应用包。</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  未卸载任何应用。</value></data>
-  <data name="CLI_AppxDisabled"><value>Winappx 数据库已禁用，请前往设置页面开启。</value></data>
-  <data name="CLI_AppxNotFound"><value>未找到 Winappx.ini 文件，请在设置页面下载该数据库。</value></data>
 
   <!-- Settings navigator / Cookie Manager -->
   <data name="SettingsNavGeneral.Content"><value>常规</value></data>

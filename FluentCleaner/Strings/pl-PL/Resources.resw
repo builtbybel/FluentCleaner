@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -166,11 +166,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  więcej agresywnych wpisów, używasz na własne ryzyko.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Pobierz</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Aktualizuj</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>bloatware</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  AppX / wpisy dotyczące zbędnego oprogramowania i składników systemu.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Pobierz</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Aktualizuj</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Ścieżka do bazy użytkownika (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Przeglądaj…</value></data>
   <data name="BtnApplyPath.Content"><value>Zastosuj</value></data>
@@ -220,7 +215,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 jeszcze nie był pobierany — kliknij Pobierz.</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx jeszcze nie był pobierany — kliknij Pobierz.</value></data>
   <data name="St_HistoryNone"><value>nie zapisano jeszcze uruchomień</value></data>
   <data name="St_HistorySummary"><value>{0} uruchomień · {1} całowicie zwolniono</value></data>
   <data name="St_HistoryItems"><value>{0} pozycji</value></data>
@@ -342,23 +336,6 @@
   <data name="CLI_NothingFound"><value>  Nic nie znaleziono.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} wpisów.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} kategorii.</value></data>
-  <data name="CLI_AppxUsage"><value>  Użycie: appx list | appx scan | appx remove &lt;nazwa&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Przeglądanie wszystkich zainstalowanych pakietów Appx...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Nie znaleziono pakietów.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} pakietów zainstalowanych. Użyj 'appx remove &lt;nazwa&gt;' aby odinstalować.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Skanowanie zainstalowanych pakietów...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Nic nie znaleziono - system wygląda czysto.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} pakiet(ów) znaleziono. Użyj 'appx remove &lt;nazwa&gt;' lub 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Użycie: appx remove &lt;nazwa&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Szukam zainstalowanych pakietów...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Nic do usunięcia.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Usuwam {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} usunięty.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — błąd (może nie być zainstalowany lub wymaga podwyższonych uprawnień).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Gotowe — {0} pakiet(ów) usuniętych.</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Nic nie zostało usunięte.</value></data>
-  <data name="CLI_AppxDisabled"><value>  Winappx database is disabled — enable it in Settings.</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini not found — download it in Settings.</value></data>
 
   <!-- Settings navigator / Cookie Manager -->
   <data name="SettingsNavGeneral.Content"><value>Ogólne</value></data>

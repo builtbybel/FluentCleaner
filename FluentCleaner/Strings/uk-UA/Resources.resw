@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -147,11 +147,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  більш агресивні записи, використовуйте на свій страх та ризик.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Завантажити</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Оновити</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>благоустрій (bloatware)</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  записи AppX / bloatware для термінального деблоатера.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Завантажити</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Оновити</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Шлях до користувацької бази даних (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Огляд…</value></data>
   <data name="BtnApplyPath.Content"><value>Застосувати</value></data>
@@ -189,7 +184,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 ще не завантажений — натисніть «Завантажити».</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx ще не завантажений — натисніть «Завантажити».</value></data>
   <data name="St_HistoryNone"><value>записів про запусках поки немає</value></data>
   <data name="St_HistorySummary"><value>{0} запусків · всього звільнено {1}</value></data>
   <data name="St_HistoryItems"><value>{0} елементів</value></data>
@@ -297,22 +291,5 @@
   <data name="CLI_NothingFound"><value>  Нічого не знайдено.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} записів.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} категорій.</value></data>
-  <data name="CLI_AppxUsage"><value>  Використання: appx list | appx scan | appx remove &lt;Ім'я&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Список всіх встановлених пакетів AppX...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Пакетів не знайдено.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} пакет(ів) встановлено. Используйте 'appx remove &lt;Ім'я&gt;' для видалення.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Сканування встановлених пакетів...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Нічого не знайдено – система чиста.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} пакет(ів) знайдено. Используйте 'appx remove &lt;Ім'я&gt;' або 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Використання: appx remove &lt;Ім'я&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Сканування встановлених пакетів...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Нічого видаляти.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Видалення {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} видалений.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  Помилка {0} — не вдалося (можливо, не встановлено або потребує прав адміністратора).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Готово — видалено {0} пакет(ів).</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Нічого не було видалено.</value></data>
-  <data name="CLI_AppxDisabled"><value>  База данних Winappx вимкнена — увімкніть її в «Налаштуваннях».</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini не знайдено — скачайте його в «Налаштуваннях».</value></data>
 
 </root>

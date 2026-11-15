@@ -165,11 +165,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  清理規則更激進，請自行承擔風險。</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>下載</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>更新</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>預先安裝軟體</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  終端精簡工具的 AppX / 預先安裝軟體項目。</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>下載</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>更新</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>自訂資料庫路徑 (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>瀏覽…</value></data>
   <data name="BtnApplyPath.Content"><value>套用</value></data>
@@ -219,7 +214,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 尚未下載 — 請按下 [下載]。</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx 尚未下載 — 請按下 [下載]。</value></data>
   <data name="St_HistoryNone"><value>暫無清理記錄</value></data>
   <data name="St_HistorySummary"><value>共 {0} 次清理 · 總計釋放 {1} 空間</value></data>
   <data name="St_HistoryItems"><value>{0} 個清理項</value></data>
@@ -341,22 +335,5 @@
   <data name="CLI_NothingFound"><value>  未找到任何項目。</value></data>
   <data name="CLI_ListEntries"><value>  — {0} 個項目。</value></data>
   <data name="CLI_ListCategories"><value>  — {0} 個類別。</value></data>
-  <data name="CLI_AppxUsage"><value>  使用格式: appx list | appx scan | appx remove &lt;名稱&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  正在列出所有已安裝的 AppX 套件...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  找不到任何套件。</value></data>
-  <data name="CLI_AppxListDone"><value>  — 已安裝 {0} 個套件。使用 'appx remove &lt;名稱&gt;' 來卸載。</value></data>
-  <data name="CLI_AppxScanStart"><value>  正在掃描預裝垃圾套件...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  找不到預裝垃圾套件 — 系統乾淨。</value></data>
-  <data name="CLI_AppxScanDone"><value>  — 找到 {0} 預裝套件。使用 'appx remove &lt;名稱&gt;' 或 'appx remove all'。</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  使用格式: appx remove &lt;名稱&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  正在掃描可卸載套件...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  無須卸載套件。</value></data>
-  <data name="CLI_AppxRemoving"><value>  正在卸載 {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  成功  {0} 已卸載。</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  失敗 {0} — 卸載出錯 (可能未安裝或需要提升權限)。</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  操作完成 — 共卸載 {0} 個套件。</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  未卸載任何套件。</value></data>
-  <data name="CLI_AppxDisabled"><value>  Winappx 資料庫已停用 — 請前往設定頁面啟用。</value></data>
-  <data name="CLI_AppxNotFound"><value>  找不到 Winappx.ini — 請在設定頁面下載該資料庫。</value></data>
 
 </root>

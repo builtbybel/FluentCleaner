@@ -147,11 +147,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  entrées plus agressives, utiliser à vos propres risques.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Charger</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Mettre à jour</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>logiciels inutiles</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  AppX / entrées de logiciels inutiles pour le terminal debloater.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Télécharger</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Mettre à jour</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Chemin de base de données personnalisé (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Parcourir…</value></data>
   <data name="BtnApplyPath.Content"><value>Appliquer</value></data>
@@ -189,7 +184,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 n'est pas encore téléchargé — cliquez sur Télécharger.</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winapp3 n'est pas encore téléchargé — cliquez sur Télécharger.</value></data>
   <data name="St_HistoryNone"><value>Aucune utilisation enregistrée pour le moment</value></data>
   <data name="St_HistorySummary"><value>{0} utilisations · {1} libéré au total</value></data>
   <data name="St_HistoryItems"><value>{0} éléments</value></data>
@@ -298,22 +292,5 @@
   <data name="CLI_NothingFound"><value>  Rien trouvé.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} entrées.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} catégories.</value></data>
-  <data name="CLI_AppxUsage"><value>  Utilisation: appx list | appx scan | appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Liste de tous les packages AppX installés...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Aucun package trouvé.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} package(s) installé(s). Utiliser 'appx remove &lt;name&gt;' pour désinstaller.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Analyse des paquets installés...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Rien trouvé — le système semble propre.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} package(s) trouvé(s). Utiliser 'appx remove &lt;name&gt;' or 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Utilisation: appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Recherche des paquets installés...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Rien à enlever.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Suppression {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} supprimé.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — échec (peut ne pas être installé ou nécessite une élévation).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Fait — {0} package(s) enlevé(s).</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Rien n'a été enlevé.</value></data>
-  <data name="CLI_AppxDisabled"><value>  La base de données Winappx est désactivée; activez-la dans les paramètres.</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini non trouvé — Téléchargez-le dans les paramètres.</value></data>
 
 </root>

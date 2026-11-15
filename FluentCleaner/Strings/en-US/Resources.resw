@@ -44,6 +44,100 @@
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini loads automatically at startup.</value></data>
 
+  <!-- ============================================================
+       APPS PAGE — uninstaller, classified by Rules\AppRules.ini
+  ============================================================ -->
+  <data name="NavApps.Content"><value>Apps</value></data>
+  <data name="AppsHint.Text"><value>Asking Windows what is installed.</value></data>
+  <data name="ColApp.Text"><value>App</value></data>
+  <data name="ColPublisher.Text"><value>Publisher</value></data>
+  <data name="ColKind.Text"><value>Kind</value></data>
+  <data name="ColSafety.Text"><value>Rating</value></data>
+  <data name="CmbSafety.PlaceholderText"><value>Rating</value></data>
+  <data name="ChkOnlyRemovable.Content"><value>Only what can be removed</value></data>
+  <data name="BtnAppsScan.Content"><value>Check again</value></data>
+  <data name="BtnAppsRemove.Content"><value>Uninstall selected</value></data>
+  <data name="St_AppPackage"><value>Store app</value></data>
+  <data name="St_AppProgram"><value>Program</value></data>
+  <data name="St_AppProtected"><value>Protected</value></data>
+  <data name="St_AppCandidate"><value>Safe to remove</value></data>
+  <data name="St_AppPersonal"><value>Yours</value></data>
+  <data name="St_AppRemoved"><value>Removed</value></data>
+  <data name="St_AppsAllLevels"><value>All ratings</value></data>
+  <data name="St_AppsFound"><value>{0} apps listed.</value></data>
+  <data name="St_AppsRemoved"><value>{0} uninstalled.</value></data>
+  <data name="St_AppsStarted"><value>{0} left an uninstaller window open.</value></data>
+  <data name="St_AppsFailedList"><value>Failed: {0}</value></data>
+  <data name="St_AppsPartialTitle"><value>Store apps could not be listed</value></data>
+  <data name="St_AppsNothingPicked"><value>Nothing selected.</value></data>
+  <data name="St_AppsConfirmTitle"><value>Uninstall {0} apps?</value></data>
+  <data name="St_AppsConfirmTitleOne"><value>Uninstall {0}?</value></data>
+  <data name="St_AppsAndMore"><value>… and {0} more</value></data>
+  <data name="St_AppsConfirmRemove"><value>Uninstall</value></data>
+  <data name="St_AppsConfirmCancel"><value>Cancel</value></data>
+  <data name="Apps_Protected"><value>Windows protects this app.</value></data>
+  <data name="Apps_Failed"><value>The uninstall did not go through.</value></data>
+  <data name="Apps_Timeout"><value>The uninstall took too long and was stopped.</value></data>
+  <data name="Apps_Removing"><value>Removing {0}…</value></data>
+  <data name="Apps_RemovingProgram"><value>Running the uninstaller of {0}…</value></data>
+  <data name="Progress_Apps"><value>Asking Windows what is installed…</value></data>
+  <data name="Progress_AppChecking"><value>Reading {0} ({1}/{2})…</value></data>
+  <data name="Progress_AppsFound"><value>{0} apps listed.</value></data>
+
+  <!-- ============================================================
+       TWEAKS PAGE — registry catalogue read from Rules\*.ini
+  ============================================================ -->
+  <data name="NavTweaks.Content"><value>Tweaks</value></data>
+  <data name="TweaksHint.Text"><value>Checking which settings this PC already has.</value></data>
+  <!-- Category names of the tweak catalogue. The key is Where_ plus the Category the .ini
+       writes; a pack whose category has no key here simply shows its raw name. -->
+  <data name="Where_Ads"><value>Ads</value></data>
+  <data name="Where_AI"><value>AI</value></data>
+  <data name="Where_Appearance"><value>Appearance</value></data>
+  <data name="Where_Edge"><value>Edge</value></data>
+  <data name="Where_Explorer"><value>File Explorer</value></data>
+  <data name="Where_Gaming"><value>Gaming</value></data>
+  <data name="Where_Privacy"><value>Privacy</value></data>
+  <data name="Where_System"><value>System</value></data>
+  <data name="Where_Taskbar"><value>Taskbar</value></data>
+  <data name="Where_Updates"><value>Updates</value></data>
+
+  <!-- Row context menus (tweaks and apps) -->
+  <data name="MenuCopyRegPath.Text"><value>Copy registry path</value></data>
+  <data name="MenuOpenRegedit.Text"><value>Open in Registry Editor</value></data>
+  <data name="MenuUninstallOne.Text"><value>Uninstall this app</value></data>
+  <data name="MenuCopyAppId.Text"><value>Copy identifier</value></data>
+  <data name="St_TweaksPathCopied"><value>Registry path copied.</value></data>
+  <data name="St_AppsIdCopied"><value>Identifier copied.</value></data>
+
+  <data name="ColTweak.Text"><value>Setting</value></data>
+  <data name="ColCategory.Text"><value>Category</value></data>
+  <data name="ColState.Text"><value>Status</value></data>
+  <data name="TweakStateApplied.Text"><value>Applied</value></data>
+  <data name="TweakStateOpen.Text"><value>Open</value></data>
+  <data name="CmbCategory.PlaceholderText"><value>Category</value></data>
+  <data name="ChkOnlyOpen.Content"><value>Only open</value></data>
+  <data name="BtnRestartExplorer.Content"><value>Restart Explorer</value></data>
+  <data name="St_TweaksAllCategories"><value>All categories</value></data>
+  <data name="St_TweaksNeedAdmin"><value>Some settings need administrator rights.</value></data>
+  <data name="St_TweaksNeedReboot"><value>A restart of Windows is needed.</value></data>
+  <data name="St_TweaksNeedExplorer"><value>Explorer has to restart before this is visible.</value></data>
+  <data name="St_TweaksFailedList"><value>Failed: {0}</value></data>
+  <data name="BtnTweaksScan.Content"><value>Check again</value></data>
+  <data name="BtnTweaksApply.Content"><value>Apply selected</value></data>
+  <data name="St_TweakApply"><value>Apply</value></data>
+  <data name="St_TweakReset"><value>Reset</value></data>
+  <data name="St_TweaksChecked"><value>{0} settings checked.</value></data>
+  <data name="St_TweaksScanFailed"><value>The catalogue could not be checked</value></data>
+  <data name="St_TweaksApplied"><value>{0} applied, {1} reset.</value></data>
+  <data name="St_TweaksPartly"><value>{0} applied, {1} reset, {2} failed.</value></data>
+  <data name="Tweak_Conflict"><value>conflicts with another selected setting</value></data>
+  <data name="Progress_Checking"><value>Checking {0} ({1}/{2})…</value></data>
+  <data name="Progress_Checked"><value>{0} settings checked.</value></data>
+  <data name="Progress_Applying"><value>Applying {0}…</value></data>
+  <data name="Progress_Resetting"><value>Resetting {0}…</value></data>
+  <data name="Progress_Completed"><value>{0} of {1} done.</value></data>
+
   <!-- Cleaner Page — result and detail column headers -->
   <data name="ColName.Text"><value>Name</value></data>
   <data name="ColContents.Text"><value>Contents</value></data>
@@ -140,8 +234,7 @@
   <data name="St_SearchFound"><value>Showing {0} matching entries.</value></data>
 
   <!-- Cleaner Page — status bar (built in code from these parts) -->
-  <data name="St_StatusCategories"><value>{0} categories</value></data>
-  <data name="St_StatusEntries"><value>{0} entries</value></data>
+  <data name="St_StatusEntries"><value>{0} of {1} entries</value></data>
   <data name="St_StatusSelected"><value>{0} selected</value></data>
   <data name="St_StatusFound"><value>{0} found</value></data>
   <data name="St_Administrator"><value>Administrator</value></data>
@@ -205,11 +298,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  more aggressive entries, use at your own risk.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Download</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Update</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>bloatware</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  AppX / bloatware entries for the terminal debloater.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Download</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Update</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Custom database path (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Browse…</value></data>
   <data name="BtnApplyPath.Content"><value>Apply</value></data>
@@ -259,7 +347,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 not downloaded yet — click Download.</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx not downloaded yet — click Download.</value></data>
   <data name="St_HistoryNone"><value>no runs recorded yet</value></data>
   <data name="St_HistorySummary"><value>{0} runs · {1} total freed</value></data>
   <data name="St_HistoryItems"><value>{0} items</value></data>
@@ -381,23 +468,6 @@
   <data name="CLI_NothingFound"><value>  Nothing found.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} entries.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} categories.</value></data>
-  <data name="CLI_AppxUsage"><value>  Usage: appx list | appx scan | appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Listing all installed AppX packages...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  No packages found.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} package(s) installed. Use 'appx remove &lt;name&gt;' to uninstall.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Scanning installed packages...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Nothing found — system looks clean.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} package(s) found. Use 'appx remove &lt;name&gt;' or 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Usage: appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Scanning for installed packages...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Nothing to remove.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Removing {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} removed.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — failed (may not be installed or requires elevation).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Done — {0} package(s) removed.</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Nothing was removed.</value></data>
-  <data name="CLI_AppxDisabled"><value>  Winappx database is disabled — enable it in Settings.</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini not found — download it in Settings.</value></data>
 
   <!-- Settings navigator / Cookie Manager -->
   <data name="SettingsNavGeneral.Content"><value>General</value></data>

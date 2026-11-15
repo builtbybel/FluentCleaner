@@ -162,11 +162,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  agresszívabb bejegyzések, saját felelősségre használd.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Letöltés</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Frissítés</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>bloatware</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  AppX / bloatware bejegyzések a terminálos eltávolítóhoz.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Letöltés</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Frissítés</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Egyéni adatbázis elérési útja (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Tallózás…</value></data>
   <data name="BtnApplyPath.Content"><value>Alkalmaz</value></data>
@@ -216,7 +211,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>A Winapp3 még nincs letöltve — kattints a Letöltésre.</value></data>
-  <data name="St_WinappxNotDownloaded"><value>A Winappx még nincs letöltve — kattints a Letöltésre.</value></data>
   <data name="St_HistoryNone"><value>még nincs rögzített futtatás</value></data>
   <data name="St_HistorySummary"><value>{0} futtatás · összesen {1} felszabadítva</value></data>
   <data name="St_HistoryItems"><value>{0} elem</value></data>
@@ -338,22 +332,5 @@
   <data name="CLI_NothingFound"><value>  Nincs találat.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} bejegyzés.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} kategória.</value></data>
-  <data name="CLI_AppxUsage"><value>  Használat: appx list | appx scan | appx remove &lt;név&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Az összes telepített AppX-csomag listázása...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Nem található csomag.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} csomag telepítve. Az eltávolításhoz használd: 'appx remove &lt;név&gt;'.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Telepített csomagok vizsgálata...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Nincs találat — a rendszer tisztának tűnik.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} csomag található. Használd: 'appx remove &lt;név&gt;' vagy 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Használat: appx remove &lt;név&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Telepített csomagok keresése...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Nincs mit eltávolítani.</value></data>
-  <data name="CLI_AppxRemoving"><value>  {0} eltávolítása...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} eltávolítva.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  HIBA {0} — sikertelen (lehet, hogy nincs telepítve, vagy emelt jogosultság szükséges).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Kész — {0} csomag eltávolítva.</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Semmi sem lett eltávolítva.</value></data>
-  <data name="CLI_AppxDisabled"><value>  A Winappx adatbázis le van tiltva — engedélyezd a Beállításokban.</value></data>
-  <data name="CLI_AppxNotFound"><value>  A Winappx.ini nem található — töltsd le a Beállításokban.</value></data>
 
 </root>

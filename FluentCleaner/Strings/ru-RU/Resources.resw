@@ -147,11 +147,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  более агрессивные записи, используйте на свой страх и риск.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Скачать</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Обновить</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>благоустройство (bloatware)</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  записи AppX / bloatware для терминального деблоатера.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Скачать</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Обновить</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Путь к пользовательской базе данных (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Обзор…</value></data>
   <data name="BtnApplyPath.Content"><value>Применить</value></data>
@@ -189,7 +184,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 ещё не скачан — нажмите «Скачать».</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx ещё не скачан — нажмите «Скачать».</value></data>
   <data name="St_HistoryNone"><value>записей о запусках пока нет</value></data>
   <data name="St_HistorySummary"><value>{0} запусков · всего освобождено {1}</value></data>
   <data name="St_HistoryItems"><value>{0} элементов</value></data>
@@ -298,22 +292,5 @@
   <data name="CLI_NothingFound"><value>  Ничего не найдено.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} записей.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} категорий.</value></data>
-  <data name="CLI_AppxUsage"><value>  Использование: appx list | appx scan | appx remove &lt;имя&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Список всех установленных пакетов AppX...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Пакетов не найдено.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} пакет(ов) установлено. Используйте 'appx remove &lt;имя&gt;' для удаления.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Сканирование установленных пакетов...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Ничего не найдено — система чистая.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} пакет(ов) найдено. Используйте 'appx remove &lt;имя&gt;' или 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Использование: appx remove &lt;имя&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Сканирование установленных пакетов...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Нечего удалять.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Удаление {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} удалён.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ОШИБКА {0} — не удалось (возможно, не установлен или требует прав администратора).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Готово — удалено {0} пакет(ов).</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Ничего не было удалено.</value></data>
-  <data name="CLI_AppxDisabled"><value>  База данных Winappx отключена — включите её в «Настройках».</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini не найден — скачайте его в «Настройках».</value></data>
 
 </root>

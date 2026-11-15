@@ -1,0 +1,252 @@
+<Page x:Class="FluentCleaner.Plugins.Tweaks.TweaksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:FluentCleaner.Plugins.Tweaks"
+    NavigationCacheMode="Required"
+    Background="Transparent">
+
+    <!-- Styles come from Styles/Shell.xaml, the same ones the cleaner list uses, so both
+         tools read as one app rather than two pasted together. -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- progress -->
+            <RowDefinition Height="Auto" />
+            <!-- outcome of the last run -->
+            <RowDefinition Height="Auto" />
+            <!-- filters -->
+            <RowDefinition Height="Auto" />
+            <!-- column headers -->
+            <RowDefinition Height="*" />
+            <!-- rows -->
+            <RowDefinition Height="Auto" />
+            <!-- description of the selected rule -->
+            <RowDefinition Height="Auto" />
+            <!-- actions -->
+        </Grid.RowDefinitions>
+
+        <ProgressBar Grid.Row="0"
+                     Height="2"
+                     Maximum="100"
+                     VerticalAlignment="Top"
+                     Value="{x:Bind ViewModel.Progress, Mode=OneWay}"
+                     Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
+                         Converter={StaticResource BoolToVisibilityConverter}}" />
+
+        <!-- What the last run did, and what it could not do: missing rights, a shell that has
+             to restart, rules that failed. Silent success would leave the user guessing. -->
+        <InfoBar Grid.Row="1"
+                 Margin="10,6,22,0"
+                 IsOpen="{x:Bind ViewModel.InfoOpen, Mode=TwoWay}"
+                 Severity="{x:Bind ViewModel.InfoSeverity, Mode=OneWay}"
+                 Title="{x:Bind ViewModel.InfoTitle, Mode=OneWay}"
+                 Message="{x:Bind ViewModel.InfoMessage, Mode=OneWay}">
+            <InfoBar.ActionButton>
+                <Button x:Uid="BtnRestartExplorer"
+                        Command="{x:Bind ViewModel.RestartExplorerCommand}"
+                        Visibility="{x:Bind ViewModel.NeedsExplorerRestart, Mode=OneWay,
+                            Converter={StaticResource BoolToVisibilityConverter}}" />
+            </InfoBar.ActionButton>
+        </InfoBar>
+
+        <!-- Category and "open only": the two cuts that make a 94 row catalogue workable. -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    Spacing="10"
+                    Padding="10,8,22,8"
+                    VerticalAlignment="Center">
+            <ComboBox x:Uid="CmbCategory"
+                      MinWidth="180"
+                      Height="30"
+                      ItemsSource="{x:Bind ViewModel.Categories, Mode=OneWay}"
+                      SelectedItem="{x:Bind ViewModel.CategoryFilter, Mode=TwoWay}" />
+            <CheckBox x:Uid="ChkOnlyOpen"
+                      MinWidth="0"
+                      VerticalAlignment="Center"
+                      IsChecked="{x:Bind ViewModel.OnlyOpen, Mode=TwoWay}" />
+        </StackPanel>
+
+        <!-- Padding matches the row template below so header and value share a left edge. -->
+        <!-- Leading 28 px mirrors the tick box column of the rows, so every heading stands
+             over the values it names. -->
+        <Grid Grid.Row="3" Padding="10,0,22,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="28" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="110" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="1" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColTweak" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Button>
+            <Button Grid.Column="2" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColCategory" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Button>
+            <Button Grid.Column="3" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColState" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            </Button>
+        </Grid>
+
+        <Border Grid.Row="3" VerticalAlignment="Bottom" Height="1"
+                Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+        <!-- Nothing scanned yet, or the filters matched nothing. -->
+        <StackPanel Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8"
+                    Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay,
+                        Converter={StaticResource BoolToVisibilityConverter}}">
+            <FontIcon Glyph="&#xE9F5;" FontSize="32"
+                      Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+            <TextBlock x:Uid="TweaksHint"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       TextAlignment="Center" />
+        </StackPanel>
+
+        <!-- Single selection drives the description strip; the tick box is separate, so
+             reading what a rule does never changes what will be written. -->
+        <ListView Grid.Row="4"
+                  ItemsSource="{x:Bind ViewModel.Rows, Mode=OneWay}"
+                  SelectedItem="{x:Bind ViewModel.SelectedRow, Mode=TwoWay}"
+                  SelectionMode="Single"
+                  Padding="0,2,0,0">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="MinHeight" Value="0" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="CornerRadius" Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:TweakRowViewModel">
+                    <!-- RightTapped, not a ContextFlyout: that would build one menu per row.
+                         Transparent, or the gaps between the columns are not hit testable. -->
+                    <Grid Height="30" Padding="10,0,22,0"
+                          Background="Transparent"
+                          RightTapped="Row_RightTapped">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="110" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- The box alone, with no content: a CheckBox that carries the label
+                             swallows every click on the name, so ticking a rule and selecting
+                             it became the same gesture and its own hover band fought the row's.
+                             Box ticks, everything else selects. -->
+                        <CheckBox Grid.Column="0"
+                                  IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                                  MinWidth="0"
+                                  Padding="0"
+                                  VerticalAlignment="Center" />
+
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Spacing="5"
+                                    VerticalAlignment="Center">
+                            <!-- Needs the machine hive or a policy key, so a standard user
+                                 cannot write it; flagged before the run, not after. -->
+                            <FontIcon Glyph="&#xE72E;" FontSize="11"
+                                      Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                      VerticalAlignment="Center"
+                                      Visibility="{x:Bind NeedsAdmin,
+                                          Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind Title}"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+
+                        <TextBlock Grid.Column="2"
+                                   Text="{x:Bind Category}"
+                                   FontSize="11"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <!-- State, not action: the action word is in the right click menu. -->
+                        <StackPanel Grid.Column="3"
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE73E;" FontSize="10"
+                                      VerticalAlignment="Center"
+                                      Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                      Visibility="{x:Bind IsApplied, Mode=OneWay,
+                                          Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock x:Uid="TweakStateApplied"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"
+                                       Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                       Visibility="{x:Bind IsApplied, Mode=OneWay,
+                                           Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock x:Uid="TweakStateOpen"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"
+                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                       Visibility="{x:Bind IsOpen, Mode=OneWay,
+                                           Converter={StaticResource BoolToVisibilityConverter}}" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- What the selected rule actually does, in the catalogue's own words, plus every
+             registry value it writes. Tooltips need hovering and waiting; this does not. -->
+        <Grid Grid.Row="5"
+              Padding="10,8,22,8"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,1,0,0"
+              Visibility="{x:Bind ViewModel.HasSelection, Mode=OneWay,
+                  Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Spacing="3">
+                <TextBlock Text="{x:Bind ViewModel.SelectedRow.Description, Mode=OneWay}"
+                           FontSize="12"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="{x:Bind ViewModel.SelectedRow.RegistryPaths, Mode=OneWay}"
+                           FontFamily="{StaticResource MonoFont}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           IsTextSelectionEnabled="True"
+                           Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Action bar -->
+        <Grid Grid.Row="6"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,1,0,0"
+              Padding="10,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Uid="BtnTweaksScan"
+                    Grid.Column="0"
+                    Command="{x:Bind ViewModel.ScanCommand}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                    MinWidth="104" Height="30" />
+
+            <TextBlock Grid.Column="1"
+                       Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                       FontSize="12"
+                       Margin="12,0"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+            <Button x:Uid="BtnTweaksApply"
+                    Grid.Column="2"
+                    Command="{x:Bind ViewModel.ApplyCommand}"
+                    MinWidth="112" Height="30" />
+        </Grid>
+    </Grid>
+</Page>

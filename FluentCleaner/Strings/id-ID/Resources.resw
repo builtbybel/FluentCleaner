@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -165,11 +165,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  entri lebih agresif, gunakan dengan risiko sendiri.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Unduh</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Perbarui</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>bloatware</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  entri AppX / bloatware untuk terminal debloater.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Unduh</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Perbarui</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Jalur database kustom (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Telusuri…</value></data>
   <data name="BtnApplyPath.Content"><value>Terapkan</value></data>
@@ -219,7 +214,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 belum diunduh — klik Unduh.</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx belum diunduh — klik Unduh.</value></data>
   <data name="St_HistoryNone"><value>belum ada riwayat penggunaan</value></data>
   <data name="St_HistorySummary"><value>{0} kali pembersihan · total {1} dibebaskan</value></data>
   <data name="St_HistoryItems"><value>{0} item</value></data>
@@ -341,23 +335,6 @@
   <data name="CLI_NothingFound"><value>  Tidak ada yang ditemukan.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} entri.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} kategori.</value></data>
-  <data name="CLI_AppxUsage"><value>  Penggunaan: appx list | appx scan | appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Mendaftar semua paket AppX yang terinstal...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Tidak ada paket yang ditemukan.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} paket terinstal. Gunakan 'appx remove &lt;name&gt;' untuk mencopot.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Memindai paket yang terinstal...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Tidak ada yang ditemukan — sistem tampak bersih.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} paket ditemukan. Gunakan 'appx remove &lt;name&gt;' atau 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Penggunaan: appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Memindai paket yang terinstal...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Tidak ada yang perlu dihapus.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Menghapus {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} dihapus.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — gagal (mungkin tidak terinstal atau memerlukan elevasi).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Selesai — {0} paket dihapus.</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Tidak ada yang dihapus.</value></data>
-  <data name="CLI_AppxDisabled"><value>  Database Winappx dinonaktifkan — aktifkan di Pengaturan.</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini tidak ditemukan — unduh di Pengaturan.</value></data>
 
   <!-- Settings navigator / Cookie Manager -->
   <data name="SettingsNavGeneral.Content"><value>Umum</value></data>

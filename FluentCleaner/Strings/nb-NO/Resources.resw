@@ -152,11 +152,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  mer aggressive oppføringer, bruk på eget ansvar.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Last ned</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Oppdater</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>bloatware</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  AppX/bloatware-oppføringer for terminalens debloater.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Last ned</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Oppdater</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Egendefinert databasesti (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Bla gjennom…</value></data>
   <data name="BtnApplyPath.Content"><value>Bruk</value></data>
@@ -194,7 +189,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 er ikke lastet ned ennå — klikk Last ned.</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx er ikke lastet ned ennå — klikk Last ned.</value></data>
   <data name="St_HistoryNone"><value>ingen kjøringer registrert ennå</value></data>
   <data name="St_HistorySummary"><value>{0} kjøringer · {1} totalt frigjort</value></data>
   <data name="St_HistoryItems"><value>{0} elementer</value></data>
@@ -303,22 +297,5 @@
   <data name="CLI_NothingFound"><value>  Ingenting funnet.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} oppføringer.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} kategorier.</value></data>
-  <data name="CLI_AppxUsage"><value>  Bruk: appx list | appx scan | appx remove &lt;navn&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Lister opp alle installerte AppX-pakker...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Ingen pakker funnet.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} pakke(r) installert. Bruk 'appx remove &lt;navn&gt;' for å avinstallere.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Skanner installerte pakker...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Ingenting funnet — systemet ser rent ut.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} pakke(r) funnet. Bruk 'appx remove &lt;navn&gt;' eller 'appx remove all'.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Bruk: appx remove &lt;navn&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Skanner etter installerte pakker...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Ingenting å fjerne.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Fjerner {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} fjernet.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — mislyktes (kanskje ikke installert, eller krever administratorrettigheter).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Fullført — {0} pakke(r) fjernet.</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Ingenting ble fjernet.</value></data>
-  <data name="CLI_AppxDisabled"><value>  Winappx-databasen er deaktivert — aktiver den i Innstillinger.</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini ikke funnet — last den ned i Innstillinger.</value></data>
 
 </root>

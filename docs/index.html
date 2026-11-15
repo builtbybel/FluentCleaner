@@ -1,21 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="./" />
-    <title>FluentCleaner Inspector</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23d6007f%22/><path d=%22M18 14h30v9H29v8h16v9H29v14H18z%22 fill=%22white%22/></svg>" />
-    <link rel="stylesheet" href="css/app.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FluentCleaner</title>
+<meta name="description" content="FluentCleaner — update check and downloads." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23d6007f%22/><path d=%22M18 14h30v9H29v8h16v9H29v14H18z%22 fill=%22white%22/></svg>" />
+<style>
+  :root{
+    --bg:#faf9fb; --card:#ffffff; --line:#e7e4ea;
+    --text:#17151a; --dim:#6b6671; --faint:#938d99;
+    --accent:#d6007f; --ok:#0f8a4a; --okbg:#e8f6ee;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#131216; --card:#1b1a1f; --line:#2c2a31;
+      --text:#f2f0f4; --dim:#a39ead; --faint:#726c7a;
+      --accent:#ff2e9a; --ok:#4ad58a; --okbg:#16301f;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:15px/1.6 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+    display:flex; justify-content:center; padding:56px 16px 72px;
+  }
+  main{width:100%; max-width:520px}
+
+  /* --- header --- */
+  .brand{display:flex; align-items:center; gap:12px; margin-bottom:34px}
+  .mark{
+    width:38px; height:38px; border-radius:10px; background:var(--accent);
+    display:grid; place-items:center; color:#fff; font-weight:700; font-size:20px;
+    font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+  }
+  .brand h1{margin:0; font-size:19px; font-weight:650; letter-spacing:-.01em}
+  .brand p{margin:1px 0 0; font-size:13px; color:var(--dim)}
+
+  /* --- cards --- */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:20px; margin-bottom:14px;
+  }
+  .status{display:flex; align-items:flex-start; gap:13px}
+  .dot{width:9px; height:9px; border-radius:50%; margin-top:8px; flex:none; background:var(--faint)}
+  .dot.ok{background:var(--ok)} .dot.new{background:var(--accent)}
+  .status h2{margin:0; font-size:16px; font-weight:620; letter-spacing:-.01em}
+  .status p{margin:3px 0 0; font-size:13.5px; color:var(--dim)}
+  .pill{
+    display:inline-block; margin-top:9px; padding:2px 9px; border-radius:20px;
+    background:var(--okbg); color:var(--ok); font-size:12px; font-weight:600;
+  }
+
+  a.btn{
+    display:inline-block; margin-top:15px; padding:9px 17px; border-radius:8px;
+    background:var(--accent); color:#fff; text-decoration:none;
+    font-size:13.5px; font-weight:600;
+  }
+  a.btn:hover{filter:brightness(1.1)}
+  a.btn.ghost{background:transparent; color:var(--text); border:1px solid var(--line)}
+
+  /* --- editions --- */
+  .ed{display:flex; justify-content:space-between; align-items:center; padding:11px 0}
+  .ed + .ed{border-top:1px solid var(--line)}
+  .ed strong{font-weight:600; font-size:14px}
+  .ed span{display:block; font-size:12.5px; color:var(--faint)}
+  .ed a{color:var(--accent); text-decoration:none; font-size:13.5px; font-weight:600}
+  .ed a:hover{text-decoration:underline}
+
+  /* --- fact --- */
+  .fact{border-left:3px solid var(--accent); padding:16px 18px}
+  .fact b{display:block; font-size:11px; letter-spacing:.09em; text-transform:uppercase;
+          color:var(--accent); margin-bottom:5px}
+  .fact p{margin:0; font-size:14px}
+  .fact a{color:inherit; text-decoration:underline; text-underline-offset:2px}
+
+  /* --- support --- */
+  h3{margin:0 0 4px; font-size:15px; font-weight:620}
+  .card > p.lead{margin:0 0 15px; font-size:13.5px; color:var(--dim)}
+  .row{display:flex; gap:9px; flex-wrap:wrap}
+  .row a{
+    padding:8px 15px; border-radius:8px; border:1px solid var(--line);
+    text-decoration:none; color:var(--text); font-size:13.5px; font-weight:600;
+  }
+  .row a.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  .row a:hover{border-color:var(--accent)}
+
+  footer{margin-top:26px; font-size:12.5px; color:var(--faint); text-align:center}
+  footer a{color:var(--faint); text-decoration:none; margin:0 7px}
+  footer a:hover{color:var(--accent)}
+</style>
 </head>
 <body>
-    <div id="app">
-        <div class="boot"><span>F</span><p>Loading Inspector…</p></div>
+<main>
+
+  <div class="brand">
+    <div class="mark">F</div>
+    <div>
+      <h1>FluentCleaner</h1>
+      <p>Clean, tweak and debloat Windows.</p>
     </div>
-    <div id="blazor-error-ui">
-        Something went wrong. <a href="." class="reload">Reload</a>
+  </div>
+
+  <section class="card" id="statusCard">
+    <div class="status">
+      <div class="dot" id="dot"></div>
+      <div style="flex:1">
+        <h2 id="title">Checking…</h2>
+        <p id="sub">Reading the latest release information.</p>
+        <div id="action"></div>
+      </div>
     </div>
-    <script src="js/app.js"></script>
-    <script src="_framework/blazor.webassembly.js"></script>
+  </section>
+
+  <section class="card" id="editions" hidden>
+    <h3>Downloads</h3>
+    <p class="lead">Both editions are free and portable.</p>
+    <div class="ed">
+      <div><strong>FluentCleaner</strong><span id="mv">WinUI 3 · Windows 10 &amp; 11</span></div>
+      <a id="ml" href="#">Download</a>
+    </div>
+    <div class="ed">
+      <div><strong>FluentCleaner Classic</strong><span id="cv">WinForms · .NET&nbsp;4.8</span></div>
+      <a id="cl" href="#">Download</a>
+    </div>
+  </section>
+
+  <section class="card fact">
+    <b id="factLabel">Did you know</b>
+    <p id="factText"></p>
+  </section>
+
+  <section class="card">
+    <h3>No ads, no telemetry, no price tag</h3>
+    <p class="lead">
+      Nearly twenty years of Windows tools, written by one person in the evenings. It started
+      with CloneApp and Cleanmgr+, and it still runs on coffee and stubbornness. If any of it
+      ever saved you an afternoon, you can pay me back in caffeine.
+    </p>
+    <div class="row">
+      <a class="primary" href="https://www.paypal.com/donate/?hosted_button_id=99X8UQJQP96WN">Donate via PayPal</a>
+      <a href="https://ko-fi.com/builtbybel">Buy me a coffee</a>
+    </div>
+  </section>
+
+  <footer>
+    <a href="https://github.com/builtbybel/FluentCleaner">GitHub</a>·
+    <a href="https://github.com/builtbybel/FluentCleaner/releases">Releases</a>·
+    <a href="https://x.com/builtbybel">X</a>·
+    <a href="https://github.com/builtbybel/FluentCleaner/issues">Report a bug</a>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  var RELEASES = "https://github.com/builtbybel/FluentCleaner/releases";
+
+  // One of these is picked at random per visit. Keep them short and personal:
+  // this is the only place on the page that sounds like a person rather than a product.
+  var FACTS = [
+    'FluentCleaner Classic is written in WinForms, and I am not even slightly sorry. ' +
+    'Dragging a button onto a form and being done still beats every XAML file I have ever written.',
+
+    'The tweaking and debloating engines are plugins, not features. Delete their folders and ' +
+    'the app still compiles — I tested that before I dared to claim it.',
+
+    'Every registry tweak lives in a plain text file. You can read all 98 of them in Notepad ' +
+    'before you let the app touch anything.',
+
+    'I actually love sport. The tools get written after the gym, which may explain why some ' +
+    'commit messages make no sense at all.',
+
+    'Nothing here phones home. No analytics, no account, no "anonymous usage data". ' +
+    'The only thing this page knows about you is which version you clicked from.',
+
+    'I post the ugly work-in-progress screenshots on X before anything ships: ' +
+    '<a href="https://x.com/builtbybel">@builtbybel</a>.',
+
+    'This started around 2007 with CloneApp and Cleanmgr+. Most of what came after never left ' +
+    'my own hard drive, and honestly, that was usually the right call.',
+
+    'Translations are plain files too. Drop a language file next to the rules and the app ' +
+    'picks it up — no code, no build, no pull request required.',
+
+    'There is no company behind this. No roadmap meeting, no backlog grooming, just one person ' +
+    'deciding that the scrollbar is two pixels off and it is 1 a.m.',
+
+    'If you want to say thanks without spending anything: star the repo, or tell one person ' +
+    'who still cleans their PC by hand. <a href="https://ko-fi.com/builtbybel">Coffee</a> works too.'
+  ];
+
+  var f = FACTS[Math.floor(Math.random() * FACTS.length)];
+  document.getElementById("factText").innerHTML = f;
+
+  function qs(name) {
+    var m = new RegExp("[?&]" + name + "=([^&]*)").exec(location.search);
+    return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : "";
+  }
+
+  // "26.11.03" / "1.18.250" -> comparable number list. Missing parts count as 0.
+  function parts(v) {
+    return String(v).split(".").map(function (p) {
+      var n = parseInt(p, 10); return isNaN(n) ? 0 : n;
+    });
+  }
+  function newer(remote, local) {
+    var a = parts(remote), b = parts(local), n = Math.max(a.length, b.length);
+    for (var i = 0; i < n; i++) {
+      var x = a[i] || 0, y = b[i] || 0;
+      if (x !== y) return x > y;
+    }
+    return false;
+  }
+
+  function show(state, title, sub, pill, href, label) {
+    document.getElementById("dot").className = "dot " + state;
+    document.getElementById("title").textContent = title;
+    document.getElementById("sub").textContent = sub;
+    var box = document.getElementById("action");
+    box.innerHTML = "";
+    if (pill) {
+      var p = document.createElement("div");
+      p.className = "pill"; p.textContent = pill;
+      box.appendChild(p);
+    }
+    if (href) {
+      var a = document.createElement("a");
+      a.className = "btn"; a.href = href; a.textContent = label;
+      box.appendChild(a);
+    }
+  }
+
+  var edition = (qs("edition") || "").toLowerCase();
+  var version = qs("version");
+
+  fetch("versions.json", { cache: "no-store" })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      // Always offer both builds; someone arriving without parameters still came to download.
+      var m = data.modern || {}, c = data.classic || {};
+      document.getElementById("mv").textContent = "WinUI 3 · v" + (m.version || "—");
+      document.getElementById("cv").textContent = "WinForms · v" + (c.version || "—");
+      document.getElementById("ml").href = m.downloadUrl || RELEASES;
+      document.getElementById("cl").href = c.downloadUrl || RELEASES;
+      document.getElementById("editions").hidden = false;
+
+      var info = data[edition];
+      if (!info || !version) {
+        show("", "Latest versions", "Pick the edition you are running.", "", "", "");
+        return;
+      }
+
+      var name = edition === "classic" ? "FluentCleaner Classic" : "FluentCleaner";
+      if (newer(info.version, version)) {
+        show("new",
+          "Version " + info.version + " is out",
+          name + " — you are running " + version + ".",
+          "", info.downloadUrl || RELEASES, "Download");
+      } else {
+        show("ok",
+          "You are up to date",
+          name + " " + version + " is the current release.",
+          "Nothing to do", "", "");
+      }
+    })
+    .catch(function () {
+      show("", "Could not check right now",
+        "The version list did not load. The releases page always has the latest build.",
+        "", RELEASES, "Open releases");
+    });
+})();
+</script>
 </body>
 </html>

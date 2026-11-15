@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -496,21 +496,6 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="BtnUpdateWinapp3.Content" xml:space="preserve">
     <value>Actualizar</value>
   </data>
-  <data name="LblWinappx.Text" xml:space="preserve">
-    <value>Winappx</value>
-  </data>
-  <data name="LblWinappxTag.Text" xml:space="preserve">
-    <value>bloatware</value>
-  </data>
-  <data name="LblWinappxDesc.Text" xml:space="preserve">
-    <value>  —  AppX / entradas de bloatware para desinstalar en terminal debloater.</value>
-  </data>
-  <data name="BtnDownloadWinappx.Content" xml:space="preserve">
-    <value>Descargar</value>
-  </data>
-  <data name="BtnUpdateWinappx.Content" xml:space="preserve">
-    <value>Actualizar</value>
-  </data>
   <data name="TxtCustomPath.PlaceholderText" xml:space="preserve">
     <value>Ruta de base de datos personalizada (.ini)</value>
   </data>
@@ -648,9 +633,6 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   </data>
   <data name="St_Winapp3NotDownloaded" xml:space="preserve">
     <value>Winapp3 aún no se ha descargado — pulsar en Descargar.</value>
-  </data>
-  <data name="St_WinappxNotDownloaded" xml:space="preserve">
-    <value>Winappx aún no se ha descargado — pulsar en Descargar.</value>
   </data>
   <data name="St_HistoryNone" xml:space="preserve">
     <value>aún no se ha registrado ninguna ejecución</value>
@@ -966,57 +948,6 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   </data>
   <data name="CLI_ListCategories" xml:space="preserve">
     <value>  — {0} categorias.</value>
-  </data>
-  <data name="CLI_AppxUsage" xml:space="preserve">
-    <value>  Utilizar: appx list | appx scan | appx remove &lt;nombre&gt; | appx remove all</value>
-  </data>
-  <data name="CLI_AppxListStart" xml:space="preserve">
-    <value>  Listando todos los paquetes AppX instalados...</value>
-  </data>
-  <data name="CLI_AppxNoPackages" xml:space="preserve">
-    <value>  No se han encontrado paquetes.</value>
-  </data>
-  <data name="CLI_AppxListDone" xml:space="preserve">
-    <value>  — {0} paquete(s) instalado(s). Utilizar 'appx remove &lt;nombre&gt;' para desinstalar.</value>
-  </data>
-  <data name="CLI_AppxScanStart" xml:space="preserve">
-    <value>  Analizando paquetes instalados...</value>
-  </data>
-  <data name="CLI_AppxNothingFound" xml:space="preserve">
-    <value>  No se ha encontrado nada — el sistema parece estar limpio.</value>
-  </data>
-  <data name="CLI_AppxScanDone" xml:space="preserve">
-    <value>  — {0} paquete(s) encontrado(s). Utilizar 'appx remove &lt;nombre&gt;' o 'appx remove all'.</value>
-  </data>
-  <data name="CLI_AppxRemoveUsage" xml:space="preserve">
-    <value>  Utilizar: appx remove &lt;nombre&gt; | appx remove all</value>
-  </data>
-  <data name="CLI_AppxRemoveScanStart" xml:space="preserve">
-    <value>  Analizando paquetes instalados...</value>
-  </data>
-  <data name="CLI_AppxNothingToRemove" xml:space="preserve">
-    <value>  No hay nada que eliminar.</value>
-  </data>
-  <data name="CLI_AppxRemoving" xml:space="preserve">
-    <value>  Eliminando {0}...</value>
-  </data>
-  <data name="CLI_AppxRemoveOk" xml:space="preserve">
-    <value>  CORRECTO  {0} eliminado.</value>
-  </data>
-  <data name="CLI_AppxRemoveErr" xml:space="preserve">
-    <value>  ERROR {0} — error (puede que no esté instalado o que requiera privilegios de administrador).</value>
-  </data>
-  <data name="CLI_AppxRemoveDone" xml:space="preserve">
-    <value>  Hecho — {0} paquete(s) eliminado(s).</value>
-  </data>
-  <data name="CLI_AppxNothingRemoved" xml:space="preserve">
-    <value>  No se ha eliminado nada.</value>
-  </data>
-  <data name="CLI_AppxDisabled" xml:space="preserve">
-    <value>  La base de datos Winappx está desactivada — activar en Configuración.</value>
-  </data>
-  <data name="CLI_AppxNotFound" xml:space="preserve">
-    <value>  No se ha encontrado Winappx.ini — descargar en Configuración .</value>
   </data>
   <data name="SettingsNavGeneral.Content" xml:space="preserve">
     <value>General</value>

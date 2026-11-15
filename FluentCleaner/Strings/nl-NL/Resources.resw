@@ -165,11 +165,6 @@
   <data name="LblWinapp3Desc.Text"><value>  —  meer agressieve ingaves, gebruik op eigen risico.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Download</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Update</value></data>
-  <data name="LblWinappx.Text"><value>Winappx</value></data>
-  <data name="LblWinappxTag.Text"><value>bloatware</value></data>
-  <data name="LblWinappxDesc.Text"><value>  —  AppX / bloatware-items voor de terminal debloater.</value></data>
-  <data name="BtnDownloadWinappx.Content"><value>Download</value></data>
-  <data name="BtnUpdateWinappx.Content"><value>Update</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Aangepast database-path (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Bladeren…</value></data>
   <data name="BtnApplyPath.Content"><value>Toepassen</value></data>
@@ -219,7 +214,6 @@
 
   <!-- Settings Page — code strings -->
   <data name="St_Winapp3NotDownloaded"><value>Winapp3 is nog niet gedownload — klik Downloaden.</value></data>
-  <data name="St_WinappxNotDownloaded"><value>Winappx is nog niet gedownload — klik Downloaden.</value></data>
   <data name="St_HistoryNone"><value>nog geen runs geregistreerd</value></data>
   <data name="St_HistorySummary"><value>{0} uitgevoerd · {1} totaal vrijgemaakt</value></data>
   <data name="St_HistoryItems"><value>{0} items</value></data>
@@ -341,22 +335,5 @@
   <data name="CLI_NothingFound"><value>  Niets gevonden.</value></data>
   <data name="CLI_ListEntries"><value>  — {0} vermeldingen.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} categorieën.</value></data>
-  <data name="CLI_AppxUsage"><value>  Gebruik: appx list | appx scan | appx remove &lt;naam&gt; | appx remove all</value></data>
-  <data name="CLI_AppxListStart"><value>  Lijst met alle geïnstalleerde AppX-pakketten...</value></data>
-  <data name="CLI_AppxNoPackages"><value>  Geen pakketten gevonden.</value></data>
-  <data name="CLI_AppxListDone"><value>  — {0} pakket(ten) geïnstalleerd. Gebruik ‘appx remove &lt;name&gt;’ om ze te verwijderen.</value></data>
-  <data name="CLI_AppxScanStart"><value>  Scannen geïnstalleerde pakketten...</value></data>
-  <data name="CLI_AppxNothingFound"><value>  Niets gevonden — het systeem lijkt in orde.</value></data>
-  <data name="CLI_AppxScanDone"><value>  — {0} pakket(ten) gevonden. Gebruik ‘appx remove &lt;name&gt;’ of ‘appx remove all’.</value></data>
-  <data name="CLI_AppxRemoveUsage"><value>  Gebruik: appx remove &lt;name&gt; | appx remove all</value></data>
-  <data name="CLI_AppxRemoveScanStart"><value>  Scannen naar geïnstalleerde pakketten...</value></data>
-  <data name="CLI_AppxNothingToRemove"><value>  Niets te verwijderen.</value></data>
-  <data name="CLI_AppxRemoving"><value>  Verwijderen {0}...</value></data>
-  <data name="CLI_AppxRemoveOk"><value>  OK  {0} verwijderd.</value></data>
-  <data name="CLI_AppxRemoveErr"><value>  ERR {0} — mislukt (is mogelijk niet geïnstalleerd of vereist beheerdersrechten).</value></data>
-  <data name="CLI_AppxRemoveDone"><value>  Klaar — {0} pakket(ten) verwijderd.</value></data>
-  <data name="CLI_AppxNothingRemoved"><value>  Niets verwijderd.</value></data>
-  <data name="CLI_AppxDisabled"><value>  Winappx-database is uitgeschakeld — schakel deze in via Instellingen.</value></data>
-  <data name="CLI_AppxNotFound"><value>  Winappx.ini niet gevonden — download het via Instellingen.</value></data>
 
 </root>
