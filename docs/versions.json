@@ -4,7 +4,7 @@
                     "downloadUrl":  "https://github.com/builtbybel/FluentCleaner/releases/latest/download/FluentCleaner-Classic-net48.zip"
                 },
     "modern":  {
-                   "version":  "26.11.03",
+                   "version":  "26.11.11",
                    "downloadUrl":  "https://github.com/builtbybel/FluentCleaner/releases/latest/download/FluentCleaner-win-x64.zip"
                }
 }
