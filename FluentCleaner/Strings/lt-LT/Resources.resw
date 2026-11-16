@@ -21,6 +21,14 @@
   <data name="NavCustom.Content"><value>Personalizuoti</value></data>
   <data name="SearchBox.PlaceholderText"><value>Paieška</value></data>
   <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Veiksmai puslapyje</value></data>
+
+  <!-- Main Window — tab strip and address bar (x:Uid) -->
+  <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Nauja kortelė</value></data>
+  <data name="BtnAddressBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Atgal</value></data>
+  <data name="BtnAddressReload.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Įkelti iš naujo</value></data>
+  <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Paieška</value></data>
+  <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Nuostatos</value></data>
+  <data name="SearchFlyoutBox.PlaceholderText"><value>Search…</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Patinka „FluentCleaner“?</value></data>
   <data name="DonationBanner.Subtitle"><value>Jei ši programa padeda jums sutaupyti laiko, apsvarstykite galimybę paremti jos kūrimą.</value></data>
@@ -35,6 +43,119 @@
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>„Winapp2.ini“ failas įkeliamas automatiškai paleidžiant sistemą.</value></data>
+
+  <!-- ============================================================
+       APPS PAGE — uninstaller, classified by Rules\AppRules.ini
+  ============================================================ -->
+  <data name="NavApps.Content"><value>Programos</value></data>
+  <data name="AppsHint.Text"><value>Klausiama „Windows“, kas įdiegta.</value></data>
+  <data name="ColApp.Text"><value>Programa</value></data>
+  <data name="ColPublisher.Text"><value>Leidėjas</value></data>
+  <data name="ColKind.Text"><value>Rūšis</value></data>
+  <data name="ColSafety.Text"><value>Reitingas</value></data>
+  <data name="CmbSafety.PlaceholderText"><value>Reitingas</value></data>
+  <data name="ChkOnlyRemovable.Content"><value>Tik tai, ką galima išdiegti</value></data>
+  <data name="BtnAppsScan.Content"><value>Tikrinti dar kartą</value></data>
+  <data name="BtnAppsRemove.Content"><value>Išdiegti pasirinktas</value></data>
+  <data name="St_AppPackage"><value>„Store“ programa</value></data>
+  <data name="St_AppProgram"><value>Programa</value></data>
+  <data name="St_AppProtected"><value>Apsaugota</value></data>
+  <data name="St_AppCandidate"><value>Saugu išdiegti</value></data>
+  <data name="St_AppPersonal"><value>Jūsų</value></data>
+  <data name="St_AppRemoved"><value>Išdiegta</value></data>
+  <data name="St_AppsAllLevels"><value>Visi reitingai</value></data>
+  <data name="St_AppsFound"><value>{0} programa(-ų) sąraše.</value></data>
+  <data name="St_AppsRemoved"><value>{0} išdiegta.</value></data>
+  <data name="St_AppsStarted"><value>{0} paliko atidarytą pašalinimo programos langą.</value></data>
+  <data name="St_AppsFailedList"><value>Nepavyko: {0}</value></data>
+  <data name="St_AppsPartialTitle"><value>„Store“ programų negalima įtraukti į sąrašą</value></data>
+  <data name="St_AppsNothingPicked"><value>Nieko nepasirinkta.</value></data>
+  <data name="St_AppsConfirmTitle"><value>Išdiegti {0} programą(-ų)?</value></data>
+  <data name="St_AppsConfirmTitleOne"><value>Išdiegti {0}?</value></data>
+  <data name="St_AppsAndMore"><value>… ir {0} daugiau</value></data>
+  <data name="St_AppsConfirmRemove"><value>Išdiegti</value></data>
+  <data name="St_AppsConfirmCancel"><value>Atšaukti</value></data>
+  <data name="Apps_Protected"><value>„Windows“ saugo šią programą.</value></data>
+  <data name="Apps_Failed"><value>Išdiegimas nepavyko.</value></data>
+  <data name="Apps_Timeout"><value>Išdiegimas užtruko per ilgai ir buvo sustabdytas.</value></data>
+  <data name="Apps_Removing"><value>Išdiegiama {0}…</value></data>
+  <data name="Apps_RemovingProgram"><value>Paleidžiamas {0} pašalinimo įrankis…</value></data>
+  <data name="Progress_Apps"><value>Klausiama „Windows“, kas įdiegta…</value></data>
+  <data name="Progress_AppChecking"><value>Skaitoma {0} ({1}/{2})…</value></data>
+  <data name="Progress_AppsFound"><value>{0} programa(-ų) sąraše.</value></data>
+
+  <!-- ============================================================
+       TWEAKS PAGE — registry catalogue read from Rules\*.ini
+  ============================================================ -->
+  <data name="NavTweaks.Content"><value>Patobulinimai</value></data>
+  <data name="TweaksHint.Text"><value>Tikrinama, kokios nuostatos jau yra šiame kompiuteryje.</value></data>
+  <!-- Category names of the tweak catalogue. The key is Where_ plus the Category the .ini
+       writes; a pack whose category has no key here simply shows its raw name. -->
+  <data name="Where_Ads"><value>Skelbimai</value></data>
+  <data name="Where_AI"><value>DI</value></data>
+  <data name="Where_Appearance"><value>Išvaizda</value></data>
+  <data name="Where_Edge"><value>„Edge“</value></data>
+  <data name="Where_Explorer"><value>Failų naršyklė</value></data>
+  <data name="Where_Gaming"><value>Žaidimai</value></data>
+  <data name="Where_Privacy"><value>Privatumas</value></data>
+  <data name="Where_System"><value>Sistema</value></data>
+  <data name="Where_Taskbar"><value>Užduočių juosta</value></data>
+  <data name="Where_Updates"><value>Atnaujinimai</value></data>
+
+  <!-- Row context menus (tweaks and apps) -->
+  <data name="MenuCopyRegPath.Text"><value>Kopijuoti registro kelią</value></data>
+  <data name="MenuOpenRegedit.Text"><value>Atverti „Registry Editor“ programoje</value></data>
+  <data name="MenuUninstallOne.Text"><value>Išdiegti šią programą</value></data>
+  <data name="MenuCopyAppId.Text"><value>Kopijuoti identifikatorių</value></data>
+  <data name="St_TweaksPathCopied"><value>Registro kelias nukopojuotas.</value></data>
+  <data name="St_AppsIdCopied"><value>Identifikatorius nukopijuotas.</value></data>
+
+  <data name="ColTweak.Text"><value>Nuostatos</value></data>
+  <data name="ColCategory.Text"><value>Kategorija</value></data>
+  <data name="ColState.Text"><value>Statusas</value></data>
+  <data name="TweakStateApplied.Text"><value>Pritaikyta</value></data>
+  <data name="TweakStateOpen.Text"><value>Atverti</value></data>
+  <data name="CmbCategory.PlaceholderText"><value>Kategorija</value></data>
+  <data name="ChkOnlyOpen.Content"><value>Tik atverti</value></data>
+  <data name="BtnRestartExplorer.Content"><value>Restartuoti „Explorer“</value></data>
+  <data name="St_TweaksAllCategories"><value>Visos kategorijos</value></data>
+  <data name="St_TweaksNeedAdmin"><value>Kai kurioms nuostatoms reikalingos administratoriaus teisės.</value></data>
+  <data name="St_TweaksNeedReboot"><value>Reikalingas „Windows“ restartas.</value></data>
+  <data name="St_TweaksNeedExplorer"><value>Kad tai būtų matoma, „Explorer“ turi būti restartuotas.</value></data>
+  <data name="St_TweaksFailedList"><value>Nepavyko: {0}</value></data>
+  <data name="BtnTweaksScan.Content"><value>Tikrinti dar kartą</value></data>
+  <data name="BtnTweaksApply.Content"><value>Taikyti pasirinktus</value></data>
+  <data name="St_TweakApply"><value>Taikyti</value></data>
+  <data name="St_TweakReset"><value>Atstatyti</value></data>
+  <data name="St_TweaksChecked"><value>patikrinta {0} nuostatų.</value></data>
+  <data name="St_TweaksScanFailed"><value>Katalogo patikrinti nepavyko</value></data>
+  <data name="St_TweaksApplied"><value>{0} pritaikyta, {1} atstatyta.</value></data>
+  <data name="St_TweaksPartly"><value>{0} pritaikyta, {1} atstatyta, {2} nepavyko.</value></data>
+  <data name="Tweak_Conflict"><value>konfliktuoja su kita pasirinkta nuostata</value></data>
+  <data name="Progress_Checking"><value>Tikrinama {0} ({1}/{2})…</value></data>
+  <data name="Progress_Checked"><value>patikrinta {0} nuostatų.</value></data>
+  <data name="Progress_Applying"><value>Pritaikoma {0}…</value></data>
+  <data name="Progress_Resetting"><value>Atstatoma {0}…</value></data>
+  <data name="Progress_Completed"><value>{0} iš {1} baigta.</value></data>
+
+  <!-- Cleaner Page — result and detail column headers -->
+  <data name="ColName.Text"><value>Pavadinimas</value></data>
+  <data name="ColContents.Text"><value>Turinys</value></data>
+  <data name="ColSize.Text"><value>Dydis</value></data>
+  <data name="ColPath.Text"><value>Kelias</value></data>
+  <data name="ColType.Text"><value>Tipas</value></data>
+  <data name="BtnRestartElevated.Content"><value>Restartuoti administratoriaus teisėmis</value></data>
+
+  <!-- Cleaner Page — category labels. Only the generic ones CategoryResolver
+       defines are listed; brand names (Firefox, Spotify, …) and section names that
+       come from Winapp2 itself keep whatever the database calls them. -->
+  <data name="Cat_Applications"><value>Programos</value></data>
+  <data name="Cat_Internet"><value>Internetas</value></data>
+  <data name="Cat_Multimedia"><value>Multimedija</value></data>
+  <data name="Cat_Utilities"><value>Priemonės</value></data>
+  <data name="Cat_Windows"><value>„Windows“</value></data>
+  <data name="Cat_OtherApplications"><value>Kitos programos</value></data>
+
   <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Veiksmai kategorijoje</value></data>
   <data name="MenuSelectAll.Text"><value>Pažymėti viską</value></data>
   <data name="MenuSelectNone.Text"><value>Nuimti pažymėjimą</value></data>
@@ -101,9 +222,9 @@
   <data name="DlgSourceError"><value>Skenavimas nepavyko: {0}</value></data>
   <data name="DlgSourceCancel"><value>Atšaukti</value></data>
   <data name="DlgSourceCancelled"><value>Atšaukta.</value></data>
-  <data name="DlgRestartTitle"><value>Reikia paleisti iš naujo</value></data>
-  <data name="DlgRestartMessage"><value>Kad pakeitimai įsigaliotų, reikia iš naujo paleisti „FluentCleaner“.</value></data>
-  <data name="DlgRestartNow"><value>Paleisti iš naujo</value></data>
+  <data name="DlgRestartTitle"><value>Reikia restartuoti</value></data>
+  <data name="DlgRestartMessage"><value>Kad pakeitimai įsigaliotų, reikia restartuoti „FluentCleaner“.</value></data>
+  <data name="DlgRestartNow"><value>Restartuoti</value></data>
   <data name="DlgRestartLater"><value>Vėliau</value></data>
 
   <!-- ============================================================
@@ -111,6 +232,15 @@
   ============================================================ -->
   <data name="St_Loading"><value>Įkeliamas Winapp2.ini...</value></data>
   <data name="St_SearchFound"><value>Rodomas(-i) {0} atitinkantis(-ys) įrašas(-ai).</value></data>
+
+  <!-- Cleaner Page — status bar (built in code from these parts) -->
+  <data name="St_StatusEntries"><value>{0} iš {1} įrašų</value></data>
+  <data name="St_StatusSelected"><value>{0} pasirinktas(-a)</value></data>
+  <data name="St_StatusFound"><value>{0} rastas(-a)</value></data>
+  <data name="St_StatusResult"><value>{0} failas(-ai), {1} registro įrašas(-ai) ({2})</value></data>
+  <data name="St_Administrator"><value>Administratorius</value></data>
+  <data name="St_StandardUser"><value>Standartinis naudotojas</value></data>
+
   <data name="St_SearchNone"><value>Nėra atitinkančių įrašų.</value></data>
   <data name="St_ParsingDatabases"><value>Analizuojamos duomenų bazės...</value></data>
   <data name="St_AnalysisReady"><value>Analizė paruošta — {0} programa(-os) rasta(-os) {1} įraše(-uose).</value></data>
@@ -142,6 +272,9 @@
        SETTINGS PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="SettingsTitle.Text"><value>Nuostatos</value></data>
+
+  <!-- Settings Page — database download progress -->
+  <data name="LblDownloading.Text"><value>Parsisiunčiama…</value></data>
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>Paremkite „FluentCleaner“</value></data>
   <data name="DonationBar.Message"><value>Pasirinkite sumą ir valiutą „PayPal“ sistemai arba paremkite projektą per „Ko-fi“. ♥</value></data>
@@ -155,7 +288,7 @@
   <data name="ThemeLight.Content"><value>Šviesi</value></data>
   <data name="ThemeDark.Content"><value>Tamsi</value></data>
   <data name="LblLanguage.Text"><value>Kalba</value></data>
-  <data name="LblLanguageDesc.Text"><value>Pakeisti sąsajos kalbą. Kad pakeitimai įsigaliotų, reikia iš naujo paleisti programą.</value></data>
+  <data name="LblLanguageDesc.Text"><value>Pakeisti sąsajos kalbą. Kad pakeitimai įsigaliotų, reikia restartuoti programą.</value></data>
   <data name="St_LangAuto"><value>Kaip sistemos</value></data>
   <data name="SectionDatabase.Text"><value>Duomenų bazės</value></data>
   <data name="LblDatabaseDesc.Text"><value>Pasirinkite, kurie įrašų sąrašai bus įkelti skenavimui ir valymui.</value></data>
@@ -170,8 +303,8 @@
   <data name="BtnBrowse.Content"><value>Naršyti…</value></data>
   <data name="BtnApplyPath.Content"><value>Taikyti</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Pašalinti personalizuotą DB</value></data>
-  <data name="RestartBar.Title"><value>Reikia paleisti iš naujo</value></data>
-  <data name="RestartBar.Message"><value>Atnaujintos duomenų bazės įkėlimui paleiskite „FluentCleaner“ iš naujo.</value></data>
+  <data name="RestartBar.Title"><value>Restartuoti</value></data>
+  <data name="RestartBar.Message"><value>Atnaujintos duomenų bazės įkėlimui restartuokite „FluentCleaner“.</value></data>
   <data name="SectionPostClean.Text"><value>Veiksmai po valymo</value></data>
   <data name="LblPostCleanDesc.Text"><value>Viena komanda eilutėje — vykdoma paeiliui po kiekvieno valymo ciklo.</value></data>
   <data name="SectionExclusions.Text"><value>Globalios išimtys</value></data>
@@ -364,4 +497,9 @@
   <data name="Cookies_TextFiles"><value>Tekstiniai failai</value></data>
   <data name="Cleaning_CleanedCookies"><value>Išvalyta {0} slapukų: {1}</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Programos meniu</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>Programos meniu</value></data>
+  <data name="AppMenuSettings.Text"><value>Nuostatos</value></data>
+  <data name="AppMenuDonate.Text"><value>Paremti projektą</value></data>
+  <data name="AppMenuUpdates.Text"><value>Tikrinti, ar yra naujinimų</value></data>
 </root>
