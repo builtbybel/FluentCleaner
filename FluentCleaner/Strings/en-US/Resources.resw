@@ -20,15 +20,12 @@
   <data name="NavTerminal.Content"><value>Terminal</value></data>
   <data name="NavCustom.Content"><value>Custom</value></data>
   <data name="SearchBox.PlaceholderText"><value>Search</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Page actions</value></data>
 
   <!-- Main Window — tab strip and address bar (x:Uid) -->
   <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>New tab</value></data>
-  <data name="BtnAddressBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Back</value></data>
-  <data name="BtnAddressReload.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Reload</value></data>
+  <data name="BtnDetailBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Back</value></data>
   <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Search</value></data>
   <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Settings</value></data>
-  <data name="SearchFlyoutBox.PlaceholderText"><value>Search…</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Enjoying FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>If this app saves you time, consider supporting its development.</value></data>
@@ -37,7 +34,6 @@
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
   <data name="BtnDonateGitHub.Content"><value>Star on GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Maybe later</value></data>
-  <data name="St_NoActions"><value>No actions for this page</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
@@ -142,7 +138,6 @@
   <data name="ColName.Text"><value>Name</value></data>
   <data name="ColContents.Text"><value>Contents</value></data>
   <data name="ColSize.Text"><value>Size</value></data>
-  <data name="ColPath.Text"><value>Path</value></data>
   <data name="ColType.Text"><value>Type</value></data>
   <data name="BtnRestartElevated.Content"><value>Restart as administrator</value></data>
 
@@ -237,8 +232,9 @@
   <data name="St_StatusEntries"><value>{0} of {1} entries</value></data>
   <data name="St_StatusSelected"><value>{0} selected</value></data>
   <data name="St_StatusFound"><value>{0} found</value></data>
+  <data name="St_StatusResult"><value>{0} files, {1} registry items ({2})</value></data>
+  <data name="St_DetailMore"><value>… and {0:N0} more</value></data>
   <data name="St_Administrator"><value>Administrator</value></data>
-  <data name="St_StandardUser"><value>Standard user</value></data>
 
   <data name="St_SearchNone"><value>No matching entries.</value></data>
   <data name="St_ParsingDatabases"><value>Parsing databases...</value></data>
@@ -286,6 +282,11 @@
   <data name="ThemeSystem.Content"><value>System default</value></data>
   <data name="ThemeLight.Content"><value>Light</value></data>
   <data name="ThemeDark.Content"><value>Dark</value></data>
+  <data name="LblBackdrop.Text"><value>Window backdrop</value></data>
+  <data name="LblBackdropDesc.Text"><value>The material behind tabs and toolbars. Mica Alt is more colourful, Acrylic is translucent.</value></data>
+  <data name="BackdropMica.Content"><value>Mica</value></data>
+  <data name="BackdropMicaAlt.Content"><value>Mica Alt</value></data>
+  <data name="BackdropAcrylic.Content"><value>Acrylic</value></data>
   <data name="LblLanguage.Text"><value>Language</value></data>
   <data name="LblLanguageDesc.Text"><value>Override the display language. Restart required to apply.</value></data>
   <data name="St_LangAuto"><value>System default</value></data>
@@ -363,7 +364,6 @@
   <data name="St_UpToDate"><value>You're up to date</value></data>
   <data name="St_UpToDateMessage"><value>Version {0} is the latest.</value></data>
   <data name="St_MenuUpdate"><value>⬆  Update available — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Check for updates</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Enter an API key first.</value></data>
   <data name="St_ApiKeyTesting"><value>Testing…</value></data>
   <data name="Scheduler_FreqDaily"><value>Daily</value></data>
@@ -398,12 +398,7 @@
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} cleaner · {1} enabled</value></data>
   <data name="St_CustomStatusScripts"><value>{0} script(s)</value></data>
-  <data name="St_CustomMenuNew"><value>New custom cleaner</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Open Custom folder</value></data>
-  <data name="St_CustomMenuReddit"><value>Ask on Reddit</value></data>
-  <data name="St_CustomMenuNeowin"><value>Neowin forums</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Share cleaner on GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Toggle failed: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Delete "{0}"?</value></data>
   <data name="St_CustomDeleteMessage"><value>This removes the custom cleaner permanently.</value></data>
@@ -457,8 +452,6 @@
   <data name="CLI_NoDrives"><value>  No drives found.</value></data>
   <data name="CLI_ThemeUsage"><value>  Usage: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  Theme set to '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Usage: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  Backdrop set to '{0}'.</value></data>
   <data name="CLI_NoMatch"><value>  No entries matching '{0}'.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} items · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Done — {0} items removed · {1} freed.</value></data>
@@ -496,4 +489,29 @@
   <data name="Cookies_TextFiles"><value>Text files</value></data>
   <data name="Cleaning_CleanedCookies"><value>Cleaned {0} cookies: {1}</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Settings and more</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Settings</value></data>
+  <data name="AppMenuDonate.Text"><value>Support the project</value></data>
+  <data name="AppMenuUpdates.Text"><value>Check for updates</value></data>
+  <data name="AppMenuSetupCode.Text"><value>Setup code</value></data>
+  <data name="SC_Title"><value>Setup code</value></data>
+  <data name="SC_Intro"><value>A setup code is your cleaner selection as one line of text. Post it or send it, and whoever pastes it here gets the same entries ticked. It only holds short fingerprints of entry names: no files, no paths, nothing about your PC.</value></data>
+  <data name="SC_OwnHeader"><value>Your selection</value></data>
+  <data name="SC_OwnSummary"><value>{0} entries ticked</value></data>
+  <data name="SC_OwnEmpty"><value>Nothing is ticked in the cleaner yet.</value></data>
+  <data name="SC_Copy"><value>Copy</value></data>
+  <data name="SC_Copied"><value>Copied</value></data>
+  <data name="SC_PasteHeader"><value>Use a code</value></data>
+  <data name="SC_PastePlaceholder"><value>Paste a code starting with FC1-</value></data>
+  <data name="SC_Invalid"><value>That isn't a setup code.</value></data>
+  <data name="SC_Match"><value>{0} of {1} entries found on this PC</value></data>
+  <data name="SC_None"><value>None of these entries apply to this PC.</value></data>
+  <data name="SC_NotInstalled"><value>{0} are for apps you don't have.</value></data>
+  <data name="SC_Unknown"><value>{0} are unknown to your Winapp2. A newer version may have them.</value></data>
+  <data name="SC_ApplyNote"><value>Applying replaces your selection and runs an analysis. Nothing is deleted until you click Run Cleaner.</value></data>
+  <data name="SC_Busy"><value>Wait for the running scan to finish, then open this again.</value></data>
+  <data name="SC_Apply"><value>Apply and analyze</value></data>
+  <data name="SC_Restore"><value>Previous selection</value></data>
+  <data name="SC_Close"><value>Close</value></data>
 </root>
