@@ -20,7 +20,6 @@
   <data name="NavTerminal.Content"><value>終端機</value></data>
   <data name="NavCustom.Content"><value>自訂</value></data>
   <data name="SearchBox.PlaceholderText"><value>搜尋</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>頁面操作</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>喜歡 FluentCleaner 嗎?</value></data>
   <data name="DonationBanner.Subtitle"><value>如果這款應用程式為您節省了時間，請考慮支持其開發。</value></data>
@@ -28,7 +27,6 @@
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
   <data name="BtnDonateGitHub.Content"><value>在 GitHub 上點讚</value></data>
   <data name="BtnDonateLater.Content"><value>稍後再說</value></data>
-  <data name="St_NoActions"><value>此頁面無任何可用操作</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
@@ -230,7 +228,6 @@
   <data name="St_UpToDate"><value>您已更新至最新版本</value></data>
   <data name="St_UpToDateMessage"><value>版本 {0} 是最新的。</value></data>
   <data name="St_MenuUpdate"><value>⬆  有可用更新 — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>檢查更新</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ 請先輸入 API 金鑰。</value></data>
   <data name="St_ApiKeyTesting"><value>正在測試…</value></data>
   <data name="Scheduler_FreqDaily"><value>每天</value></data>
@@ -336,4 +333,9 @@
   <data name="CLI_ListEntries"><value>  — {0} 個項目。</value></data>
   <data name="CLI_ListCategories"><value>  — {0} 個類別。</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>設定及其他</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Settings</value></data>
+  <data name="AppMenuDonate.Text"><value>支持本專案</value></data>
+  <data name="AppMenuUpdates.Text"><value>檢查更新</value></data>
 </root>

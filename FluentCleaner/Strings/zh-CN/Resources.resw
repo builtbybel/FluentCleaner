@@ -20,12 +20,6 @@
   <data name="NavTerminal.Content"><value>终端</value></data>
   <data name="NavCustom.Content"><value>自定义</value></data>
   <data name="SearchBox.PlaceholderText"><value>搜索</value></data>
-
-  <!-- Main Window — tab strip and address bar (x:Uid) -->
-  <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>新建标签页</value></data>
-  <data name="BtnDetailBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>返回</value></data>
-  <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>搜索</value></data>
-  <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>设置</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>喜欢 FluentCleaner 吗？</value></data>
   <data name="DonationBanner.Subtitle"><value>如果这款应用为你节省了时间，不妨支持开发者。</value></data>
@@ -39,118 +33,6 @@
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>程序启动时将自动加载 Winapp2.ini 文件。</value></data>
-
-  <!-- ============================================================
-       APPS PAGE — uninstaller, classified by Rules\AppRules.ini
-  ============================================================ -->
-  <data name="NavApps.Content"><value>应用</value></data>
-  <data name="AppsHint.Text"><value>正在查询 Windows 中已安装的应用。</value></data>
-  <data name="ColApp.Text"><value>应用</value></data>
-  <data name="ColPublisher.Text"><value>发布者</value></data>
-  <data name="ColKind.Text"><value>类型</value></data>
-  <data name="ColSafety.Text"><value>评级</value></data>
-  <data name="CmbSafety.PlaceholderText"><value>评级</value></data>
-  <data name="ChkOnlyRemovable.Content"><value>仅显示可移除的应用</value></data>
-  <data name="BtnAppsScan.Content"><value>重新扫描</value></data>
-  <data name="BtnAppsRemove.Content"><value>卸载所选应用</value></data>
-  <data name="St_AppPackage"><value>应用商店应用</value></data>
-  <data name="St_AppProgram"><value>程序</value></data>
-  <data name="St_AppProtected"><value>受保护</value></data>
-  <data name="St_AppCandidate"><value>可安全移除</value></data>
-  <data name="St_AppPersonal"><value>个人应用</value></data>
-  <data name="St_AppRemoved"><value>已移除</value></data>
-  <data name="St_AppsAllLevels"><value>所有评级</value></data>
-  <data name="St_AppsFound">​​<value>已列出 {0} 个应用。</value></data>
-  <data name="St_AppsRemoved"><value>已卸载 {0} 个应用。</value></data>
-  <data name="St_AppsStarted"><value>{0} 个应用留下了未关闭的卸载程序窗口。</value></data>
-  <data name="St_AppsFailedList"><value>失败：{0}</value></data>
-  <data name="St_AppsPartialTitle"><value>应用商店应用无法被</value></data>已列出</value></data>
-  <data name="St_AppsNothingPicked"><value>未选择任何内容。</value></data>
-  <data name="St_AppsConfirmTitle"><value>卸载 {0} 个应用？</value></data>
-  <data name="St_AppsConfirmTitleOne"><value>卸载 {0}？</value></data>
-  <data name="St_AppsAndMore"><value>...以及其他 {0} 个</value></data>
-  <data name="St_AppsConfirmRemove"><value>卸载</value></data>
-  <data name="St_AppsConfirmCancel"><value>取消</value></data>
-  <data name="Apps_Protected"><value>此应用受 Windows 保护。</value></data>
-  <data name="Apps_Failed"><value>卸载未成功完成。</value></data>
-  <data name="Apps_Timeout"><value>卸载耗时过长，已停止。</value></data>
-  <data name="Apps_Removing"><value>正在移除 {0}...</value></data>
-  <data name="Apps_RemovingProgram"><value>正在运行 {0} 的卸载程序...</value></data>
-  <data name="Progress_Apps"><value>正在查询 Windows 中已安装的应用...</value></data>
-  <data name="Progress_AppChecking"><value>正在读取 {0} ({1}/{2})...</value></data>
-  <data name="Progress_AppsFound">​​<value>已列出 {0} 个应用。</value></data>
-
-  <!-- ============================================================
-       TWEAKS PAGE — registry catalogue read from Rules\*.ini
-  ============================================================ -->
-  <data name="NavTweaks.Content"><value>调整</value></data>
-  <data name="TweaksHint.Text"><value>正在检查此电脑当前已有的设置。</value></data>
-  <!-- Category names of the tweak catalogue. The key is Where_ plus the Category the .ini
-       writes; a pack whose category has no key here simply shows its raw name. -->
-  <data name="Where_Ads"><value>广告</value></data>
-  <data name="Where_AI"><value>AI</value></data>
-  <data name="Where_Appearance"><value>外观</value></data>
-  <data name="Where_Edge"><value>Edge</value></data>
-  <data name="Where_Explorer"><value>文件资源管理器</value></data>
-  <data name="Where_Gaming"><value>游戏</value></data>
-  <data name="Where_Privacy"><value>隐私</value></data>
-  <data name="Where_System"><value>系统</value></data>
-  <data name="Where_Taskbar"><value>任务栏</value></data>
-  <data name="Where_Updates"><value>更新</value></data>
-
-  <!-- Row context menus (tweaks and apps) -->
-  <data name="MenuCopyRegPath.Text"><value>复制注册表路径</value></data>
-  <data name="MenuOpenRegedit.Text"><value>在注册表编辑器中打开</value></data>
-  <data name="MenuUninstallOne.Text"><value>卸载此应用</value></data>
-  <data name="MenuCopyAppId.Text"><value>复制标识符</value></data>
-  <data name="St_TweaksPathCopied"><value>注册表路径已复制。</value></data>
-  <data name="St_AppsIdCopied"><value>标识符已复制。</value></data>
-
-  <data name="ColTweak.Text"><value>设置</value></data>
-  <data name="ColCategory.Text"><value>类别</value></data>
-  <data name="ColState.Text"><value>状态</value></data>
-  <data name="TweakStateApplied.Text"><value>已应用</value></data>
-  <data name="TweakStateOpen.Text"><value>未应用</value></data>
-  <data name="CmbCategory.PlaceholderText"><value>类别</value></data>
-  <data name="ChkOnlyOpen.Content"><value>仅显示未应用项</value></data>
-  <data name="BtnRestartExplorer.Content"><value>重启资源管理器</value></data>
-  <data name="St_TweaksAllCategories"><value>所有类别</value></data>
-  <data name="St_TweaksNeedAdmin"><value>部分设置需要管理员权限。</value></data>
-  <data name="St_TweaksNeedReboot"><value>需要重启 Windows。</value></data>
-  <data name="St_TweaksNeedExplorer"><value>需重启资源管理器后方可生效。</value></data>
-  <data name="St_TweaksFailedList"><value>失败：{0}</value></data>
-  <data name="BtnTweaksScan.Content"><value>重新检查</value></data>
-  <data name="BtnTweaksApply.Content"><value>应用所选项</value></data>
-  <data name="St_TweakApply"><value>应用</value></data>
-  <data name="St_TweakReset"><value>重置</value></data>
-  <data name="St_TweaksChecked"><value>已检查 {0} 项设置。</value></data>
-  <data name="St_TweaksScanFailed"><value>无法检查设置目录</value></data>
-  <data name="St_TweaksApplied"><value>已应用 {0} 项，已重置 {1} 项。</value></data>
-  <data name="St_TweaksPartly"><value>已应用 {0} 项，已重置 {1} 项，{2} 项失败。</value></data>
-  <data name="Tweak_Conflict"><value>与其他已选设置冲突</value></data>
-  <data name="Progress_Checking"><value>正在检查 {0} ({1}/{2})...</value></data>
-  <data name="Progress_Checked"><value>已检查 {0} 项设置。</value></data>
-  <data name="Progress_Applying"><value>正在应用 {0}...</value></data>
-  <data name="Progress_Resetting"><value>正在重置 {0}...</value></data>
-  <data name="Progress_Completed"><value>已完成 {0} 项（共 {1} 项）。</value></data>
-
-  <!-- Cleaner Page — result and detail column headers -->
-  <data name="ColName.Text"><value>名称</value></data>
-  <data name="ColContents.Text"><value>内容</value></data>
-  <data name="ColSize.Text"><value>大小</value></data>
-  <data name="ColType.Text"><value>类型</value></data>
-  <data name="BtnRestartElevated.Content"><value>以管理员身份重启</value></data>
-
-  <!-- Cleaner Page — category labels. Only the generic ones CategoryResolver
-       defines are listed; brand names (Firefox, Spotify, …) and section names that
-       come from Winapp2 itself keep whatever the database calls them. -->
-  <data name="Cat_Applications"><value>应用程序</value></data>
-  <data name="Cat_Internet"><value>互联网</value></data>
-  <data name="Cat_Multimedia"><value>多媒体</value></data>
-  <data name="Cat_Utilities"><value>实用工具</value></data>
-  <data name="Cat_Windows"><value>Windows</value></data>
-  <data name="Cat_OtherApplications"><value>其他应用程序</value></data>
-
   <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>分类操作</value></data>
   <data name="MenuSelectAll.Text"><value>全选</value></data>
   <data name="MenuSelectNone.Text"><value>取消全选</value></data>
@@ -227,15 +109,6 @@
   ============================================================ -->
   <data name="St_Loading"><value>正在加载 Winapp2.ini...</value></data>
   <data name="St_SearchFound"><value>共找到 {0} 个匹配条目。</value></data>
-
-  <!-- Cleaner Page — status bar (built in code from these parts) -->
-  <data name="St_StatusEntries"><value>{0} / {1} 项</value></data>
-  <data name="St_StatusSelected"><value>已选择 {0} 项</value></data>
-  <data name="St_StatusFound">​​<value>找到 {0} 项</value></data>
-  <data name="St_StatusResult"><value>{0} 个文件，{1} 个注册表项 ({2})</value></data>
-  <data name="St_DetailMore"><value>...以及其他 {0:N0} 项</value></data>
-  <data name="St_Administrator"><value>管理员</value></data>
-
   <data name="St_SearchNone"><value>未找到匹配条目。</value></data>
   <data name="St_ParsingDatabases"><value>正在解析数据库...</value></data>
   <data name="St_AnalysisReady"><value>分析完成 — 在 {1} 个条目中识别到 {0} 款应用。</value></data>
@@ -267,11 +140,8 @@
        SETTINGS PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="SettingsTitle.Text"><value>设置</value></data>
-
-  <!-- Settings Page — database download progress -->
-  <data name="LblDownloading.Text"><value>正在下载...</value></data>
   <!-- Settings Page — donation InfoBar -->
-  <data name="DonationBar.Title"><value>支持 FluentCleaner</value></data>
+  <data name="DonationBar.Title"><value>FluentCleaner 是开源的。</value></data>
   <data name="DonationBar.Message"><value>这款软件耗费了大量开发精力，如果它对你有所帮助，若愿意表达支持，捐赠将是对开发者莫大的鼓励。♥</value></data>
   <data name="BtnDonate.Content"><value>支持本项目</value></data>
   <data name="MenuDonatePayPal.Text"><value>通过 PayPal 捐赠</value></data>
@@ -421,7 +291,7 @@
   <data name="DlgNewCleanerTypePs1.Content"><value>PowerShell 脚本 (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>名称</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>自定义清理规则</value></data>
-  <data name="DlgNewCleanerAiPlaceholder"><value>AI 自动生成 - 描述需要清理的内容（生成效果仅供参考）</value></data>
+  <data name="DlgNewCleanerAiPlaceholder"><value>AI自动生成 - 描述需要清理的内容（生成效果仅供参考）</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>生成</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>生成</value></data>
   <data name="DlgNewCleanerContentLabel"><value>内容</value></data>
@@ -491,29 +361,9 @@
   <data name="Cookies_TextFiles"><value>文本文件</value></data>
   <data name="Cleaning_CleanedCookies"><value>已清理 {0} 个 Cookie：{1}</value></data>
 
-  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>设置及更多</value></data>
-  <data name="BtnAppMenu.AutomationProperties.Name"><value>应用菜单</value></data>
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>设置及其他</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
   <data name="AppMenuSettings.Text"><value>设置</value></data>
   <data name="AppMenuDonate.Text"><value>支持本项目</value></data>
   <data name="AppMenuUpdates.Text"><value>检查更新</value></data>
-  <data name="AppMenuSetupCode.Text"><value>配置代码</value></data>
-  <data name="SC_Title"><value>配置代码</value></data>
-  <data name="SC_Intro"><value>“配置代码”以单行文本的形式呈现了您的清理选项。您可以将其发布或发送给他人；其他人只需将其粘贴至此处，即可自动勾选与您相同的清理项目。它仅包含条目名称的简短特征码：不含任何文件、路径或有关您电脑的信息。</value></data>
-  <data name="SC_OwnHeader"><value>您的选择</value></data>
-  <data name="SC_OwnSummary"><value>已勾选 {0} 个条目</value></data>
-  <data name="SC_OwnEmpty"><value>清理工具中尚未勾选任何条目。</value></data>
-  <data name="SC_Copy"><value>复制</value></data>
-  <data name="SC_Copied"><value>已复制</value></data>
-  <data name="SC_PasteHeader"><value>使用代码</value></data>
-  <data name="SC_PastePlaceholder"><value>粘贴以“FC1-”开头的代码</value></data>
-  <data name="SC_Invalid"><value>这不是有效的设置代码。</value></data>
-  <data name="SC_Match"><value>在您的电脑上找到了 {1} 个条目中的 {0} 个</value></data>
-  <data name="SC_None"><value>这些条目均不适用于您的电脑。</value></data>
-  <data name="SC_NotInstalled"><value>{0} 个条目对应的是您未安装的应用程序。</value></data>
-  <data name="SC_Unknown"><value>{0} 个条目在您的 Winapp2 中未被识别。更新版本可能包含这些条目。</value></data>
-  <data name="SC_ApplyNote"><value>应用后将替换您当前的选择并执行分析。在您点击“运行清理”之前，不会删除任何内容。</value></data>
-  <data name="SC_Busy"><value>请等待当前的扫描任务完成后，再重新打开此窗口。</value></data>
-  <data name="SC_Apply"><value>应用并分析</value></data>
-  <data name="SC_Restore"><value>之前的选择</value></data>
-  <data name="SC_Close"><value>关闭</value></data>
 </root>

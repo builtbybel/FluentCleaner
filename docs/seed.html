@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FluentSeed</title>
+<meta name="description" content="A FluentSeed is a FluentCleaner selection as one line of text. This page shows what's in it." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23d6007f%22/><path d=%22M18 14h30v9H29v8h16v9H29v14H18z%22 fill=%22white%22/></svg>" />
+<style>
+  /* Same tokens as index.html, so both pages read as one site. */
+  :root{
+    --bg:#faf9fb; --card:#ffffff; --line:#e7e4ea;
+    --text:#17151a; --dim:#6b6671; --faint:#938d99;
+    --accent:#d6007f;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#131216; --card:#1b1a1f; --line:#2c2a31;
+      --text:#f2f0f4; --dim:#a39ead; --faint:#726c7a;
+      --accent:#ff2e9a;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:15px/1.6 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+    display:flex; justify-content:center; padding:56px 16px 72px;
+  }
+  main{width:100%; max-width:520px}
+
+  .brand{display:flex; align-items:center; gap:12px; margin-bottom:34px}
+  .mark{
+    width:38px; height:38px; border-radius:10px; background:var(--accent);
+    display:grid; place-items:center; color:#fff; font-weight:700; font-size:20px;
+    font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+  }
+  .brand h1{margin:0; font-size:19px; font-weight:650; letter-spacing:-.01em}
+  .brand p{margin:1px 0 0; font-size:13px; color:var(--dim)}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:20px; margin-bottom:14px;
+  }
+  .card h2{margin:0; font-size:16px; font-weight:620; letter-spacing:-.01em}
+  .card > p{margin:4px 0 0; font-size:13.5px; color:var(--dim)}
+
+  .actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:15px}
+  .btn{
+    display:inline-block; padding:9px 17px; border-radius:8px; border:0; cursor:pointer;
+    background:var(--accent); color:#fff; text-decoration:none;
+    font:600 13.5px/1.4 inherit;
+  }
+  .btn:hover{filter:brightness(1.1)}
+  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--line)}
+
+  ol.how{margin:10px 0 0; padding-left:20px; font-size:13.5px; color:var(--dim)}
+  ol.how b{color:var(--text); font-weight:600}
+
+  .group + .group{margin-top:14px}
+  .group h3{
+    margin:0 0 4px; font-size:11px; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--accent); font-weight:650;
+  }
+  .group ul{margin:0; padding:0; list-style:none; font-size:13.5px}
+  .group li{padding:3px 0; border-bottom:1px solid var(--line)}
+  .group li:last-child{border-bottom:0}
+  .note{margin-top:14px; font-size:12.5px; color:var(--faint)}
+
+  footer{margin-top:26px; font-size:12.5px; color:var(--faint); text-align:center}
+  footer a{color:inherit}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <div class="mark">F</div>
+    <div>
+      <h1>FluentSeed</h1>
+      <p>A FluentCleaner selection, shared as one line of text</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="title">Reading the seed…</h2>
+    <p id="summary"></p>
+    <div class="actions" id="actions" hidden>
+      <button class="btn" id="copy">Copy FluentSeed</button>
+      <a class="btn ghost" href="./">Get FluentCleaner</a>
+    </div>
+  </div>
+
+  <div class="card" id="howto" hidden>
+    <h2>How to use it</h2>
+    <ol class="how">
+      <li>Copy the seed with the button above.</li>
+      <li>Open FluentCleaner and click <b>Share selection</b> at the bottom left.</li>
+      <li>It's already in the box. Click <b>Apply and analyze</b>.</li>
+    </ol>
+    <p class="note">Nothing is deleted until you click Run Cleaner yourself.</p>
+  </div>
+
+  <div class="card" id="list" hidden></div>
+
+  <footer>
+    The seed never leaves your browser. It sits after the # in the link, which isn't sent to any server.
+    <br /><a href="https://github.com/builtbybel/FluentCleaner">FluentCleaner on GitHub</a>
+  </footer>
+</main>
+
+<script>
+// The two public databases FluentCleaner itself downloads. Winapp3 is much bigger, so it is
+// only fetched when Winapp2 leaves entries unresolved.
+const DATABASES = [
+  "https://raw.githubusercontent.com/builtbybel/FluentCleaner/master/Winapp2.ini",
+  "https://raw.githubusercontent.com/MoscaDotTo/Winapp2/master/Winapp3/Winapp3.ini",
+];
+
+// Same category names and order as the app (CategoryResolver.cs).
+const CATEGORIES = {
+  3006:["Microsoft Edge",5], 3021:["Applications",10], 3022:["Internet",20], 3023:["Multimedia",30],
+  3024:["Utilities",40], 3025:["Windows",50], 3026:["Firefox",60], 3027:["Opera",70],
+  3028:["Safari",80], 3029:["Google Chrome",90], 3030:["Thunderbird",100], 3031:["Microsoft Store",110],
+  3033:["Vivaldi",130], 3034:["Brave",140], 3035:["Opera GX",150], 3036:["Spotify",160],
+  3037:["Avast Secure Browser",170], 3038:["AVG Secure Browser",180], 3039:["Arc Browser",190],
+  3040:["iTunes",200], 3042:["WhatsApp",210], 3043:["Norton Private Browser",220], 3044:["Avira Secure Browser",230],
+};
+
+// Mirrors SetupCode.cs: Crockford base32, six characters per entry.
+const ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+const PATTERN = /FC1(?:-[0-9A-HJKMNP-TV-Z]{6})+/i;
+
+// FNV-1a over the lower-cased UTF-8 name, folded to 30 bits. Must match SetupCode.Hash exactly.
+function hash(name) {
+  let h = 2166136261;
+  for (const b of new TextEncoder().encode(name.trim().toLowerCase()))
+    h = Math.imul(h ^ b, 16777619) >>> 0;
+  return ((h ^ (h >>> 30)) & 0x3FFFFFFF) >>> 0;
+}
+
+function fromGroup(group) {
+  let value = 0;
+  for (const c of group.toUpperCase()) value = value * 32 + ALPHABET.indexOf(c);
+  return value;
+}
+
+// Entry names as Winapp2Parser reads them: [Name *] without the trailing star.
+function* entries(ini) {
+  let current = null;
+  for (const raw of ini.split(/[\r\n]+/)) {
+    const line = raw.trim();
+    if (!line || line[0] === ";" || line[0] === "#") continue;
+    if (line.startsWith("[") && line.endsWith("]")) {
+      if (current) yield current;
+      const name = line.slice(1, -1).trim();
+      current = /^(winapp2|version)/i.test(name)
+        ? null
+        : { name: name.replace(/\*+$/, "").trimEnd(), langSecRef: null, section: null };
+      continue;
+    }
+    if (!current) continue;
+    const eq = line.indexOf("=");
+    if (eq < 0) continue;
+    const key = line.slice(0, eq).trim().toLowerCase(), value = line.slice(eq + 1).trim();
+    if (key === "langsecref") current.langSecRef = parseInt(value, 10);
+    else if (key === "section") current.section = value;
+  }
+  if (current) yield current;
+}
+
+function category(entry) {
+  if (CATEGORIES[entry.langSecRef]) return CATEGORIES[entry.langSecRef];
+  if (entry.section) return [entry.section, 1000];
+  return ["Other Applications", 2000];
+}
+
+const $ = id => document.getElementById(id);
+
+async function main() {
+  const match = decodeURIComponent(location.hash).match(PATTERN);
+  if (!match) {
+    $("title").textContent = "No FluentSeed in this link";
+    $("summary").textContent = "A FluentSeed starts with FC1-. In FluentCleaner, click Share selection at the bottom left to make one.";
+    return;
+  }
+
+  const seed = match[0].toUpperCase();
+  const open = new Set(seed.split("-").slice(1).map(fromGroup));
+  const total = open.size;
+  const found = [];
+
+  $("title").textContent = `${total} cleaner entries`;
+  $("summary").textContent = "Looking up the names…";
+  $("actions").hidden = $("howto").hidden = false;
+  $("copy").onclick = async () => {
+    await navigator.clipboard.writeText(seed);
+    $("copy").textContent = "Copied";
+  };
+
+  for (const url of DATABASES) {
+    if (open.size === 0) break;
+    try {
+      const ini = await (await fetch(url)).text();
+      for (const entry of entries(ini)) {
+        const h = hash(entry.name);
+        if (open.delete(h)) found.push(entry);
+      }
+    } catch { /* offline or blocked: whatever is left counts as unknown */ }
+  }
+
+  $("summary").textContent = "Paste it into FluentCleaner and these get selected, where they're installed.";
+  render(found, open.size);
+}
+
+function render(found, unknown) {
+  const groups = new Map();
+  for (const entry of found) {
+    const [name, order] = category(entry);
+    if (!groups.has(name)) groups.set(name, { order, names: [] });
+    groups.get(name).names.push(entry.name);
+  }
+
+  const list = $("list");
+  [...groups].sort((a, b) => a[1].order - b[1].order || a[0].localeCompare(b[0]))
+    .forEach(([name, group]) => {
+      const section = document.createElement("div");
+      section.className = "group";
+      const h3 = document.createElement("h3");
+      h3.textContent = `${name} · ${group.names.length}`;
+      const ul = document.createElement("ul");
+      group.names.sort((a, b) => a.localeCompare(b)).forEach(n => {
+        const li = document.createElement("li");
+        li.textContent = n;
+        ul.append(li);
+      });
+      section.append(h3, ul);
+      list.append(section);
+    });
+
+  if (unknown > 0) {
+    const note = document.createElement("p");
+    note.className = "note";
+    note.textContent = `${unknown} more only the sender knows: their own Custom cleaners, a private database, or a Winapp2 version that differs from today's.`;
+    list.append(note);
+  }
+  list.hidden = found.length === 0 && unknown === 0;
+}
+
+main();
+</script>
+</body>
+</html>
