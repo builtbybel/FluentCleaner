@@ -20,24 +20,20 @@
   <data name="NavTerminal.Content"><value>Terminal</value></data>
   <data name="NavCustom.Content"><value>Personalizado</value></data>
   <data name="SearchBox.PlaceholderText"><value>Buscar</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Acciones (página)</value></data>
-  
+    
   <!-- Main Window — tab strip and address bar (x:Uid) -->
   <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Nueva pestaña</value></data>
-  <data name="BtnAddressBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Atrás</value></data>
-  <data name="BtnAddressReload.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Recargar</value></data>
+  <data name="BtnDetailBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Atrás</value></data>
   <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Buscar</value></data>
   <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Configuración</value></data>
-  <data name="SearchFlyoutBox.PlaceholderText"><value>Search…</value></data>
   <!-- Main Window — donation TeachingTip -->
-  <data name="DonationBanner.Title"><value>¿Le gusta FluentCleaner?</value></data>
-  <data name="DonationBanner.Subtitle"><value>Si esta aplicación le ahorra tiempo, considere la posibilidad de apoyar su desarrollo.</value></data>
+  <data name="DonationBanner.Title"><value>¿Resulta útil FluentCleaner?</value></data>
+  <data name="DonationBanner.Subtitle"><value>Apoyar su desarrollo contribuye a que la aplicación siga mejorando.</value></data>
   <data name="Donation_OtherAmount"><value>Otra cantidad…</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
   <data name="BtnDonateGitHub.Content"><value>Estrella en GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Quizá más tarde</value></data>
-  <data name="St_NoActions"><value>No hay acciones para esta página.</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
@@ -48,20 +44,20 @@
        APPS PAGE — uninstaller, classified by Rules\AppRules.ini
   ============================================================ -->
   <data name="NavApps.Content"><value>Aplicaciones</value></data>
-  <data name="AppsHint.Text"><value>Pregunta a Windows qué hay instalado.</value></data>
+  <data name="AppsHint.Text"><value>Comprueba qué hay instalado en Windows.</value></data>
   <data name="ColApp.Text"><value>Aplicación</value></data>
   <data name="ColPublisher.Text"><value>Editor</value></data>
   <data name="ColKind.Text"><value>Clase</value></data>
   <data name="ColSafety.Text"><value>Valoración</value></data>
   <data name="CmbSafety.PlaceholderText"><value>Valoración</value></data>
-  <data name="ChkOnlyRemovable.Content"><value>Solo lo que puede ser eliminado</value></data>
+  <data name="ChkOnlyRemovable.Content"><value>Solo lo que se pueda eliminar</value></data>
   <data name="BtnAppsScan.Content"><value>Comprobar de nuevo</value></data>
   <data name="BtnAppsRemove.Content"><value>Desinstalar seleccionado</value></data>
-  <data name="St_AppPackage"><value>Aplicación de la tienda</value></data>
+  <data name="St_AppPackage"><value>Tienda MS</value></data>
   <data name="St_AppProgram"><value>Programa</value></data>
   <data name="St_AppProtected"><value>Protegido</value></data>
-  <data name="St_AppCandidate"><value>Puede eliminarse con seguridad</value></data>
-  <data name="St_AppPersonal"><value>Suyo</value></data>
+  <data name="St_AppCandidate"><value>Se puede eliminar</value></data>
+  <data name="St_AppPersonal"><value>Conservar</value></data>
   <data name="St_AppRemoved"><value>Eliminado</value></data>
   <data name="St_AppsAllLevels"><value>Todas las valoraciones</value></data>
   <data name="St_AppsFound"><value>{0} aplicaciones listadas.</value></data>
@@ -80,7 +76,7 @@
   <data name="Apps_Timeout"><value>La desinstalación tardó demasiado y se interrumpió.</value></data>
   <data name="Apps_Removing"><value>Eliminando {0}…</value></data>
   <data name="Apps_RemovingProgram"><value>Ejecutando el desinstalador de {0}…</value></data>
-  <data name="Progress_Apps"><value>Preguntando a Windows qué hay instalado…</value></data>
+  <data name="Progress_Apps"><value>Comprobando qué hay instalado en Windows...</value></data>
   <data name="Progress_AppChecking"><value>Leyendo {0} ({1}/{2})…</value></data>
   <data name="Progress_AppsFound"><value>{0} aplicaciones listadas.</value></data>
   
@@ -142,7 +138,6 @@
   <data name="ColName.Text"><value>Nombre</value></data>
   <data name="ColContents.Text"><value>Contenido</value></data>
   <data name="ColSize.Text"><value>Tamaño</value></data>
-  <data name="ColPath.Text"><value>Ruta</value></data>
   <data name="ColType.Text"><value>Tipo</value></data>
   <data name="BtnRestartElevated.Content"><value>Reiniciar como administrador</value></data>
   
@@ -238,9 +233,10 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="St_StatusEntries"><value>{0} de {1} entradas</value></data>
   <data name="St_StatusSelected"><value>{0} seleccionados</value></data>
   <data name="St_StatusFound"><value>{0} encontrados</value></data>
+  <data name="St_StatusResult"><value>{0} archivos, {1} entradas del Registro ({2})</value></data>
+  <data name="St_DetailMore"><value>… y {0:N0} más</value></data>
   <data name="St_Administrator"><value>Administrador</value></data>
-  <data name="St_StandardUser"><value>Usuario estándar</value></data>
-  
+    
   <data name="St_SearchNone"><value>No hay entradas coincidentes.</value></data>
   <data name="St_ParsingDatabases"><value>Analizando bases de datos...</value></data>
   <data name="St_AnalysisReady"><value>Análisis listo — {0} aplicaciones encontradas en {1} entradas.</value></data>
@@ -364,7 +360,6 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="St_UpToDate"><value>Aplicación actualizada</value></data>
   <data name="St_UpToDateMessage"><value>La versión {0} es la más reciente.</value></data>
   <data name="St_MenuUpdate"><value>⬆  Actualización disponible — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Buscar actualizaciones</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Introducir primero una clave API</value></data>
   <data name="St_ApiKeyTesting"><value>Probando…</value></data>
   <data name="Scheduler_FreqDaily"><value>Diariamente</value></data>
@@ -497,4 +492,29 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="Cookies_TextFiles"><value>Archivos de texto</value></data>
   <data name="Cleaning_CleanedCookies"><value>Eliminadas {0} cookies: {1}</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Configuración y más</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>Menú de la aplicación</value></data>
+  <data name="AppMenuSettings.Text"><value>Configuración</value></data>
+  <data name="AppMenuDonate.Text"><value>Apoyar el proyecto</value></data>
+  <data name="AppMenuUpdates.Text"><value>Buscar actualizaciones</value></data>
+  <data name="AppMenuSetupCode.Text"><value>Código de configutación</value></data>
+  <data name="SC_Title"><value>Código de configutación</value></data>
+  <data name="SC_Intro"><value>Un código de configuración es la selección de limpieza actual del usuario en una sola línea de texto. Al publicarlo o enviarlo, cualquier otro usuario puede pegarlo aquí para obtener las mismas entradas marcadas. Solo contiene identificadores breves de los nombres de las entradas: no incluye archivos, rutas ni nada relacionado con el equipo.</value></data>
+  <data name="SC_OwnHeader"><value>Selección del usuario</value></data>
+  <data name="SC_OwnSummary"><value>{0} entradas marcadas</value></data>
+  <data name="SC_OwnEmpty"><value>Aún no hay ninguna opción marcada en el limpiador.</value></data>
+  <data name="SC_Copy"><value>Copiar</value></data>
+  <data name="SC_Copied"><value>Copiado</value></data>
+  <data name="SC_PasteHeader"><value>Utilizar código</value></data>
+  <data name="SC_PastePlaceholder"><value>Pegar código empezando por FC1-</value></data>
+  <data name="SC_Invalid"><value>Eso no es un código de configuración.</value></data>
+  <data name="SC_Match"><value>{0} de {1} entradas localizadas en este equipo</value></data>
+  <data name="SC_None"><value>Ninguna de estas entradas es aplicable a este equipo.</value></data>
+  <data name="SC_NotInstalled"><value>{0} son para aplicaciones no instaladas.</value></data>
+  <data name="SC_Unknown"><value>{0} son desconocidas para el actual Winapp2. Es posible que una versión más reciente las incluya.</value></data>
+  <data name="SC_ApplyNote"><value>'Aplicar y analizar' reemplaza la selección del usuario y ejecuta un análisis. Nada se elimina hasta hacer clic en Limpiar.</value></data>
+  <data name="SC_Busy"><value>Esperar a que finalice el análisis que se está realizando para abrir de nuevo.</value></data>
+  <data name="SC_Apply"><value>Aplicar y analizar</value></data>
+  <data name="SC_Restore"><value>Selección anterior</value></data>
+  <data name="SC_Close"><value>Cerrar</value></data>
 </root>
