@@ -24,15 +24,12 @@
   <!-- Main Window — tab strip and address bar (x:Uid) -->
   <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>New tab</value></data>
   <data name="BtnDetailBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Back</value></data>
-  <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Search</value></data>
-  <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Settings</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Enjoying FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>If this app saves you time, consider supporting its development.</value></data>
   <data name="Donation_OtherAmount"><value>Other amount…</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Star on GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Maybe later</value></data>
 
   <!-- ============================================================
@@ -139,7 +136,7 @@
   <data name="ColContents.Text"><value>Contents</value></data>
   <data name="ColSize.Text"><value>Size</value></data>
   <data name="ColType.Text"><value>Type</value></data>
-  <data name="BtnRestartElevated.Content"><value>Restart as administrator</value></data>
+  <data name="BtnRestartElevated.Text"><value>Restart as administrator</value></data>
 
   <!-- Cleaner Page — category labels. Only the generic ones CategoryResolver
        defines are listed; brand names (Firefox, Spotify, …) and section names that
@@ -151,21 +148,15 @@
   <data name="Cat_Windows"><value>Windows</value></data>
   <data name="Cat_OtherApplications"><value>Other Applications</value></data>
 
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Category actions</value></data>
   <data name="MenuSelectAll.Text"><value>Select all</value></data>
   <data name="MenuSelectNone.Text"><value>Select none</value></data>
-  <data name="MenuSelectDefaults.Text"><value>Select defaults</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Analyze category</value></data>
-  <data name="MenuCleanCategory.Text"><value>Clean category</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Entry actions</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Analyze</value></data>
-  <data name="MenuCleanEntry.Text"><value>Clean</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Restore defaults</value></data>
+  <data name="MenuAnalyzeNamed"><value>Analyze {0}</value></data>
+  <data name="MenuCleanNamed"><value>Clean {0}</value></data>
   <data name="MenuExplainEntry.Text"><value>Explain with AI</value></data>
   <data name="MenuShowSource.Text"><value>Show source</value></data>
   <data name="LblAIDesc.Text"><value>Right-click any entry on the Cleaner page → Explain with AI. Choose Groq, OpenAI or Anthropic. Nothing is sent without your explicit action. Requires your own API key.</value></data>
-  <data name="LblAICustomHint.Text"><value>💡 Once your key is saved, the Custom Cleaners page also unlocks AI — describe what to clean and it generates a ready-to-use Winapp2 entry or PowerShell script for you.</value></data>
-  <data name="ResultsHeader.Text"><value>Results</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Back to results</value></data>
+  <data name="LblAICustomHint.Text"><value>💡 Once your key is saved, the Custom Cleaners page also unlocks AI — describe what to clean and it generates a ready-to-use Winapp2 entry for you.</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Delete these files now</value></data>
   <data name="MenuExcludeFile.Text"><value>Exclude file</value></data>
   <data name="MenuExcludeFolder.Text"><value>Exclude folder</value></data>
@@ -176,16 +167,10 @@
   <!-- Cleaner Page — IPageActions (built in code) -->
   <data name="St_MenuSelectAll"><value>Select all</value></data>
   <data name="St_MenuSelectNone"><value>Select none</value></data>
-  <data name="St_MenuSelectDefaults"><value>Select defaults</value></data>
-  <data name="St_MenuExpandAll"><value>Expand all</value></data>
-  <data name="St_MenuCollapseAll"><value>Collapse all</value></data>
-  <data name="St_MenuSortDesc"><value>Sort by size ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Sort by size ↑</value></data>
+  <data name="St_MenuSelectDefaults"><value>Restore defaults</value></data>
   <data name="St_MenuRefresh"><value>Refresh</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>Files</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Registry</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>files</value></data>
@@ -226,22 +211,17 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Loading Winapp2.ini...</value></data>
-  <data name="St_SearchFound"><value>Showing {0} matching entries.</value></data>
 
   <!-- Cleaner Page — status bar (built in code from these parts) -->
   <data name="St_StatusEntries"><value>{0} of {1} entries</value></data>
   <data name="St_StatusSelected"><value>{0} selected</value></data>
-  <data name="St_StatusFound"><value>{0} found</value></data>
-  <data name="St_StatusResult"><value>{0} files, {1} registry items ({2})</value></data>
   <data name="St_DetailMore"><value>… and {0:N0} more</value></data>
-  <data name="St_Administrator"><value>Administrator</value></data>
 
-  <data name="St_SearchNone"><value>No matching entries.</value></data>
   <data name="St_ParsingDatabases"><value>Parsing databases...</value></data>
   <data name="St_AnalysisReady"><value>Analysis ready — {0} apps found in {1} entries.</value></data>
   <data name="St_NothingSelected"><value>Nothing selected.</value></data>
   <data name="St_Scanning"><value>Scanning...</value></data>
-  <data name="St_ScanComplete"><value>Scan complete — {0} files, {1} registry items ({2})</value></data>
+  <data name="St_ScanComplete"><value>Analysis complete: {2} to be removed, {0} files and {1} registry items. Nothing has been deleted yet.</value></data>
   <data name="St_ScanCancelled"><value>Scan cancelled.</value></data>
   <data name="St_Cleaning"><value>Cleaning...</value></data>
   <data name="St_CleanDone"><value>Finished — {0} freed · {1} skipped (files in use)</value></data>
@@ -273,9 +253,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>Support FluentCleaner</value></data>
   <data name="DonationBar.Message"><value>Choose an amount and currency for PayPal, or support the project through Ko-fi. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Support the project</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Donate via PayPal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Donate via Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Appearance</value></data>
   <data name="LblTheme.Text"><value>App theme</value></data>
   <data name="LblThemeDesc.Text"><value>Choose how FluentCleaner looks on your device.</value></data>
@@ -303,8 +280,6 @@
   <data name="BtnBrowse.Content"><value>Browse…</value></data>
   <data name="BtnApplyPath.Content"><value>Apply</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Remove custom database</value></data>
-  <data name="RestartBar.Title"><value>Restart required</value></data>
-  <data name="RestartBar.Message"><value>Please restart FluentCleaner to load the updated database.</value></data>
   <data name="SectionPostClean.Text"><value>Post-clean tasks</value></data>
   <data name="LblPostCleanDesc.Text"><value>One command per line — runs sequentially after every clean pass.</value></data>
   <data name="SectionExclusions.Text"><value>Global exclusions</value></data>
@@ -353,17 +328,11 @@
   <data name="St_HistoryItems"><value>{0} items</value></data>
   <data name="St_FileNotFound"><value>File not found: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Custom path saved.</value></data>
-  <data name="St_Download"><value>Download</value></data>
   <data name="St_Downloading"><value>Downloading {0}…</value></data>
   <data name="St_Downloaded"><value>{0} downloaded — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>Download failed: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Not downloaded</value></data>
   <data name="St_FileInfo"><value>{0} entries  •  {1} KB  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Update available — {0}</value></data>
-  <data name="St_UpdateMessage"><value>A new version of FluentCleaner is ready to download.</value></data>
-  <data name="St_UpToDate"><value>You're up to date</value></data>
-  <data name="St_UpToDateMessage"><value>Version {0} is the latest.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Update available — {0}</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Enter an API key first.</value></data>
   <data name="St_ApiKeyTesting"><value>Testing…</value></data>
   <data name="Scheduler_FreqDaily"><value>Daily</value></data>
@@ -391,23 +360,16 @@
   <data name="MenuEditEntry.Text"><value>Edit</value></data>
   <data name="MenuDeleteEntry.Text"><value>Delete</value></data>
   <data name="MenuTestEntry.Text"><value>Test in Rule Lab</value></data>
-  <data name="MenuRunEntry.Text"><value>Run</value></data>
   <data name="BtnNewCleaner.Content"><value>+ New Cleaner</value></data>
-  <data name="BtnRunScript.Text"><value>Run</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} cleaner · {1} enabled</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} script(s)</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Open Custom folder</value></data>
   <data name="St_CustomToggleFailed"><value>Toggle failed: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Delete "{0}"?</value></data>
   <data name="St_CustomDeleteMessage"><value>This removes the custom cleaner permanently.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Delete</value></data>
   <data name="St_CustomDeleteCancel"><value>Cancel</value></data>
-  <data name="St_CustomRunning"><value>Running {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: could not read script — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: completed successfully.</value></data>
-  <data name="St_CustomFailed"><value>{0}: failed (exit {1}).</value></data>
   <data name="St_CustomEntryNone"><value>no entries parsed</value></data>
   <data name="St_CustomEntryOne"><value>1 entry · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} entries · {1}</value></data>
@@ -417,8 +379,6 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Save</value></data>
   <data name="DlgNewCleanerCancel"><value>Cancel</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Winapp2 entry (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>PowerShell script (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Name</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>My Cleaner</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generate with AI - describe what to clean (results may vary)</value></data>
@@ -427,6 +387,9 @@
   <data name="DlgNewCleanerContentLabel"><value>Content</value></data>
   <data name="DlgNewCleanerTest"><value>Test in Rule Lab</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Load template</value></data>
+  <data name="DlgNewCleanerNameTaken"><value>There's already a custom cleaner with that name.</value></data>
+  <data name="DlgNewCleanerNameInvalid"><value>A name can't contain \ / : * ? " &lt; &gt; |</value></data>
+  <data name="DlgNewCleanerSaveFailed"><value>Couldn't save: {0}</value></data>
   <data name="DlgNewCleanerTitleNew"><value>New custom cleaner</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Edit — {0}</value></data>
   <data name="DlgNewCleanerGenerating"><value>…</value></data>
@@ -434,7 +397,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>No API key configured for the selected provider. Go to Settings → AI explanations to add one.</value></data>
   <data name="AI_ApiError"><value>{0} API error: {1}</value></data>
   <data name="AI_NoResponse"><value>No response received.</value></data>
   <data name="AI_NetworkError"><value>Could not reach {0}: {1}</value></data>
@@ -494,17 +456,18 @@
   <data name="AppMenuSettings.Text"><value>Settings</value></data>
   <data name="AppMenuDonate.Text"><value>Support the project</value></data>
   <data name="AppMenuUpdates.Text"><value>Check for updates</value></data>
-  <data name="AppMenuSetupCode.Text"><value>Setup code</value></data>
-  <data name="SC_Title"><value>Setup code</value></data>
-  <data name="SC_Intro"><value>A setup code is your cleaner selection as one line of text. Post it or send it, and whoever pastes it here gets the same entries ticked. It only holds short fingerprints of entry names: no files, no paths, nothing about your PC.</value></data>
+  <data name="ShareSelection.Text"><value>Share selection</value></data>
+  <data name="SC_Title"><value>FluentSeed</value></data>
+  <data name="SC_Intro"><value>A FluentSeed is your selection as one line of text. Whoever pastes it here gets the same entries selected. No files, no paths, nothing about your PC.</value></data>
   <data name="SC_OwnHeader"><value>Your selection</value></data>
-  <data name="SC_OwnSummary"><value>{0} entries ticked</value></data>
-  <data name="SC_OwnEmpty"><value>Nothing is ticked in the cleaner yet.</value></data>
+  <data name="SC_OwnSummary"><value>{0} selected</value></data>
+  <data name="SC_OwnEmpty"><value>Nothing is selected in the cleaner yet.</value></data>
   <data name="SC_Copy"><value>Copy</value></data>
   <data name="SC_Copied"><value>Copied</value></data>
-  <data name="SC_PasteHeader"><value>Use a code</value></data>
-  <data name="SC_PastePlaceholder"><value>Paste a code starting with FC1-</value></data>
-  <data name="SC_Invalid"><value>That isn't a setup code.</value></data>
+  <data name="SC_CopyLink"><value>Copy as link</value></data>
+  <data name="SC_PasteHeader"><value>Use a FluentSeed</value></data>
+  <data name="SC_PastePlaceholder"><value>Paste a FluentSeed starting with FC1-</value></data>
+  <data name="SC_Invalid"><value>That isn't a FluentSeed.</value></data>
   <data name="SC_Match"><value>{0} of {1} entries found on this PC</value></data>
   <data name="SC_None"><value>None of these entries apply to this PC.</value></data>
   <data name="SC_NotInstalled"><value>{0} are for apps you don't have.</value></data>
