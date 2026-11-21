@@ -35,6 +35,6 @@ internal static class Scanner
     //whether a tweak belongs on this pc: its os version has to match and its required key exist.
     //public, because the number the start page promises has to be the number the scan then reports
     public static bool Fits(Tweak tweak) =>
-        (tweak.OsVersion.Length == 0 || (tweak.OsVersion == "11") == AppInfo.IsEleven)
+        (tweak.OsVersion.Length == 0 || (tweak.OsVersion == "11") == (Environment.OSVersion.Version.Build >= 22000))
         && (tweak.Requires.Length == 0 || tweak.Requires.Split('|').Any(RegistryService.Exists));
 }
