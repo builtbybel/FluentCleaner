@@ -143,6 +143,21 @@
                                                                        FontSize="12"
                                                                        TextTrimming="CharacterEllipsis"
                                                                        ToolTipService.ToolTip="{x:Bind Name}" />
+                                                        <!-- Running Process In-Use Warning Badge -->
+                                                        <Border Visibility="{x:Bind IsProcessRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                Background="#22FFB900"
+                                                                BorderBrush="#CCFFB900"
+                                                                BorderThickness="1"
+                                                                CornerRadius="4"
+                                                                Padding="4,1"
+                                                                Margin="4,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                ToolTipService.ToolTip="{x:Bind RunningWarningText, Mode=OneWay}">
+                                                            <StackPanel Orientation="Horizontal" Spacing="3">
+                                                                <FontIcon Glyph="&#xE7BA;" FontSize="9" Foreground="#FFFFB900" VerticalAlignment="Center" />
+                                                                <TextBlock Text="In Use" FontSize="10" Foreground="#FFFFB900" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                            </StackPanel>
+                                                        </Border>
                                                     </StackPanel>
                                                 </CheckBox>
 
