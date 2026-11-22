@@ -47,7 +47,8 @@ public class Winapp2Parser
                 current = new CleanerEntry { Name = name.TrimEnd('*').TrimEnd() };
                 var cleanName = name.TrimEnd('*').TrimEnd();
                 bool isCompaction = cleanName.IndexOf("VACUUM", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                                   cleanName.IndexOf("Compact Databases", StringComparison.OrdinalIgnoreCase) >= 0;
+                                   cleanName.IndexOf("Compact Databases", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                   cleanName.IndexOf("Optimize & Compact Databases", StringComparison.OrdinalIgnoreCase) >= 0;
                 current = new CleanerEntry { Name = cleanName, IsCompactionOnly = isCompaction };
                 continue;
             }
