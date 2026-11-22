@@ -54,6 +54,16 @@ internal static class CookieService
         };
     }
 
+    // Scans browser cookies and filters them against the IntelligentDomains knowledge base
+    public static IReadOnlyList<string> DetectIntelligentDomains()
+    {
+        var scan = ScanDomains();
+        return scan.Domains
+            .Where(IntelligentDomains.IsAuthDomain)
+            .OrderBy(domain => domain, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
     //one selected website removes that domain and its subdomains from every supported profile
     public static int DeleteDomains(IEnumerable<string> domains)
     {
@@ -68,12 +78,21 @@ internal static class CookieService
                 using var database = new WinSqlite(store.DatabasePath);
                 var column = store.Kind == StoreKind.Chromium ? "host_key" : "host";
                 var table = store.Kind == StoreKind.Chromium ? "cookies" : "moz_cookies";
-                var deleteExpression = BuildDomainExpression(column, selectedDomains);
-
                 database.Execute("BEGIN IMMEDIATE");
                 try
                 {
-                    database.Execute($"DELETE FROM {table} WHERE {deleteExpression}");
+                    database.PopulateTempDomainTable("_target_domains", selectedDomains);
+                    database.Execute($@"
+                        DELETE FROM {table}
+                        WHERE lower(ltrim({column}, '.')) IN (SELECT domain FROM _target_domains)
+                           OR (
+                               instr(lower(ltrim({column}, '.')), '.') > 0
+                               AND substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1) IN (SELECT domain FROM _target_domains)
+                           )
+                           OR (
+                               instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') > 0
+                               AND substr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') + 1) IN (SELECT domain FROM _target_domains)
+                           )");
                     database.Execute("COMMIT");
                 }
                 catch
@@ -119,13 +138,23 @@ internal static class CookieService
             using var database = new WinSqlite(path);
             var column = match.Store.Kind == StoreKind.Chromium ? "host_key" : "host";
             var table = match.Store.Kind == StoreKind.Chromium ? "cookies" : "moz_cookies";
-            var keepExpression = BuildDomainExpression(column, protectedDomains);
 
             database.Execute("BEGIN IMMEDIATE");
             int removed;
             try
             {
-                removed = database.Execute($"DELETE FROM {table} WHERE NOT ({keepExpression})");
+                database.PopulateTempDomainTable("_kept_domains", protectedDomains);
+                removed = database.Execute($@"
+                    DELETE FROM {table}
+                    WHERE lower(ltrim({column}, '.')) NOT IN (SELECT domain FROM _kept_domains)
+                      AND (
+                          instr(lower(ltrim({column}, '.')), '.') == 0
+                          OR substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1) NOT IN (SELECT domain FROM _kept_domains)
+                      )
+                      AND (
+                          instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') == 0
+                          OR substr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') + 1) NOT IN (SELECT domain FROM _kept_domains)
+                      )");
                 database.Execute("COMMIT");
             }
             catch

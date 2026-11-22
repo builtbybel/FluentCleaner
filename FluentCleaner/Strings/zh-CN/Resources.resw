@@ -64,7 +64,7 @@
   <data name="St_AppsRemoved"><value>已卸载 {0} 个应用。</value></data>
   <data name="St_AppsStarted"><value>{0} 个应用留下了未关闭的卸载程序窗口。</value></data>
   <data name="St_AppsFailedList"><value>失败：{0}</value></data>
-  <data name="St_AppsPartialTitle"><value>应用商店应用无法被</value></data>已列出</value></data>
+  <data name="St_AppsPartialTitle"><value>应用商店应用无法被列出</value></data>
   <data name="St_AppsNothingPicked"><value>未选择任何内容。</value></data>
   <data name="St_AppsConfirmTitle"><value>卸载 {0} 个应用？</value></data>
   <data name="St_AppsConfirmTitleOne"><value>卸载 {0}？</value></data>
@@ -487,6 +487,10 @@
   <data name="Cookies_MiImport"><value>导入...</value></data>
   <data name="Cookies_MiExport"><value>导出...</value></data>
   <data name="Cookies_TextFiles"><value>文本文件</value></data>
+  <data name="Cookies_IntelligentScan"><value>✨ 智能扫描</value></data>
+  <data name="Cookies_IntelligentScanning"><value>正在扫描身份验证和登录 Cookie...</value></data>
+  <data name="Cookies_IntelligentResult"><value>已将 {0} 个登录域名添加到保留列表（共检测到 {1} 个）。</value></data>
+  <data name="Cookies_MiIntelligentScan"><value>✨ 保留智能身份验证域名</value></data>
   <data name="Cleaning_CleanedCookies"><value>已清理 {0} 个 Cookie：{1}</value></data>
 
   <data name="BtnAppMenu.ToolTipService.ToolTip"><value>设置及更多</value></data>

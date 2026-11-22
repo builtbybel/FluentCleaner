@@ -449,6 +449,10 @@
   <data name="Cookies_MiImport"><value>Import...</value></data>
   <data name="Cookies_MiExport"><value>Export...</value></data>
   <data name="Cookies_TextFiles"><value>Text files</value></data>
+  <data name="Cookies_IntelligentScan"><value>✨ Intelligent Scan</value></data>
+  <data name="Cookies_IntelligentScanning"><value>Scanning for authentication and login cookies…</value></data>
+  <data name="Cookies_IntelligentResult"><value>Added {0} login domains to keep list ({1} total detected).</value></data>
+  <data name="Cookies_MiIntelligentScan"><value>✨ Keep Intelligent Auth Domains</value></data>
   <data name="Cleaning_CleanedCookies"><value>Cleaned {0} cookies: {1}</value></data>
 
   <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Settings and more</value></data>

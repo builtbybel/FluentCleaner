@@ -48,6 +48,7 @@
                         <ListView.ContextFlyout>
                             <MenuFlyout Opening="AvailableMenu_Opening">
                                 <MenuFlyoutItem x:Name="KeepMenuItem" Click="Keep_Click" />
+                                <MenuFlyoutItem x:Name="IntelligentScanMenuItem" Click="IntelligentScan_Click" />
                                 <MenuFlyoutItem x:Name="DeleteMenuItem" Click="Delete_Click" />
                             </MenuFlyout>
                         </ListView.ContextFlyout>
@@ -98,10 +99,12 @@
         <Grid Grid.Row="2" ColumnSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button x:Name="RefreshButton" Click="Refresh_Click" />
-            <TextBlock x:Name="StatusText" Grid.Column="1"
+            <Button x:Name="IntelligentScanButton" Grid.Column="1" Click="IntelligentScan_Click" />
+            <TextBlock x:Name="StatusText" Grid.Column="2"
                        FontSize="12"
                        VerticalAlignment="Center"
                        TextAlignment="Right"
