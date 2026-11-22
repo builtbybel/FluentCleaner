@@ -12,17 +12,34 @@
     <Grid Padding="0">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" MinWidth="200" MaxWidth="420" />
-            <ColumnDefinition Width="1" />
+            <ColumnDefinition x:Name="LeftPaneColumn" Width="300" MinWidth="180" MaxWidth="650" />
+            <ColumnDefinition Width="Auto" />
             <!-- divider -->
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MinWidth="320" />
         </Grid.ColumnDefinitions>
 
-        <!-- vertical divider -->
-        <Rectangle Grid.Column="1"
-                   Width="1"
-                   Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
-                   VerticalAlignment="Stretch" />
+        <!-- Interactive Resizable Divider Handle between Left and Right Panes -->
+        <Grid Grid.Column="1"
+              x:Name="PaneSplitter"
+              Width="9"
+              Margin="-4,0,-4,0"
+              Canvas.ZIndex="10"
+              Background="Transparent"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Stretch"
+              PointerEntered="PaneSplitter_PointerEntered"
+              PointerExited="PaneSplitter_PointerExited"
+              PointerPressed="PaneSplitter_PointerPressed"
+              PointerMoved="PaneSplitter_PointerMoved"
+              PointerReleased="PaneSplitter_PointerReleased"
+              PointerCaptureLost="PaneSplitter_PointerCaptureLost">
+            <!-- Center visible 1px line -->
+            <Rectangle x:Name="PaneSplitterLine"
+                       Width="1"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Stretch"
+                       Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
+        </Grid>
 
         <!-- left panel;entry selector -->
         <Grid Grid.Column="0">

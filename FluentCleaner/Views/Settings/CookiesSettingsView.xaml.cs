@@ -215,8 +215,8 @@ public sealed partial class CookiesSettingsView : UserControl
     {
         var filter = search.Trim();
         return domains
-            .Where(domain => filter.Length == 0 || domain.Contains(filter, StringComparison.CurrentCultureIgnoreCase))
-            .OrderBy(domain => domain, StringComparer.CurrentCultureIgnoreCase)
+            .Where(domain => filter.Length == 0 || domain.Contains(filter, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(domain => domain, StringComparer.OrdinalIgnoreCase)
             .ToArray();
     }
 }

@@ -56,16 +56,16 @@
         <ListView x:Name="SettingsNav"
                   Margin="12,20,0,20"
                   Padding="0"
-                  SelectedIndex="0"
+                  SelectedIndex="4"
                   SelectionChanged="SettingsNav_SelectionChanged">
-            <ListViewItem x:Uid="SettingsNavGeneral" Tag="General" />
+            <ListViewItem x:Uid="SettingsNavAbout" Tag="About" />
+            <ListViewItem x:Uid="SettingsNavAI" Tag="AI" />
             <ListViewItem x:Uid="SettingsNavCookies" Tag="Cookies" />
             <ListViewItem x:Uid="SettingsNavExclusions" Tag="Exclusions" />
-            <ListViewItem x:Uid="SettingsNavTasks" Tag="Tasks" />
+            <ListViewItem x:Uid="SettingsNavGeneral" Tag="General" />
             <ListViewItem x:Uid="SettingsNavHistory" Tag="History" />
-            <ListViewItem x:Uid="SettingsNavAI" Tag="AI" />
+            <ListViewItem x:Uid="SettingsNavTasks" Tag="Tasks" />
             <ListViewItem x:Uid="SettingsNavScheduler" Tag="Scheduler" />
-            <ListViewItem x:Uid="SettingsNavAbout" Tag="About" />
         </ListView>
 
     <ScrollViewer x:Name="SettingsScroll" Grid.Column="1" VerticalScrollBarVisibility="Auto">

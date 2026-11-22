@@ -72,6 +72,9 @@ public class AppSettings
     public int WindowWidth  { get; set; } = 960;
     public int WindowHeight { get; set; } = 620;
 
+    // remembered cleaner left pane width; resizable via mouse drag
+    public double CleanerPaneWidth { get; set; } = 300;
+
     //Junk growth tracker;logged after every successful clean run
     public bool CleanHistoryEnabled { get; set; } = true;
     public List<CleanHistoryEntry> CleanHistory { get; set; } = [];

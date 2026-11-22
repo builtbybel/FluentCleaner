@@ -495,8 +495,7 @@ public partial class CleanerPageViewModel : ObservableObject
         var groups = entries
             .Select(e => new { Entry = e, Category = CategoryResolver.TryMapLangSecRef(e) })
             .GroupBy(x => x.Category)
-            .OrderBy(g => g.Key.Order)
-            .ThenBy(g => g.Key.Name, StringComparer.OrdinalIgnoreCase);
+            .OrderBy(g => g.Key.Name, StringComparer.OrdinalIgnoreCase);
 
         var settings = AppSettings.Instance;
         var saved = settings.SelectedEntries;
