@@ -38,6 +38,7 @@ public sealed partial class SettingsPage : Page, IPageActions
     {
         InitializeComponent();
         _navigationReady = true;
+        SettingsNav.SelectedIndex = 3;
         ShowSettingsSection("General");
         InitializeDonationOptions();
         AiProviderBox.ItemsSource = new[] { "Groq", "OpenAI", "Anthropic" };
