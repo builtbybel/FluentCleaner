@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -242,6 +242,7 @@
   <!-- CleaningService progress messages -->
   <data name="Prog_Deleted"><value>Deleted: {0}</value></data>
   <data name="Prog_Registry"><value>Registry: {0}</value></data>
+  <data name="Prog_ShellRefreshed"><value>Refreshed Windows Shell icon cache</value></data>
 
   <!-- ============================================================
        SETTINGS PAGE — static XAML strings (x:Uid)

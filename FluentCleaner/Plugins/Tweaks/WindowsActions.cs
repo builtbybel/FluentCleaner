@@ -11,9 +11,12 @@ internal static class WindowsActions
     private const uint SmtoAbortIfHung = 0x0002;    // one frozen app must not hold up the rest
 
     //asks Explorer and open apps to pick up theme and taskbar registry changes
-    public static void NotifyShellSettingsChanged() =>
+    public static void NotifyShellSettingsChanged()
+    {
         SendMessageTimeout(new IntPtr(HwndBroadcast), WmSettingChange, IntPtr.Zero,
             "ImmersiveColorSet", SmtoAbortIfHung, 100, out _);
+        Services.ShellNotification.NotifyAssocChanged();
+    }
 
     //ends explorer in this session and waits for it to come back, since some values are read
     //only once at startup; failures are silent, a shell that stays away is not ours to fix

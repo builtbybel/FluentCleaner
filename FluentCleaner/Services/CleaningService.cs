@@ -172,6 +172,7 @@ public class CleaningService
     {
         int count = 0;
         long bytes = 0;
+        bool shellRefreshNeeded = ShellNotification.ShouldNotify(result);
         var registryExclusions = BuildRegistryExclusions(result.Entry);
 
         foreach (var file in result.FilesToDelete)
@@ -200,6 +201,11 @@ public class CleaningService
                 count++;
                 bytes += size;
                 progress?.Report(ResourceService.Fmt("Prog_Deleted", file));
+
+                if (!shellRefreshNeeded && ShellNotification.IsShellCacheFile(file))
+                {
+                    shellRefreshNeeded = true;
+                }
             }
             catch { } //in use or already gone; skip silently
         }
@@ -212,6 +218,10 @@ public class CleaningService
                 {
                     count++;
                     progress?.Report(ResourceService.Fmt("Prog_Registry", regItem));
+                    if (!shellRefreshNeeded && ShellNotification.IsShellRegistryKey(regItem.KeyPath))
+                    {
+                        shellRefreshNeeded = true;
+                    }
                 }
             }
             catch { }
@@ -221,6 +231,14 @@ public class CleaningService
         foreach (var fk in result.Entry.FileKeys.Where(fk => fk.Flag == FileKeyFlag.RemoveSelf))
             foreach (var resolved in _expander.ResolvePaths(fk.Path))
                 TryPruneEmptyDirs(resolved);
+
+        // Windows Shell live notification hook (BleachBit WinShellChangeNotify)
+        // Flushes and refreshes Explorer icon and thumbnail caches without restart
+        if (shellRefreshNeeded)
+        {
+            ShellNotification.RefreshIconCache();
+            progress?.Report(ResourceService.Get("Prog_ShellRefreshed"));
+        }
 
         return (count, bytes);
     }
