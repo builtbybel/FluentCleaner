@@ -2,9 +2,34 @@ using System.Runtime.InteropServices;
 
 namespace FluentCleaner.Services;
 
-// Tiny wrapper around SQLite already shipped with Windows 10/11.
-// This file exists only for the Cookie Manager under Settings > Cookies.
-internal sealed class WinSqlite : IDisposable
+public sealed class VacuumResult
+{
+    public bool Success { get; }
+    public string Path { get; }
+    public long InitialBytes { get; }
+    public long FinalBytes { get; }
+    public long ReclaimedBytes { get; }
+    public string? Error { get; }
+
+    public VacuumResult(bool success, string path, long initialBytes, long finalBytes, long reclaimedBytes, string? error = null)
+    {
+        Success = success;
+        Path = path ?? string.Empty;
+        InitialBytes = initialBytes;
+        FinalBytes = finalBytes;
+        ReclaimedBytes = reclaimedBytes;
+        Error = error;
+    }
+
+    public override string ToString() =>
+        Success
+            ? $"{System.IO.Path.GetFileName(Path)}: Reclaimed {ReclaimedBytes:N0} bytes ({InitialBytes:N0} -> {FinalBytes:N0})"
+            : $"{System.IO.Path.GetFileName(Path)}: Failed ({Error})";
+}
+
+// Wrapper around native SQLite (winsqlite3.dll) bundled with Windows 10/11.
+// Provides 64-bit safe database querying and high-performance in-place compaction (VACUUM).
+public sealed class WinSqlite : IDisposable
 {
     private const int SqliteOk = 0;
     private const int SqliteRow = 100;
@@ -63,6 +88,48 @@ internal sealed class WinSqlite : IDisposable
         }
         finally { Native.sqlite3_finalize(statement); }
     }
+
+    // Executes PRAGMA wal_checkpoint(TRUNCATE) and VACUUM to defragment pages and shrink file size.
+    public static VacuumResult VacuumDatabase(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            return new VacuumResult(false, path ?? string.Empty, 0, 0, 0, "File does not exist.");
+
+        long initialSize;
+        try { initialSize = new FileInfo(path).Length; }
+        catch (Exception ex) { return new VacuumResult(false, path, 0, 0, 0, ex.Message); }
+
+        try
+        {
+            using var db = new WinSqlite(path);
+            try
+            {
+                // Truncate the write-ahead log if WAL mode is active
+                db.Execute("PRAGMA wal_checkpoint(TRUNCATE);");
+            }
+            catch
+            {
+                // WAL checkpoint is safe to ignore if the database uses DELETE or MEMORY journal mode
+            }
+
+            // Compact and defragment free pages
+            db.Execute("VACUUM;");
+        }
+        catch (Exception ex)
+        {
+            return new VacuumResult(false, path, initialSize, initialSize, 0, ex.Message);
+        }
+
+        long finalSize;
+        try { finalSize = new FileInfo(path).Length; }
+        catch { finalSize = initialSize; }
+
+        long reclaimed = Math.Max(0, initialSize - finalSize);
+        return new VacuumResult(true, path, initialSize, finalSize, reclaimed);
+    }
+
+    public static Task<VacuumResult> VacuumDatabaseAsync(string path, CancellationToken token = default) =>
+        Task.Run(() => VacuumDatabase(path), token);
 
     public void Dispose()
     {

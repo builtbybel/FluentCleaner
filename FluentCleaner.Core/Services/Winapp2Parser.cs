@@ -45,6 +45,10 @@ public class Winapp2Parser
 
                 //Strip the trailing " *" Winapp2 uses to mark community entries
                 current = new CleanerEntry { Name = name.TrimEnd('*').TrimEnd() };
+                var cleanName = name.TrimEnd('*').TrimEnd();
+                bool isCompaction = cleanName.IndexOf("VACUUM", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                   cleanName.IndexOf("Compact Databases", StringComparison.OrdinalIgnoreCase) >= 0;
+                current = new CleanerEntry { Name = cleanName, IsCompactionOnly = isCompaction };
                 continue;
             }
 
@@ -61,6 +65,12 @@ public class Winapp2Parser
 
             if (key.Equals("LangSecRef", StringComparison.OrdinalIgnoreCase)) { if (int.TryParse(value, out var n)) current.LangSecRef = n; }
             else if (key.Equals("Section", StringComparison.OrdinalIgnoreCase)) current.Section = value;
+            else if (key.Equals("Section", StringComparison.OrdinalIgnoreCase))
+            {
+                current.Section = value;
+                if (value.Equals("Database Optimization", StringComparison.OrdinalIgnoreCase))
+                    current.IsCompactionOnly = true;
+            }
             else if (key.Equals("SpecialDetect", StringComparison.OrdinalIgnoreCase)) current.SpecialDetect = value;
             else if (key.Equals("Warning", StringComparison.OrdinalIgnoreCase)) current.Warning = value;
             else if (key.Equals("Default", StringComparison.OrdinalIgnoreCase)) current.Default = value.Equals("True", StringComparison.OrdinalIgnoreCase);

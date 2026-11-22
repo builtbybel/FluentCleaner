@@ -53,6 +53,11 @@ public class CleaningService
 
                     // Skip files that are truly inaccessible (hard lock / no permissions).
                     var size = TryGetDeletableSize(file);
+                    if (size < 0 && entry.IsCompactionOnly && File.Exists(file))
+                    {
+                        try { size = new FileInfo(file).Length; }
+                        catch { size = -1; }
+                    }
                     if (size < 0) continue;
 
                     result.FilesToDelete.Add(file);
@@ -179,6 +184,18 @@ public class CleaningService
             token.ThrowIfCancellationRequested(); //stop between files so we never delete half an entry
             try
             {
+                if (result.Entry.IsCompactionOnly)
+                {
+                    var vacuum = WinSqlite.VacuumDatabase(file);
+                    if (vacuum.Success)
+                    {
+                        count++;
+                        bytes += vacuum.ReclaimedBytes;
+                        progress?.Report($"Compacted {Path.GetFileName(file)}: Reclaimed {vacuum.ReclaimedBytes:N0} bytes");
+                    }
+                    continue;
+                }
+
                 // A keep-list replaces Winapp2's whole-file delete for known browser stores.
                 // CookieService owns the SQL work and blocks unsafe fallback deletion.
                 var cookieClean = CookieService.TryCleanProtectedStore(
