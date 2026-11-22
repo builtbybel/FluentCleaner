@@ -192,6 +192,7 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Get("St_ScanCancelled");
             TotalSize  = "";
         }
@@ -325,11 +326,13 @@ public partial class CleanerPageViewModel : ObservableObject
             var result = await AnalyzeEntryInternalAsync(entryVm.Entry,
                 new Progress<string>(msg => StatusText = msg), keepDetailSelection: true, cts.Token);
 
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Fmt("St_EntryScanned", entryVm.Name, result.FilesToDelete.Count, result.RegistryToDelete.Count);
             UpdateTotalsFromLastScan();
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Get("St_ScanCancelled");
         }
         finally
@@ -404,11 +407,13 @@ public partial class CleanerPageViewModel : ObservableObject
                 ScanProgress = ++done * 100.0 / total;
             }
 
+            SortResultLinesBySize(descending: true);
             UpdateTotalsFromLastScan();
             StatusText = ResourceService.Fmt("St_CategoryScanned", categoryVm.Name, selected.Count);
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Get("St_ScanCancelled");
         }
         finally
@@ -467,8 +472,12 @@ public partial class CleanerPageViewModel : ObservableObject
     private void SortResultLinesBySize(bool descending = true)
     {
         var sorted = descending
-            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? 0).ToList()
-            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? 0).ToList();
+            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? 0)
+                         .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
+                         .ToList()
+            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? 0)
+                         .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
+                         .ToList();
         for (int i = 0; i < sorted.Count; i++)
         {
             int from = ResultLines.IndexOf(sorted[i]);
