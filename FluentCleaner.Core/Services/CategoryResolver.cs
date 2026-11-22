@@ -36,7 +36,11 @@ public static class CategoryResolver
 
     private static readonly Dictionary<string, CategoryInfo> CategoriesByName =
         Categories.Values
-            .Concat(new[] { new CategoryInfo("Other Applications", 2000) })
+            .Concat(new[]
+            {
+                new CategoryInfo("Developer Tools", 45),
+                new CategoryInfo("Other Applications", 2000),
+            })
             .ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase);
 
     public static CategoryInfo TryMapLangSecRef(CleanerEntry entry)
@@ -46,7 +50,7 @@ public static class CategoryResolver
 
         if (!string.IsNullOrWhiteSpace(entry.Section))
         {
-            var section = entry.Section.Trim();
+            var section = entry.Section!.Trim();
             return CategoriesByName.TryGetValue(section, out var known)
                 ? known
                 : new CategoryInfo(section, 1000); // Put custom sections after all known LangSecRef categories.

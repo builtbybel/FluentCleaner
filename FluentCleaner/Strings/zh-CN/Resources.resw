@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -64,7 +64,7 @@
   <data name="St_AppsRemoved"><value>已卸载 {0} 个应用。</value></data>
   <data name="St_AppsStarted"><value>{0} 个应用留下了未关闭的卸载程序窗口。</value></data>
   <data name="St_AppsFailedList"><value>失败：{0}</value></data>
-  <data name="St_AppsPartialTitle"><value>应用商店应用无法被</value></data>已列出</value></data>
+  <data name="St_AppsPartialTitle"><value>应用商店应用无法被列出</value></data>
   <data name="St_AppsNothingPicked"><value>未选择任何内容。</value></data>
   <data name="St_AppsConfirmTitle"><value>卸载 {0} 个应用？</value></data>
   <data name="St_AppsConfirmTitleOne"><value>卸载 {0}？</value></data>
