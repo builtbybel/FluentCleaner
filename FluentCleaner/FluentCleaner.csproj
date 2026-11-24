@@ -99,10 +99,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\AppIcon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\AppIconAlt.ico">
+    <Content Include="Assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\Winapp2.ini">

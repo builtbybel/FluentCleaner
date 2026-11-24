@@ -107,29 +107,39 @@ public sealed partial class SettingsPage : Page
         SettingsScroll.ChangeView(null, 0, null, true);
     }
 
+    private bool _isShowingDialog;
+
     private async void LangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!_pageReady) return;
+        if (!_pageReady || _isShowingDialog) return;
+        _isShowingDialog = true;
 
-        // Only one ContentDialog at a time; the choice is saved either way.
-        if (Microsoft.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot)
-                .Any(p => p.Child is ContentDialog)) return;
-
-        var result = await new ContentDialog
+        try
         {
-            XamlRoot          = XamlRoot,
-            RequestedTheme    = ActualTheme,
-            Title             = ResourceService.Get("DlgRestartTitle"),
-            Content           = ResourceService.Get("DlgRestartMessage"),
-            PrimaryButtonText = ResourceService.Get("DlgRestartNow"),
-            CloseButtonText   = ResourceService.Get("DlgRestartLater"),
-            DefaultButton     = ContentDialogButton.Primary
-        }.ShowAsync();
+            var result = await new ContentDialog
+            {
+                XamlRoot          = XamlRoot,
+                RequestedTheme    = ActualTheme,
+                Title             = ResourceService.Get("DlgRestartTitle"),
+                Content           = ResourceService.Get("DlgRestartMessage"),
+                PrimaryButtonText = ResourceService.Get("DlgRestartNow"),
+                CloseButtonText   = ResourceService.Get("DlgRestartLater"),
+                DefaultButton     = ContentDialogButton.Primary
+            }.ShowAsync();
 
-        if (result == ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
+            {
+                Process.Start(Environment.ProcessPath!);
+                Application.Current.Exit();
+            }
+        }
+        catch (System.Runtime.InteropServices.COMException)
         {
-            Process.Start(Environment.ProcessPath!);
-            Application.Current.Exit();
+            // Suppress secondary dialog invocation if one is already transitioning
+        }
+        finally
+        {
+            _isShowingDialog = false;
         }
     }
 

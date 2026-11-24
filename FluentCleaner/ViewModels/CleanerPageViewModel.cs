@@ -750,11 +750,8 @@ public partial class CleanerPageViewModel : ObservableObject
         _          => "\uE74C"
     };
 
-    private static (string glyph, string accentHex, string bgHex) ResolveCategoryStyling(string categoryName, string macroGroup)
-    {
-        var style = CategoryStylingResolver.Resolve(categoryName, macroGroup);
-        return (style.Glyph, style.AccentHex, style.BackgroundHex);
-    }
+    private static CategoryStyle ResolveCategoryStyling(string categoryName, string macroGroup) =>
+        CategoryStylingResolver.Resolve(categoryName, macroGroup);
 
     private void SetMacroGroupSelected(string macroKey, bool isSelected)
     {
@@ -835,9 +832,17 @@ public partial class CleanerPageViewModel : ObservableObject
 
         foreach (var group in groups)
         {
-            var macroGroup                = ResolveMacroGroup(group.Key.Name);
-            var (glyph, accentHex, bgHex) = ResolveCategoryStyling(group.Key.Name, macroGroup);
-            var catVm                     = new CleanerCategoryViewModel(group.Key.Name, macroGroup, glyph, accentHex, bgHex, SetCategoryBulkSelected)
+            var macroGroup = ResolveMacroGroup(group.Key.Name);
+            var style      = ResolveCategoryStyling(group.Key.Name, macroGroup);
+            var catVm      = new CleanerCategoryViewModel(
+                group.Key.Name,
+                macroGroup,
+                style.Glyph,
+                style.AccentHex,
+                style.BackgroundHex,
+                style.AppIconSource,
+                style.HasAppIcon,
+                SetCategoryBulkSelected)
             {
                 IsExpanded = expandedNames.Contains(group.Key.Name)
             };

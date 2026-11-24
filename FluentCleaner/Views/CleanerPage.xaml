@@ -435,18 +435,27 @@
                                                           Padding="0"
                                                           VerticalAlignment="Center" />
 
-                                                <!-- 28x28 Vibrant Container for Category Icon -->
+                                                <!-- 28x28 Vibrant Container for Category Icon (Authentic App Icon + Fluent Fallback) -->
                                                 <Border Grid.Column="1"
                                                         Width="28" Height="28"
                                                         CornerRadius="6"
                                                         Background="{x:Bind IconBackgroundHex, Converter={StaticResource HexToBrushConverter}}"
                                                         Margin="4,0,6,0"
                                                         VerticalAlignment="Center">
-                                                    <FontIcon Glyph="{x:Bind IconGlyph}"
-                                                              FontSize="14"
-                                                              Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
-                                                              HorizontalAlignment="Center"
-                                                              VerticalAlignment="Center" />
+                                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <!-- Mode A: Authentic Application Icon (High-DPI PNG) -->
+                                                        <Image Source="{x:Bind AppIconSource, Mode=OneWay}"
+                                                               Width="18" Height="18"
+                                                               Visibility="{x:Bind HasAppIcon, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                                        <!-- Mode B: Universal Fluent FontIcon Fallback -->
+                                                        <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}"
+                                                                  FontSize="14"
+                                                                  Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
+                                                                  Visibility="{x:Bind HasAppIcon, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                                                  HorizontalAlignment="Center"
+                                                                  VerticalAlignment="Center" />
+                                                    </Grid>
                                                 </Border>
 
                                                 <TextBlock Grid.Column="2"
