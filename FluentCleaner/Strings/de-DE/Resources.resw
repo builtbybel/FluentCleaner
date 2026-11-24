@@ -141,11 +141,13 @@
   <data name="Cat_Multimedia"><value>Multimedia</value></data>
   <data name="Cat_Utilities"><value>Dienstprogramme</value></data>
   <data name="Cat_Windows"><value>Windows</value></data>
+  <data name="St_UpdatedTo"><value>FluentCleaner wurde auf {0} aktualisiert.</value></data>
+  <data name="BtnWhatsNew.Content"><value>Was ist neu</value></data>
   <data name="Cat_OtherApplications"><value>Weitere Anwendungen</value></data>
 
   <data name="MenuSelectAll.Text"><value>Alle auswählen</value></data>
   <data name="MenuSelectNone.Text"><value>Keine auswählen</value></data>
-  <data name="MenuSelectDefaults.Text"><value>Standard wiederherstellen</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Standardzustand wiederherstellen</value></data>
   <data name="MenuAnalyzeNamed"><value>{0} analysieren</value></data>
   <data name="MenuCleanNamed"><value>{0} bereinigen</value></data>
   <data name="MenuExplainEntry.Text"><value>Mit KI erklären</value></data>
@@ -161,7 +163,7 @@
 
   <data name="St_MenuSelectAll"><value>Alle auswählen</value></data>
   <data name="St_MenuSelectNone"><value>Keine auswählen</value></data>
-  <data name="St_MenuSelectDefaults"><value>Standard wiederherstellen</value></data>
+  <data name="St_MenuSelectDefaults"><value>Standardzustand wiederherstellen</value></data>
   <data name="St_MenuRefresh"><value>Aktualisieren</value></data>
 
 
@@ -184,7 +186,6 @@
   <data name="DlgSourceCopy"><value>Kopieren</value></data>
   <data name="DlgSourceReport"><value>Eintrag melden</value></data>
   <data name="DlgSourceDryRun"><value>Testlauf</value></data>
-  <data name="RuleLabTitle"><value>Rule Lab — {0}</value></data>
   <data name="DlgSourceHint"><value>Regeln anpassen, dann Testlauf für die Vorschau.</value></data>
   <data name="DlgSourceScanning"><value>Scanne…</value></data>
   <data name="DlgSourceNoEntry"><value>Kein gültiger Eintrag — braucht ein Detect und einen FileKey.</value></data>
@@ -259,8 +260,8 @@
   <data name="LblWinapp2.Text"><value>Winapp2</value></data>
   <data name="BtnUpdateWinapp2.Content"><value>Aktualisieren</value></data>
   <data name="LblWinapp3.Text"><value>Winapp3</value></data>
-  <data name="LblWinapp3Tag.Text"><value>experimentell</value></data>
-  <data name="LblWinapp3Desc.Text"><value>  —  aggressivere Einträge, auf eigene Gefahr.</value></data>
+  <data name="LblWinapp3Tag.Text"><value>aggressiv · eigene Gefahr</value></data>
+  <data name="LblWinapp3Desc.Text"><value>  —  manche Regeln löschen auf dem ganzen Laufwerk. Nichts ist vorausgewählt: Hake nur an, was du brauchst, und prüfe die Vorschau vor dem Reinigen.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Herunterladen</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Aktualisieren</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Eigener Datenbankpfad (.ini)</value></data>
@@ -369,7 +370,6 @@
   <data name="DlgNewCleanerGenerate.Content"><value>Generieren</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Generieren</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Inhalt</value></data>
-  <data name="DlgNewCleanerTest"><value>Im Rule Lab testen</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Vorlage laden</value></data>
   <data name="DlgNewCleanerNameTaken"><value>Es gibt schon einen eigenen Reiniger mit diesem Namen.</value></data>
   <data name="DlgNewCleanerNameInvalid"><value>Ein Name darf kein \ / : * ? " &lt; &gt; | enthalten.</value></data>

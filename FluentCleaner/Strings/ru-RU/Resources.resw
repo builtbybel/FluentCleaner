@@ -20,33 +20,22 @@
   <data name="NavTerminal.Content"><value>Терминал</value></data>
   <data name="NavCustom.Content"><value>Пользовательские</value></data>
   <data name="SearchBox.PlaceholderText"><value>Поиск</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Действия страницы</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Нравится FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Если это приложение экономит ваше время, подумайте о поддержке его разработки.</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Поставить звезду на GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Может быть, позже</value></data>
-  <data name="St_NoActions"><value>Нет действий для этой страницы</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini загружается автоматически при запуске.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Действия категории</value></data>
   <data name="MenuSelectAll.Text"><value>Выбрать все</value></data>
   <data name="MenuSelectNone.Text"><value>Снять все</value></data>
   <data name="MenuSelectDefaults.Text"><value>Выбрать по умолчанию</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Анализировать категорию</value></data>
-  <data name="MenuCleanCategory.Text"><value>Очистить категорию</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Действия записи</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Анализировать</value></data>
-  <data name="MenuCleanEntry.Text"><value>Очистить</value></data>
   <data name="MenuExplainEntry.Text"><value>Объяснить с помощью ИИ</value></data>
   <data name="LblAIDesc.Text"><value>Щелкните правой кнопкой мыши любую запись на странице «Очистка» → «Объяснить с помощью ИИ». Работает на Groq (llama-3.3-70b) — бесплатно, без счетов. Ничего не отправляется без вашего явного действия. Требуется ваш собственный ключ API.</value></data>
-  <data name="ResultsHeader.Text"><value>Результаты</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Назад к результатам</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Удалить эти файлы сейчас</value></data>
   <data name="MenuExcludeFile.Text"><value>Исключить файл</value></data>
   <data name="MenuExcludeFolder.Text"><value>Исключить папку</value></data>
@@ -58,15 +47,9 @@
   <data name="St_MenuSelectAll"><value>Выбрать все</value></data>
   <data name="St_MenuSelectNone"><value>Снять все</value></data>
   <data name="St_MenuSelectDefaults"><value>Выбрать по умолчанию</value></data>
-  <data name="St_MenuExpandAll"><value>Развернуть все</value></data>
-  <data name="St_MenuCollapseAll"><value>Свернуть все</value></data>
-  <data name="St_MenuSortDesc"><value>Сортировать по размеру ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Сортировать по размеру ↑</value></data>
   <data name="St_MenuRefresh"><value>Обновить</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>Файлы</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Реестр</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>файлов</value></data>
@@ -91,8 +74,6 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Загрузка Winapp2.ini...</value></data>
-  <data name="St_SearchFound"><value>Показано {0} совпадающих записей.</value></data>
-  <data name="St_SearchNone"><value>Совпадающих записей нет.</value></data>
   <data name="St_ParsingDatabases"><value>Анализ баз данных...</value></data>
   <data name="St_AnalysisReady"><value>Анализ готов — найдено {0} приложений в {1} записях.</value></data>
   <data name="St_NothingSelected"><value>Ничего не выбрано.</value></data>
@@ -126,9 +107,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>FluentCleaner становится открытым исходным кодом.</value></data>
   <data name="DonationBar.Message"><value>Вложено много работы — если это помогает вам и вы хотите сказать спасибо, пожертвование будет очень значимым. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Поддержать проект</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Пожертвовать через PayPal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Пожертвовать через Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Внешний вид</value></data>
   <data name="LblTheme.Text"><value>Тема приложения</value></data>
   <data name="LblThemeDesc.Text"><value>Выберите, как FluentCleaner выглядит на вашем устройстве.</value></data>
@@ -151,8 +129,6 @@
   <data name="BtnBrowse.Content"><value>Обзор…</value></data>
   <data name="BtnApplyPath.Content"><value>Применить</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Удалить пользовательскую базу данных</value></data>
-  <data name="RestartBar.Title"><value>Требуется перезапуск</value></data>
-  <data name="RestartBar.Message"><value>Пожалуйста, перезапустите FluentCleaner для загрузки обновлённой базы данных.</value></data>
   <data name="SectionPostClean.Text"><value>Задачи после очистки</value></data>
   <data name="LblPostCleanDesc.Text"><value>Одна команда в строке — выполняется последовательно после каждого прохода очистки.</value></data>
   <data name="SectionExclusions.Text"><value>Глобальные исключения</value></data>
@@ -189,18 +165,11 @@
   <data name="St_HistoryItems"><value>{0} элементов</value></data>
   <data name="St_FileNotFound"><value>Файл не найден: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Пользовательский путь сохранён.</value></data>
-  <data name="St_Download"><value>Скачать</value></data>
   <data name="St_Downloading"><value>Загрузка {0}…</value></data>
   <data name="St_Downloaded"><value>{0} загружен — {1} КБ</value></data>
   <data name="St_DownloadFailed"><value>Ошибка загрузки: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Не загружено</value></data>
   <data name="St_FileInfo"><value>{0} записей  •  {1} КБ  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Доступно обновление — {0}</value></data>
-  <data name="St_UpdateMessage"><value>Новая версия FluentCleaner готова к загрузке.</value></data>
-  <data name="St_UpToDate"><value>У вас последняя версия</value></data>
-  <data name="St_UpToDateMessage"><value>Версия {0} — последняя.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Доступно обновление — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Проверить обновления</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Сначала введите ключ API.</value></data>
   <data name="St_ApiKeyTesting"><value>Проверка…</value></data>
   <data name="St_ExportSuccess"><value>Настройки экспортированы в {0}</value></data>
@@ -216,28 +185,16 @@
   <data name="CustomEmptyHint2.Text"><value>Создайте новый очиститель — он появится здесь автоматически.</value></data>
   <data name="MenuEditEntry.Text"><value>Изменить</value></data>
   <data name="MenuDeleteEntry.Text"><value>Удалить</value></data>
-  <data name="MenuRunEntry.Text"><value>Выполнить</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Новый очиститель</value></data>
-  <data name="BtnRunScript.Text"><value>Выполнить</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} очиститель · {1} включено</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} скрипт(ов)</value></data>
-  <data name="St_CustomMenuNew"><value>Новый пользовательский очиститель</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Открыть папку Custom</value></data>
-  <data name="St_CustomMenuReddit"><value>Спросить на Reddit</value></data>
-  <data name="St_CustomMenuNeowin"><value>Форумы Neowin</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Опубликовать очиститель на GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Ошибка переключения: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Удалить «{0}»?</value></data>
   <data name="St_CustomDeleteMessage"><value>Это приведёт к безвозвратному удалению пользовательского очистителя.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Удалить</value></data>
   <data name="St_CustomDeleteCancel"><value>Отмена</value></data>
-  <data name="St_CustomRunning"><value>Выполнение {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: не удалось прочитать скрипт — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: успешно завершено.</value></data>
-  <data name="St_CustomFailed"><value>{0}: ошибка (код {1}).</value></data>
   <data name="St_CustomEntryNone"><value>записей не найдено</value></data>
   <data name="St_CustomEntryOne"><value>1 запись · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} записей · {1}</value></data>
@@ -247,8 +204,6 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Сохранить</value></data>
   <data name="DlgNewCleanerCancel"><value>Отмена</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Запись Winapp2 (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>Скрипт PowerShell (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Имя</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>Мой очиститель</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Сгенерировать с ИИ — опишите, что нужно очистить (результаты могут различаться)</value></data>
@@ -263,7 +218,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>Ключ API не настроен. Перейдите в «Настройки» → «Объяснения ИИ», чтобы добавить ваш ключ Groq API (бесплатно на console.groq.com).</value></data>
   <data name="AI_ApiError"><value>Ошибка Groq API: {0}</value></data>
   <data name="AI_NoResponse"><value>Ответ не получен.</value></data>
   <data name="AI_NetworkError"><value>Не удалось связаться с Groq API: {0}</value></data>
@@ -281,8 +235,6 @@
   <data name="CLI_NoDrives"><value>  Диски не найдены.</value></data>
   <data name="CLI_ThemeUsage"><value>  Использование: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  Тема установлена на '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Использование: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  Фон установлен на '{0}'.</value></data>
   <data name="CLI_NoMatch"><value>  Записей, соответствующих '{0}', не найдено.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} элементов · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Готово — удалено {0} элементов · освобождено {1}.</value></data>
@@ -293,4 +245,9 @@
   <data name="CLI_ListEntries"><value>  — {0} записей.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} категорий.</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Настройки и прочее</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Настройки</value></data>
+  <data name="AppMenuDonate.Text"><value>Поддержать проект</value></data>
+  <data name="AppMenuUpdates.Text"><value>Проверить обновления</value></data>
 </root>

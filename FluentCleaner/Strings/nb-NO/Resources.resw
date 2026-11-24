@@ -20,34 +20,23 @@
   <data name="NavTerminal.Content"><value>Terminal</value></data>
   <data name="NavCustom.Content"><value>Egendefinert</value></data>
   <data name="SearchBox.PlaceholderText"><value>Søk</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Sidehandlinger</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Liker du FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Hvis denne appen sparer deg for tid, kan du vurdere å støtte utviklingen.</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Gi stjerne på GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Kanskje senere</value></data>
-  <data name="St_NoActions"><value>Ingen handlinger for denne siden</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini lastes automatisk ved oppstart.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Kategorihandlinger</value></data>
   <data name="MenuSelectAll.Text"><value>Velg alle</value></data>
   <data name="MenuSelectNone.Text"><value>Velg ingen</value></data>
   <data name="MenuSelectDefaults.Text"><value>Velg standardvalg</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Analyser kategori</value></data>
-  <data name="MenuCleanCategory.Text"><value>Rens kategori</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Oppføringshandlinger</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Analyser</value></data>
-  <data name="MenuCleanEntry.Text"><value>Rens</value></data>
   <data name="MenuExplainEntry.Text"><value>Forklar med AI</value></data>
   <data name="LblAIDesc.Text"><value>Høyreklikk på en oppføring på Rens-siden → Forklar med AI. Drevet av Groq (llama-3.3-70b) — gratis, ingen fakturering. Ingenting sendes uten din eksplisitte handling. Krever din egen API-nøkkel.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Når nøkkelen din er lagret, låses AI også opp på siden for egendefinerte rensere — beskriv hva som skal renses, så genereres en ferdig Winapp2-oppføring eller et PowerShell-skript for deg.</value></data>
-  <data name="ResultsHeader.Text"><value>Resultater</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Tilbake til resultater</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Slett disse filene nå</value></data>
   <data name="MenuExcludeFile.Text"><value>Ekskluder fil</value></data>
   <data name="MenuExcludeFolder.Text"><value>Ekskluder mappe</value></data>
@@ -59,15 +48,9 @@
   <data name="St_MenuSelectAll"><value>Velg alle</value></data>
   <data name="St_MenuSelectNone"><value>Velg ingen</value></data>
   <data name="St_MenuSelectDefaults"><value>Velg standardvalg</value></data>
-  <data name="St_MenuExpandAll"><value>Utvid alle</value></data>
-  <data name="St_MenuCollapseAll"><value>Slå sammen alle</value></data>
-  <data name="St_MenuSortDesc"><value>Sorter etter størrelse ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Sorter etter størrelse ↑</value></data>
   <data name="St_MenuRefresh"><value>Oppdater</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>Filer</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Register</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>filer</value></data>
@@ -96,8 +79,6 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Laster Winapp2.ini...</value></data>
-  <data name="St_SearchFound"><value>Viser {0} samsvarende oppføringer.</value></data>
-  <data name="St_SearchNone"><value>Ingen samsvarende oppføringer.</value></data>
   <data name="St_ParsingDatabases"><value>Analyserer databaser...</value></data>
   <data name="St_AnalysisReady"><value>Analyse klar — {0} apper funnet i {1} oppføringer.</value></data>
   <data name="St_NothingSelected"><value>Ingenting valgt.</value></data>
@@ -131,9 +112,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>FluentCleaner blir open source.</value></data>
   <data name="DonationBar.Message"><value>Mye arbeid er lagt ned i dette — hvis det hjelper deg og du har lyst til å si takk, ville en donasjon bety mye. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Støtt prosjektet</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Doner via PayPal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Doner via Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Utseende</value></data>
   <data name="LblTheme.Text"><value>Apptema</value></data>
   <data name="LblThemeDesc.Text"><value>Velg hvordan FluentCleaner ser ut på enheten din.</value></data>
@@ -156,8 +134,6 @@
   <data name="BtnBrowse.Content"><value>Bla gjennom…</value></data>
   <data name="BtnApplyPath.Content"><value>Bruk</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Fjern egendefinert database</value></data>
-  <data name="RestartBar.Title"><value>Omstart kreves</value></data>
-  <data name="RestartBar.Message"><value>Start FluentCleaner på nytt for å laste inn den oppdaterte databasen.</value></data>
   <data name="SectionPostClean.Text"><value>Oppgaver etter rensing</value></data>
   <data name="LblPostCleanDesc.Text"><value>Én kommando per linje — kjøres i rekkefølge etter hver rensing.</value></data>
   <data name="SectionExclusions.Text"><value>Globale unntak</value></data>
@@ -194,18 +170,11 @@
   <data name="St_HistoryItems"><value>{0} elementer</value></data>
   <data name="St_FileNotFound"><value>Fil ikke funnet: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Egendefinert sti lagret.</value></data>
-  <data name="St_Download"><value>Last ned</value></data>
   <data name="St_Downloading"><value>Laster ned {0}…</value></data>
   <data name="St_Downloaded"><value>{0} lastet ned — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>Nedlasting mislyktes: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Ikke lastet ned</value></data>
   <data name="St_FileInfo"><value>{0} oppføringer  •  {1} KB  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Oppdatering tilgjengelig — {0}</value></data>
-  <data name="St_UpdateMessage"><value>En ny versjon av FluentCleaner er klar for nedlasting.</value></data>
-  <data name="St_UpToDate"><value>Du har den nyeste versjonen</value></data>
-  <data name="St_UpToDateMessage"><value>Versjon {0} er den nyeste.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Oppdatering tilgjengelig — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Se etter oppdateringer</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Skriv inn en API-nøkkel først.</value></data>
   <data name="St_ApiKeyTesting"><value>Tester…</value></data>
   <data name="St_ExportSuccess"><value>Innstillinger eksportert til {0}</value></data>
@@ -221,28 +190,16 @@
   <data name="CustomEmptyHint2.Text"><value>Opprett en ny renser — den vises her automatisk.</value></data>
   <data name="MenuEditEntry.Text"><value>Rediger</value></data>
   <data name="MenuDeleteEntry.Text"><value>Slett</value></data>
-  <data name="MenuRunEntry.Text"><value>Kjør</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Ny renser</value></data>
-  <data name="BtnRunScript.Text"><value>Kjør</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} rensere · {1} aktivert</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} skript</value></data>
-  <data name="St_CustomMenuNew"><value>Ny egendefinert renser</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Åpne mappen Egendefinert</value></data>
-  <data name="St_CustomMenuReddit"><value>Spør på Reddit</value></data>
-  <data name="St_CustomMenuNeowin"><value>Neowin-forumene</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Del renser på GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Veksling mislyktes: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Slette "{0}"?</value></data>
   <data name="St_CustomDeleteMessage"><value>Dette fjerner den egendefinerte renseren permanent.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Slett</value></data>
   <data name="St_CustomDeleteCancel"><value>Avbryt</value></data>
-  <data name="St_CustomRunning"><value>Kjører {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: kunne ikke lese skript — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: fullført.</value></data>
-  <data name="St_CustomFailed"><value>{0}: mislyktes (avslutningskode {1}).</value></data>
   <data name="St_CustomEntryNone"><value>ingen oppføringer tolket</value></data>
   <data name="St_CustomEntryOne"><value>1 oppføring · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} oppføringer · {1}</value></data>
@@ -252,8 +209,6 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Lagre</value></data>
   <data name="DlgNewCleanerCancel"><value>Avbryt</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Winapp2-oppføring (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>PowerShell-skript (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Navn</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>Min renser</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generer med AI – beskriv hva som skal renses (resultatene kan variere)</value></data>
@@ -268,7 +223,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>Ingen API-nøkkel konfigurert. Gå til Innstillinger → AI-forklaringer for å legge til din Groq API-nøkkel (gratis på console.groq.com).</value></data>
   <data name="AI_ApiError"><value>Groq API-feil: {0}</value></data>
   <data name="AI_NoResponse"><value>Ingen svar mottatt.</value></data>
   <data name="AI_NetworkError"><value>Kunne ikke nå Groq API: {0}</value></data>
@@ -286,8 +240,6 @@
   <data name="CLI_NoDrives"><value>  Ingen stasjoner funnet.</value></data>
   <data name="CLI_ThemeUsage"><value>  Bruk: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  Tema satt til '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Bruk: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  Bakgrunn satt til '{0}'.</value></data>
   <data name="CLI_NoMatch"><value>  Ingen oppføringer samsvarer med '{0}'.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} elementer · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Fullført — {0} elementer fjernet · {1} frigjort.</value></data>
@@ -298,4 +250,9 @@
   <data name="CLI_ListEntries"><value>  — {0} oppføringer.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} kategorier.</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Innstillinger med mer</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Innstillinger</value></data>
+  <data name="AppMenuDonate.Text"><value>Støtt prosjektet</value></data>
+  <data name="AppMenuUpdates.Text"><value>Se etter oppdateringer</value></data>
 </root>

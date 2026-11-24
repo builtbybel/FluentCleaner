@@ -86,6 +86,14 @@ public class Winapp2Parser
         string content;
         using (var reader = new StreamReader(filePath))
             content = await reader.ReadToEndAsync();
-        return Parse(content);
+        var entries = Parse(content);
+
+        // Winapp3 has no Default= lines, missing Default = ticked, so everything got ticked (#217).
+        // done here, not in the file, Winapp3.ini gets replaced on every update
+        if (Path.GetFileName(filePath).Equals("Winapp3.ini", StringComparison.OrdinalIgnoreCase))
+            foreach (var entry in entries)
+                entry.Default = false;
+
+        return entries;
     }
 }

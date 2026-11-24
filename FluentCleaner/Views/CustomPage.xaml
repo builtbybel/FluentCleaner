@@ -66,22 +66,15 @@
                                     <TextBlock Text="{x:Bind Name}"
                                                FontSize="13" FontWeight="SemiBold"
                                                VerticalAlignment="Center" />
-                                    <Button HorizontalAlignment="Right" Padding="6">
-                                        <Button.Resources>
-                                            <SolidColorBrush x:Key="ButtonBackground"            Color="Transparent" />
-                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{ThemeResource SubtleFillColorSecondary}" />
-                                            <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="{ThemeResource SubtleFillColorTertiary}" />
-                                            <SolidColorBrush x:Key="ButtonBorderBrush"           Color="Transparent" />
-                                        </Button.Resources>
+                                    <Button HorizontalAlignment="Right" Padding="6"
+                                            Style="{StaticResource SubtleButtonStyle}">
                                         <FontIcon Glyph="&#xE712;" FontSize="13" />
                                         <Button.Flyout>
                                             <MenuFlyout Placement="Bottom">
                                                 <MenuFlyoutItem x:Uid="MenuEditEntry" Tag="{x:Bind}" Click="Edit_Click">
                                                     <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE70F;" /></MenuFlyoutItem.Icon>
                                                 </MenuFlyoutItem>
-                                                <!-- ini only;scripts can't be dry-run -->
-                                                <MenuFlyoutItem x:Uid="MenuTestEntry" Tag="{x:Bind}" Click="TestInLab_Click"
-                                                                Visibility="{x:Bind IniVisibility}">
+                                                <MenuFlyoutItem x:Uid="MenuTestEntry" Tag="{x:Bind}" Click="TestInLab_Click">
                                                     <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE9F5;" /></MenuFlyoutItem.Icon>
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem x:Uid="MenuDeleteEntry" Tag="{x:Bind}" Click="Delete_Click">
@@ -92,52 +85,31 @@
                                     </Button>
                                 </Grid>
 
-                                <!-- Middle: description (scripts) or status (INI) -->
-                                <TextBlock Grid.Row="1"
-                                           Text="{x:Bind Description}"
-                                           FontSize="11" TextWrapping="Wrap"
-                                           MaxLines="3" TextTrimming="CharacterEllipsis"
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           VerticalAlignment="Top"
-                                           Visibility="{x:Bind ScriptVisibility}" />
                                 <TextBlock Grid.Row="1"
                                            Text="{x:Bind StatusText, Mode=OneWay}"
                                            FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           VerticalAlignment="Top"
-                                           Visibility="{x:Bind IniVisibility}" />
-
-                                <!-- Action: Run (scripts) or Toggle (INI) -->
-                                <Button Grid.Row="2"
-                                        Tag="{x:Bind}" Click="RunScript_Click"
-                                        HorizontalAlignment="Center"
-                                        Padding="24,6"
-                                        Style="{StaticResource AccentButtonStyle}"
-                                        Visibility="{x:Bind ScriptVisibility}">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE768;" FontSize="12" />
-                                        <TextBlock x:Uid="BtnRunScript" />
-                                    </StackPanel>
-                                </Button>
+                                           VerticalAlignment="Top" />
 
                                 <ToggleSwitch Grid.Row="2"
                                              IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
+                                             AutomationProperties.Name="{x:Bind Name}"
                                              HorizontalAlignment="Right"
-                                             OnContent="" OffContent="" MinWidth="0"
-                                             Visibility="{x:Bind IniVisibility}" />
+                                             OnContent="" OffContent="" MinWidth="0" />
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-
-            <!-- floating action button -->
-            <Button x:Uid="BtnNewCleaner"
-                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Margin="0,0,32,16"
-                    Padding="16,8"
-                    Click="BtnNew_Click" />
         </Grid>
+
+        <!-- Outside the card grid, so it is there when the grid is still empty too. -->
+        <Button x:Uid="BtnNewCleaner"
+                Grid.Row="1"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Style="{StaticResource AccentButtonStyle}"
+                Margin="0,0,32,16"
+                Padding="16,8"
+                Click="BtnNew_Click" />
     </Grid>
 </Page>
