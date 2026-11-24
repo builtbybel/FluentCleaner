@@ -21,6 +21,12 @@
             <!-- actions -->
         </Grid.RowDefinitions>
 
+        <!-- content background from headers to last row;filters and footer stay on the panel like in the cleaner -->
+        <Border Grid.Row="3" Grid.RowSpan="2"
+                Background="{ThemeResource ShellContentBrush}"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0" />
+
         <ProgressBar Grid.Row="0"
                      Height="2"
                      Maximum="100"
@@ -53,8 +59,8 @@
                       IsChecked="{x:Bind ViewModel.OnlyRemovable, Mode=TwoWay}" />
         </StackPanel>
 
-        <!-- Leading 28 px mirrors the tick box column of the rows. -->
-        <Grid Grid.Row="3" Padding="10,0,22,0">
+        <!-- 28px = checkbox column of the rows -->
+        <Grid Grid.Row="3" Height="28" Padding="10,0,22,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="28" />
                 <ColumnDefinition Width="*" />
@@ -63,18 +69,15 @@
                 <ColumnDefinition Width="110" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="1" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
-                <TextBlock x:Uid="ColApp" VerticalAlignment="Center" HorizontalAlignment="Left" />
-            </Button>
-            <Button Grid.Column="2" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
-                <TextBlock x:Uid="ColPublisher" VerticalAlignment="Center" HorizontalAlignment="Left" />
-            </Button>
-            <Button Grid.Column="3" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
-                <TextBlock x:Uid="ColKind" VerticalAlignment="Center" HorizontalAlignment="Left" />
-            </Button>
-            <Button Grid.Column="4" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
-                <TextBlock x:Uid="ColSafety" VerticalAlignment="Center" HorizontalAlignment="Right" />
-            </Button>
+            <TextBlock Grid.Column="1" x:Uid="ColApp" Style="{StaticResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" x:Uid="ColPublisher" Style="{StaticResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="3" x:Uid="ColKind" Style="{StaticResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="4" x:Uid="ColSafety" Style="{StaticResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"
+                       HorizontalAlignment="Right" />
         </Grid>
 
         <Border Grid.Row="3" VerticalAlignment="Bottom" Height="1"
@@ -91,8 +94,8 @@
                        TextAlignment="Center" />
         </StackPanel>
 
-        <!-- IsItemClickEnabled only for the hover state: a ListView draws none without it.
-             No real selection, or it would mark a different row than the context menu acts on. -->
+        <!-- IsItemClickEnabled only for hover (no hover without it).
+             no selection, else it could mark another row than the right-click menu -->
         <ListView Grid.Row="4"
                   ItemsSource="{x:Bind ViewModel.Rows, Mode=OneWay}"
                   SelectionMode="None"
@@ -109,9 +112,8 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:AppRowViewModel">
-                    <!-- RightTapped rather than a ContextFlyout in the template: one menu for
-                         the page instead of one per row. -->
-                    <!-- Transparent, or the gaps between the columns are not hit testable. -->
+                    <!-- RightTapped instead of ContextFlyout (one menu, not one per row).
+                         Transparent or the gaps don't get clicks -->
                     <Grid Height="30" Padding="10,0,22,0"
                           Background="Transparent"
                           Opacity="{x:Bind RowOpacity, Mode=OneWay}"
@@ -124,12 +126,11 @@
                             <ColumnDefinition Width="110" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Box without a label, as in the tweak list: a CheckBox carrying the
-                             name claims every click on it. Disabled for anything Windows needs,
-                             so the row stays readable but cannot be ticked. -->
+                        <!-- checkbox without text like in tweaks;disabled for protected apps -->
                         <CheckBox Grid.Column="0"
                                   IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
                                   IsEnabled="{x:Bind CanRemove, Mode=OneWay}"
+                                  AutomationProperties.Name="{x:Bind Name}"
                                   MinWidth="0"
                                   Padding="0"
                                   VerticalAlignment="Center" />
@@ -164,37 +165,49 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <!-- footer, same as CleanerPage: status left, buttons right -->
         <Grid Grid.Row="5"
+              Padding="10,6,8,6"
+              ColumnSpacing="12"
               BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-              BorderThickness="0,1,0,0"
-              Padding="10,8">
+              BorderThickness="0,1,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button x:Uid="BtnAppsScan"
-                    Grid.Column="0"
-                    Command="{x:Bind ViewModel.ScanCommand}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
-                    MinWidth="104" Height="30" />
+            <!-- link to AppRules.ini, looks like "Share selection" in the cleaner -->
+            <HyperlinkButton FontSize="11"
+                             Padding="0" MinWidth="0" MinHeight="0"
+                             VerticalAlignment="Center"
+                             Click="Rules_Click">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xEA86;" FontSize="14" />
+                    <TextBlock Text="AppRules.ini" />
+                </StackPanel>
+            </HyperlinkButton>
 
             <TextBlock Grid.Column="1"
                        Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
-                       FontSize="12"
-                       Margin="12,0"
+                       FontSize="11"
                        VerticalAlignment="Center"
                        TextTrimming="CharacterEllipsis"
                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
-            <!-- Click, not Command: uninstalling cannot be undone, so the page asks first. -->
-            <Button x:Uid="BtnAppsRemove"
-                    Grid.Column="2"
-                    Click="Remove_Click"
-                    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
-                    MinWidth="112" Height="30" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Uid="BtnAppsScan"
+                        Command="{x:Bind ViewModel.ScanCommand}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                        MinWidth="96" Height="30" Padding="12,0" />
+
+                <!-- Click instead of Command, page asks first -->
+                <Button x:Uid="BtnAppsRemove"
+                        Click="Remove_Click"
+                        IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                        MinWidth="104" Height="30" Padding="12,0" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>
