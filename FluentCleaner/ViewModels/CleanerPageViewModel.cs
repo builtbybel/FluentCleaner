@@ -752,27 +752,27 @@ public partial class CleanerPageViewModel : ObservableObject
 
     private static (string glyph, string accentHex, string bgHex) ResolveCategoryStyling(string categoryName, string macroGroup) => categoryName switch
     {
-        "Windows" or "Microsoft Store" => ("\uE782", "#38BDF8", "#1438BDF8"), // Windows Cyan
-        "Google Chrome"                => ("\uE774", "#F59E0B", "#14F59E0B"), // Chrome Gold
-        "Microsoft Edge"               => ("\uE774", "#0078D4", "#140078D4"), // Edge Blue
-        "Firefox"                      => ("\uE774", "#F97316", "#14F97316"), // Firefox Orange
-        "Brave"                        => ("\uE774", "#FB542B", "#14FB542B"), // Brave Orange-Red
-        "Opera" or "Opera GX"          => ("\uE774", "#EF4444", "#14EF4444"), // Opera Red
-        "Vivaldi" or "Arc Browser"     => ("\uE774", "#06B6D4", "#1406B6D4"), // Vivaldi Cyan
-        "Developer Tools" or "Developer & AI" => ("\uE943", "#10B981", "#1410B981"), // Dev Emerald
-        "Multimedia" or "iTunes" or "Spotify" => ("\uE8B9", "#EC4899", "#14EC4899"), // Hot Pink
-        "Utilities"                    => ("\uE74C", "#22C55E", "#1422C55E"), // Lime Green
-        "Games"                        => ("\uE7FC", "#A855F7", "#14A855F7"), // Games Violet
-        "Applications"                 => ("\uE71D", "#8B5CF6", "#148B5CF6"), // Apps Purple
-        "Adobe"                        => ("\uE8B7", "#EA580C", "#14EA580C"), // Adobe Red/Orange
-        "Internet"                     => ("\uE774", "#0EA5E9", "#140EA5E9"), // Ocean Blue
-        "Microsoft PowerToys"          => ("\uE74C", "#D97706", "#14D97706"), // PowerToys Amber
+        "Windows" or "Microsoft Store" => ("\uE782", "#60A5FA", "#2260A5FA"), // Clean Electric Azure
+        "Google Chrome"                => ("\uE774", "#FBBF24", "#22FBBF24"), // High-Voltage Chrome Gold
+        "Microsoft Edge"               => ("\uE774", "#38BDF8", "#2238BDF8"), // Vibrant Sky Blue
+        "Firefox"                      => ("\uE774", "#FB923C", "#22FB923C"), // Radiant Firefox Orange
+        "Brave"                        => ("\uE774", "#FB7185", "#22FB7185"), // Brave Coral
+        "Opera" or "Opera GX"          => ("\uE774", "#F87171", "#22F87171"), // Opera Red
+        "Vivaldi" or "Arc Browser"     => ("\uE774", "#22D3EE", "#2222D3EE"), // Vivaldi Cyan
+        "Developer Tools" or "Developer & AI" => ("\uE943", "#34D399", "#2234D399"), // Electric Emerald
+        "Multimedia" or "iTunes" or "Spotify" => ("\uE8B9", "#F472B6", "#22F472B6"), // Neon Hot Pink
+        "Utilities"                    => ("\uE74C", "#4ADE80", "#224ADE80"), // Vivid Lime Green
+        "Games"                        => ("\uE7FC", "#A78BFA", "#22A78BFA"), // Vivid Gamepad Purple
+        "Applications"                 => ("\uE71D", "#C084FC", "#22C084FC"), // Electric Violet
+        "Adobe"                        => ("\uE8B7", "#F87171", "#22F87171"), // Coral Red Document
+        "Internet"                     => ("\uE774", "#22D3EE", "#2222D3EE"), // Bright Ocean Cyan
+        "Microsoft PowerToys"          => ("\uEDA2", "#FCD34D", "#22FCD34D"), // Bright PowerTools Amber
         _ => macroGroup switch
         {
-            "Windows"  => ("\uE782", "#38BDF8", "#1438BDF8"),
-            "Browsers" => ("\uE774", "#F59E0B", "#14F59E0B"),
-            "DevAi"    => ("\uE943", "#10B981", "#1410B981"),
-            _          => ("\uE71D", "#8B5CF6", "#148B5CF6")
+            "Windows"  => ("\uE782", "#60A5FA", "#2260A5FA"),
+            "Browsers" => ("\uE774", "#FBBF24", "#22FBBF24"),
+            "DevAi"    => ("\uE943", "#34D399", "#2234D399"),
+            _          => ("\uE71D", "#C084FC", "#22C084FC")
         }
     };
 

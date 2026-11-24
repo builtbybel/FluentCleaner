@@ -38,10 +38,18 @@
                 <Setter Property="CornerRadius" Value="8" />
             </Style>
 
+            <!-- Deep obsidian dark slate card (prevents wallpaper muddy brown tint bleed) -->
+            <Style x:Key="DarkSlateCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="#111827" />
+                <Setter Property="BorderBrush" Value="#1E293B" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+            </Style>
+
             <!-- Secondary nested card (for Macro-Category toggles &amp; Inspector panels) -->
             <Style x:Key="SubtleCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="#162032" />
+                <Setter Property="BorderBrush" Value="#1E293B" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="6" />
             </Style>
@@ -55,6 +63,7 @@
                 <Setter Property="FontSize" Value="11" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="#1E293B" />
             </Style>
 
             <!-- Subtle icon-only or icon+label toolbar button -->

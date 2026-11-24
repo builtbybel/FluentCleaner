@@ -31,7 +31,7 @@
         <!-- ROW 0: COLLAPSIBLE HERO SUMMARY & MACRO-CATEGORY TOGGLES            -->
         <!-- =================================================================== -->
         <Border Grid.Row="0"
-                Style="{StaticResource SurfaceCardStyle}"
+                Style="{StaticResource DarkSlateCardStyle}"
                 Margin="16,12,16,8"
                 Padding="16,12">
             <Grid RowSpacing="10">
@@ -309,7 +309,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- LEFT PANE: CATEGORIES & RULES TREE -->
-            <Border Grid.Column="0" Style="{StaticResource SurfaceCardStyle}">
+            <Border Grid.Column="0" Style="{StaticResource DarkSlateCardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -318,7 +318,7 @@
                     </Grid.RowDefinitions>
 
                     <!-- Left Pane Header -->
-                    <Grid Grid.Row="0" Padding="12,10,10,6">
+                    <Grid Grid.Row="0" Padding="14,12,12,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -326,6 +326,7 @@
 
                         <TextBlock Text="Categories &amp; Rules"
                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                   Foreground="#F8FAFC"
                                    VerticalAlignment="Center" />
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
@@ -383,7 +384,7 @@
                     <Border Grid.Row="1"
                             VerticalAlignment="Bottom"
                             Height="1"
-                            Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                            Background="#1E293B" />
 
                     <!-- Empty state -->
                     <StackPanel Grid.Row="2"
@@ -411,8 +412,17 @@
                                     <Expander HorizontalAlignment="Stretch"
                                               HorizontalContentAlignment="Stretch"
                                               IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
-                                              Margin="8,3,8,0"
-                                              Padding="0">
+                                              Margin="8,2,8,2"
+                                              Padding="0"
+                                              CornerRadius="6">
+                                        <Expander.Resources>
+                                            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#162032" />
+                                            <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#1E293B" />
+                                            <SolidColorBrush x:Key="ExpanderHeaderBackgroundPressed" Color="#0F172A" />
+                                            <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="#1E293B" />
+                                            <SolidColorBrush x:Key="ExpanderContentBackground" Color="#0D131F" />
+                                            <SolidColorBrush x:Key="ExpanderContentBorderBrush" Color="#1E293B" />
+                                        </Expander.Resources>
                                         <Expander.Header>
                                             <Grid HorizontalAlignment="Stretch" ColumnSpacing="6">
                                                 <Grid.ColumnDefinitions>
@@ -431,25 +441,35 @@
                                                           Padding="0"
                                                           VerticalAlignment="Center" />
 
-                                                <FontIcon Grid.Column="1"
-                                                          Glyph="{x:Bind IconGlyph}"
-                                                          FontSize="15"
-                                                          Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
-                                                          Margin="6,0,8,0"
-                                                          VerticalAlignment="Center" />
+                                                <!-- 28x28 Vibrant Container for Category Icon -->
+                                                <Border Grid.Column="1"
+                                                        Width="28" Height="28"
+                                                        CornerRadius="6"
+                                                        Background="{x:Bind IconBackgroundHex, Converter={StaticResource HexToBrushConverter}}"
+                                                        Margin="4,0,6,0"
+                                                        VerticalAlignment="Center">
+                                                    <FontIcon Glyph="{x:Bind IconGlyph}"
+                                                              FontSize="14"
+                                                              Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center" />
+                                                </Border>
 
                                                 <TextBlock Grid.Column="2"
                                                            Text="{x:Bind Name}"
                                                            FontSize="13"
                                                            FontWeight="SemiBold"
+                                                           Foreground="#F8FAFC"
                                                            TextTrimming="CharacterEllipsis"
                                                            ToolTipService.ToolTip="{x:Bind Name}"
                                                            VerticalAlignment="Center" />
 
                                                 <Border Grid.Column="3"
-                                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                                        Background="#1E293B"
+                                                        BorderBrush="#334155"
+                                                        BorderThickness="1"
                                                         CornerRadius="10"
-                                                        Padding="7,2"
+                                                        Padding="8,2"
                                                         Margin="6,0,0,0"
                                                         VerticalAlignment="Center">
                                                     <TextBlock Text="{x:Bind HeaderBadgeText, Mode=OneWay}"
@@ -465,7 +485,7 @@
                                                         Width="24" Height="24" Padding="0"
                                                         Background="Transparent"
                                                         BorderThickness="0">
-                                                    <FontIcon Glyph="&#xE712;" FontSize="12" />
+                                                    <FontIcon Glyph="&#xE712;" FontSize="12" Foreground="#94A3B8" />
                                                     <Button.Flyout>
                                                         <MenuFlyout Placement="Bottom">
                                                             <MenuFlyoutItem x:Uid="MenuSelectAll" Command="{x:Bind SelectAllCommand}" />
@@ -587,7 +607,7 @@
             </Grid>
 
             <!-- RIGHT PANE: RESULTS LIST / LIVE ITEM INSPECTOR -->
-            <Border Grid.Column="2" Style="{StaticResource SurfaceCardStyle}">
+            <Border Grid.Column="2" Style="{StaticResource DarkSlateCardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -603,7 +623,7 @@
 
                     <!-- HEADER: RESULTS LIST MODE -->
                     <Grid Grid.Row="1"
-                          Padding="14,10,14,10"
+                          Padding="14,12,14,10"
                           Visibility="{x:Bind ViewModel.IsShowingDetail, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -614,6 +634,7 @@
                         <TextBlock Text="Scan Results"
                                    Grid.Column="0"
                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                   Foreground="#F8FAFC"
                                    VerticalAlignment="Center" />
 
                         <StackPanel Grid.Column="1"
