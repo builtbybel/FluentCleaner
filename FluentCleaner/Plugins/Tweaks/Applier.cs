@@ -2,12 +2,11 @@ using FluentCleaner.Services;   // Loc and WorkProgress are shared with the app 
 
 namespace FluentCleaner.Plugins.Tweaks;
 
-//the only class that writes registry tweaks to this pc, and it writes only what stayed ticked.
-//app removal is deliberately not here: that is a separate tool, so a registry reset can never
-//become an uninstall by accident.
+//writes the ticked tweaks;the only class that writes to the registry.
+//app removal is in the Apps plugin, not here
 internal static class Applier
 {
-    //writes the ticked findings to this pc and tells the shell about it, since it caches such values
+    //applies the ticked findings, then tells the shell (it caches some values)
     public static Report Apply(List<Finding> findings, IProgress<WorkProgress>? progress = null, int total = 0)
     {
         var report = Apply(findings, Write, Scanner.Holds, progress, total);
@@ -15,8 +14,8 @@ internal static class Applier
         return report;
     }
 
-    //the same run against any writer, which is what lets a test drive it without touching a registry.
-    //All values are validated first. A write failure stops the row; earlier writes are not rolled back.
+    //same with any writer, for tests.
+    //validates everything first;a failed write stops the row, no rollback
     internal static Report Apply(List<Finding> findings, Func<Entry, bool, bool> write, Func<Entry, bool> holds,
         IProgress<WorkProgress>? progress = null, int total = 0)
     {
@@ -42,7 +41,7 @@ internal static class Applier
                 if (reset) report.Reset++; else report.Fixed++;
                 finding.Done = finding.Tweak.Entries.All(holds);
                 finding.Wanted = false;
-                //only a write that happened can ask for a restart, or a failed run still demands one
+                //restart only for writes that worked
                 var restart = finding.Tweak.Restart;
                 if (restart.Length > 0 && !report.Restart.Contains(restart)) report.Restart.Add(restart);
             }
@@ -58,8 +57,7 @@ internal static class Applier
 
     // --- values --------------------------------------------------------------
 
-    //says whether this entry can be written at all: a reset needs a documented default, and the
-    //value has to fit its type, where a delete marker counts as a state the catalogue may ask for
+    //reset needs a default, value has to fit the type (<delete> markers are ok)
     internal static bool Valid(Entry entry, bool reset)
     {
         var value = reset ? entry.Default : entry.Recommended;
@@ -67,7 +65,7 @@ internal static class Applier
         return RegistryService.Deletes(value) || RegistryService.Fits(value, entry.ValueType);
     }
 
-    //writes or deletes one entry and reads it back, because windows may accept a write and ignore it
+    //writes or deletes, then reads back;windows sometimes accepts a write and ignores it
     private static bool Write(Entry entry, bool reset)
     {
         var value = reset ? entry.Default : entry.Recommended;

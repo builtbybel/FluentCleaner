@@ -20,35 +20,24 @@
   <data name="NavTerminal.Content"><value>Terminal</value></data>
   <data name="NavCustom.Content"><value>Kustom</value></data>
   <data name="SearchBox.PlaceholderText"><value>Cari</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Tindakan halaman</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Suka pakai FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Jika aplikasi ini menghemat waktu Anda, pertimbangkan untuk mendukung pengembangannya.</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Star di GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Mungkin nanti</value></data>
-  <data name="St_NoActions"><value>Tidak ada tindakan untuk halaman ini</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini otomatis dimuat saat startup.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Tindakan kategori</value></data>
   <data name="MenuSelectAll.Text"><value>Pilih semua</value></data>
   <data name="MenuSelectNone.Text"><value>Batal pilih semua</value></data>
   <data name="MenuSelectDefaults.Text"><value>Pilih bawaan</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Analisis kategori</value></data>
-  <data name="MenuCleanCategory.Text"><value>Bersihkan kategori</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Tindakan entri</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Analisis</value></data>
-  <data name="MenuCleanEntry.Text"><value>Bersihkan</value></data>
   <data name="MenuExplainEntry.Text"><value>Jelaskan dengan AI</value></data>
   <data name="MenuShowSource.Text"><value>Lihat sumber</value></data>
   <data name="LblAIDesc.Text"><value>Klik kanan entri apa pun di halaman Pembersih → Jelaskan dengan AI. Pilih Groq, OpenAI, atau Anthropic. Tidak ada data yang dikirim tanpa tindakan eksplisit Anda. Memerlukan kunci API Anda sendiri.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Setelah kunci API disimpan, halaman Pembersih Kustom juga mengaktifkan AI — jelaskan apa yang ingin dibersihkan dan AI akan menghasilkan entri Winapp2 atau skrip PowerShell yang siap digunakan.</value></data>
-  <data name="ResultsHeader.Text"><value>Hasil</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Kembali ke hasil</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Hapus file-file ini sekarang</value></data>
   <data name="MenuExcludeFile.Text"><value>Kecualikan file</value></data>
   <data name="MenuExcludeFolder.Text"><value>Kecualikan folder</value></data>
@@ -60,15 +49,9 @@
   <data name="St_MenuSelectAll"><value>Pilih semua</value></data>
   <data name="St_MenuSelectNone"><value>Batal pilih semua</value></data>
   <data name="St_MenuSelectDefaults"><value>Pilih bawaan</value></data>
-  <data name="St_MenuExpandAll"><value>Perluas semua</value></data>
-  <data name="St_MenuCollapseAll"><value>Ciutkan semua</value></data>
-  <data name="St_MenuSortDesc"><value>Urutkan berdasarkan ukuran ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Urutkan berdasarkan ukuran ↑</value></data>
   <data name="St_MenuRefresh"><value>Segarkan</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>File</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Registri</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>file</value></data>
@@ -91,7 +74,6 @@
   <data name="DlgSourceCopy"><value>Salin</value></data>
   <data name="DlgSourceReport"><value>Laporkan entri</value></data>
   <data name="DlgSourceDryRun"><value>Uji Coba</value></data>
-  <data name="RuleLabTitle"><value>Rule Lab — {0}</value></data>
   <data name="DlgSourceHint"><value>Edit aturan, lalu klik Uji Coba untuk melihat pratinjau hasil.</value></data>
   <data name="DlgSourceScanning"><value>Memindai…</value></data>
   <data name="DlgSourceNoEntry"><value>Entri tidak valid — memerlukan Detect dan FileKey.</value></data>
@@ -109,8 +91,6 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Memuat Winapp2.ini...</value></data>
-  <data name="St_SearchFound"><value>Menampilkan {0} entri yang sesuai.</value></data>
-  <data name="St_SearchNone"><value>Tidak ada entri yang sesuai.</value></data>
   <data name="St_ParsingDatabases"><value>Mengurai database...</value></data>
   <data name="St_AnalysisReady"><value>Analisis siap — {0} aplikasi ditemukan dalam {1} entri.</value></data>
   <data name="St_NothingSelected"><value>Tidak ada yang dipilih.</value></data>
@@ -144,9 +124,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>Dukung FluentCleaner</value></data>
   <data name="DonationBar.Message"><value>Pilih nominal dan mata uang untuk PayPal, atau dukung proyek ini melalui Ko-fi. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Dukung proyek ini</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Donasi lewat PayPal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Donasi lewat Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Tampilan</value></data>
   <data name="LblTheme.Text"><value>Tema aplikasi</value></data>
   <data name="LblThemeDesc.Text"><value>Pilih tema tampilan FluentCleaner di perangkat Anda.</value></data>
@@ -169,8 +146,6 @@
   <data name="BtnBrowse.Content"><value>Telusuri…</value></data>
   <data name="BtnApplyPath.Content"><value>Terapkan</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Hapus database kustom</value></data>
-  <data name="RestartBar.Title"><value>Perlu mulai ulang</value></data>
-  <data name="RestartBar.Message"><value>Silakan mulai ulang FluentCleaner untuk memuat database terbaru.</value></data>
   <data name="SectionPostClean.Text"><value>Tugas setelah pembersihan</value></data>
   <data name="LblPostCleanDesc.Text"><value>Satu perintah per baris — dijalankan berurutan setelah setiap pembersihan.</value></data>
   <data name="SectionExclusions.Text"><value>Pengecualian global</value></data>
@@ -219,18 +194,11 @@
   <data name="St_HistoryItems"><value>{0} item</value></data>
   <data name="St_FileNotFound"><value>File tidak ditemukan: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Jalur kustom disimpan.</value></data>
-  <data name="St_Download"><value>Unduh</value></data>
   <data name="St_Downloading"><value>Mengunduh {0}…</value></data>
   <data name="St_Downloaded"><value>{0} berhasil diunduh — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>Gagal mengunduh: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Belum diunduh</value></data>
   <data name="St_FileInfo"><value>{0} entri  •  {1} KB  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Pembaruan tersedia — {0}</value></data>
-  <data name="St_UpdateMessage"><value>Versi baru FluentCleaner siap untuk diunduh.</value></data>
-  <data name="St_UpToDate"><value>Anda sudah menggunakan versi terbaru</value></data>
-  <data name="St_UpToDateMessage"><value>Versi {0} adalah yang terbaru.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Pembaruan tersedia — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Periksa pembaruan</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Masukkan kunci API terlebih dahulu.</value></data>
   <data name="St_ApiKeyTesting"><value>Menguji…</value></data>
   <data name="Scheduler_FreqDaily"><value>Harian</value></data>
@@ -258,28 +226,16 @@
   <data name="MenuEditEntry.Text"><value>Edit</value></data>
   <data name="MenuDeleteEntry.Text"><value>Hapus</value></data>
   <data name="MenuTestEntry.Text"><value>Uji di Rule Lab</value></data>
-  <data name="MenuRunEntry.Text"><value>Jalankan</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Pembersih Baru</value></data>
-  <data name="BtnRunScript.Text"><value>Jalankan</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} pembersih · {1} diaktifkan</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} skrip</value></data>
-  <data name="St_CustomMenuNew"><value>Pembersih kustom baru</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Buka folder Kustom</value></data>
-  <data name="St_CustomMenuReddit"><value>Tanya di Reddit</value></data>
-  <data name="St_CustomMenuNeowin"><value>Forum Neowin</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Bagikan pembersih di GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Gagal mengubah status: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Hapus "{0}"?</value></data>
   <data name="St_CustomDeleteMessage"><value>Ini akan menghapus pembersih kustom secara permanen.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Hapus</value></data>
   <data name="St_CustomDeleteCancel"><value>Batal</value></data>
-  <data name="St_CustomRunning"><value>Menjalankan {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: tidak dapat membaca skrip — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: berhasil diselesaikan.</value></data>
-  <data name="St_CustomFailed"><value>{0}: gagal (exit {1}).</value></data>
   <data name="St_CustomEntryNone"><value>tidak ada entri yang diproses</value></data>
   <data name="St_CustomEntryOne"><value>1 entri · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} entri · {1}</value></data>
@@ -289,15 +245,12 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Simpan</value></data>
   <data name="DlgNewCleanerCancel"><value>Batal</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Entri Winapp2 (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>Skrip PowerShell (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Nama</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>Pembersih Saya</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Buat dengan AI - jelaskan apa yang ingin dibersihkan (hasil dapat bervariasi)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Buat</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Buat</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Konten</value></data>
-  <data name="DlgNewCleanerTest"><value>Uji di Rule Lab</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Muat templat</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Pembersih kustom baru</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Edit — {0}</value></data>
@@ -306,7 +259,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>Belum ada kunci API yang dikonfigurasi untuk penyedia yang dipilih. Buka Pengaturan → Penjelasan AI untuk menambahkannya.</value></data>
   <data name="AI_ApiError"><value>Error API {0}: {1}</value></data>
   <data name="AI_NoResponse"><value>Tidak ada respons yang diterima.</value></data>
   <data name="AI_NetworkError"><value>Tidak dapat terhubung ke {0}: {1}</value></data>
@@ -324,8 +276,6 @@
   <data name="CLI_NoDrives"><value>  Tidak ada drive yang ditemukan.</value></data>
   <data name="CLI_ThemeUsage"><value>  Penggunaan: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  Tema diatur ke '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Penggunaan: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  Backdrop diatur ke '{0}'.</value></data>
   <data name="CLI_NoMatch"><value>  Tidak ada entri yang sesuai dengan '{0}'.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} item · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Selesai — {0} item dihapus · {1} dibebaskan.</value></data>
@@ -363,4 +313,9 @@
   <data name="Cookies_TextFiles"><value>File teks</value></data>
   <data name="Cleaning_CleanedCookies"><value>{0} cookie dibersihkan: {1}</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Pengaturan dan lainnya</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Pengaturan</value></data>
+  <data name="AppMenuDonate.Text"><value>Dukung proyek ini</value></data>
+  <data name="AppMenuUpdates.Text"><value>Periksa pembaruan</value></data>
 </root>

@@ -15,13 +15,29 @@
     <WindowsPackageType>None</WindowsPackageType>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>26.09.01</AssemblyVersion>
-    <FileVersion>26.09.01</FileVersion>
+    <AssemblyVersion>26.11.123</AssemblyVersion>
+    <FileVersion>26.11.123</FileVersion>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- Release is published as native code (NativeAOT): no JIT at start-up, which is most of
+       what a WinUI 3 app spends before its first frame. Debug stays on the JIT for F5.
+       Anything that needs runtime reflection breaks here first, so test the published exe. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- CsWinRT generates its AOT interop for collections as unsafe code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.0.1" />
+    <!-- The SDK metapackage brings Windows AI and ONNX Runtime along: about 40 MB of
+         onnxruntime.dll and DirectML.dll in every release that nothing here ever calls. -->
+    <PackageReference Include="Microsoft.WindowsAppSDK.AI" Version="2.0.185" ExcludeAssets="all" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.ML" Version="2.0.300" ExcludeAssets="all" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Windows.AI.MachineLearning" Version="2.0.300" ExcludeAssets="all" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1839" PrivateAssets="all" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
@@ -29,6 +45,15 @@
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
+
+  <!-- Publish leaves out the compiled XAML (.xbf) and the .pri that a build puts next to
+       the exe, and an unpackaged app loads both by path. -->
+  <Target Name="PublishXamlResources" AfterTargets="ComputeFilesToPublish" DependsOnTargets="GetCopyToOutputDirectoryItems">
+    <ItemGroup>
+      <ResolvedFileToPublish Include="@(AllItemsFullPathWithTargetPath)" Condition="'%(AllItemsFullPathWithTargetPath.Extension)' == '.xbf'" RelativePath="%(AllItemsFullPathWithTargetPath.TargetPath)" CopyToPublishDirectory="PreserveNewest" />
+      <ResolvedFileToPublish Include="$(ProjectPriFullPath)" RelativePath="$(ProjectPriFileName)" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
 
   <!-- Shared parsing/cleaning logic lives once in FluentCleaner.Core and is compiled
        in from there as linked source, not a ProjectReference. A reference would clash
@@ -62,6 +87,15 @@
   <!-- runtime by scanning Strings\{lang}\ (ResourceService.GetAvailableLanguages).            -->
   <ItemGroup>
     <Content Include="Strings\**\*.resw">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Each plugin's own data files, kept beside its code and deployed to the same relative    -->
+  <!-- path. The glob means a rule pack is installed by dropping an .ini into the plugin's     -->
+  <!-- folder and uninstalled by deleting it again; no build step knows the file names.        -->
+  <ItemGroup>
+    <Content Include="Plugins\**\*.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
