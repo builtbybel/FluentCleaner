@@ -8,13 +8,17 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="AccelFocusSearch_Invoked" />
+        </Grid.KeyboardAccelerators>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Native TitleBar:icon + title left, search center, [...] right -->
+        <!-- Native Windows 11 TitleBar: icon + title left, contextual search center, [...] page actions right -->
         <TitleBar x:Name="AppTitleBar"
                   Grid.Row="0"
                   Title="FluentCleaner"
@@ -25,20 +29,18 @@
                 <ImageIconSource ImageSource="Assets/AppIcon.ico" />
             </TitleBar.IconSource>
 
-
             <TitleBar.Content>
                 <Grid>
-                    <!-- Full search -->
                     <AutoSuggestBox x:Name="TitleSearchBox"
                         x:Uid="SearchBox"
-                        MinWidth="160"
-                        MaxWidth="280"
-                        Width="280"
+                        MinWidth="180"
+                        MaxWidth="340"
+                        Width="320"
                         VerticalAlignment="Center"
+                        PlaceholderText="Search rules, apps, or paths… (Ctrl+F)"
                         QueryIcon="Find"
                         TextChanged="TitleSearchBox_TextChanged" />
 
-                    <!-- Compact search icon -->
                     <Button x:Name="SearchIconButton"
                         Width="32"
                         Height="32"
@@ -46,14 +48,13 @@
                         Visibility="Collapsed"
                         Background="Transparent"
                         BorderThickness="0"
-                        ToolTipService.ToolTip="Search">
-
-                        <FontIcon Glyph="&#xE721;"
-                            FontSize="15" />
+                        AutomationProperties.Name="Search"
+                        ToolTipService.ToolTip="Search (Ctrl+F)">
+                        <FontIcon Glyph="&#xE721;" FontSize="15" />
                         <Button.Flyout>
                             <Flyout Placement="Bottom">
                                 <AutoSuggestBox Width="280"
-                                    PlaceholderText="Search…"
+                                    PlaceholderText="Search rules, apps, or paths…"
                                     QueryIcon="Find"
                                     TextChanged="TitleSearchBox_TextChanged" />
                             </Flyout>
@@ -63,12 +64,15 @@
             </TitleBar.Content>
 
             <TitleBar.RightHeader>
-                <Button x:Name="BtnPageActions" x:Uid="BtnPageActions" Width="32" Height="32" Padding="0">
+                <Button x:Name="BtnPageActions"
+                        AutomationProperties.Name="Page actions"
+                        ToolTipService.ToolTip="More actions"
+                        Width="32" Height="32" Padding="0">
                     <Button.Resources>
-                        <SolidColorBrush x:Key="ButtonBackground"             Color="Transparent" />
-                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver"  Color="Transparent" />
-                        <SolidColorBrush x:Key="ButtonBackgroundPressed"      Color="Transparent" />
-                        <SolidColorBrush x:Key="ButtonBorderBrush"            Color="Transparent" />
+                        <SolidColorBrush x:Key="ButtonBackground"            Color="Transparent" />
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#18808080" />
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="#30808080" />
+                        <SolidColorBrush x:Key="ButtonBorderBrush"           Color="Transparent" />
                     </Button.Resources>
                     <FontIcon Glyph="&#xE712;" FontSize="14" />
                     <Button.Flyout>
@@ -80,7 +84,7 @@
             </TitleBar.RightHeader>
         </TitleBar>
 
-        <!-- NavView sits below TitleBar; IsTitleBarAutoPaddingEnabled=False avoids double padding -->
+        <!-- Adaptive, grouped WinUI 3 NavigationView -->
         <NavigationView x:Name="NavView"
                         Grid.Row="1"
                         PaneDisplayMode="LeftCompact"
@@ -88,51 +92,83 @@
                         IsBackButtonVisible="Collapsed"
                         IsPaneToggleButtonVisible="False"
                         CompactPaneLength="48"
-                        OpenPaneLength="240"
-                        SelectionChanged="NavView_SelectionChanged">
+                        OpenPaneLength="232"
+                        SelectionChanged="NavView_SelectionChanged"
+                        ItemInvoked="NavView_ItemInvoked">
 
             <NavigationView.MenuItems>
-                <NavigationViewItem x:Uid="NavCleaner" Tag="Cleaner" IsSelected="True">
+                <NavigationViewItemHeader Content="CORE" />
+
+                <NavigationViewItem x:Name="NavItemCleaner" x:Uid="NavCleaner" Content="Cleaner" Tag="Cleaner"
+                                    ToolTipService.ToolTip="Cleaner (Ctrl+1)">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEA99;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="NavTerminal" Tag="Terminal">
+
+                <NavigationViewItem x:Name="NavItemApps" x:Uid="NavApps" Content="Apps" Tag="Apps"
+                                    ToolTipService.ToolTip="Apps Uninstaller (Ctrl+2)">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xECAA;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavItemTweaks" x:Uid="NavTweaks" Content="Tweaks" Tag="Tweaks"
+                                    ToolTipService.ToolTip="Windows Tweaks (Ctrl+3)">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9E9;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItemHeader Content="POWER TOOLS" />
+
+                <NavigationViewItem x:Name="NavItemCustom" x:Uid="NavCustom" Content="Custom" Tag="Custom"
+                                    ToolTipService.ToolTip="Custom &amp; Rules (Ctrl+4)">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE943;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="NavCustom" Tag="Custom">
+
+                <NavigationViewItem x:Name="NavItemTerminal" x:Uid="NavTerminal" Content="Terminal" Tag="Terminal"
+                                    ToolTipService.ToolTip="Terminal CLI (Ctrl+5)">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE710;" />
+                        <FontIcon Glyph="&#xE756;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItemHeader Content="PROTECTION" />
+
+                <NavigationViewItem Content="Cookies" Tag="Settings:Cookies">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="Exclusions" Tag="Settings:Exclusions">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE72E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="Scheduler" Tag="Settings:Scheduler">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE823;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
 
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Tag="GitHub"
+                                    Content="{x:Bind VersionFooterText}"
+                                    SelectsOnInvoked="False"
+                                    ToolTipService.ToolTip="Open FluentCleaner on GitHub">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+
             <Frame x:Name="NavFrame" />
         </NavigationView>
-        <!-- donation prompt; anchored to the [...] button -->
-        <TeachingTip x:Name="DonationTip"
-                     x:Uid="DonationBanner"
-                     Target="{x:Bind BtnPageActions}"
-                     PreferredPlacement="BottomLeft"
-                     IsLightDismissEnabled="False">
-            <TeachingTip.Content>
-                <StackPanel Spacing="6" Margin="0,4,0,0">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button x:Uid="BtnDonatePayPal" Click="DonationTip_PayPal"
-                                Style="{StaticResource AccentButtonStyle}" />
-                        <Button x:Uid="BtnDonateKoFi" Click="DonationTip_KoFi" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <HyperlinkButton x:Uid="BtnDonateGitHub" Click="DonationTip_Star"
-                                         Padding="0" FontSize="12" />
-                        <HyperlinkButton x:Uid="BtnDonateLater" Click="DonationTip_Dismiss"
-                                         Padding="0" FontSize="12"
-                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                    </StackPanel>
-                </StackPanel>
-            </TeachingTip.Content>
-        </TeachingTip>
     </Grid>
 </Window>

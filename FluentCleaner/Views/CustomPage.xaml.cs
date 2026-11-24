@@ -123,6 +123,19 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
         lblStatus.Text = parts.Count > 0 ? string.Join(" · ", parts) : "";
     }
 
+    private async void NewCleanerHeader_Click(object sender, RoutedEventArgs e) =>
+        await ShowEditorAsync(null);
+
+    private void OpenFolderHeader_Click(object sender, RoutedEventArgs e)
+    {
+        Directory.CreateDirectory(CustomDir);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName        = CustomDir,
+            UseShellExecute = true
+        });
+    }
+
     // --- IPageActions ----------------------------------------------------------
 
     public void BuildActions(MenuFlyout flyout)

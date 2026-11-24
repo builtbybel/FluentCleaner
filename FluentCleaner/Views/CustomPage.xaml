@@ -12,11 +12,27 @@
         </Grid.RowDefinitions>
 
         <!-- header -->
-        <Grid Grid.Row="0" Padding="32,26,32,8">
-            <StackPanel VerticalAlignment="Center" Spacing="2">
+        <Grid Grid.Row="0" Padding="24,18,24,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
                 <TextBlock x:Uid="CustomTitle" Style="{StaticResource TitleTextBlockStyle}" />
-                <TextBlock x:Name="lblStatus" FontSize="11"
+                <TextBlock x:Name="lblStatus" FontSize="12"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Click="OpenFolderHeader_Click" Height="32">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE8B7;" FontSize="12" />
+                        <TextBlock Text="Open Folder" FontSize="12" />
+                    </StackPanel>
+                </Button>
+                <Button x:Uid="BtnNewCleaner"
+                        Click="NewCleanerHeader_Click"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Height="32" />
             </StackPanel>
         </Grid>
 
@@ -69,8 +85,8 @@
                                     <Button HorizontalAlignment="Right" Padding="6">
                                         <Button.Resources>
                                             <SolidColorBrush x:Key="ButtonBackground"            Color="Transparent" />
-                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{ThemeResource SubtleFillColorSecondary}" />
-                                            <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="{ThemeResource SubtleFillColorTertiary}" />
+                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="Transparent" />
                                             <SolidColorBrush x:Key="ButtonBorderBrush"           Color="Transparent" />
                                         </Button.Resources>
                                         <FontIcon Glyph="&#xE712;" FontSize="13" />

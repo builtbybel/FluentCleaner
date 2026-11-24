@@ -1,9 +1,15 @@
 using CommunityToolkit.Mvvm.Input;
 using FluentCleaner.Services;
 using FluentCleaner.ViewModels;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace FluentCleaner.Views;
 
@@ -12,11 +18,18 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
     public CleanerPageViewModel ViewModel { get; } = new();
 
     private bool _loaded;
+    private bool _isDraggingSplitter;
+    private double _dragStartPointerX;
+    private double _dragStartColumnWidth;
 
     public CleanerPage()
     {
         InitializeComponent();
-        // Auto-load on first appearance using whatever path settings resolves to
+
+        var savedWidth = AppSettings.Instance.CleanerPaneWidth;
+        if (savedWidth >= 240 && savedWidth <= 650)
+            LeftPaneColumn.Width = new GridLength(savedWidth);
+
         Loaded += async (_, _) =>
         {
             if (_loaded) return;
@@ -29,13 +42,40 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         };
     }
 
-    // OnNavigatedTo fires on every visit, even with NavigationCacheMode="Required".
-    // Loaded only fires once, so this is the right place to pick up new custom entries
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         if (_loaded)
+        {
             _ = ViewModel.RefreshCustomEntriesAsync();
+            ViewModel.RefreshFooterMetadata();
+            ViewModel.RefreshSystemDriveInfo();
+        }
+    }
+
+    // --- Keyboard Accelerators ------------------------------------------------
+
+    private void AccelAnalyze_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (ViewModel.AnalyzeCommand.CanExecute(null))
+            ViewModel.AnalyzeCommand.Execute(null);
+        args.Handled = true;
+    }
+
+    private void AccelClean_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (ViewModel.CanRunCleaner)
+            RunCleaner_Click(this, new RoutedEventArgs());
+        args.Handled = true;
+    }
+
+    private void AccelEscape_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (ViewModel.IsBusy)
+            ViewModel.CancelCommand.Execute(null);
+        else if (ViewModel.IsShowingDetail)
+            ViewModel.ClearDetailCommand.Execute(null);
+        args.Handled = true;
     }
 
     // --- ISearchablePage ----------------------------------------------------------
@@ -61,18 +101,64 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         Add(ResourceService.Get("St_MenuSortDesc"), () => ViewModel.SortResultsDescCommand.Execute(null));
         Add(ResourceService.Get("St_MenuSortAsc"), () => ViewModel.SortResultsAscCommand.Execute(null));
         flyout.Items.Add(new MenuFlyoutSeparator());
+        Add("Export Audit Report…", () => ExportReport_Click(this, new RoutedEventArgs()));
         Add(ResourceService.Get("St_MenuRefresh"), () => ViewModel.RefreshCommand.Execute(null));
     }
 
-    //Open the detail view for the clicked result row
+    // --- Audit Report Export --------------------------------------------------
+
+    private async void ExportReport_Click(object sender, RoutedEventArgs e)
+    {
+        if (!ViewModel.CanExportReport) return;
+
+        try
+        {
+            var picker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                SuggestedFileName      = $"FluentCleaner_Audit_{DateTime.Now:yyyyMMdd_HHmmss}"
+            };
+            picker.FileTypeChoices.Add("Markdown Report", [".md"]);
+            picker.FileTypeChoices.Add("CSV Audit Log",   [".csv"]);
+
+            var hwnd = WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
+            InitializeWithWindow.Initialize(picker, hwnd);
+
+            var file = await picker.PickSaveFileAsync();
+            if (file is null) return;
+
+            bool isCsv = file.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase);
+            var content = ViewModel.BuildAuditReport(csvFormat: isCsv);
+            await File.WriteAllTextAsync(file.Path, content);
+
+            ViewModel.StatusText = $"Audit report saved to {file.Name}";
+            ViewModel.ShowBanner(InfoBarSeverity.Success, "Audit Report Exported", $"Saved to {file.Path}");
+        }
+        catch (Exception ex)
+        {
+            ViewModel.ShowBanner(InfoBarSeverity.Error, "Export Failed", ex.Message);
+        }
+    }
+
+    // --- Inline Filter Pills ---------------------------------------------------
+
+    private void FilterPill_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleButton { Tag: string mode })
+        {
+            ViewModel.FilterMode = mode;
+            ((ToggleButton)sender).IsChecked = true;
+        }
+    }
+
+    // --- Results & Detail Inspector -------------------------------------------
+
     private void ResultsListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is ScanResultLine line && line.Result is not null)
             ViewModel.SelectedResultLine = line;
     }
 
-    // Click a path row in the detail list;just highlight the file in Explorer.
-    // Headers and registry keys are ignored; only real file paths get /select treatment.
     private void DetailList_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is not DetailLine { IsHeader: false } line) return;
@@ -82,11 +168,21 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
     }
 
-    // Right-click "Exclude file";protects just this one file (FILE|dir|name)
+    private void ExcludeFileInline_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: string path }) return;
+        ExcludeFilePath(path);
+    }
+
     private void ExcludeFile_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not MenuFlyoutItem { Tag: string path } || string.IsNullOrWhiteSpace(path)) return;
-        if (path.StartsWith("HK", StringComparison.OrdinalIgnoreCase)) return;
+        if (sender is not MenuFlyoutItem { Tag: string path }) return;
+        ExcludeFilePath(path);
+    }
+
+    private void ExcludeFilePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || path.StartsWith("HK", StringComparison.OrdinalIgnoreCase)) return;
 
         var dir = Path.GetDirectoryName(path);
         var file = Path.GetFileName(path);
@@ -95,7 +191,6 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         AddGlobalExclusion($"FILE|{dir}|{file}", ResourceService.Fmt("St_ExcludedFile", file));
     }
 
-    // Right-click "Exclude folder";protects the entire parent folder tree (PATH|dir)
     private void ExcludeFolder_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not MenuFlyoutItem { Tag: string path } || string.IsNullOrWhiteSpace(path)) return;
@@ -116,9 +211,35 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         settings.GlobalExclusionsEnabled = true;
         settings.Save();
         ViewModel.StatusText = status;
+        ViewModel.RefreshFooterMetadata();
+        ViewModel.ShowBanner(InfoBarSeverity.Informational, "Exclusion Added", status, undoExclusionRule: rule);
     }
 
-    // Entry flyout; Tag="{x:Bind}" gives us the CleanerEntryViewModel directly
+    // --- Inspector Toolbar Actions --------------------------------------------
+
+    private async void DetailExplain_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.SelectedEntryVm is { } vm)
+            await ShowAiExplanationAsync(vm);
+    }
+
+    private void DetailRuleLab_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.SelectedEntryVm is { } vm)
+            new RuleLabWindow(vm.Entry.Name, vm.Entry.RawText, ActualTheme).Activate();
+    }
+
+    private async void DetailClean_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.SelectedEntryVm is not { } vm) return;
+        if (!await CheckRunningBrowsersAsync([vm])) return;
+        if (!await ConfirmWarningsAsync(ViewModel.GetWarningsForEntry(vm))) return;
+
+        await ViewModel.CleanSingleEntryAsync(vm);
+    }
+
+    // --- Entry & Category Flyout Handlers -------------------------------------
+
     private async void EntryAnalyze_Click(object sender, RoutedEventArgs e)
     {
         if (sender is MenuFlyoutItem { Tag: CleanerEntryViewModel vm })
@@ -130,23 +251,25 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         if (sender is MenuFlyoutItem { Tag: CleanerEntryViewModel vm })
         {
             if (!await CheckRunningBrowsersAsync([vm])) return;
-            if (!await ConfirmWarningsAsync(ViewModel.GetWarningsForEntry(vm)))
-                return;
+            if (!await ConfirmWarningsAsync(ViewModel.GetWarningsForEntry(vm))) return;
 
             await ViewModel.CleanSingleEntryAsync(vm);
         }
     }
 
-    // Ask Groq to explain the entry;result is cached so repeated opens are instant
     private async void EntryExplain_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not MenuFlyoutItem { Tag: CleanerEntryViewModel vm }) return;
+        if (sender is MenuFlyoutItem { Tag: CleanerEntryViewModel vm })
+            await ShowAiExplanationAsync(vm);
+    }
 
+    private async Task ShowAiExplanationAsync(CleanerEntryViewModel vm)
+    {
         var textBlock = new TextBlock
         {
             Text = ResourceService.Get("DlgExplainThinking"),
             TextWrapping = TextWrapping.Wrap,
-            MaxWidth = 400
+            MaxWidth = 420
         };
 
         var dialog = new ContentDialog
@@ -159,20 +282,17 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
             Content = textBlock
         };
 
-        //let show the dialog immediately (dont await),then fill in the answer
         var showTask = dialog.ShowAsync().AsTask();
         textBlock.Text = await AiExplainer.ExplainAsync(vm.Entry);
         await showTask;
     }
 
-    // Show source;opens the raw ini block in the Rule Lab (inspect + dry-run test)
     private void EntrySource_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not MenuFlyoutItem { Tag: CleanerEntryViewModel vm }) return;
         new RuleLabWindow(vm.Entry.Name, vm.Entry.RawText, ActualTheme).Activate();
     }
 
-    // Category flyout;same trick with CleanerCategoryViewModel
     private async void CatAnalyze_Click(object sender, RoutedEventArgs e)
     {
         if (sender is MenuFlyoutItem { Tag: CleanerCategoryViewModel vm })
@@ -185,8 +305,7 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         {
             var selected = vm.Entries.Where(e => e.IsSelected).ToList();
             if (!await CheckRunningBrowsersAsync(selected)) return;
-            if (!await ConfirmWarningsAsync(ViewModel.GetWarningsForCategory(vm)))
-                return;
+            if (!await ConfirmWarningsAsync(ViewModel.GetWarningsForCategory(vm))) return;
 
             await ViewModel.CleanCategoryAsync(vm);
         }
@@ -204,7 +323,8 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         await ((IAsyncRelayCommand)ViewModel.RunCleanerCommand).ExecuteAsync(null);
     }
 
-    // Check for running browsers;only warns when browser entries are actually selected
+    // --- Safety Dialogs -------------------------------------------------------
+
     private static readonly (string Process, string DisplayName, int[] LangSecRefs)[] KnownBrowsers =
     [
         ("chrome",  "Google Chrome",    [3029]),
@@ -245,7 +365,6 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         return await dialog.ShowAsync() == ContentDialogResult.Primary;
     }
 
-    // Show a warning dialog if any of the selected entries have warnings;return true to proceed with cleaning
     private async Task<bool> ConfirmWarningsAsync(IReadOnlyList<string> warnings)
     {
         if (warnings.Count == 0)
@@ -277,24 +396,91 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         return await dialog.ShowAsync() == ContentDialogResult.Primary;
     }
 
-    // Show/hide the [...] button when hovering over a category header or entry row.
-    // the buttons sit at Opacity="0"
-    private void CatHeader_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e) =>
-        SetMenuButtonOpacity(sender, 1);
+    // --- Row Hover Accent -----------------------------------------------------
 
-    private void CatHeader_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e) =>
-        SetMenuButtonOpacity(sender, 0);
+    private void EntryRow_PointerEntered(object sender, PointerRoutedEventArgs e) =>
+        SetMenuButtonOpacity(sender, 1.0);
 
-    private void EntryRow_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e) =>
-        SetMenuButtonOpacity(sender, 1);
-
-    private void EntryRow_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e) =>
-        SetMenuButtonOpacity(sender, 0);
+    private void EntryRow_PointerExited(object sender, PointerRoutedEventArgs e) =>
+        SetMenuButtonOpacity(sender, 0.35);
 
     private static void SetMenuButtonOpacity(object sender, double opacity)
     {
         if (sender is Grid g)
             foreach (var btn in g.Children.OfType<Button>())
                 btn.Opacity = opacity;
+    }
+
+    // --- Interactive Pane Splitter (§8.2) -------------------------------------
+
+    private void PaneSplitter_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast);
+        if (!_isDraggingSplitter && Application.Current.Resources.TryGetValue("AccentFillColorDefaultBrush", out var brush))
+            PaneSplitterLine.Fill = (Brush)brush;
+    }
+
+    private void PaneSplitter_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingSplitter)
+        {
+            ProtectedCursor = null;
+            if (Application.Current.Resources.TryGetValue("DividerStrokeColorDefaultBrush", out var brush))
+                PaneSplitterLine.Fill = (Brush)brush;
+        }
+    }
+
+    private void PaneSplitter_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(PaneSplitter).Properties.IsLeftButtonPressed) return;
+
+        _isDraggingSplitter = true;
+        PaneSplitter.CapturePointer(e.Pointer);
+        _dragStartPointerX = e.GetCurrentPoint(this).Position.X;
+        _dragStartColumnWidth = LeftPaneColumn.ActualWidth;
+
+        if (Application.Current.Resources.TryGetValue("AccentFillColorDefaultBrush", out var brush))
+            PaneSplitterLine.Fill = (Brush)brush;
+
+        e.Handled = true;
+    }
+
+    private void PaneSplitter_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingSplitter) return;
+
+        var currentX = e.GetCurrentPoint(this).Position.X;
+        var delta = currentX - _dragStartPointerX;
+        var maxAllowed = Math.Max(260, ActualWidth - 340);
+        var targetWidth = Math.Clamp(_dragStartColumnWidth + delta, 240, Math.Min(650, maxAllowed));
+
+        LeftPaneColumn.Width = new GridLength(targetWidth);
+        e.Handled = true;
+    }
+
+    private void PaneSplitter_PointerReleased(object sender, PointerRoutedEventArgs e) =>
+        EndSplitterDrag(e);
+
+    private void PaneSplitter_PointerCaptureLost(object sender, PointerRoutedEventArgs e) =>
+        EndSplitterDrag(e);
+
+    private void EndSplitterDrag(PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingSplitter) return;
+
+        _isDraggingSplitter = false;
+        try { PaneSplitter.ReleasePointerCapture(e.Pointer); } catch { }
+
+        ProtectedCursor = null;
+        if (Application.Current.Resources.TryGetValue("DividerStrokeColorDefaultBrush", out var brush))
+            PaneSplitterLine.Fill = (Brush)brush;
+
+        var newWidth = LeftPaneColumn.ActualWidth;
+        if (newWidth >= 240)
+        {
+            AppSettings.Instance.CleanerPaneWidth = newWidth;
+            AppSettings.Instance.Save();
+        }
+        e.Handled = true;
     }
 }

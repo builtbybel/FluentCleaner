@@ -11,12 +11,8 @@ public record CleanHistoryEntry(DateTime Date, long BytesFreed, int ItemsRemoved
 // here never strips them out of the shared file.
 public class AppSettings
 {
-    // set in the static ctor (below), not "= Load()" here: the load path is built
-    // from the fields further down, which aren't set yet at this point.
     public static AppSettings Instance { get; private set; } = null!;
 
-    // Portable mode: if settings.json sits next to the exe, use it instead of %AppData%.
-    // Drop a settings.json next to FluentCleaner.exe and the app becomes fully portable.
     private static readonly string PortablePath = Path.Combine(AppContext.BaseDirectory, "settings.json");
     private static readonly string RoamingPath  = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -65,14 +61,20 @@ public class AppSettings
     // Website domains protected by the Cookie Manager during browser cleaning.
     public List<string> CookieDomainsToKeep { get; set; } = [];
 
-    // backdrop style;terminal-only tweak, no Settings UI on purpose
-    public string Backdrop { get; set; } = "mica";
+    // backdrop style; micaalt by default for Windows 11 depth
+    public string Backdrop { get; set; } = "micaalt";
 
-    // remembered window size;restored on next launch
-    public int WindowWidth  { get; set; } = 960;
-    public int WindowHeight { get; set; } = 620;
+    // remembered window size; restored on next launch
+    public int WindowWidth  { get; set; } = 1160;
+    public int WindowHeight { get; set; } = 740;
 
-    //Junk growth tracker;logged after every successful clean run
+    // remembered cleaner left pane width; resizable via mouse drag
+    public double CleanerPaneWidth { get; set; } = 360;
+
+    // remembered hero summary expanded state on CleanerPage
+    public bool CleanerHeroExpanded { get; set; } = true;
+
+    // Junk growth tracker; logged after every successful clean run
     public bool CleanHistoryEnabled { get; set; } = true;
     public List<CleanHistoryEntry> CleanHistory { get; set; } = [];
 
@@ -100,18 +102,14 @@ public class AppSettings
     [JsonExtensionData]
     public Dictionary<string, JsonElement> Extra { get; set; } = [];
 
-
     // -----------------------------------------------------------------------
 
-    // true only when CustomWinapp2Path points to a file that actually exists
     [JsonIgnore]
     public bool HasCustomPath =>
         !string.IsNullOrWhiteSpace(CustomWinapp2Path) && File.Exists(CustomWinapp2Path);
 
-    // re-reads settings.json from disk and replaces the current instance;useful shit after external edits, called after the user saves changes in Settings
     public static void Reload() => Instance = Load();
 
-    // yields all active database paths in load order (built-ins first, custom last)
     public IEnumerable<string> ResolveDatabasePaths()
     {
         if (EnableWinapp2)
@@ -128,7 +126,6 @@ public class AppSettings
             yield return CustomWinapp2Path;
     }
 
-    // returns the custom path if set and valid, otherwise falls back to the bundled Winapp2.ini
     public string ResolveWinapp2Path()
     {
         if (!string.IsNullOrWhiteSpace(CustomWinapp2Path) && File.Exists(CustomWinapp2Path))
@@ -155,14 +152,12 @@ public class AppSettings
             s.CustomWinapp2Path = NormalizePath(s.CustomWinapp2Path);
             return s;
         }
-        catch { return new(); }  // corrupted file;just start fresh
+        catch { return new(); }
     }
 
-    // Export current settings to a file (for backup or sharing)
     public static void ExportTo(string path)
         => File.WriteAllText(path, JsonSerializer.Serialize(Instance, JsonOptions));
 
-    // Import settings from a file and replace the current instance
     public static void ImportFrom(string path)
     {
         var json = File.ReadAllText(path);
@@ -172,7 +167,6 @@ public class AppSettings
         Instance.Save();
     }
 
-    // strips quotes and expands %env% variables so paths from the JSON always work
     private static string? NormalizePath(string? path)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;

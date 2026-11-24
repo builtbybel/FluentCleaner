@@ -7,10 +7,18 @@
     mc:Ignorable="d"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-    <Grid Padding="12,12,12,12">
+    <Grid Padding="16,12,16,14" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Spacing="2">
+            <TextBlock Text="Terminal CLI" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="Run interactive cleaner, AppX debloat, and diagnostic commands." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
 
         <!-- output + input in one card; suggestion popup stays inside -->
-        <Border CornerRadius="8"
+        <Border Grid.Row="1" CornerRadius="8"
                 Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1">

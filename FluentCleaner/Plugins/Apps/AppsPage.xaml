@@ -5,7 +5,19 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <Grid>
+    <Grid Padding="16,12,16,14" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="2">
+            <TextBlock Text="Apps Uninstaller" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="Review and uninstall Store apps and classic desktop programs with safety ratings." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+
+        <Border Grid.Row="1" Style="{StaticResource SurfaceCardStyle}">
+            <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <!-- progress -->
@@ -196,5 +208,7 @@
                     IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
                     MinWidth="112" Height="30" />
         </Grid>
+    </Grid>
+        </Border>
     </Grid>
 </Page>

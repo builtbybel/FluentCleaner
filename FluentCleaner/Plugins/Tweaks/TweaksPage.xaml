@@ -7,7 +7,19 @@
 
     <!-- Styles come from Styles/Shell.xaml, the same ones the cleaner list uses, so both
          tools read as one app rather than two pasted together. -->
-    <Grid>
+    <Grid Padding="16,12,16,14" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="2">
+            <TextBlock Text="Windows Tweaks" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="Audit, apply, or revert Windows privacy, telemetry, and shell configuration rules." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+
+        <Border Grid.Row="1" Style="{StaticResource SurfaceCardStyle}">
+            <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <!-- progress -->
@@ -248,5 +260,7 @@
                     Command="{x:Bind ViewModel.ApplyCommand}"
                     MinWidth="112" Height="30" />
         </Grid>
+    </Grid>
+        </Border>
     </Grid>
 </Page>

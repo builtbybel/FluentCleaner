@@ -22,4 +22,6 @@ public static class AppInfo
 
     // used as TitleBar.Subtitle; empty string hides the subtitle area
     public static string InsiderSubtitle => IsInsider ? "Insider" : "";
+
+    public static bool IsEleven => Environment.OSVersion.Version.Build >= 22000;
 }
