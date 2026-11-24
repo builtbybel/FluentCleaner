@@ -132,13 +132,7 @@
                                 HorizontalAlignment="Center"
                                 Spacing="6">
                         <Grid Width="124" Height="124" HorizontalAlignment="Center">
-                            <ctrl:StorageDonutControl
-                                WindowsBytes="{x:Bind ViewModel.WindowsBytes, Mode=OneWay}"
-                                BrowsersBytes="{x:Bind ViewModel.BrowsersBytes, Mode=OneWay}"
-                                DevAiBytes="{x:Bind ViewModel.DevAiBytes, Mode=OneWay}"
-                                AppsBytes="{x:Bind ViewModel.AppsBytes, Mode=OneWay}"
-                                Progress="{x:Bind ViewModel.ScanProgress, Mode=OneWay}"
-                                IsBusy="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+                            <Canvas x:Name="DonutCanvas" Width="124" Height="124" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             <StackPanel VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
                                         Spacing="2">

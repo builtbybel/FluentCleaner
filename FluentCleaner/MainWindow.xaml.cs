@@ -40,7 +40,10 @@ public sealed partial class MainWindow : Window
         UpdateTitleSearch(AppWindow.Size.Width);
 
         NavView.SelectedItem = NavItemCleaner;
-        NavFrame.Navigate(typeof(CleanerPage));
+        if (NavFrame.Content == null)
+        {
+            NavFrame.Navigate(typeof(CleanerPage));
+        }
     }
 
     // --- Keyboard Accelerators ------------------------------------------------

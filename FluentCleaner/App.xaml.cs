@@ -14,6 +14,18 @@ public partial class App : Application
 
     public App()
     {
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            if (e.ExceptionObject is Exception ex)
+                LogCrash(ex);
+        };
+
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            LogCrash(e.Exception);
+            e.SetObserved();
+        };
+
         //Language must be applied BEFORE InitializeComponent so WinUI reads it once at startup
         try
         {

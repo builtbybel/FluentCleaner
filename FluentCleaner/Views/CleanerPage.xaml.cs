@@ -32,6 +32,7 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
 
         Loaded += async (_, _) =>
         {
+            UpdateDonutChart();
             if (_loaded) return;
             _loaded = true;
 
@@ -40,6 +41,32 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
             if (paths.Count == 0) paths.Add(Path.Combine(AppContext.BaseDirectory, "Winapp2.ini"));
             await ViewModel.LoadWinapp2Async(paths);
         };
+
+        ActualThemeChanged += (_, _) => UpdateDonutChart();
+        ViewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is null or nameof(ViewModel.WindowsBytes) or nameof(ViewModel.BrowsersBytes)
+                or nameof(ViewModel.DevAiBytes) or nameof(ViewModel.AppsBytes) or nameof(ViewModel.ScanProgress)
+                or nameof(ViewModel.IsBusy))
+            {
+                DispatcherQueue.TryEnqueue(UpdateDonutChart);
+            }
+        };
+    }
+
+    private void UpdateDonutChart()
+    {
+        if (DonutCanvas != null)
+        {
+            StorageDonutRenderer.Render(
+                DonutCanvas,
+                ViewModel.WindowsBytes,
+                ViewModel.BrowsersBytes,
+                ViewModel.DevAiBytes,
+                ViewModel.AppsBytes,
+                ViewModel.ScanProgress,
+                ViewModel.IsBusy);
+        }
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
