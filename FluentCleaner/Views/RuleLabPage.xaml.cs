@@ -1,65 +1,39 @@
 using FluentCleaner.Models;
 using FluentCleaner.Services;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace FluentCleaner.Views;
 
-/* Rule Lab ; a standalone window that inspects and tests a Winapp2 ini block.
+/* Rule Lab ; a tab that inspects and tests a Winapp2 ini block.
    The rules are editable and a live Dry Run re-parses whatever is in the box and
    scans it read-only (AnalyzeAsync deletes nothing), so a rule can be tweaked and
    the hits previewed instantly. Nothing is ever written back to the database.
  */
-public sealed partial class RuleLabWindow : Window
+public sealed partial class RuleLabPage : Page
 {
-    //cancels an in-flight Dry Run;a broad RECURSE scan shouldn't outlive the window
-    private CancellationTokenSource? _cts;
-    private bool _scanning;   //while true the Dry Run button acts as Cancel
+    private CancellationTokenSource? _cts;   //cancels an in-flight Dry Run
+    private bool _scanning;                  //while true the Dry Run button acts as Cancel
 
-    //title is the entry name, rawIni the block to inspect, theme so we match the app
-    public RuleLabWindow(string title, string rawIni, ElementTheme theme)
+    public RuleLabPage()
     {
         InitializeComponent();
-
-        Root.RequestedTheme = theme;
-        Title               = ResourceService.Fmt("RuleLabTitle", title);
-        AppWindow.Resize(new Windows.Graphics.SizeInt32(860, 580));
-
-        //open dead center on the main window, not wherever Windows drops it
-        if ((Application.Current as App)?.MainWindow?.AppWindow is { } owner)
-            AppWindow.Move(new Windows.Graphics.PointInt32(
-                owner.Position.X + (owner.Size.Width  - 860) / 2,
-                owner.Position.Y + (owner.Size.Height - 580) / 2));
-
-        //ditch the default chrome for our own icon+title bar
-        ExtendsContentIntoTitleBar = true;
-        SetTitleBar(AppTitleBar);
-        AppTitleBar.Subtitle = title;   //the entry name next to "Rule Lab"
-
-        //caption buttons follow the SYSTEM theme, not our forced one
-        var caption = AppWindow.TitleBar;
-        caption.ButtonBackgroundColor         = Microsoft.UI.Colors.Transparent;
-        caption.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
-        caption.PreferredTheme = theme switch
-        {
-            ElementTheme.Light => TitleBarTheme.Light,
-            ElementTheme.Dark  => TitleBarTheme.Dark,
-            _                  => TitleBarTheme.UseDefaultAppMode
-        };
 
         DryRunButton.Content = ResourceService.Get("DlgSourceDryRun");
         Summary.Text         = ResourceService.Get("DlgSourceHint");
         CopyButton.Content   = ResourceService.Get("DlgSourceCopy");
         ReportButton.Content = ResourceService.Get("DlgSourceReport");
-        CloseButton.Content  = ResourceService.Get("DlgExplainClose");
+    }
+
+    // entry's ini block as new tab, title = entry name (icon already says Rule Lab)
+    public static void Open(string title, string rawIni)
+    {
+        if ((Application.Current as App)?.MainWindow?.OpenTab<RuleLabPage>(title) is not { } page)
+            return;
 
         //WinUI TextBox shows only the first line when the text carries \r\n;normalize to \n
-        SourceBox.Text = rawIni.Replace("\r\n", "\n").Replace("\r", "\n");
-
-        //close the window mid-scan ; kill the scan too
-        Closed += (_, _) => { _cts?.Cancel(); _cts?.Dispose(); };
+        page.SourceBox.Text = rawIni.Replace("\r\n", "\n").Replace("\r", "\n");
     }
 
     private async void DryRun_Click(object sender, RoutedEventArgs e)
@@ -145,8 +119,6 @@ public sealed partial class RuleLabWindow : Window
         CopyToClipboard(SourceBox.Text);
         await AppLinks.OpenAsync(AppLinks.Issues);
     }
-
-    private void Close_Click(object sender, RoutedEventArgs e) => Close();
 
     // drops text on the clipboard;used by Copy and Report
     private static void CopyToClipboard(string text)

@@ -1,27 +1,11 @@
-<Window
-    x:Class="FluentCleaner.Views.RuleLabWindow"
+<Page
+    x:Class="FluentCleaner.Views.RuleLabPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
 
-    <Window.SystemBackdrop>
-        <MicaBackdrop />
-    </Window.SystemBackdrop>
-
-    <Grid x:Name="Root">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!-- custom title bar:app icon + title -->
-        <TitleBar x:Name="AppTitleBar" Grid.Row="0" Title="Rule Lab">
-            <TitleBar.IconSource>
-                <ImageIconSource ImageSource="Assets/AppIcon.ico" />
-            </TitleBar.IconSource>
-        </TitleBar>
-
-        <!-- content -->
-        <Grid Grid.Row="1" Padding="20,8,20,20" RowSpacing="12" ColumnSpacing="12">
+    <!-- Opens as a tab, so backdrop, title and theme come from the main window. -->
+        <Grid Padding="20,16,20,20" RowSpacing="12" ColumnSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -55,13 +39,11 @@
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      ScrollViewer.HorizontalScrollBarVisibility="Auto" />
 
-            <!-- bottom bar: Copy / Report / Close -->
+            <!-- bottom bar: Copy / Report. Closing is the tab's own X. -->
             <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
                         Spacing="8" HorizontalAlignment="Right">
                 <Button x:Name="CopyButton"   Click="Copy_Click" />
                 <Button x:Name="ReportButton" Click="Report_Click" />
-                <Button x:Name="CloseButton"  Click="Close_Click" />
             </StackPanel>
         </Grid>
-    </Grid>
-</Window>
+</Page>

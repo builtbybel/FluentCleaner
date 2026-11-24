@@ -232,6 +232,10 @@ public class CleaningService
             foreach (var resolved in _expander.ResolvePaths(fk.Path))
                 TryPruneEmptyDirs(resolved);
 
+        // Recycle Bin only: desktop icon stayed full after cleaning until you opened it, so tell Explorer
+        if (result.FilesToDelete.Any(f => f.Contains(@"\$Recycle.Bin\", StringComparison.OrdinalIgnoreCase)))
+            SHUpdateRecycleBinIcon();
+
         // Windows Shell live notification hook (BleachBit WinShellChangeNotify)
         // Flushes and refreshes Explorer icon and thumbnail caches without restart
         if (shellRefreshNeeded)
@@ -518,4 +522,7 @@ public class CleaningService
         string lpFileName, uint dwDesiredAccess, uint dwShareMode,
         IntPtr lpSecurityAttributes, uint dwCreationDisposition,
         uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+
+    [DllImport("shell32.dll")]
+    private static extern void SHUpdateRecycleBinIcon();
 }

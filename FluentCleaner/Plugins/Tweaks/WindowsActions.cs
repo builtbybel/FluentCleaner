@@ -3,14 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace FluentCleaner.Plugins.Tweaks;
 
-//the small jobs that belong to the shell rather than to the registry, kept out of the applier
+//shell stuff (broadcast, explorer restart), not registry
 internal static class WindowsActions
 {
-    private const int HwndBroadcast = 0xffff;       // every top level window
-    private const uint WmSettingChange = 0x001A;    // a setting changed, go and read it again
-    private const uint SmtoAbortIfHung = 0x0002;    // one frozen app must not hold up the rest
+    private const int HwndBroadcast = 0xffff;       // all top level windows
+    private const uint WmSettingChange = 0x001A;    // setting changed, reread it
+    private const uint SmtoAbortIfHung = 0x0002;    // skip hung apps
 
-    //asks Explorer and open apps to pick up theme and taskbar registry changes
+    //tells Explorer and open apps to reload theme/taskbar settings
     public static void NotifyShellSettingsChanged()
     {
         SendMessageTimeout(new IntPtr(HwndBroadcast), WmSettingChange, IntPtr.Zero,
@@ -18,8 +18,8 @@ internal static class WindowsActions
         Services.ShellNotification.NotifyAssocChanged();
     }
 
-    //ends explorer in this session and waits for it to come back, since some values are read
-    //only once at startup; failures are silent, a shell that stays away is not ours to fix
+    //kills explorer in this session and waits for it to come back;
+    //some values are only read at startup. errors are ignored
     public static void RestartExplorer()
     {
         try
@@ -36,7 +36,7 @@ internal static class WindowsActions
             var running = Process.GetProcessesByName("explorer");
             var shellReturned = running.Any(process => process.SessionId == session);
             foreach (var process in running) process.Dispose();
-            //windows restarts the shell by itself as a rule, this is only for when it did not
+            //windows usually restarts it by itself, this is just the fallback
             if (!shellReturned)
                 Process.Start(new ProcessStartInfo("explorer.exe") { UseShellExecute = true });
         }
