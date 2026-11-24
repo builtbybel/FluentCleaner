@@ -3,18 +3,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     DefaultButton="Primary"
-    CornerRadius="8">
+    CornerRadius="8"
+    PrimaryButtonClick="Save_Click">
 
     <StackPanel Spacing="4">
 
-        <!-- Type picker -->
-        <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,0,4">
-            <ToggleButton x:Name="btnIni" x:Uid="DlgNewCleanerTypeIni" IsChecked="True" Click="TypeBtn_Click" />
-            <ToggleButton x:Name="btnPs1" x:Uid="DlgNewCleanerTypePs1"                    Click="TypeBtn_Click" />
-        </StackPanel>
-
         <!-- Name -->
-        <TextBox x:Name="nameBox" Margin="0,0,0,4" />
+        <TextBox x:Name="nameBox" Margin="0,0,0,4" TextChanged="Input_Changed" />
 
         <!-- AI generate row (hidden when no API key is configured) -->
         <Grid x:Name="aiRow" Margin="0,0,0,4">
@@ -35,12 +30,10 @@
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="contentLabel" VerticalAlignment="Center"
                        Style="{StaticResource BodyStrongTextBlockStyle}" />
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
-                <!-- Test:dry-run the draft in Rule Lab, no save needed;ini only -->
-                <HyperlinkButton x:Name="testBtn" Padding="0" Click="TestBtn_Click" />
-                <HyperlinkButton x:Uid="DlgNewCleanerLoadTemplate"
-                                 Padding="0" Click="TemplateBtn_Click" />
-            </StackPanel>
+            <!-- Testing happens after saving: right-click the card, "Test in Rule Lab".
+                 Rule Lab opens as a tab, and a tab can't show above this dialog. -->
+            <HyperlinkButton Grid.Column="1" x:Uid="DlgNewCleanerLoadTemplate"
+                             Padding="0" Click="TemplateBtn_Click" />
         </Grid>
 
         <!-- Content editor -->
@@ -51,7 +44,12 @@
                  FontSize="12"
                  Height="260"
                  IsSpellCheckEnabled="False"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 TextChanged="Input_Changed" />
+
+        <!-- Why Save didn't close the dialog: name taken, invalid, or the file couldn't be written -->
+        <TextBlock x:Name="errorText" Visibility="Collapsed" TextWrapping="Wrap"
+                   Foreground="{ThemeResource SystemFillColorCriticalBrush}" />
 
     </StackPanel>
 </ContentDialog>

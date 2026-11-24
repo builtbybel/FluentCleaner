@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using FluentCleaner.Models;
 
 namespace FluentCleaner.Services;
@@ -90,21 +91,6 @@ public static class AiExplainer
                 "  %Documents% %Desktop% %Music% %Pictures% %Videos%\n" +
                 "OTHER FIELDS: Section=  Warning=  Default=True|False");
 
-    // Generates a PowerShell cleanup script from a plain-English description.
-    public static Task<string> GenerateScriptAsync(string description) =>
-        GenerateAsync(
-            userMsg: $"Generate a PowerShell script for: {description}",
-            errorPrefix: "# ",
-            systemPrompt:
-                "You are a Windows PowerShell expert. Generate a practical, well-written PowerShell script based on the user description. " +
-                "Output ONLY raw PowerShell — no explanation, no markdown, no code fences.\n" +
-                "RULES:\n" +
-                "  - First line MUST be a # comment briefly describing what the script does.\n" +
-                "  - Use $env: variables where appropriate: $env:LOCALAPPDATA $env:APPDATA $env:TEMP $env:USERPROFILE $env:ProgramFiles $env:SystemRoot.\n" +
-                "  - Always use -ErrorAction SilentlyContinue or try/catch — never let the script crash.\n" +
-                "  - Use Write-Host to report progress.\n" +
-                "  - NEVER use Invoke-Expression or download and execute remote code.");
-
     // Sends generation requests through the same provider selected for explanations.
     private static async Task<string> GenerateAsync(string userMsg, string systemPrompt, string errorPrefix)
     {
@@ -141,41 +127,41 @@ public static class AiExplainer
         {
             using var req = new HttpRequestMessage(HttpMethod.Post, baseUrl);
 
-            object body;
+            // Built as a JsonObject rather than anonymous types: those are serialized through
+            // reflection, which the AOT build doesn't have.
+            static JsonNode Message(string role, string content) => new JsonObject { ["role"] = role, ["content"] = content };
+
+            var messages = new JsonArray();
+            var body = new JsonObject { ["model"] = model };
+
             if (IsAnthropic(provider))
             {
                 req.Headers.Add("x-api-key", apiKey);
                 req.Headers.Add("anthropic-version", "2023-06-01");
-                var messages = new[] { new { role = "user", content = userMsg } };
-                body = systemPrompt is null
-                    ? new { model, max_tokens = maxTokens, messages }
-                    : new { model, max_tokens = maxTokens, system = systemPrompt, messages };
+                body["max_tokens"] = maxTokens;
+                if (systemPrompt is not null) body["system"] = systemPrompt;
             }
             else
             {
                 req.Headers.Add("Authorization", $"Bearer {apiKey}");
-                var messages = systemPrompt == null
-                    ? new[] { new { role = "user", content = userMsg } }
-                    : new[] { new { role = "system", content = systemPrompt }, new { role = "user", content = userMsg } };
+                if (systemPrompt is not null) messages.Add(Message("system", systemPrompt));
 
                 if (provider == "Groq")
                 {
-                    body = new
-                    {
-                        model,
-                        max_completion_tokens = maxTokens,
-                        reasoning_effort = "low",
-                        reasoning_format = "hidden",
-                        messages
-                    };
+                    body["max_completion_tokens"] = maxTokens;
+                    body["reasoning_effort"] = "low";
+                    body["reasoning_format"] = "hidden";
                 }
                 else
                 {
-                    body = new { model, max_tokens = maxTokens, messages };
+                    body["max_tokens"] = maxTokens;
                 }
             }
 
-            req.Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            messages.Add(Message("user", userMsg));
+            body["messages"] = messages;
+
+            req.Content = new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json");
 
             using var res = await _http.SendAsync(req);
             var json = await res.Content.ReadAsStringAsync();

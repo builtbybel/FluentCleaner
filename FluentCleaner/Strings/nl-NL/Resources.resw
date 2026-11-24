@@ -20,35 +20,24 @@
   <data name="NavTerminal.Content"><value>Terminal</value></data>
   <data name="NavCustom.Content"><value>Aangepast</value></data>
   <data name="SearchBox.PlaceholderText"><value>Zoeken</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Pagina-acties</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Bevalt FluentCleaner je?</value></data>
   <data name="DonationBanner.Subtitle"><value>Als deze app je tijd bespaart, overweeg dan om de ontwikkeling ervan te steunen.</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Ster op GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Misschien later</value></data>
-  <data name="St_NoActions"><value>Geen acties voor deze pagina</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini laadt automatisch bij het opstarten.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Categorie-acties</value></data>
   <data name="MenuSelectAll.Text"><value>Alles selecteren</value></data>
   <data name="MenuSelectNone.Text"><value>Niets selecteren</value></data>
   <data name="MenuSelectDefaults.Text"><value>Selecteer standaarden</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Analyseer categorie</value></data>
-  <data name="MenuCleanCategory.Text"><value>Categorie opschonen</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Invoeracties</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Analyseren</value></data>
-  <data name="MenuCleanEntry.Text"><value>Opruimen</value></data>
   <data name="MenuExplainEntry.Text"><value>Uitleggen met AI</value></data>
   <data name="MenuShowSource.Text"><value>Bron weergeven</value></data>
   <data name="LblAIDesc.Text"><value>Rechtsklik op een willekeurig item op de Cleaner-pagina → Uitleggen met AI. Kies Groq, OpenAI of Anthropic. Er wordt niets verzonden zonder dat je daar expliciet toestemming voor geeft. Je hebt hiervoor je eigen API-sleutel nodig.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Zodra je sleutel is opgeslagen, wordt op de pagina Aangepaste cleaners ook de AI-functie ontgrendeld: beschrijf wat op te schonen en de functie genereert een kant-en-klare Winapp2-vermelding of een PowerShell-script voor je.</value></data>
-  <data name="ResultsHeader.Text"><value>Resultaten</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Terug naar resultaten</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Verwijder deze bestanden nu</value></data>
   <data name="MenuExcludeFile.Text"><value>Bestand uitsluiten</value></data>
   <data name="MenuExcludeFolder.Text"><value>Map uitsluiten</value></data>
@@ -60,15 +49,9 @@
   <data name="St_MenuSelectAll"><value>Alles selecteren</value></data>
   <data name="St_MenuSelectNone"><value>Niets selecteren</value></data>
   <data name="St_MenuSelectDefaults"><value>Standaarden selecteren</value></data>
-  <data name="St_MenuExpandAll"><value>Alles uitvouwen</value></data>
-  <data name="St_MenuCollapseAll"><value>Alles samenvouwen</value></data>
-  <data name="St_MenuSortDesc"><value>Sorteren op grootte ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Sorteren op grootte ↑</value></data>
   <data name="St_MenuRefresh"><value>Vernieuwen</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>Bestanden</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Register</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>bestanden</value></data>
@@ -91,7 +74,6 @@
   <data name="DlgSourceCopy"><value>Kopiëren</value></data>
   <data name="DlgSourceReport"><value>Rapport-vermelding</value></data>
   <data name="DlgSourceDryRun"><value>Proefdraaien</value></data>
-  <data name="RuleLabTitle"><value>Rule Lab — {0}</value></data>
   <data name="DlgSourceHint"><value>Pas de regels aan en doe een proefdraai om een voorbeeld van de resultaten te bekijken.</value></data>
   <data name="DlgSourceScanning"><value>Scannen…</value></data>
   <data name="DlgSourceNoEntry"><value>Geen geldige invoer — er is een Detect en een FileKey nodig.</value></data>
@@ -109,8 +91,6 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Winapp2.ini laden. . .</value></data>
-  <data name="St_SearchFound"><value>Weergave {0} overeenkomende resultaten.</value></data>
-  <data name="St_SearchNone"><value>Geen passende resultaten.</value></data>
   <data name="St_ParsingDatabases"><value>Databases analyseren...</value></data>
   <data name="St_AnalysisReady"><value>Analyse voltooid — {0} apps gevonden in {1} vermeldingen.</value></data>
   <data name="St_NothingSelected"><value>Niets geselecteerd.</value></data>
@@ -144,9 +124,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>FluentCleaner wordt open source.</value></data>
   <data name="DonationBar.Message"><value>Ik heb hier veel werk in gestoken — als je er iets aan hebt en wilt bedanken, dan zou een donatie veel voor mij betekenen. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Steun het project</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Doneer via PayPal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Doneer via Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Uiterlijk</value></data>
   <data name="LblTheme.Text"><value>App-thema</value></data>
   <data name="LblThemeDesc.Text"><value>Kies hoe FluentCleaner er op je apparaat uitziet.</value></data>
@@ -169,8 +146,6 @@
   <data name="BtnBrowse.Content"><value>Bladeren…</value></data>
   <data name="BtnApplyPath.Content"><value>Toepassen</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Aangepaste database verwijderen</value></data>
-  <data name="RestartBar.Title"><value>Herstart vereist</value></data>
-  <data name="RestartBar.Message"><value>Start FluentCleaner opnieuw om de bijgewerkte database te laden.</value></data>
   <data name="SectionPostClean.Text"><value>Taken na opruimen</value></data>
   <data name="LblPostCleanDesc.Text"><value>Een opdracht per regel — wordt na elke opschoonronde achtereenvolgens uitgevoerd.</value></data>
   <data name="SectionExclusions.Text"><value>Algemene uitsluitingen</value></data>
@@ -219,18 +194,11 @@
   <data name="St_HistoryItems"><value>{0} items</value></data>
   <data name="St_FileNotFound"><value>Bestand niet gevonden: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Aangepast path opgeslagen.</value></data>
-  <data name="St_Download"><value>Download</value></data>
   <data name="St_Downloading"><value>Downloaden {0}…</value></data>
   <data name="St_Downloaded"><value>{0} gedownload — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>Download mislukt: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Niet gedownload</value></data>
   <data name="St_FileInfo"><value>{0} vermeldingen  •  {1} KB  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Update beschikbaar — {0}</value></data>
-  <data name="St_UpdateMessage"><value>Een nieuwe versie van FluentCleaner klaar om te worden gedownload.</value></data>
-  <data name="St_UpToDate"><value>Je bent up-to-date</value></data>
-  <data name="St_UpToDateMessage"><value>Versie {0} is de nieuwste.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Update beschikbaar — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Controleer op updates</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Voer eerst een API-sleutel in.</value></data>
   <data name="St_ApiKeyTesting"><value>Testen…</value></data>
   <data name="Scheduler_FreqDaily"><value>Dagelijks</value></data>
@@ -258,28 +226,16 @@
   <data name="MenuEditEntry.Text"><value>Bewerken</value></data>
   <data name="MenuDeleteEntry.Text"><value>Wissen</value></data>
   <data name="MenuTestEntry.Text"><value>Test in Rule Lab</value></data>
-  <data name="MenuRunEntry.Text"><value>Start</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Nieuwe Cleaner</value></data>
-  <data name="BtnRunScript.Text"><value>Start</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} cleaner · {1} ingeschakeld</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} script(s)</value></data>
-  <data name="St_CustomMenuNew"><value>Nieuwe aangepaste cleaner</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Aangepaste map openen</value></data>
-  <data name="St_CustomMenuReddit"><value>Vraag het op Reddit</value></data>
-  <data name="St_CustomMenuNeowin"><value>Neowin forums</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Deel cleaner op GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Schakelen mislukt: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>“{0}” verwijderen?</value></data>
   <data name="St_CustomDeleteMessage"><value>Dit verwijdert de aangepaste cleaner permanent.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Wissen</value></data>
   <data name="St_CustomDeleteCancel"><value>Annuleren</value></data>
-  <data name="St_CustomRunning"><value>Uitvoeren {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: kon script niet lezen — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: completed successfully.</value></data>
-  <data name="St_CustomFailed"><value>{0}: mislukt (uitgang {1}).</value></data>
   <data name="St_CustomEntryNone"><value>Geen items verwerkt</value></data>
   <data name="St_CustomEntryOne"><value>1 vermelding · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} vermeldingen · {1}</value></data>
@@ -289,15 +245,12 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Opslaan</value></data>
   <data name="DlgNewCleanerCancel"><value>Annuleren</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Winapp2 vermelding (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>PowerShell script (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Naam</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>Mijn Cleaner</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Genereer met AI – beschrijf wat er moet worden opgeschoond (resultaten kunnen variëren)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Genereren</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Genereren</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Inhoud</value></data>
-  <data name="DlgNewCleanerTest"><value>Test in Rule Lab</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Sjabloon laden</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Nieuwe aangepaste cleaner</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Bewerk — {0}</value></data>
@@ -306,7 +259,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>Geen API-sleutel geconfigureerd voor geselecteerde aanbieder. Ga naar Instellingen → AI-uitleg om een toe te voegen.</value></data>
   <data name="AI_ApiError"><value>{0} API-fout: {1}</value></data>
   <data name="AI_NoResponse"><value>Geen reactie ontvangen.</value></data>
   <data name="AI_NetworkError"><value>Kon {0} niet bereiken: {1}</value></data>
@@ -324,8 +276,6 @@
   <data name="CLI_NoDrives"><value>  Geen schijven gevonden.</value></data>
   <data name="CLI_ThemeUsage"><value>  Gebruik: thema donker | licht | systeem</value></data>
   <data name="CLI_ThemeSet"><value>  Thema ingesteld op '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Toepassing: achtergrond van mica | acryl</value></data>
-  <data name="CLI_BackdropSet"><value>  Achtergrond ingesteld op ‘{0}’.</value></data>
   <data name="CLI_NoMatch"><value>  Geen resultaten gevonden voor ‘{0}’.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} items · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Klaar — {0} items verwijderd · {1} vrijgemaakt.</value></data>
@@ -336,4 +286,9 @@
   <data name="CLI_ListEntries"><value>  — {0} vermeldingen.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} categorieën.</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Instellingen en meer</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Instellingen</value></data>
+  <data name="AppMenuDonate.Text"><value>Steun het project</value></data>
+  <data name="AppMenuUpdates.Text"><value>Controleer op updates</value></data>
 </root>

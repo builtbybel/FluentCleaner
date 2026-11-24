@@ -11,6 +11,11 @@ public static class ResourceService
 
     private static ResourceLoader Loader => _loader ??= new ResourceLoader();
 
+    // Keys that came back missing once. GetString throws on a miss rather than returning "",
+    // and a deliberate fallback lookup — Loc.GetOr, say — would otherwise throw on every call.
+    // Concurrent, because the tweak scanner looks strings up from a background thread.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> Missing = new();
+
     //Scans Strings\{lang}\ folders next to the exe for installed languages
     public static IReadOnlyList<string> GetAvailableLanguages()
     {
@@ -35,18 +40,22 @@ public static class ResourceService
         catch { /* ignore;app keeps running in the current language */ }
 
         _loader = null;  //force a fresh loader so lookups pick up the new language
+        Missing.Clear(); //a key absent in one language may well be present in the next
     }
 
     // Returns the key itself as fallback when a string is missing
     public static string Get(string key)
     {
+        if (Missing.ContainsKey(key)) return key;
+
         try
         {
             var result = Loader.GetString(key);
             //resw stores \n literally will turn it into a real newline
-            return string.IsNullOrEmpty(result) ? key : result.Replace("\\n", "\n");
+            if (string.IsNullOrEmpty(result)) { Missing[key] = 0; return key; }
+            return result.Replace("\\n", "\n");
         }
-        catch { return key; }
+        catch { Missing[key] = 0; return key; }
     }
 
     //Format-string lookup; used for interpolated status messages.

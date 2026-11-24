@@ -10,11 +10,8 @@ using Windows.ApplicationModel.DataTransfer;
 
 namespace FluentCleaner.Plugins.Tweaks;
 
-/// <summary>
-/// Registry tweak catalogue. The rules live in Rules\*.ini and are read by the engine in
-/// <see cref="Tweaks"/>; this page only lists them and runs the applier.
-/// </summary>
-public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions
+//tweaks tab;rules are in WinRules.ini, this page lists them and runs the Applier
+public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions, IRefreshablePage
 {
     public TweaksPageViewModel ViewModel { get; } = new();
 
@@ -24,7 +21,7 @@ public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions
     {
         InitializeComponent();
 
-        // First visit checks the PC once; a tab that is reopened keeps what it already found.
+        // scan once on first load, not again when the tab comes back
         Loaded += async (_, _) =>
         {
             if (_scanned) return;
@@ -33,10 +30,13 @@ public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions
         };
     }
 
+    private void Rules_Click(object sender, RoutedEventArgs e) =>
+        PluginPaths.Reveal("Tweaks", "WinRules.ini");
+
     // --- row context menu ----------------------------------------------------
 
-    private MenuFlyout? _rowMenu;          // built once, reused by every row
-    private MenuFlyoutItem? _applyItem;    // its label follows the row it was opened on
+    private MenuFlyout? _rowMenu;          // one menu for all rows
+    private MenuFlyoutItem? _applyItem;    // text changes per row (apply/reset)
     private TweakRowViewModel? _menuRow;
 
     private void Row_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -44,7 +44,7 @@ public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions
         if (sender is not FrameworkElement element
             || element.DataContext is not TweakRowViewModel row) return;
 
-        // The menu acts on this row, so the selection and the description follow it.
+        // right-clicked row gets selected too
         _menuRow = row;
         ViewModel.SelectedRow = row;
         _rowMenu ??= BuildRowMenu();
@@ -68,7 +68,7 @@ public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions
         var regedit = new MenuFlyoutItem { Text = ResourceService.Get("MenuOpenRegedit/Text") };
         regedit.Click += (_, _) => OpenRegedit();
 
-        // Row actions only; select all/none are list actions and live in the [...] menu.
+        // only row stuff here, select all/none is in the [...] menu
         var menu = new MenuFlyout();
         menu.Items.Add(_applyItem);
         menu.Items.Add(new MenuFlyoutSeparator());
@@ -86,8 +86,7 @@ public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions
         ViewModel.StatusText = ResourceService.Get("St_TweaksPathCopied");
     }
 
-    // Regedit reopens wherever it was last left, and that is stored in LastKey — writing it
-    // first is the documented way to send it somewhere. Only the key, not the value name.
+    // regedit opens at LastKey, so set that first (key only, no value name)
     private void OpenRegedit()
     {
         if (_menuRow?.KeyPath is not { Length: > 0 } key) return;
@@ -109,23 +108,18 @@ public sealed partial class TweaksPage : Page, ISearchablePage, IPageActions
 
     public void BuildActions(MenuFlyout flyout)
     {
-        void Add(string label, Action action)
-        {
-            var item = new MenuFlyoutItem { Text = label };
-            item.Click += (_, _) => action();
-            flyout.Items.Add(item);
-        }
-
-        Add(ResourceService.Get("St_MenuSelectAll"), () => SetAll(true));
-        Add(ResourceService.Get("St_MenuSelectNone"), () => SetAll(false));
+        flyout.AddItem(ResourceService.Get("St_MenuSelectAll"), () => SetAll(true));
+        flyout.AddItem(ResourceService.Get("St_MenuSelectNone"), () => SetAll(false));
         flyout.Items.Add(new MenuFlyoutSeparator());
-        // Forget() drops the cached catalogue so a rule pack dropped into Rules\ shows up
-        // without restarting the app.
-        Add(ResourceService.Get("St_MenuRefresh"), async () =>
-        {
-            Tweaks.TweakDatabase.Forget();
-            await ViewModel.ScanAsync();
-        });
+        flyout.AddItem(ResourceService.Get("St_MenuRefresh"), Refresh);
+    }
+
+    // Forget() = re-read the ini files, new rules show up without restarting the app
+    public async void Refresh()
+    {
+        if (ViewModel.IsBusy) return;
+        Tweaks.TweakDatabase.Forget();
+        await ViewModel.ScanAsync();
     }
 
     private void SetAll(bool selected)

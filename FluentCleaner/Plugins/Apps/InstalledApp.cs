@@ -1,30 +1,35 @@
 namespace FluentCleaner.Plugins.Apps;
 
-//how freely an app may be removed: a personal one, a known candidate, or one windows needs
+//personal, safe to remove, or needed by windows
 internal enum AppSafety { Personal, Candidate, Protected }
 
-//one app windows reported, with everything the list and the uninstaller need to know about it
+//one installed app (store or classic program)
 internal sealed class InstalledApp
 {
-    public string Name { get; set; } = "";           // what the start menu calls it
-    public string Family { get; set; } = "";         // the package family name, which identifies it
-    public string Publisher { get; set; } = "";      // who signed it
-    public string Uninstall { get; set; } = "";      // the uninstaller of a classic program, empty for a store app
-    public string QuietUninstall { get; set; } = ""; // the same without a window, where the maker supplied one
-    public bool IsFramework { get; set; }            // other apps need it to run
-    public bool IsResourcePackage { get; set; }      // language or asset part of another app
-    public bool NonRemovable { get; set; }           // windows refuses to uninstall it
-    public AppSafety Safety;                         // the level AppRules.ini puts it in
-    public bool IsProgram => Uninstall.Length > 0;   // installed the classic way, not out of the store
-    public bool Selected;                            // ticked for removal
-    public bool Removed;                             // already gone in this session
+    public string Name { get; set; } = "";           // display name
+    public string Family { get; set; } = "";         // package family name = id
+    public string Publisher { get; set; } = "";      // signer
+    public string Uninstall { get; set; } = "";      // uninstall string, empty for store apps
+    public string QuietUninstall { get; set; } = ""; // silent version, if there is one
+    public bool IsFramework { get; set; }            // other apps need it
+    public bool IsResourcePackage { get; set; }      // language/asset part of another app
+    public bool NonRemovable { get; set; }           // windows won't uninstall it
+    public AppSafety Safety;                         // from AppRules.ini
+    public bool IsProgram => Uninstall.Length > 0;   // classic program, not store
+    public bool Selected;                            // ticked
+    public bool Removed;                             // already removed this session
     public bool CanRemove => !Removed && Safety != AppSafety.Protected
         && !IsFramework && !IsResourcePackage && !NonRemovable;
 }
 
-//the result of one look at the installed apps: the list, the reason a source stayed silent, or both
+//json source gen for the inventory, AOT has no reflection
+[System.Text.Json.Serialization.JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
+[System.Text.Json.Serialization.JsonSerializable(typeof(List<InstalledApp>))]
+internal sealed partial class InventoryJson : System.Text.Json.Serialization.JsonSerializerContext;
+
+//scan result: apps and/or an error
 internal sealed class AppScan
 {
-    public List<InstalledApp> Apps = new();   // the apps windows reported
-    public string Error = "";                 // why a source reported none, shown above the list
+    public List<InstalledApp> Apps = new();   // found apps
+    public string Error = "";                 // shown above the list if a source failed
 }

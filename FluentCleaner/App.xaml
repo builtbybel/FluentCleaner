@@ -9,6 +9,30 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- Two surfaces, Regedit-style. Panel: under every tab and the selected tab itself,
+                 WinUI's layer-on-Mica-Alt values so the backdrop only tints through a little.
+                 Content: the opaque sheet lists sit on, Notepad's editor tone. High contrast gets
+                 the solid base for both; WinUI's own layer brush is plain red there. -->
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ShellPanelBrush" Color="#B3FFFFFF" />
+                    <SolidColorBrush x:Key="ShellContentBrush" Color="#F9F9F9" />
+                    <!-- Terminal: solid, never see-through. Light keeps the solid base grey. -->
+                    <SolidColorBrush x:Key="TerminalBrush" Color="#F3F3F3" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ShellPanelBrush" Color="#0FFFFFFF" />
+                    <SolidColorBrush x:Key="ShellContentBrush" Color="#282828" />
+                    <!-- Windows Terminal's own black (Campbell scheme). -->
+                    <SolidColorBrush x:Key="TerminalBrush" Color="#0C0C0C" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <StaticResource x:Key="ShellPanelBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                    <StaticResource x:Key="ShellContentBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                    <StaticResource x:Key="TerminalBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         </ResourceDictionary>

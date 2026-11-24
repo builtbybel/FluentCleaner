@@ -2,50 +2,47 @@ using FluentCleaner.Services;   // Loc
 
 namespace FluentCleaner.Plugins.Tweaks;
 
-//one registry value a tweak writes. a tweak that changes three values carries three of these,
-//which is what path2, valuename2 and the rest of the numbered keys in the ini mean.
+//one registry value of a tweak;path2, valuename2 etc. in the ini become more of these
 internal sealed class Entry
 {
-    public string Path = "";            // hive and key in one line, long or short spelling
-    public string ValueName = "";       // (Default) means the key's unnamed value
+    public string Path = "";            // hive + key, long or short hive name
+    public string ValueName = "";       // (Default) = the unnamed value
     public string ValueType = "DWORD";  // DWORD, QWORD, String, ExpandString or Binary
-    public string Recommended = "";     // what applying writes, and what the check compares
-    public string Default = "";         // what resetting writes, empty means it cannot go back
+    public string Recommended = "";     // written on apply, compared on check
+    public string Default = "";         // written on reset;empty = no reset
 }
 
-//one section of the ini, read once at start and then only asked
+//one ini section, read once at start
 internal sealed class Tweak
 {
-    // --- what the ini says ---------------------------------------------------
+    // --- from the ini --------------------------------------------------------
 
-    public string Name = "";            // the section heading, unique, and the id everywhere else
-    public string Category = "";        // the group it is listed under
-    public string Description = "";     // the plain words the detail card shows
-    public string Restart = "";         // explorer or system, empty when it takes effect at once
-    public string OsVersion = "";       // 10 or 11, empty means both
-    public string Requires = "";        // a key that has to be there, else this pc is not meant
-    public string Group = "";           // variants of one setting share it, and only one may win
-    public bool Recommended;            // false leaves the row unticked after a check
-    public List<Entry> Entries = new(); // written in order; failures are not rolled back
+    public string Name = "";            // section name, also the id
+    public string Category = "";        // group in the list
+    public string Description = "";     // text for the detail card
+    public string Restart = "";         // explorer or system, empty = no restart
+    public string OsVersion = "";       // 10 or 11, empty = both
+    public string Requires = "";        // key that has to exist, else hidden
+    public string Group = "";           // variants of one setting, only one may be applied
+    public bool Recommended;            // false = not pre-ticked
+    public List<Entry> Entries = new(); // written in order;no rollback on failure
 
-    // --- what the app makes of it --------------------------------------------
+    // --- computed ------------------------------------------------------------
 
-    //the machine hive and anything under policies decide for every account on the pc,
-    //so windows refuses them to a normal user and the app has to say so before it tries
+    //HKLM and policies need admin rights
     public bool NeedsAdmin => _admin ?? (_admin = Entries.Any(entry =>
         Machine.Any(hive => entry.Path.StartsWith(hive + @"\", StringComparison.OrdinalIgnoreCase))
         || entry.Path.IndexOf(@"\Policies\", StringComparison.OrdinalIgnoreCase) >= 0)).Value;
 
-    //both spellings of the two hives the ini may use for them
+    //both spellings
     private static readonly string[] Machine =
         { "HKLM", "HKEY_LOCAL_MACHINE", "HKCR", "HKEY_CLASSES_ROOT" };
 
-    private bool? _admin;               // worked out once, the paths never change afterwards
+    private bool? _admin;               // cached
 
-    //the ini holds the english wording, a language file beside it may replace it
+    //english from the ini, a Lang\ file can override it
     public string Title => RuleText.Get("Name", Name, Name);
     public string Text => RuleText.Get("Detail", Name, Description);
-    //a category out of a plugin's ini has no Where_ key in any locale file, so the raw name the
-    //ini wrote is the stand-in: "Browser" reads like a category, "Where_Browser" does not
+    //plugin categories have no Where_ key, so the raw name is shown
     public string Where => Loc.GetOr("Where_" + Category, Category);
 }

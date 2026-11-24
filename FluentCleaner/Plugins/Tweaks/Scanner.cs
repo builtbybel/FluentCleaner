@@ -2,10 +2,10 @@ using FluentCleaner.Services;   // Loc and WorkProgress are shared with the app 
 
 namespace FluentCleaner.Plugins.Tweaks;
 
-//reads the pc and never writes to it. writing is the applier's job alone.
+//read only;writing is done by the Applier
 internal static class Scanner
 {
-    //reads every tweak that fits this windows and reports one finding per tweak, with its progress
+    //checks every tweak that fits this windows, one finding per tweak
     public static List<Finding> Scan(IProgress<WorkProgress>? progress = null)
     {
         var tweaks = TweakDatabase.All.Where(Fits).ToList();
@@ -15,7 +15,7 @@ internal static class Scanner
             var tweak = tweaks[index];
             progress?.Report(new WorkProgress(index, tweaks.Count,
                 Loc.Format("Progress_Checking", tweak.Title, index + 1, tweaks.Count)));
-            //Only catalogue recommendations are preselected; recipes are explicit UI actions.
+            //only recommended tweaks get pre-ticked
             var done = tweak.Entries.All(Holds);
             findings.Add(new Finding { Tweak = tweak, Done = done, Wanted = !done && tweak.Recommended });
             if (index == tweaks.Count - 1)
@@ -26,14 +26,14 @@ internal static class Scanner
 
     // --- one value -----------------------------------------------------------
 
-    //whether one value already stands as the catalogue wants it; a missing value counts as not set
+    //is the value already set as recommended? missing value = not set
     internal static bool Holds(Entry entry) =>
         RegistryService.Matches(entry, entry.Recommended);
 
     // --- this windows --------------------------------------------------------
 
-    //whether a tweak belongs on this pc: its os version has to match and its required key exist.
-    //public, because the number the start page promises has to be the number the scan then reports
+    //os version has to match and the required key has to exist.
+    //public, the start page uses it too so the counts match
     public static bool Fits(Tweak tweak) =>
         (tweak.OsVersion.Length == 0 || (tweak.OsVersion == "11") == AppInfo.IsEleven)
         && (tweak.Requires.Length == 0 || tweak.Requires.Split('|').Any(RegistryService.Exists));

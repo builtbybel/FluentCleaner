@@ -11,109 +11,233 @@
        Each translator fills this in their own Strings\{lang}\Resources.resw,
        e.g.: Translation: Jane Doe · jane.example.com
   ============================================================ -->
-  <data name="LblTranslatorCredit"><value>Translation: Igor Klyopov · https://github.com/igorklyopov</value></data>
+  <data name="LblTranslatorCredit"><value>Переклад: Igor Klyopov · https://github.com/igorklyopov</value></data>
 
   <!-- ============================================================
        MAIN WINDOW
   ============================================================ -->
   <data name="NavCleaner.Content"><value>Очищення</value></data>
   <data name="NavTerminal.Content"><value>Термінал</value></data>
-  <data name="NavCustom.Content"><value>Користувацькі</value></data>
+  <data name="NavCustom.Content"><value>Власні правила</value></data>
   <data name="SearchBox.PlaceholderText"><value>Пошук</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Дії сторінки</value></data>
+
+  <!-- Main Window — tab strip and address bar (x:Uid) -->
+  <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Нова вкладка</value></data>
+  <data name="BtnDetailBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Назад</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Подобається FluentCleaner?</value></data>
-  <data name="DonationBanner.Subtitle"><value>Якщо ця програма заощаджує ваш час, подумайте про підтримку його розробки.</value></data>
+  <data name="DonationBanner.Subtitle"><value>Якщо ця програма заощаджує ваш час, підтримайте її розробку.</value></data>
+  <data name="Donation_OtherAmount"><value>Інша сума…</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Поставити зірку на GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Можливо, пізніше</value></data>
-  <data name="St_NoActions"><value>Немає дій для цієї сторінки</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini завантажується автоматично під час запуску.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Дії категорії</value></data>
+
+  <!-- ============================================================
+       APPS PAGE — uninstaller, classified by Rules\AppRules.ini
+  ============================================================ -->
+  <data name="NavApps.Content"><value>Програми</value></data>
+  <data name="AppsHint.Text"><value>Отримання відомостей про встановлені програми від Windows.</value></data>
+  <data name="ColApp.Text"><value>Програма</value></data>
+  <data name="ColPublisher.Text"><value>Видавець</value></data>
+  <data name="ColKind.Text"><value>Тип</value></data>
+  <data name="ColSafety.Text"><value>Оцінка</value></data>
+  <data name="CmbSafety.PlaceholderText"><value>Оцінка</value></data>
+  <data name="ChkOnlyRemovable.Content"><value>Лише ті, які можна видалити</value></data>
+  <data name="BtnAppsScan.Content"><value>Перевірити повторно</value></data>
+  <data name="BtnAppsRemove.Content"><value>Видалити вибрані</value></data>
+  <data name="St_AppPackage"><value>Програма з Microsoft Store</value></data>
+  <data name="St_AppProgram"><value>Програма</value></data>
+  <data name="St_AppProtected"><value>Захищена</value></data>
+  <data name="St_AppCandidate"><value>Безпечно видаляти</value></data>
+  <data name="St_AppPersonal"><value>Встановлена користувачем</value></data>
+  <data name="St_AppRemoved"><value>Видалено</value></data>
+  <data name="St_AppsAllLevels"><value>Усі оцінки</value></data>
+  <data name="St_AppsFound"><value>Програм у списку: {0}.</value></data>
+  <data name="St_AppsRemoved"><value>Видалено програм: {0}.</value></data>
+  <data name="St_AppsStarted"><value>Вікна засобів видалення залишилися відкритими для програм: {0}.</value></data>
+  <data name="St_AppsFailedList"><value>Не вдалося виконати: {0}</value></data>
+  <data name="St_AppsPartialTitle"><value>Не вдалося отримати список програм із Microsoft Store</value></data>
+  <data name="St_AppsNothingPicked"><value>Нічого не вибрано.</value></data>
+  <data name="St_AppsConfirmTitle"><value>Видалити програми ({0})?</value></data>
+  <data name="St_AppsConfirmTitleOne"><value>Видалити {0}?</value></data>
+  <data name="St_AppsAndMore"><value>… і ще {0}</value></data>
+  <data name="St_AppsConfirmRemove"><value>Видалити</value></data>
+  <data name="St_AppsConfirmCancel"><value>Скасувати</value></data>
+  <data name="Apps_Protected"><value>Windows захищає цю програму.</value></data>
+  <data name="Apps_Failed"><value>Не вдалося видалити програму.</value></data>
+  <data name="Apps_Timeout"><value>Видалення тривало надто довго, тому його зупинено.</value></data>
+  <data name="Apps_Removing"><value>Видалення {0}…</value></data>
+  <data name="Apps_RemovingProgram"><value>Запуск засобу видалення {0}…</value></data>
+  <data name="Progress_Apps"><value>Отримання відомостей про встановлені програми від Windows…</value></data>
+  <data name="Progress_AppChecking"><value>Зчитування {0} ({1}/{2})…</value></data>
+  <data name="Progress_AppsFound"><value>Програм у списку: {0}.</value></data>
+
+  <!-- ============================================================
+       TWEAKS PAGE — registry catalogue read from Rules\*.ini
+  ============================================================ -->
+  <data name="NavTweaks.Content"><value>Тонкі налаштування</value></data>
+  <data name="TweaksHint.Text"><value>Перевірка поточних налаштувань цього ПК.</value></data>
+  <!-- Category names of the tweak catalogue. The key is Where_ plus the Category the .ini
+       writes; a pack whose category has no key here simply shows its raw name. -->
+  <data name="Where_Ads"><value>Реклама</value></data>
+  <data name="Where_AI"><value>ШІ</value></data>
+  <data name="Where_Appearance"><value>Зовнішній вигляд</value></data>
+  <data name="Where_Edge"><value>Edge</value></data>
+  <data name="Where_Explorer"><value>Провідник</value></data>
+  <data name="Where_Gaming"><value>Ігри</value></data>
+  <data name="Where_Privacy"><value>Конфіденційність</value></data>
+  <data name="Where_System"><value>Система</value></data>
+  <data name="Where_Taskbar"><value>Панель завдань</value></data>
+  <data name="Where_Updates"><value>Оновлення</value></data>
+
+  <!-- Row context menus (tweaks and apps) -->
+  <data name="MenuCopyRegPath.Text"><value>Копіювати шлях у реєстрі</value></data>
+  <data name="MenuOpenRegedit.Text"><value>Відкрити в редакторі реєстру</value></data>
+  <data name="MenuUninstallOne.Text"><value>Видалити цю програму</value></data>
+  <data name="MenuCopyAppId.Text"><value>Копіювати ідентифікатор</value></data>
+  <data name="St_TweaksPathCopied"><value>Шлях у реєстрі скопійовано.</value></data>
+  <data name="St_AppsIdCopied"><value>Ідентифікатор скопійовано.</value></data>
+
+  <data name="ColTweak.Text"><value>Налаштування</value></data>
+  <data name="ColCategory.Text"><value>Категорія</value></data>
+  <data name="ColState.Text"><value>Стан</value></data>
+  <data name="TweakStateApplied.Text"><value>Застосовано</value></data>
+  <data name="TweakStateOpen.Text"><value>Не застосовано</value></data>
+  <data name="CmbCategory.PlaceholderText"><value>Категорія</value></data>
+  <data name="ChkOnlyOpen.Content"><value>Лише незастосовані</value></data>
+  <data name="BtnRestartExplorer.Content"><value>Перезапустити Провідник</value></data>
+  <data name="St_TweaksAllCategories"><value>Усі категорії</value></data>
+  <data name="St_TweaksNeedAdmin"><value>Для деяких налаштувань потрібні права адміністратора.</value></data>
+  <data name="St_TweaksNeedReboot"><value>Потрібно перезавантажити Windows.</value></data>
+  <data name="St_TweaksNeedExplorer"><value>Щоб зміни набули чинності, потрібно перезапустити Провідник.</value></data>
+  <data name="St_TweaksFailedList"><value>Не вдалося виконати: {0}</value></data>
+  <data name="BtnTweaksScan.Content"><value>Перевірити повторно</value></data>
+  <data name="BtnTweaksApply.Content"><value>Застосувати вибрані</value></data>
+  <data name="St_TweakApply"><value>Застосувати</value></data>
+  <data name="St_TweakReset"><value>Скинути</value></data>
+  <data name="St_TweaksChecked"><value>Перевірено налаштувань: {0}.</value></data>
+  <data name="St_TweaksScanFailed"><value>Не вдалося перевірити каталог</value></data>
+  <data name="St_TweaksApplied"><value>Застосовано: {0}, скинуто: {1}.</value></data>
+  <data name="St_TweaksPartly"><value>Застосовано: {0}, скинуто: {1}, не вдалося: {2}.</value></data>
+  <data name="Tweak_Conflict"><value>конфліктує з іншим вибраним налаштуванням</value></data>
+  <data name="Progress_Checking"><value>Перевірка {0} ({1}/{2})…</value></data>
+  <data name="Progress_Checked"><value>Перевірено налаштувань: {0}.</value></data>
+  <data name="Progress_Applying"><value>Застосування {0}…</value></data>
+  <data name="Progress_Resetting"><value>Скидання {0}…</value></data>
+  <data name="Progress_Completed"><value>Виконано {0} із {1}.</value></data>
+
+  <!-- Cleaner Page — result and detail column headers -->
+  <data name="ColName.Text"><value>Назва</value></data>
+  <data name="ColContents.Text"><value>Вміст</value></data>
+  <data name="ColSize.Text"><value>Розмір</value></data>
+  <data name="ColType.Text"><value>Тип</value></data>
+  <data name="BtnRestartElevated.Text"><value>Перезапустити від імені адміністратора</value></data>
+
+  <!-- Cleaner Page — category labels. Only the generic ones CategoryResolver
+       defines are listed; brand names (Firefox, Spotify, …) and section names that
+       come from Winapp2 itself keep whatever the database calls them. -->
+  <data name="Cat_Applications"><value>Прикладні програми</value></data>
+  <data name="Cat_Internet"><value>Інтернет</value></data>
+  <data name="Cat_Multimedia"><value>Мультимедіа</value></data>
+  <data name="Cat_Utilities"><value>Утиліти</value></data>
+  <data name="Cat_Windows"><value>Windows</value></data>
+  <data name="Cat_OtherApplications"><value>Інші програми</value></data>
+
   <data name="MenuSelectAll.Text"><value>Вибрати все</value></data>
-  <data name="MenuSelectNone.Text"><value>Зняти все</value></data>
-  <data name="MenuSelectDefaults.Text"><value>Вибрати за замовчуванням</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Аналізувати категорію</value></data>
-  <data name="MenuCleanCategory.Text"><value>Очистити категорію</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Дії запису</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Аналізувати</value></data>
-  <data name="MenuCleanEntry.Text"><value>Очистити</value></data>
+  <data name="MenuSelectNone.Text"><value>Зняти всі позначки</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Відновити стандартні налаштування</value></data>
+  <data name="MenuAnalyzeNamed"><value>Аналізувати {0}</value></data>
+  <data name="MenuCleanNamed"><value>Очистити {0}</value></data>
   <data name="MenuExplainEntry.Text"><value>Пояснити за допомогою ШІ</value></data>
-  <data name="LblAIDesc.Text"><value>Клацніть правою кнопкою миші будь-який запис на сторінці «Очищення» → «Пояснити за допомогою ІІ». Працює на Groq (llama-3.3-70b) – безкоштовно, без рахунків. Нічого не вирушає без вашої явної дії. Потрібен ваш власний ключ API.</value></data>
-  <data name="ResultsHeader.Text"><value>Результати</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Назад до результатів</value></data>
+  <data name="MenuShowSource.Text"><value>Показати вихідний код правила</value></data>
+  <data name="LblAIDesc.Text"><value>Клацніть правою кнопкою миші будь-яке правило в розділі «Очищення» та виберіть «Пояснити за допомогою ШІ». Виберіть Groq, OpenAI або Anthropic. Жодні дані не надсилаються без вашої явної дії. Потрібен власний ключ API.</value></data>
+  <data name="LblAICustomHint.Text"><value>💡 Після збереження ключа ШІ стане доступним і в розділі власних правил очищення. Опишіть, що потрібно очистити, і ШІ створить готове до використання правило Winapp2.</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Видалити ці файли зараз</value></data>
-  <data name="MenuExcludeFile.Text"><value>Виключити файл</value></data>
-  <data name="MenuExcludeFolder.Text"><value>Виключити папку</value></data>
+  <data name="MenuExcludeFile.Text"><value>Додати файл до винятків</value></data>
+  <data name="MenuExcludeFolder.Text"><value>Додати папку до винятків</value></data>
   <data name="BtnAnalyze.Content"><value>Аналізувати</value></data>
   <data name="BtnCancel.Content"><value>Скасувати</value></data>
   <data name="BtnRunCleaner.Content"><value>Запустити очищення</value></data>
 
   <!-- Cleaner Page — IPageActions (built in code) -->
-  <data name="St_MenuSelectAll"><value>Обрати все</value></data>
-  <data name="St_MenuSelectNone"><value>Зняти все</value></data>
-  <data name="St_MenuSelectDefaults"><value>Вибрати за замовчуванням</value></data>
-  <data name="St_MenuExpandAll"><value>Розгорнути все</value></data>
-  <data name="St_MenuCollapseAll"><value>Згорнути все</value></data>
-  <data name="St_MenuSortDesc"><value>Сортувати за розміром ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Сортировать по размеру ↑</value></data>
+  <data name="St_MenuSelectAll"><value>Вибрати все</value></data>
+  <data name="St_MenuSelectNone"><value>Зняти всі позначки</value></data>
+  <data name="St_MenuSelectDefaults"><value>Відновити стандартні налаштування</value></data>
   <data name="St_MenuRefresh"><value>Оновити</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>Файли</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Реєстр</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
-  <data name="SuffixFiles"><value>файлів</value></data>
-  <data name="SuffixRegistry"><value>реєстр</value></data>
+  <data name="SuffixFiles"><value>файл.</value></data>
+  <data name="SuffixRegistry"><value>зап. реєстру</value></data>
   <data name="SuffixFilesSingular"><value>файл(ів)</value></data>
   <data name="SuffixRegistryItems"><value>елемент(ів) реєстру</value></data>
   <data name="LabelCleaningComplete"><value>Очищення завершено.</value></data>
 
   <!-- Cleaner Page — dialogs -->
-  <data name="DlgBrowsersTitle"><value>Запущено браузери</value></data>
-  <data name="DlgBrowsersContinue"><value>Продовжити у будь-якому випадку</value></data>
+  <data name="DlgBrowsersTitle"><value>Браузери запущено</value></data>
+  <data name="DlgBrowsersContinue"><value>Усе одно продовжити</value></data>
   <data name="DlgBrowsersCancel"><value>Скасувати</value></data>
-  <data name="DlgBrowsersMessage"><value>Закрийте ці програми для кращого результату:\n{0}\n\nВідкриті браузери блокують файли кешу та історії — вони будуть пропущені під час очищення.</value></data>
-  <data name="DlgWarningTitle"><value>Попередження очистки</value></data>
+  <data name="DlgBrowsersMessage"><value>Для найкращого результату закрийте ці програми:\n{0}\n\nВідкриті браузери блокують файли кешу та журналу перегляду — під час очищення їх буде пропущено.</value></data>
+  <data name="DlgWarningTitle"><value>Попередження щодо очищення</value></data>
   <data name="DlgWarningContinue"><value>Продовжити</value></data>
   <data name="DlgWarningCancel"><value>Скасувати</value></data>
-  <data name="DlgWarningMessage"><value>Вибрані записи Winapp2 містять такі попередження:</value></data>
-  <data name="DlgExplainThinking"><value>Думаю…</value></data>
+  <data name="DlgWarningMessage"><value>Для вибраних правил Winapp2 є такі попередження:</value></data>
+  <data name="DlgExplainThinking"><value>Обробка запиту…</value></data>
   <data name="DlgExplainClose"><value>Закрити</value></data>
+  <data name="DlgSourceCopy"><value>Копіювати</value></data>
+  <data name="DlgSourceReport"><value>Повідомити про проблему з правилом</value></data>
+  <data name="DlgSourceDryRun"><value>Пробний запуск</value></data>
+  <data name="RuleLabTitle"><value>Лабораторія правил — {0}</value></data>
+  <data name="DlgSourceHint"><value>Відредагуйте правила, а потім виконайте пробний запуск, щоб переглянути знайдені елементи.</value></data>
+  <data name="DlgSourceScanning"><value>Сканування…</value></data>
+  <data name="DlgSourceNoEntry"><value>Немає дійсного правила — потрібні Detect і FileKey.</value></data>
+  <data name="DlgSourceFound"><value>Файлів: {0} · {1}</value></data>
+  <data name="DlgSourceMore"><value>… і ще {0}</value></data>
+  <data name="DlgSourceError"><value>Помилка сканування: {0}</value></data>
+  <data name="DlgSourceCancel"><value>Скасувати</value></data>
+  <data name="DlgSourceCancelled"><value>Скасовано.</value></data>
+  <data name="DlgRestartTitle"><value>Потрібен перезапуск</value></data>
+  <data name="DlgRestartMessage"><value>Щоб застосувати зміни, потрібно перезапустити FluentCleaner.</value></data>
+  <data name="DlgRestartNow"><value>Перезапустити зараз</value></data>
+  <data name="DlgRestartLater"><value>Пізніше</value></data>
 
   <!-- ============================================================
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Завантаження Winapp2.ini...</value></data>
-  <data name="St_SearchFound"><value>Показано {0} відповідних записів.</value></data>
-  <data name="St_SearchNone"><value>Відповідних записів не ззнайдено.</value></data>
-  <data name="St_ParsingDatabases"><value>Аналіз баз данних...</value></data>
-  <data name="St_AnalysisReady"><value>Аналіз готовий - ззнайдено {0} додатків у {1} ​​записах.</value></data>
-  <data name="St_NothingSelected"><value>Нічого не обрано.</value></data>
+
+  <!-- Cleaner Page — status bar (built in code from these parts) -->
+  <data name="St_StatusEntries"><value>Правил: {0} із {1}</value></data>
+  <data name="St_StatusSelected"><value>Вибрано: {0}</value></data>
+  <data name="St_DetailMore"><value>… і ще {0:N0}</value></data>
+
+  <data name="St_ParsingDatabases"><value>Обробка баз даних...</value></data>
+  <data name="St_AnalysisReady"><value>Готово до аналізу — знайдено програм: {0}; правил у базі: {1}.</value></data>
+  <data name="St_NothingSelected"><value>Нічого не вибрано.</value></data>
   <data name="St_Scanning"><value>Сканування...</value></data>
-  <data name="St_ScanComplete"><value>Сканування завершено — {0} файлів, {1} елементів Реєстра ({2})</value></data>
-  <data name="St_ScanCancelled"><value>Сканування відмінено.</value></data>
-  <data name="St_Cleaning"><value>Очистка...</value></data>
-  <data name="St_CleanDone"><value>Завершено - звільнено {0} · пропущено {1} (файли використовуються)</value></data>
-  <data name="St_CleanDoneSimple"><value>Завершено — видалено {0} елементів · звільнено {1}.</value></data>
-  <data name="St_CleanCancelledBytes"><value>Очистка скасована — звільнено {0}.</value></data>
-  <data name="St_CleanCancelled"><value>Очистка скасована.</value></data>
-  <data name="St_EntryScanned"><value>{0}: {1} файлів, {2} елементів Реєстра</value></data>
-  <data name="St_EntryNothingToClean"><value>{0}: нечего очищать.</value></data>
-  <data name="St_EntryCleanDone"><value>{0}: видалено {1} елементів · звільнено {2}.</value></data>
+  <data name="St_ScanComplete"><value>Аналіз завершено: до видалення {2}; файлів: {0}, елементів реєстру: {1}. Нічого ще не видалено.</value></data>
+  <data name="St_ScanCancelled"><value>Сканування скасовано.</value></data>
+  <data name="St_Cleaning"><value>Очищення...</value></data>
+  <data name="St_CleanDone"><value>Завершено — звільнено {0} · пропущено: {1} (файли використовуються)</value></data>
+  <data name="St_CleanDoneSimple"><value>Завершено — видалено елементів: {0} · звільнено {1}.</value></data>
+  <data name="St_CleanCancelledBytes"><value>Очищення скасовано — наразі звільнено {0}.</value></data>
+  <data name="St_CleanCancelled"><value>Очищення скасовано.</value></data>
+  <data name="St_EntryScanned"><value>{0}: файлів — {1}, елементів реєстру — {2}</value></data>
+  <data name="St_EntryNothingToClean"><value>{0}: немає даних для очищення.</value></data>
+  <data name="St_EntryCleanDone"><value>{0}: видалено елементів — {1} · звільнено {2}.</value></data>
   <data name="St_CategoryScanning"><value>Сканування {0}...</value></data>
-  <data name="St_CategoryScanned"><value>{0} проскановано — {1} записів.</value></data>
-  <data name="St_CategoryCleaning"><value>Очистка {0}...</value></data>
-  <data name="St_CategoryCleanDone"><value>{0}: видалено {1} елементів · звільнено {2}.</value></data>
+  <data name="St_CategoryScanned"><value>{0}: сканування завершено — правил: {1}.</value></data>
+  <data name="St_CategoryCleaning"><value>Очищення {0}...</value></data>
+  <data name="St_CategoryCleanDone"><value>{0}: видалено елементів — {1} · звільнено {2}.</value></data>
   <data name="St_EntryScanningProgress"><value>Сканування {0}...</value></data>
-  <data name="St_ExcludedFile"><value>Виключено: {0}</value></data>
-  <data name="St_ExcludedFolder"><value>Виключено: {0}</value></data>
+  <data name="St_ExcludedFile"><value>Додано до винятків: {0}</value></data>
+  <data name="St_ExcludedFolder"><value>Додано до винятків: {0}</value></data>
 
   <!-- CleaningService progress messages -->
   <data name="Prog_Deleted"><value>Видалено: {0}</value></data>
@@ -123,173 +247,234 @@
        SETTINGS PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="SettingsTitle.Text"><value>Налаштування</value></data>
+
+  <!-- Settings Page — database download progress -->
+  <data name="LblDownloading.Text"><value>Завантаження…</value></data>
   <!-- Settings Page — donation InfoBar -->
-  <data name="DonationBar.Title"><value>FluentCleaner стає відкритим вихідним кодом.</value></data>
-  <data name="DonationBar.Message"><value>Вкладено багато роботи - якщо це допомагає вам і ви хочете сказати спасибі, пожертвування буде дуже значним. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Підтримати проект</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Пожертвувати через PayPal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Пожертвувати через Ko-fi</value></data>
+  <data name="DonationBar.Title"><value>Підтримайте FluentCleaner</value></data>
+  <data name="DonationBar.Message"><value>Виберіть суму й валюту для PayPal або підтримайте проєкт через Ko-fi. ♥</value></data>
   <data name="SectionAppearance.Text"><value>Зовнішній вигляд</value></data>
-  <data name="LblTheme.Text"><value>Тема додатку</value></data>
-  <data name="LblThemeDesc.Text"><value>Виберіть, як FluentCleaner виглядатиме на вашому пристрої.</value></data>
-  <data name="ThemeSystem.Content"><value>Системна</value></data>
+  <data name="LblTheme.Text"><value>Тема програми</value></data>
+  <data name="LblThemeDesc.Text"><value>Виберіть, як виглядатиме FluentCleaner на вашому пристрої.</value></data>
+  <data name="ThemeSystem.Content"><value>Як у системі</value></data>
   <data name="ThemeLight.Content"><value>Світла</value></data>
   <data name="ThemeDark.Content"><value>Темна</value></data>
+  <data name="LblBackdrop.Text"><value>Фон вікна</value></data>
+  <data name="LblBackdropDesc.Text"><value>Матеріал фону за вкладками й панелями інструментів. Mica Alt має насиченіші кольори, а Acrylic — напівпрозорий.</value></data>
+  <data name="BackdropMica.Content"><value>Mica</value></data>
+  <data name="BackdropMicaAlt.Content"><value>Mica Alt</value></data>
+  <data name="BackdropAcrylic.Content"><value>Acrylic</value></data>
   <data name="LblLanguage.Text"><value>Мова</value></data>
-  <data name="LblLanguageDesc.Text"><value>Перевизначити мову інтерфейсу. Потрібний перезавантаження для застосування.</value></data>
-  <data name="St_LangAuto"><value>Системний</value></data>
-  <data name="SectionDatabase.Text"><value>База данних</value></data>
-  <data name="LblDatabaseDesc.Text"><value>Оберіть, які списки записів завантажити для сканування та очищення.</value></data>
+  <data name="LblLanguageDesc.Text"><value>Виберіть мову інтерфейсу незалежно від системної. Для застосування потрібен перезапуск.</value></data>
+  <data name="St_LangAuto"><value>Як у системі</value></data>
+  <data name="SectionDatabase.Text"><value>База даних</value></data>
+  <data name="LblDatabaseDesc.Text"><value>Виберіть списки правил, які завантажуватимуться для сканування й очищення.</value></data>
   <data name="LblWinapp2.Text"><value>Winapp2</value></data>
   <data name="BtnUpdateWinapp2.Content"><value>Оновити</value></data>
   <data name="LblWinapp3.Text"><value>Winapp3</value></data>
-  <data name="LblWinapp3Tag.Text"><value>експеріментальний</value></data>
-  <data name="LblWinapp3Desc.Text"><value>  —  більш агресивні записи, використовуйте на свій страх та ризик.</value></data>
+  <data name="LblWinapp3Tag.Text"><value>експериментальна</value></data>
+  <data name="LblWinapp3Desc.Text"><value>  —  агресивніші правила, використовуйте на власний ризик.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Завантажити</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Оновити</value></data>
-  <data name="TxtCustomPath.PlaceholderText"><value>Шлях до користувацької бази даних (.ini)</value></data>
+  <data name="TxtCustomPath.PlaceholderText"><value>Шлях до власної бази даних (.ini)</value></data>
   <data name="BtnBrowse.Content"><value>Огляд…</value></data>
   <data name="BtnApplyPath.Content"><value>Застосувати</value></data>
-  <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Видалити користувацьку базу данних</value></data>
-  <data name="RestartBar.Title"><value>Треба перезавантаження</value></data>
-  <data name="RestartBar.Message"><value>Будь ласка, перезавантажте FluentCleaner для завантаження оновленої бази данних.</value></data>
-  <data name="SectionPostClean.Text"><value>Задачі після очистки</value></data>
-  <data name="LblPostCleanDesc.Text"><value>Одна команда в рядку - виконується послідовно після кожного проходу очищення.</value></data>
-  <data name="SectionExclusions.Text"><value>Глобальні виключення</value></data>
-  <data name="LblExclusionsDesc.Text"><value>Шляхи, вказані тут, ніколи не очищаються — перевизначають усі правила баз даних.</value></data>
+  <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Вилучити власну базу даних</value></data>
+  <data name="SectionPostClean.Text"><value>Завдання після очищення</value></data>
+  <data name="LblPostCleanDesc.Text"><value>По одній команді в рядку — команди виконуються послідовно після кожного очищення.</value></data>
+  <data name="SectionExclusions.Text"><value>Глобальні винятки</value></data>
+  <data name="LblExclusionsDesc.Text"><value>Зазначені тут шляхи ніколи не очищуються — винятки мають пріоритет над усіма правилами бази даних.</value></data>
+  <data name="LnkProtectedPaths.Content"><value>Переглянути захищені шляхи</value></data>
+  <data name="DlgProtectedTitle"><value>Захищені шляхи</value></data>
+  <data name="DlgProtectedDesc"><value>Ці шляхи завжди пропускаються, незалежно від правил бази даних. У них зберігаються дані розширень браузера, без яких деякі розширення (менеджери паролів, блокувальники реклами) можуть перестати працювати.</value></data>
   <data name="SectionHistory.Text"><value>Історія</value></data>
-  <data name="LblHistoryDesc.Text"><value>Слідкуйте, скільки сміття накопичується з часом.</value></data>
-  <data name="LblCleanHistory.Text"><value>Очистити історію</value></data>
+  <data name="LblHistoryDesc.Text"><value>Відстежуйте, скільки непотрібних даних накопичується з часом.</value></data>
+  <data name="LblCleanHistory.Text"><value>Історія очищень</value></data>
   <data name="BtnClearHistory.Content"><value>Очистити історію</value></data>
-  <data name="SectionAI.Text"><value>Пояснення ШІ</value></data>
-  <data name="LblAIOptIn.Text"><value>добровільне</value></data>
-  <data name="LblAIPreview.Text"><value>попередній перегляд</value></data>
-  <data name="BtnAIDiscussion.Content"><value>Є думки? Долучайтесь до обговорення →</value></data>
+  <data name="SectionScheduler.Text"><value>Очищення за розкладом</value></data>
+  <data name="LblSchedulerDesc.Text"><value>Виконує таке саме очищення, як /AUTO, через Планувальник завдань Windows. Завдання виконується лише тоді, коли ви ввійшли в систему, і не потребує прав адміністратора.</value></data>
+  <data name="SchedulerEnabled.Header"><value>Увімкнути очищення за розкладом</value></data>
+  <data name="SchedulerFrequency.Header"><value>Періодичність</value></data>
+  <data name="SchedulerTime.Header"><value>Час</value></data>
+  <data name="SchedulerShutdown.Content"><value>Вимкнути ПК після очищення</value></data>
+  <data name="SchedulerApply.Content"><value>Застосувати</value></data>
+  <data name="SchedulerOpen.Content"><value>Відкрити Планувальник завдань Windows</value></data>
+  <data name="SectionAI.Text"><value>Пояснення за допомогою ШІ</value></data>
+  <data name="LblAIOptIn.Text"><value>за бажанням</value></data>
+  <data name="LblAIPreview.Text"><value>попередня версія</value></data>
+  <data name="BtnAIDiscussion.Content"><value>Маєте пропозиції? Долучайтеся до обговорення →</value></data>
+  <data name="CboAIProvider.Header"><value>Постачальник</value></data>
   <data name="BtnSaveApiKey.Content"><value>Зберегти</value></data>
   <data name="BtnTestApiKey.Content"><value>Перевірити</value></data>
   <data name="BtnGetApiKey.Content"><value>Отримати ключ</value></data>
   <data name="SectionBackup.Text"><value>Резервне копіювання</value></data>
-  <data name="LblBackupDesc.Text"><value>Експортуйте або імпортуйте свої налаштування у вигляді JSON-файлу. Помістіть settings.json поруч із exe-файлом для портативного режиму.</value></data>
-  <data name="BtnExport.Content"><value>Експорт</value></data>
-  <data name="BtnImport.Content"><value>Імпорт</value></data>
-  <data name="LblPortableActive.Text"><value>📦 Портативний режим активний — Налаштування зберігаються поруч із exe</value></data>
-  <data name="SectionAbout.Text"><value>Про программу</value></data>
-  <data name="LblCopyright.Text"><value>© 2026 Створення додатку Belim</value></data>
+  <data name="LblBackupDesc.Text"><value>Експортуйте або імпортуйте налаштування у форматі JSON. Для портативного режиму розмістіть settings.json поруч із виконуваним файлом.</value></data>
+  <data name="BtnExport.Content"><value>Експортувати</value></data>
+  <data name="BtnImport.Content"><value>Імпортувати</value></data>
+  <data name="LblPortableActive.Text"><value>📦 Портативний режим активний — налаштування зберігаються поруч із виконуваним файлом</value></data>
+  <data name="SectionAbout.Text"><value>Про програму</value></data>
+  <data name="LblCopyright.Text"><value>© 2026 Програму створив Belim</value></data>
   <!-- (LblTranslatorCredit is defined at the top of this file) -->
   <data name="BtnGitHub.Content"><value>GitHub</value></data>
   <data name="BtnReportIssue.Content"><value>Повідомити про проблему</value></data>
-  <data name="BtnIconCredit.Content"><value>Іконка додатку від naderi</value></data>
-  <data name="BtnFAQ.Content"><value>Часті питання</value></data>
+  <data name="BtnIconCredit.Content"><value>Піктограма програми від naderi</value></data>
+  <data name="BtnFAQ.Content"><value>Поширені запитання</value></data>
   <data name="LblInsiderBadge.Text"><value>INSIDER</value></data>
 
   <!-- Settings Page — code strings -->
-  <data name="St_Winapp3NotDownloaded"><value>Winapp3 ще не завантажений — натисніть «Завантажити».</value></data>
-  <data name="St_HistoryNone"><value>записів про запусках поки немає</value></data>
-  <data name="St_HistorySummary"><value>{0} запусків · всього звільнено {1}</value></data>
-  <data name="St_HistoryItems"><value>{0} елементів</value></data>
-  <data name="St_FileNotFound"><value>Файл не ззнайдено: {0}</value></data>
-  <data name="St_CustomPathSaved"><value>Користувальницький шлях збережено.</value></data>
-  <data name="St_Download"><value>Завантажити</value></data>
+  <data name="St_Winapp3NotDownloaded"><value>Winapp3 ще не завантажено — натисніть «Завантажити».</value></data>
+  <data name="St_HistoryNone"><value>Очищень ще не записано</value></data>
+  <data name="St_HistorySummary"><value>Очищень: {0} · загалом звільнено {1}</value></data>
+  <data name="St_HistoryItems"><value>Елементів: {0}</value></data>
+  <data name="St_FileNotFound"><value>Файл не знайдено: {0}</value></data>
+  <data name="St_CustomPathSaved"><value>Шлях до власної бази даних збережено.</value></data>
   <data name="St_Downloading"><value>Завантаження {0}…</value></data>
-  <data name="St_Downloaded"><value>{0} завантажений — {1} КБ</value></data>
+  <data name="St_Downloaded"><value>{0} завантажено — {1} КБ</value></data>
   <data name="St_DownloadFailed"><value>Помилка завантаження: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Не завантажено</value></data>
-  <data name="St_FileInfo"><value>{0} записів  •  {1} КБ  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Доступне оновлення — {0}</value></data>
-  <data name="St_UpdateMessage"><value>Нова версія FluentCleaner готова до завантаження.</value></data>
-  <data name="St_UpToDate"><value>У вас остання версія</value></data>
-  <data name="St_UpToDateMessage"><value>Версія {0} — остання.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Доступно оновлення — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Перевірити оновлення</value></data>
-  <data name="St_ApiKeyMissing"><value>⚠ Сначала введіть ключ API.</value></data>
+  <data name="St_FileInfo"><value>Правил: {0}  •  {1} КБ  •  {2}</value></data>
+  <data name="St_ApiKeyMissing"><value>⚠ Спочатку введіть ключ API.</value></data>
   <data name="St_ApiKeyTesting"><value>Перевірка…</value></data>
-  <data name="St_ExportSuccess"><value>Налаштування експортовані у {0}</value></data>
-  <data name="St_ExportFailed"><value>Помилка экспорту: {0}</value></data>
-  <data name="St_ImportSuccess"><value>Налаштування імпортовані з {0}</value></data>
+  <data name="Scheduler_FreqDaily"><value>Щодня</value></data>
+  <data name="Scheduler_FreqWeekly"><value>Щотижня (понеділок)</value></data>
+  <data name="Scheduler_FreqLogon"><value>Під час входу в систему</value></data>
+  <data name="Scheduler_StatusActive"><value>✓ Заплановане завдання активне.</value></data>
+  <data name="Scheduler_StatusInactive"><value>✗ Завдання не заплановано.</value></data>
+  <data name="Scheduler_Applying"><value>Застосування…</value></data>
+  <data name="Scheduler_ErrorExecutablePath"><value>Не вдалося визначити шлях до виконуваного файлу FluentCleaner.</value></data>
+  <data name="Scheduler_ResultCreated"><value>Заплановане завдання створено.</value></data>
+  <data name="Scheduler_ResultNothingToRemove"><value>Нічого видаляти.</value></data>
+  <data name="Scheduler_ResultRemoved"><value>Заплановане завдання видалено.</value></data>
+  <data name="Scheduler_ErrorSchtasks"><value>Помилка Планувальника завдань Windows.</value></data>
+  <data name="St_ExportSuccess"><value>Налаштування експортовано до {0}</value></data>
+  <data name="St_ExportFailed"><value>Помилка експорту: {0}</value></data>
+  <data name="St_ImportSuccess"><value>Налаштування імпортовано з {0}</value></data>
   <data name="St_ImportFailed"><value>Помилка імпорту: {0}</value></data>
 
   <!-- ============================================================
        CUSTOM PAGE — static XAML strings (x:Uid)
   ============================================================ -->
-  <data name="CustomTitle.Text"><value>Користувацькі очищувачі</value></data>
-  <data name="CustomEmptyHint.Text"><value>Користувацьких очищувачів пока нет.</value></data>
-  <data name="CustomEmptyHint2.Text"><value>Створіть новий очищувач - він з'явиться тут автоматично.</value></data>
-  <data name="MenuEditEntry.Text"><value>Змінити</value></data>
+  <data name="CustomTitle.Text"><value>Власні правила очищення</value></data>
+  <data name="CustomEmptyHint.Text"><value>Власних правил очищення ще немає.</value></data>
+  <data name="CustomEmptyHint2.Text"><value>Створіть нове правило очищення — воно автоматично з’явиться тут.</value></data>
+  <data name="MenuEditEntry.Text"><value>Редагувати</value></data>
   <data name="MenuDeleteEntry.Text"><value>Видалити</value></data>
-  <data name="MenuRunEntry.Text"><value>Виконати</value></data>
-  <data name="BtnNewCleaner.Content"><value>+ Новий очищувач</value></data>
-  <data name="BtnRunScript.Text"><value>Виконати</value></data>
+  <data name="MenuTestEntry.Text"><value>Перевірити в лабораторії правил</value></data>
+  <data name="BtnNewCleaner.Content"><value>+ Нове правило</value></data>
 
   <!-- Custom Page — code strings -->
-  <data name="St_CustomStatus"><value>{0} очищувач · {1} ввімкнено</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} скрипт(ів)</value></data>
-  <data name="St_CustomMenuNew"><value>Новий користувацький очищувач</value></data>
+  <data name="St_CustomStatus"><value>Правил очищення: {0} · увімкнено: {1}</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Відкрити папку Custom</value></data>
-  <data name="St_CustomMenuReddit"><value>Запитати на Reddit</value></data>
-  <data name="St_CustomMenuNeowin"><value>Форуми Neowin</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Опублікувати очищувач на GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Помилка перемикання: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Видалити «{0}»?</value></data>
-  <data name="St_CustomDeleteMessage"><value>Це призведе до безповоротного видалення очищувача користувача.</value></data>
+  <data name="St_CustomDeleteMessage"><value>Власне правило очищення буде видалено безповоротно.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Видалити</value></data>
-  <data name="St_CustomDeleteCancel"><value>Відміна</value></data>
-  <data name="St_CustomRunning"><value>Виконання {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: не вдалося прочитати скрипт — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: успішно завершено.</value></data>
-  <data name="St_CustomFailed"><value>{0}: Помилка (код {1}).</value></data>
-  <data name="St_CustomEntryNone"><value>записів не знайдено</value></data>
-  <data name="St_CustomEntryOne"><value>1 запис · {0}</value></data>
-  <data name="St_CustomEntryMany"><value>{0} записів · {1}</value></data>
-  <data name="St_CustomEntryEnabled"><value>ввімкнено</value></data>
+  <data name="St_CustomDeleteCancel"><value>Скасувати</value></data>
+  <data name="St_CustomEntryNone"><value>Правил не знайдено</value></data>
+  <data name="St_CustomEntryOne"><value>1 правило · {0}</value></data>
+  <data name="St_CustomEntryMany"><value>Правил: {0} · {1}</value></data>
+  <data name="St_CustomEntryEnabled"><value>увімкнено</value></data>
   <data name="St_CustomEntryDisabled"><value>вимкнено</value></data>
 
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Зберегти</value></data>
-  <data name="DlgNewCleanerCancel"><value>Відміна</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>запис Winapp2 (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>Скрипт PowerShell (.ps1)</value></data>
-  <data name="DlgNewCleanerNameHeader"><value>Ім'я</value></data>
-  <data name="DlgNewCleanerNamePlaceholder"><value>Мій очищувач</value></data>
-  <data name="DlgNewCleanerAiPlaceholder"><value>Згенерувати з ШІ - опишіть, що потрібно Очистити (результати можуть відрізнятися)</value></data>
-  <data name="DlgNewCleanerGenerate.Content"><value>Згенерувати</value></data>
+  <data name="DlgNewCleanerCancel"><value>Скасувати</value></data>
+  <data name="DlgNewCleanerNameHeader"><value>Назва</value></data>
+  <data name="DlgNewCleanerNamePlaceholder"><value>Моє правило очищення</value></data>
+  <data name="DlgNewCleanerAiPlaceholder"><value>Створити за допомогою ШІ — опишіть, що потрібно очистити (результати можуть відрізнятися)</value></data>
+  <data name="DlgNewCleanerGenerate.Content"><value>Створити</value></data>
+  <data name="DlgNewCleanerGenerateBtn"><value>Створити</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Вміст</value></data>
+  <data name="DlgNewCleanerTest"><value>Перевірити в лабораторії правил</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Завантажити шаблон</value></data>
-  <data name="DlgNewCleanerTitleNew"><value>Новий користувацький очищувач</value></data>
+  <data name="DlgNewCleanerNameTaken"><value>Власне правило очищення з такою назвою вже існує.</value></data>
+  <data name="DlgNewCleanerNameInvalid"><value>Назва не може містити символи \ / : * ? " &lt; &gt; |</value></data>
+  <data name="DlgNewCleanerSaveFailed"><value>Не вдалося зберегти: {0}</value></data>
+  <data name="DlgNewCleanerTitleNew"><value>Нове власне правило очищення</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Редагування — {0}</value></data>
   <data name="DlgNewCleanerGenerating"><value>…</value></data>
 
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>Ключ API не налаштований. Перейдіть до "Налаштування" → "Пояснення ШІ", щоб додати ваш ключ Groq API (безкоштовно на console.groq.com).</value></data>
-  <data name="AI_ApiError"><value>Помилка Groq API: {0}</value></data>
-  <data name="AI_NoResponse"><value>Відповідь не отримана.</value></data>
-  <data name="AI_NetworkError"><value>Не вдалося зв'язатися з Groq API: {0}</value></data>
-  <data name="AI_NoKeyShort"><value>Ключ API не налаштований — перейдіть до "Налаштування" → "Пояснення ШІ".</value></data>
+  <data name="AI_ApiError"><value>Помилка API {0}: {1}</value></data>
+  <data name="AI_NoResponse"><value>Відповідь не отримано.</value></data>
+  <data name="AI_NetworkError"><value>Не вдалося з’єднатися з {0}: {1}</value></data>
+  <data name="AI_NoKeyShort"><value>Ключ API не налаштовано — перейдіть до розділу «Налаштування» → «Пояснення за допомогою ШІ».</value></data>
 
   <!-- ============================================================
        TERMINAL / CLI
   ============================================================ -->
   <data name="TerminalPlaceholder.PlaceholderText"><value>clean firefox  ·  analyze chrome  ·  help</value></data>
-  <data name="CLI_Welcome"><value>Термінал FluentCleaner онлайн.</value></data>
-  <data name="CLI_Databases"><value>Бази данних: {0} активні — виявлено {1} записів</value></data>
-  <data name="CLI_HelpHint"><value>Введіть 'help' для перегляду списку команд.</value></data>
+  <data name="CLI_Welcome"><value>Термінал FluentCleaner готовий до роботи.</value></data>
+  <data name="CLI_Databases"><value>Бази даних: активних — {0}, виявлено правил — {1}</value></data>
+  <data name="CLI_HelpHint"><value>Введіть 'help', щоб переглянути список команд.</value></data>
   <data name="CLI_Version"><value>  FluentCleaner {0}</value></data>
   <data name="CLI_UnknownCommand"><value>  Невідома команда '{0}'. Введіть 'help'.</value></data>
-  <data name="CLI_NoDrives"><value>  Диски не знайдені.</value></data>
+  <data name="CLI_NoDrives"><value>  Диски не знайдено.</value></data>
   <data name="CLI_ThemeUsage"><value>  Використання: theme dark | light | system</value></data>
-  <data name="CLI_ThemeSet"><value>  Тема встановлена на '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Використання: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  Фон встановлений на '{0}'.</value></data>
-  <data name="CLI_NoMatch"><value>  записів, відповідних '{0}', не знайдено.</value></data>
-  <data name="CLI_CleanEntry"><value>  {0}: {1} елементів · {2}</value></data>
-  <data name="CLI_CleanDone"><value>  Готово — видалено {0} елементів · освобождено {1}.</value></data>
-  <data name="CLI_NothingToClean"><value>  Нічого очищати.</value></data>
-  <data name="CLI_AnalyzeEntry"><value>  {0}: {1} файлів · {2} записів Реєстра · {3}</value></data>
-  <data name="CLI_AnalyzeTotal"><value>  Всього: {0} знайдено.</value></data>
+  <data name="CLI_ThemeSet"><value>  Встановлено тему '{0}'.</value></data>
+  <data name="CLI_NoMatch"><value>  Не знайдено правил, що відповідають '{0}'.</value></data>
+  <data name="CLI_CleanEntry"><value>  {0}: елементів — {1} · {2}</value></data>
+  <data name="CLI_CleanDone"><value>  Готово — видалено елементів: {0} · звільнено {1}.</value></data>
+  <data name="CLI_NothingToClean"><value>  Немає даних для очищення.</value></data>
+  <data name="CLI_AnalyzeEntry"><value>  {0}: файлів — {1} · елементів реєстру — {2} · {3}</value></data>
+  <data name="CLI_AnalyzeTotal"><value>  Загалом знайдено: {0}.</value></data>
   <data name="CLI_NothingFound"><value>  Нічого не знайдено.</value></data>
-  <data name="CLI_ListEntries"><value>  — {0} записів.</value></data>
-  <data name="CLI_ListCategories"><value>  — {0} категорій.</value></data>
+  <data name="CLI_ListEntries"><value>  — Правил: {0}.</value></data>
+  <data name="CLI_ListCategories"><value>  — Категорій: {0}.</value></data>
 
+  <!-- Settings navigator / Cookie Manager -->
+  <data name="SettingsNavGeneral.Content"><value>Загальні</value></data>
+  <data name="SettingsNavCookies.Content"><value>Файли cookie</value></data>
+  <data name="SettingsNavExclusions.Content"><value>Винятки</value></data>
+  <data name="SettingsNavTasks.Content"><value>Завдання після очищення</value></data>
+  <data name="SettingsNavHistory.Content"><value>Історія</value></data>
+  <data name="SettingsNavAI.Content"><value>ШІ</value></data>
+  <data name="SettingsNavScheduler.Content"><value>Планувальник</value></data>
+  <data name="SettingsNavAbout.Content"><value>Про програму</value></data>
+  <data name="Cookies_Title"><value>Файли cookie</value></data>
+  <data name="Cookies_Subtitle"><value>Виберіть файли cookie сайтів, які потрібно зберегти під час очищення браузерів</value></data>
+  <data name="Cookies_Available"><value>Знайдені файли cookie</value></data>
+  <data name="Cookies_Kept"><value>Файли cookie, які слід зберегти</value></data>
+  <data name="Cookies_Search"><value>Пошук</value></data>
+  <data name="Cookies_Refresh"><value>Оновити</value></data>
+  <data name="Cookies_Scanning"><value>Зчитування файлів cookie браузерів…</value></data>
+  <data name="Cookies_Status"><value>Знайдено сайтів: {0} у профілях браузерів: {1}.</value></data>
+  <data name="Cookies_StatusUnavailable"><value>Знайдено сайтів: {0} у профілях браузерів: {1} · недоступно: {2}. Закрийте браузери й оновіть список.</value></data>
+  <data name="Cookies_DeleteUnavailable"><value>Не вдалося змінити профілі браузерів ({0}). Закрийте браузери та спробуйте ще раз.</value></data>
+  <data name="Cookies_MiKeep"><value>Зберегти</value></data>
+  <data name="Cookies_MiDelete"><value>Видалити</value></data>
+  <data name="Cookies_MiRemove"><value>Вилучити зі списку</value></data>
+  <data name="Cookies_MiImport"><value>Імпортувати...</value></data>
+  <data name="Cookies_MiExport"><value>Експортувати...</value></data>
+  <data name="Cookies_TextFiles"><value>Текстові файли</value></data>
+  <data name="Cleaning_CleanedCookies"><value>Видалено файлів cookie: {0} ({1})</value></data>
+
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Налаштування та інше</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>Меню програми</value></data>
+  <data name="AppMenuSettings.Text"><value>Налаштування</value></data>
+  <data name="AppMenuDonate.Text"><value>Підтримати проєкт</value></data>
+  <data name="AppMenuUpdates.Text"><value>Перевірити наявність оновлень</value></data>
+  <data name="ShareSelection.Text"><value>Поділитися вибраними правилами</value></data>
+  <data name="SC_Title"><value>FluentSeed</value></data>
+  <data name="SC_Intro"><value>FluentSeed — це вибрані вами правила, представлені одним рядком тексту. Той, хто вставить його сюди, отримає той самий набір вибраних правил. Без файлів, шляхів чи будь-яких відомостей про ваш ПК.</value></data>
+  <data name="SC_OwnHeader"><value>Ваші вибрані правила</value></data>
+  <data name="SC_OwnSummary"><value>Вибрано: {0}</value></data>
+  <data name="SC_OwnEmpty"><value>У розділі «Очищення» ще нічого не вибрано.</value></data>
+  <data name="SC_Copy"><value>Копіювати</value></data>
+  <data name="SC_Copied"><value>Скопійовано</value></data>
+  <data name="SC_CopyLink"><value>Копіювати як посилання</value></data>
+  <data name="SC_PasteHeader"><value>Використати FluentSeed</value></data>
+  <data name="SC_PastePlaceholder"><value>Вставте FluentSeed, що починається з FC1-</value></data>
+  <data name="SC_Invalid"><value>Це не дійсний FluentSeed.</value></data>
+  <data name="SC_Match"><value>На цьому ПК знайдено правил: {0} із {1}</value></data>
+  <data name="SC_None"><value>Жодне з цих правил не застосовується до цього ПК.</value></data>
+  <data name="SC_NotInstalled"><value>Правил для програм, яких у вас немає: {0}.</value></data>
+  <data name="SC_Unknown"><value>Невідомих вашій базі Winapp2 правил: {0}. Можливо, вони є в новішій версії.</value></data>
+  <data name="SC_ApplyNote"><value>Застосування замінить ваші вибрані правила й запустить аналіз. Нічого не буде видалено, доки ви не натиснете «Запустити очищення».</value></data>
+  <data name="SC_Busy"><value>Дочекайтеся завершення поточного сканування, а потім відкрийте це вікно знову.</value></data>
+  <data name="SC_Apply"><value>Застосувати й аналізувати</value></data>
+  <data name="SC_Restore"><value>Попередній вибір</value></data>
+  <data name="SC_Close"><value>Закрити</value></data>
 </root>

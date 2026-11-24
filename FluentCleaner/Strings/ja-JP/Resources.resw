@@ -17,35 +17,24 @@
   <data name="NavTerminal.Content"><value>ターミナル</value></data>
   <data name="NavCustom.Content"><value>カスタム</value></data>
   <data name="SearchBox.PlaceholderText"><value>検索</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>ページの操作</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>FluentCleanerを気に入っていただけましたか？</value></data>
   <data name="DonationBanner.Subtitle"><value>このアプリが時間の節約に役立ったら、開発への支援をご検討ください。</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>GitHubでStar</value></data>
   <data name="BtnDonateLater.Content"><value>後で検討する</value></data>
-  <data name="St_NoActions"><value>このページで実行できる操作はありません</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.iniは起動時に自動で読み込まれます。</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>カテゴリーの操作</value></data>
   <data name="MenuSelectAll.Text"><value>すべて選択</value></data>
   <data name="MenuSelectNone.Text"><value>すべて選択解除</value></data>
   <data name="MenuSelectDefaults.Text"><value>既定項目を選択</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>カテゴリーを解析</value></data>
-  <data name="MenuCleanCategory.Text"><value>カテゴリーをクリーンアップ</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>エントリの操作</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>解析</value></data>
-  <data name="MenuCleanEntry.Text"><value>クリーンアップ</value></data>
   <data name="MenuExplainEntry.Text"><value>AIで説明</value></data>
   <data name="MenuShowSource.Text"><value>ソースを表示</value></data>
   <data name="LblAIDesc.Text"><value>クリーナーページのエントリを右クリックし、［AIで説明］を選択します。Groq、OpenAI、Anthropicから選べます。明示的に操作しない限り、データは送信されません。ご自身のAPIキーが必要です。</value></data>
   <data name="LblAICustomHint.Text"><value>💡 キーを保存すると、カスタムクリーナーページでもAIが使えるようになります。クリーンアップしたい内容を説明すると、すぐに使えるWinapp2エントリまたはPowerShellスクリプトが生成されます。</value></data>
-  <data name="ResultsHeader.Text"><value>結果</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>結果に戻る</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>これらのファイルを今すぐ削除</value></data>
   <data name="MenuExcludeFile.Text"><value>ファイルを除外</value></data>
   <data name="MenuExcludeFolder.Text"><value>フォルダーを除外</value></data>
@@ -57,15 +46,9 @@
   <data name="St_MenuSelectAll"><value>すべて選択</value></data>
   <data name="St_MenuSelectNone"><value>すべて選択解除</value></data>
   <data name="St_MenuSelectDefaults"><value>既定項目を選択</value></data>
-  <data name="St_MenuExpandAll"><value>すべて展開</value></data>
-  <data name="St_MenuCollapseAll"><value>すべて折りたたむ</value></data>
-  <data name="St_MenuSortDesc"><value>サイズの降順 ↓</value></data>
-  <data name="St_MenuSortAsc"><value>サイズの昇順 ↑</value></data>
   <data name="St_MenuRefresh"><value>最新の情報に更新</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>ファイル</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>レジストリ</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>ファイル</value></data>
@@ -88,7 +71,6 @@
   <data name="DlgSourceCopy"><value>コピー</value></data>
   <data name="DlgSourceReport"><value>エントリを報告</value></data>
   <data name="DlgSourceDryRun"><value>ドライラン</value></data>
-  <data name="RuleLabTitle"><value>ルールラボ — {0}</value></data>
   <data name="DlgSourceHint"><value>ルールを編集してからドライランを実行し、一致する項目を確認します。</value></data>
   <data name="DlgSourceScanning"><value>スキャン中…</value></data>
   <data name="DlgSourceNoEntry"><value>有効なエントリがありません — DetectとFileKeyが必要です。</value></data>
@@ -106,8 +88,6 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Winapp2.iniを読み込み中...</value></data>
-  <data name="St_SearchFound"><value>一致するエントリを{0}件表示しています。</value></data>
-  <data name="St_SearchNone"><value>一致するエントリはありません。</value></data>
   <data name="St_ParsingDatabases"><value>データベースを読み取り中...</value></data>
   <data name="St_AnalysisReady"><value>解析が完了しました — {1}件のエントリから{0}個のアプリを検出しました。</value></data>
   <data name="St_NothingSelected"><value>何も選択されていません。</value></data>
@@ -141,9 +121,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>FluentCleanerはオープンソース化を進めています。</value></data>
   <data name="DonationBar.Message"><value>このアプリの開発には多くの時間をかけています。役に立ったと感じたら、感謝の気持ちとして寄付していただけると大きな支えになります。♥</value></data>
-  <data name="BtnDonate.Content"><value>プロジェクトを支援</value></data>
-  <data name="MenuDonatePayPal.Text"><value>PayPalで寄付</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Ko-fiで寄付</value></data>
   <data name="SectionAppearance.Text"><value>外観</value></data>
   <data name="LblTheme.Text"><value>アプリのテーマ</value></data>
   <data name="LblThemeDesc.Text"><value>デバイス上でのFluentCleanerの外観を選択します。</value></data>
@@ -166,8 +143,6 @@
   <data name="BtnBrowse.Content"><value>参照…</value></data>
   <data name="BtnApplyPath.Content"><value>適用</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>カスタムデータベースを削除</value></data>
-  <data name="RestartBar.Title"><value>再起動が必要です</value></data>
-  <data name="RestartBar.Message"><value>更新したデータベースを読み込むにはFluentCleanerを再起動してください。</value></data>
   <data name="SectionPostClean.Text"><value>クリーンアップ後のタスク</value></data>
   <data name="LblPostCleanDesc.Text"><value>1行に1つのコマンドを指定し、クリーンアップのたびに上から順に実行します。</value></data>
   <data name="SectionExclusions.Text"><value>グローバル除外設定</value></data>
@@ -216,18 +191,11 @@
   <data name="St_HistoryItems"><value>{0}項目</value></data>
   <data name="St_FileNotFound"><value>ファイルが見つかりません: {0}</value></data>
   <data name="St_CustomPathSaved"><value>カスタムパスを保存しました。</value></data>
-  <data name="St_Download"><value>ダウンロード</value></data>
   <data name="St_Downloading"><value>{0}をダウンロード中…</value></data>
   <data name="St_Downloaded"><value>{0}をダウンロードしました — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>ダウンロードに失敗しました: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>未ダウンロード</value></data>
   <data name="St_FileInfo"><value>{0}件のエントリ  •  {1} KB  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>更新があります — {0}</value></data>
-  <data name="St_UpdateMessage"><value>新しいバージョンのFluentCleanerをダウンロードできます。</value></data>
-  <data name="St_UpToDate"><value>最新の状態です</value></data>
-  <data name="St_UpToDateMessage"><value>バージョン{0}が最新です。</value></data>
-  <data name="St_MenuUpdate"><value>⬆  更新があります — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>更新を確認</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ 先にAPIキーを入力してください。</value></data>
   <data name="St_ApiKeyTesting"><value>テスト中…</value></data>
   <data name="Scheduler_FreqDaily"><value>毎日</value></data>
@@ -255,28 +223,16 @@
   <data name="MenuEditEntry.Text"><value>編集</value></data>
   <data name="MenuDeleteEntry.Text"><value>削除</value></data>
   <data name="MenuTestEntry.Text"><value>ルールラボでテスト</value></data>
-  <data name="MenuRunEntry.Text"><value>実行</value></data>
   <data name="BtnNewCleaner.Content"><value>+ 新しいクリーナー</value></data>
-  <data name="BtnRunScript.Text"><value>実行</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>クリーナー{0}件 · 有効{1}件</value></data>
-  <data name="St_CustomStatusScripts"><value>スクリプト{0}件</value></data>
-  <data name="St_CustomMenuNew"><value>新しいカスタムクリーナー</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Customフォルダーを開く</value></data>
-  <data name="St_CustomMenuReddit"><value>Redditで質問</value></data>
-  <data name="St_CustomMenuNeowin"><value>Neowinフォーラム</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>クリーナーをGitHubで共有</value></data>
   <data name="St_CustomToggleFailed"><value>切り替えに失敗しました: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>「{0}」を削除しますか？</value></data>
   <data name="St_CustomDeleteMessage"><value>カスタムクリーナーは完全に削除されます。</value></data>
   <data name="St_CustomDeleteConfirm"><value>削除</value></data>
   <data name="St_CustomDeleteCancel"><value>キャンセル</value></data>
-  <data name="St_CustomRunning"><value>{0}を実行中...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: スクリプトを読み込めませんでした — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: 正常に完了しました。</value></data>
-  <data name="St_CustomFailed"><value>{0}: 失敗しました（終了コード{1}）。</value></data>
   <data name="St_CustomEntryNone"><value>読み取れたエントリはありません</value></data>
   <data name="St_CustomEntryOne"><value>1件のエントリ · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0}件のエントリ · {1}</value></data>
@@ -286,15 +242,12 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>保存</value></data>
   <data name="DlgNewCleanerCancel"><value>キャンセル</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Winapp2エントリ（.ini）</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>PowerShellスクリプト（.ps1）</value></data>
   <data name="DlgNewCleanerNameHeader"><value>名前</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>マイクリーナー</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>AIで生成 - クリーンアップしたい内容を説明してください（生成結果は毎回異なる場合があります）</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>生成</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>生成</value></data>
   <data name="DlgNewCleanerContentLabel"><value>内容</value></data>
-  <data name="DlgNewCleanerTest"><value>ルールラボでテスト</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>テンプレートを読み込む</value></data>
   <data name="DlgNewCleanerTitleNew"><value>新しいカスタムクリーナー</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>編集 — {0}</value></data>
@@ -303,7 +256,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>選択したプロバイダーのAPIキーが設定されていません。［設定］→［AIによる説明］で追加してください。</value></data>
   <data name="AI_ApiError"><value>{0} APIエラー: {1}</value></data>
   <data name="AI_NoResponse"><value>応答を受信できませんでした。</value></data>
   <data name="AI_NetworkError"><value>{0}に接続できませんでした: {1}</value></data>
@@ -321,8 +273,6 @@
   <data name="CLI_NoDrives"><value>  ドライブが見つかりません。</value></data>
   <data name="CLI_ThemeUsage"><value>  使用方法: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  テーマを「{0}」に設定しました。</value></data>
-  <data name="CLI_BackdropUsage"><value>  使用方法: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  背景を「{0}」に設定しました。</value></data>
   <data name="CLI_NoMatch"><value>  「{0}」に一致するエントリはありません。</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1}項目 · {2}</value></data>
   <data name="CLI_CleanDone"><value>  完了 — {0}項目を削除し、{1}を解放しました。</value></data>
@@ -333,4 +283,9 @@
   <data name="CLI_ListEntries"><value>  — {0}件のエントリ。</value></data>
   <data name="CLI_ListCategories"><value>  — {0}件のカテゴリー。</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>設定など</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>設定</value></data>
+  <data name="AppMenuDonate.Text"><value>プロジェクトを支援</value></data>
+  <data name="AppMenuUpdates.Text"><value>更新を確認</value></data>
 </root>

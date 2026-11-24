@@ -1,146 +1,183 @@
-<Page
-    x:Class="FluentCleaner.Views.CleanerPage"
-    NavigationCacheMode="Required"
+<Page x:Class="FluentCleaner.Views.CleanerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:FluentCleaner.ViewModels"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    xmlns:local="using:FluentCleaner.Views"
+    NavigationCacheMode="Required"
+    Background="Transparent">
 
-    <!-- two-card layout: left = entry selector, right = analysis results -->
-    <Grid Padding="0">
+    <Page.Resources>
+        <local:BoolToChevronConverter x:Key="Chevron" />
+        <local:PathKindConverter x:Key="PathKind" />
+    </Page.Resources>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" MinWidth="200" MaxWidth="420" />
-            <ColumnDefinition Width="1" />
-            <!-- divider -->
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />   <!-- what's new, once after an update -->
+            <RowDefinition Height="*" />      <!-- tree | details -->
+            <RowDefinition Height="Auto" />   <!-- footer -->
+        </Grid.RowDefinitions>
 
-        <!-- vertical divider -->
-        <Rectangle Grid.Column="1"
-                   Width="1"
-                   Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
-                   VerticalAlignment="Stretch" />
+        <!-- Closed it takes no room. Opened by ShowWhatsNewOnce. -->
+        <InfoBar x:Name="UpdateNotice"
+                 Grid.Row="0"
+                 Severity="Informational"
+                 CornerRadius="0">
+            <InfoBar.ActionButton>
+                <HyperlinkButton x:Uid="BtnWhatsNew" Click="WhatsNew_Click" />
+            </InfoBar.ActionButton>
+        </InfoBar>
 
-        <!-- left panel;entry selector -->
-        <Grid Grid.Column="0">
-            <!-- Empty state: nothing loaded yet (IsEmpty = Categories.Count == 0) -->
-            <StackPanel HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Spacing="8"
+        <!-- CONTENT -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" MinWidth="220" MaxWidth="460" />
+                <ColumnDefinition Width="1" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Content sheet behind the details; its left border is the divider. -->
+            <Border Grid.Column="1" Grid.ColumnSpan="2"
+                    Background="{ThemeResource ShellContentBrush}"
+                    BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                    BorderThickness="1,0,0,0" />
+
+            <!-- TREE PANE -->
+            <Grid Grid.Column="0">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8"
                             Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay,
                                 Converter={StaticResource BoolToVisibilityConverter}}">
-                <FontIcon Glyph="&#xE8A5;" FontSize="36"
+                    <FontIcon Glyph="&#xE8A5;" FontSize="32"
                               Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-                <TextBlock x:Uid="CleanerHint"
+                    <TextBlock x:Uid="CleanerHint"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Style="{StaticResource CaptionTextBlockStyle}"
                                TextAlignment="Center" />
-            </StackPanel>
+                </StackPanel>
 
-            <!-- Entry tree: one Expander per category, one row per app inside.
-                     Hidden until something is loaded (IsNotEmpty). -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              Padding="0,6,0,8"
+                <!-- Right padding keeps the [...] buttons clear of the scrollbar. -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              Padding="10,8,14,4"
                               Visibility="{x:Bind ViewModel.IsNotEmpty, Mode=OneWay,
                                   Converter={StaticResource BoolToVisibilityConverter}}">
-                <ItemsControl ItemsSource="{x:Bind ViewModel.Categories, Mode=OneWay}"
-                                  Padding="0">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:CleanerCategoryViewModel">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.Categories, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:CleanerCategoryViewModel">
+                                <StackPanel>
 
-                            <!-- one collapsible group per category (e.g. "Google Chrome") -->
-                            <Expander HorizontalAlignment="Stretch"
-                                          HorizontalContentAlignment="Stretch"
-                                          IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
-                                          Margin="8,3,8,0"
-                                          Padding="0">
+                                    <!-- Category row: click toggles, [...] shows on hover. -->
+                                    <Button Style="{StaticResource SubtleButtonStyle}"
+                                            Command="{x:Bind ToggleCommand}"
+                                            AutomationProperties.Name="{x:Bind DisplayName}"
+                                            Padding="0" BorderThickness="0"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch">
+                                        <!-- Right-click, menu key, Shift+F10 or press and hold. On the button,
+                                             so the keyboard reaches it when the category has focus. -->
+                                        <Button.ContextFlyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem x:Uid="MenuSelectAll"
+                                                                Command="{x:Bind SelectAllCommand}" />
+                                                <MenuFlyoutItem x:Uid="MenuSelectNone"
+                                                                Command="{x:Bind SelectNoneCommand}" />
+                                                <MenuFlyoutItem x:Uid="MenuSelectDefaults"
+                                                                Command="{x:Bind SelectDefaultsCommand}" />
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem Text="{x:Bind AnalyzeText}"
+                                                                Tag="{x:Bind}"
+                                                                Click="CatAnalyze_Click" />
+                                                <MenuFlyoutItem Text="{x:Bind CleanText}"
+                                                                Tag="{x:Bind}"
+                                                                Click="CatClean_Click" />
+                                            </MenuFlyout>
+                                        </Button.ContextFlyout>
+                                        <Grid Height="30"
+                                              Padding="4,0,2,0"
+                                              Background="Transparent">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="18" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                                <!-- Category header: name + hover [...] menu -->
-                                <Expander.Header>
-                                    <Grid HorizontalAlignment="Stretch"
-                                              PointerEntered="CatHeader_PointerEntered"
-                                              PointerExited="CatHeader_PointerExited">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                                            <FontIcon Grid.Column="0"
+                                                      Glyph="{x:Bind IsExpanded, Mode=OneWay,
+                                                          Converter={StaticResource Chevron}}"
+                                                      FontSize="10"
+                                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center" />
 
-                                        <TextBlock Grid.Column="0"
-                                                       Text="{x:Bind Name}"
-                                                       FontSize="13"
-                                                       FontWeight="SemiBold"
+                                            <FontIcon Grid.Column="1"
+                                                      Glyph="{x:Bind Glyph}" FontSize="14"
+                                                      Foreground="{x:Bind IconBrush}"
+                                                      VerticalAlignment="Center"
+                                                      Margin="2,0,8,0" />
+
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{x:Bind DisplayName}"
+                                                       FontSize="12"
+                                                       VerticalAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       ToolTipService.ToolTip="{x:Bind Name}"
-                                                       VerticalAlignment="Center" />
+                                                       ToolTipService.ToolTip="{x:Bind DisplayName}" />
+                                        </Grid>
+                                    </Button>
 
-                                        <!-- [...] category actions; fades in on hover via code-behind -->
-                                        <Button x:Uid="BtnCategoryActions"
-                                                    Grid.Column="1"
-                                                    Width="26" Height="26" Padding="0"
-                                                    Margin="8,0,0,0"
-                                                    Opacity="0">
-                                            <Button.Resources>
-                                                <SolidColorBrush x:Key="ButtonBackground" Color="Transparent" />
-                                                <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
-                                            </Button.Resources>
-                                            <FontIcon Glyph="&#xE712;" FontSize="13" />
-                                            <Button.Flyout>
-                                                <MenuFlyout Placement="Bottom">
-                                                    <MenuFlyoutItem x:Uid="MenuSelectAll"
-                                                                        Command="{x:Bind SelectAllCommand}" />
-                                                    <MenuFlyoutItem x:Uid="MenuSelectNone"
-                                                                        Command="{x:Bind SelectNoneCommand}" />
-                                                    <MenuFlyoutItem x:Uid="MenuSelectDefaults"
-                                                                        Command="{x:Bind SelectDefaultsCommand}" />
-                                                    <MenuFlyoutSeparator />
-                                                    <!-- Tag passes the CategoryViewModel to the click handler -->
-                                                    <MenuFlyoutItem x:Uid="MenuAnalyzeCategory"
-                                                                        Tag="{x:Bind}"
-                                                                        Click="CatAnalyze_Click" />
-                                                    <MenuFlyoutItem x:Uid="MenuCleanCategory"
-                                                                        Tag="{x:Bind}"
-                                                                        Click="CatClean_Click" />
-                                                </MenuFlyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                    </Grid>
-                                </Expander.Header>
+                                    <ItemsControl ItemsSource="{x:Bind Entries, Mode=OneWay}"
+                                                  Visibility="{x:Bind IsExpanded, Mode=OneWay,
+                                                      Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:CleanerEntryViewModel">
+                                                <Grid Height="28"
+                                                      Padding="4,0,2,0"
+                                                      Background="Transparent">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="3" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <!-- On the row: the checkbox inside takes focus, and the menu key bubbles up to here. -->
+                                                    <Grid.ContextFlyout>
+                                                        <MenuFlyout>
+                                                            <MenuFlyoutItem Text="{x:Bind AnalyzeText}"
+                                                                            Tag="{x:Bind}" Click="EntryAnalyze_Click" />
+                                                            <MenuFlyoutItem Text="{x:Bind CleanText}"
+                                                                            Tag="{x:Bind}" Click="EntryClean_Click" />
+                                                            <MenuFlyoutItem x:Uid="MenuExplainEntry"
+                                                                            Tag="{x:Bind}" Click="EntryExplain_Click" />
+                                                            <MenuFlyoutItem x:Uid="MenuShowSource"
+                                                                            Tag="{x:Bind}" Click="EntrySource_Click" />
+                                                        </MenuFlyout>
+                                                    </Grid.ContextFlyout>
 
-                                <!-- Entry rows inside the category -->
-                                <ItemsControl ItemsSource="{x:Bind Entries, Mode=OneWay}"
-                                                  Padding="4,0,0,4">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="vm:CleanerEntryViewModel">
-                                            <!-- Three columns: [checkbox+name] [size after scan] [...] -->
-                                            <Grid Padding="2,1" Margin="16,0,0,0"
-                                                      PointerEntered="EntryRow_PointerEntered"
-                                                      PointerExited="EntryRow_PointerExited">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <!-- size label -->
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <!-- [...] button -->
-                                                </Grid.ColumnDefinitions>
+                                                    <!-- Accent bar marks "this will be cleaned". -->
+                                                    <Rectangle Grid.Column="0"
+                                                               Width="3" Height="16"
+                                                               RadiusX="1.5" RadiusY="1.5"
+                                                               Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                                                               VerticalAlignment="Center"
+                                                               Visibility="{x:Bind IsSelected, Mode=OneWay,
+                                                                   Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                                                <!-- Checkbox; Warning tooltip from Winapp2.ini Warning= field.
-                                                         Orange icon appears when HasWarning is true. -->
-                                                <CheckBox Grid.Column="0"
+                                                    <CheckBox Grid.Column="1"
                                                               IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                                                              AutomationProperties.Name="{x:Bind Name}"
+                                                              Checked="EntryCheck_Changed"
+                                                              Unchecked="EntryCheck_Changed"
                                                               ToolTipService.ToolTip="{x:Bind Warning}"
-                                                              MinWidth="0"
-                                                              Padding="6,3">
-                                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                                        <FontIcon Glyph="&#xE7BA;"
-                                                                      FontSize="11"
-                                                                      Foreground="OrangeRed"
+                                                              MinWidth="0" MinHeight="0"
+                                                              Margin="22,0,0,0"
+                                                              Padding="6,0,0,0"
+                                                              VerticalAlignment="Center">
+                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                            <FontIcon Glyph="&#xE7BA;" FontSize="11"
+                                                                      Foreground="#E8903C"
                                                                       VerticalAlignment="Center"
-                                                                      Visibility="{x:Bind HasWarning, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                                        <TextBlock Text="{x:Bind Name}"
+                                                                      Visibility="{x:Bind HasWarning,
+                                                                          Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                            <TextBlock Text="{x:Bind ShortName}"
                                                                        FontSize="12"
+                                                                       VerticalAlignment="Center"
                                                                        TextTrimming="CharacterEllipsis"
                                                                        ToolTipService.ToolTip="{x:Bind Name}" />
                                                         <!-- Running Process In-Use Warning Badge -->
@@ -161,318 +198,365 @@
                                                     </StackPanel>
                                                 </CheckBox>
 
-                                                <!-- SizeText: empty string until this entry has been scanned.
-                                                         Updated live by UpdateEntrySize() in the ViewModel. -->
-                                                <TextBlock Grid.Column="1"
+                                                    <TextBlock Grid.Column="2"
                                                                Text="{x:Bind SizeText, Mode=OneWay}"
-                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               FontFamily="Cascadia Mono,Consolas"
                                                                FontSize="11"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                VerticalAlignment="Center"
-                                                               Margin="2,0,4,0" />
+                                                               Margin="6,0,4,0" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
 
-                                                <!-- [...] entry actions;fades in on hover.
-                                                         Tag="{x:Bind}" passes this EntryViewModel to the click handlers. -->
-                                                <Button x:Uid="BtnEntryActions"
-                                                            Grid.Column="2"
-                                                            Width="22" Height="22" Padding="0"
-                                                            Margin="0,0,4,0"
-                                                            Opacity="0">
-                                                    <FontIcon Glyph="&#xE712;" FontSize="10" />
-                                                    <Button.Flyout>
-                                                        <MenuFlyout Placement="Bottom">
-                                                            <MenuFlyoutItem x:Uid="MenuAnalyzeEntry"
-                                                                                Tag="{x:Bind}"
-                                                                                Click="EntryAnalyze_Click" />
-                                                            <MenuFlyoutItem x:Uid="MenuCleanEntry"
-                                                                                Tag="{x:Bind}"
-                                                                                Click="EntryClean_Click" />
-                                                            <MenuFlyoutItem x:Uid="MenuExplainEntry"
-                                                                                Tag="{x:Bind}"
-                                                                                Click="EntryExplain_Click" />
-                                                            <MenuFlyoutItem x:Uid="MenuShowSource"
-                                                                                Tag="{x:Bind}"
-                                                                                Click="EntrySource_Click" />
-                                                        </MenuFlyout>
-                                                    </Button.Flyout>
-                                                </Button>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Expander>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </Grid>
+            <!-- DETAILS PANE -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />   <!-- run header -->
+                    <RowDefinition Height="Auto" />   <!-- column headers -->
+                    <RowDefinition Height="*" />      <!-- rows -->
+                </Grid.RowDefinitions>
 
-        <!-- right panel;analysis results -->
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <!-- results header OR detail header -->
-                <RowDefinition Height="*" />
-                <!-- results list OR detail list -->
-                <RowDefinition Height="Auto" />
-                <!-- status text -->
-                <RowDefinition Height="Auto" />
-                <!-- Analyze / Run Cleaner buttons -->
-            </Grid.RowDefinitions>
+                <!-- Run header, like CCleaner's: what is happening or what was found, the size,
+                     and the progress while busy. Shows up with the first Analyze. -->
+                <StackPanel Grid.Row="0"
+                            Padding="10,10,22,10"
+                            Spacing="8"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="0,0,0,1"
+                            Visibility="{x:Bind ViewModel.HasRun, Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- always 2 lines high, else the header jumps with every path -->
+                        <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                                   FontSize="12"
+                                   LineHeight="16" LineStackingStrategy="BlockLineHeight"
+                                   Height="32"
+                                   TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{x:Bind ViewModel.TotalSize, Mode=OneWay}"
+                                   FontFamily="Cascadia Mono,Consolas"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                   VerticalAlignment="Center" />
+                        <!-- Same spot as the size, which is empty after a clean. Only shows when that
+                             clean skipped files and the app runs without admin rights. -->
+                        <HyperlinkButton Grid.Column="1"
+                                         FontSize="12"
+                                         Padding="0" MinWidth="0" MinHeight="0"
+                                         VerticalAlignment="Center"
+                                         Click="RestartElevated_Click"
+                                         Visibility="{x:Bind ViewModel.OfferElevation, Mode=OneWay,
+                                             Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xEA18;" FontSize="14" />
+                                <TextBlock x:Uid="BtnRestartElevated" />
+                            </StackPanel>
+                        </HyperlinkButton>
+                    </Grid>
+                    <!-- Stays after the run (at 100 %, like CCleaner), so the header keeps its height. -->
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar Maximum="100"
+                                     Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}"
+                                     VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{x:Bind ViewModel.ProgressLabel, Mode=OneWay}"
+                                   FontFamily="Cascadia Mono,Consolas"
+                                   FontSize="11"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
 
-            <!-- real scan progress; ills per finished entry -->
-            <ProgressBar Grid.RowSpan="4"
-                             VerticalAlignment="Top"
-                             Maximum="100"
-                             Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}"
-                             Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
-                                 Converter={StaticResource BoolToVisibilityConverter}}" />
-            <TextBlock Grid.RowSpan="4"
-                           VerticalAlignment="Top"
-                           HorizontalAlignment="Center"
-                           Margin="0,6,0,0"
-                           FontSize="11"
-                           Opacity="0.6"
-                           Text="{x:Bind ViewModel.ProgressLabel, Mode=OneWay}"
-                           Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
-                               Converter={StaticResource BoolToVisibilityConverter}}" />
-
-            <!-- Results header; visible while the list is showing (not in detail view) -->
-            <Grid Grid.Row="0"
-                      Padding="12,10,12,10"
+                <!-- List headers. Same padding as the rows, so headers and values line up. -->
+                <Grid Grid.Row="1"
+                      Height="28"
+                      Padding="10,0,22,0"
                       Visibility="{x:Bind ViewModel.IsShowingList, Mode=OneWay,
                           Converter={StaticResource BoolToVisibilityConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <!-- total size badge -->
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="110" />
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock x:Uid="ResultsHeader"
-                               Grid.Column="0"
-                               Style="{StaticResource BodyStrongTextBlockStyle}"
-                               VerticalAlignment="Center" />
+                    <!-- Name and Size sort; Contents is only a label. -->
+                    <Button Grid.Column="0" Style="{StaticResource SubtleButtonStyle}"
+                            Padding="0" CornerRadius="0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            VerticalAlignment="Stretch"
+                            Click="SortByName_Click">
+                        <TextBlock x:Uid="ColName" Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    </Button>
+                    <TextBlock Grid.Column="1" x:Uid="ColContents" Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+                    <Button Grid.Column="2" Style="{StaticResource SubtleButtonStyle}"
+                            Padding="0" CornerRadius="0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Click="SortBySize_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                            <TextBlock x:Uid="ColSize" Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <FontIcon x:Name="SortGlyph" Glyph="&#xE70D;" FontSize="9"
+                                      VerticalAlignment="Center"
+                                      Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
 
-                <!-- Sum of all scanned entries; empty until Analyze finishes -->
-                <TextBlock Grid.Column="1"
-                               Text="{x:Bind ViewModel.TotalSize, Mode=OneWay}"
-                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                               Style="{StaticResource SubtitleTextBlockStyle}"
-                               VerticalAlignment="Center" />
-            </Grid>
-
-            <!-- Detail header;this replaces results header when a result row is open.
-                     Shows back button + entry name + open-folder + delete buttons. -->
-            <Grid Grid.Row="0"
-                      Padding="12,10,12,10"
+                <!-- Detail headers: back, entry name, Type. -->
+                <Grid Grid.Row="1"
+                      Height="28"
+                      Padding="4,0,22,0"
                       Visibility="{x:Bind ViewModel.IsShowingDetail, Mode=OneWay,
                           Converter={StaticResource BoolToVisibilityConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <!-- entry name; truncates if too long -->
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="110" />
+                    </Grid.ColumnDefinitions>
 
-                <!-- Back;so it returns to results list (clears SelectedResultLine) -->
-                <Button x:Uid="BtnBackToResults"
+                    <Button x:Uid="BtnDetailBack"
                             Grid.Column="0"
-                            Command="{x:Bind ViewModel.ClearDetailCommand}"
-                            Width="24" Height="24" Padding="0">
-                    <FontIcon Glyph="&#xE72B;" FontSize="14" />
-                </Button>
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Width="30" Height="26" Padding="0"
+                            Command="{x:Bind ViewModel.ClearDetailCommand}">
+                        <FontIcon Glyph="&#xE72B;" FontSize="12" />
+                    </Button>
 
-                <!-- SelectedAppName = the AppName of whichever result row was clicked -->
-                <TextBlock Grid.Column="1"
+                    <TextBlock Grid.Column="1"
+                               Margin="4,0,8,0"
                                Text="{x:Bind ViewModel.SelectedAppName, Mode=OneWay}"
-                               Style="{StaticResource BodyStrongTextBlockStyle}"
+                               FontSize="12"
+                               FontWeight="SemiBold"
                                VerticalAlignment="Center"
-                               Margin="8,0"
                                TextTrimming="CharacterEllipsis" />
 
-                <!-- Cleans only this single entry without touching the rest -->
-                <Button x:Uid="BtnCleanDetail"
-                            Grid.Column="2"
-                            Command="{x:Bind ViewModel.CleanSelectedCommand}"
-                            Width="28" Height="28" Padding="0">
-                    <FontIcon Glyph="&#xE74D;" FontSize="13" />
-                </Button>
-            </Grid>
+                    <TextBlock Grid.Column="2" x:Uid="ColType" Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
 
-            <!-- Divider below header -->
-            <Border Grid.Row="0"
-                        VerticalAlignment="Bottom"
-                        Height="1"
+                    <!-- Cleans only the open entry. -->
+                    <Button x:Uid="BtnCleanDetail"
+                            Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Width="30" Height="26" Padding="0"
+                            Command="{x:Bind ViewModel.CleanSelectedCommand}">
+                        <FontIcon Glyph="&#xE74D;" FontSize="13" />
+                    </Button>
+                </Grid>
+
+                <Border Grid.Row="1" VerticalAlignment="Bottom" Height="1"
                         Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
-            <!-- Results list; each row is one scanned app.
-                     Click a row >> SelectedResultLine is set >> switches to detail view.
-                     AppName = entry name (bold); tooltip on it shows the category.
-                     CountSummary = "3988 files · 2 registry" (gray, line 2).
-                     Size = formatted bytes from the scan (accent, right). -->
-            <ListView Grid.Row="1"
-                          x:Name="ResultsListView"
+                <!-- Results: one line per scanned entry. -->
+                <ListView Grid.Row="2"
                           ItemsSource="{x:Bind ViewModel.ResultLines, Mode=OneWay}"
                           SelectionMode="None"
                           IsItemClickEnabled="True"
                           ItemClick="ResultsListView_ItemClick"
-                          Padding="0,2"
+                          Padding="0,2,0,0"
                           Visibility="{x:Bind ViewModel.IsShowingList, Mode=OneWay,
                               Converter={StaticResource BoolToVisibilityConverter}}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="MinHeight" Value="0" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:ScanResultLine">
-                        <Grid Padding="12,7"
-                                  BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                                  BorderThickness="0,0,0,1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <!-- size + chevron -->
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <!-- AppName -->
-                                <RowDefinition Height="Auto" />
-                                <!-- SubLine -->
-                            </Grid.RowDefinitions>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="MinHeight" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="CornerRadius" Value="0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ScanResultLine">
+                            <Grid Height="28" Padding="10,0,22,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="110" />
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                           Text="{x:Bind AppName}"
-                                           FontSize="12"
-                                           FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis" />
+                                <!-- Grid, not StackPanel, or long names don't trim and run into Contents -->
+                                <Grid Grid.Column="0" ColumnSpacing="8" Margin="0,0,8,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Glyph="{x:Bind Glyph}" FontSize="13"
+                                              Foreground="{x:Bind IconBrush}"
+                                              VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{x:Bind AppName}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTipService.ToolTip="{x:Bind AppName}" />
+                                </Grid>
 
-                            <!-- "3988 files · 2 registry" -->
-                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                <TextBlock Grid.Column="1"
                                            Text="{x:Bind CountSummary}"
                                            FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           Margin="0,1,0,0" />
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
 
-                            <!-- Size in accent color + chevron to signal the row is clickable -->
-                            <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
-                                            Orientation="Horizontal" Spacing="6"
-                                            VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Bind Size}"
-                                               FontSize="13"
-                                               FontWeight="SemiBold"
-                                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                               VerticalAlignment="Center" />
-                                <FontIcon Glyph="&#xE76C;" FontSize="10"
-                                              Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                              VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                                <TextBlock Grid.Column="2"
+                                           Text="{x:Bind Size}"
+                                           FontFamily="Cascadia Mono,Consolas"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
-            <!-- Detail list; flat "header + paths" list for the selected entry.
-                     DetailLine.IsHeader = true : accent bold section title ("Files (10)")
-                     DetailLine.IsHeader = false : dimmed path row; click opens folder in Explorer -->
-            <ListView Grid.Row="1"
+                <!-- Detail: flat path list. -->
+                <ListView Grid.Row="2"
                           ItemsSource="{x:Bind ViewModel.DetailLines, Mode=OneWay}"
                           SelectionMode="None"
                           IsItemClickEnabled="True"
                           ItemClick="DetailList_ItemClick"
-                          Padding="0,2"
+                          Padding="0,2,0,0"
                           Visibility="{x:Bind ViewModel.IsShowingDetail, Mode=OneWay,
                               Converter={StaticResource BoolToVisibilityConverter}}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="MinHeight" Value="0" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:DetailLine">
-                        <Grid Padding="12,3">
-                            <!-- Section header: "Files (3988)" or "Registry (2)" -->
-                            <TextBlock Text="{x:Bind Text}"
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="MinHeight" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="CornerRadius" Value="0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DetailLine">
+                            <Grid Height="26" Padding="10,0,22,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="110" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Section header ("Files (3988)") -->
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind Text}"
                                            FontSize="11"
                                            FontWeight="SemiBold"
                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                           Margin="0,6,0,2"
+                                           VerticalAlignment="Center"
                                            Visibility="{x:Bind IsHeader,
                                                Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <!-- Path row: full file path or registry key -->
-                            <TextBlock Text="{x:Bind Text}"
+
+                                <!-- Path row -->
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind Text}"
+                                           FontFamily="Cascadia Mono,Consolas"
                                            FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"
                                            Visibility="{x:Bind IsNotHeader,
                                                Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <!-- Right-click to whitelist file or folder from cleaning -->
-                                <TextBlock.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem x:Uid="MenuExcludeFile"
-                                                            Click="ExcludeFile_Click"
-                                                            Tag="{x:Bind Text}" />
-                                        <MenuFlyoutItem x:Uid="MenuExcludeFolder"
-                                                            Click="ExcludeFolder_Click"
-                                                            Tag="{x:Bind Text}" />
-                                    </MenuFlyout>
-                                </TextBlock.ContextFlyout>
-                            </TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                                    <TextBlock.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem x:Uid="MenuExcludeFile"
+                                                            Click="ExcludeFile_Click" Tag="{x:Bind Text}" />
+                                            <MenuFlyoutItem x:Uid="MenuExcludeFolder"
+                                                            Click="ExcludeFolder_Click" Tag="{x:Bind Text}" />
+                                        </MenuFlyout>
+                                    </TextBlock.ContextFlyout>
+                                </TextBlock>
 
-            <!-- Status text: last message from the ViewModel (scan progress, errors, done) -->
-            <TextBlock Grid.Row="2"
-                           Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
-                           FontSize="11"
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           TextTrimming="CharacterEllipsis"
-                           Padding="12,4,12,0" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{x:Bind Text, Converter={StaticResource PathKind}}"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                           VerticalAlignment="Center"
+                                           Visibility="{x:Bind IsNotHeader,
+                                               Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Grid>
 
-            <!-- Action buttons: Analyze (accent, left) + Run Cleaner (right) -->
-            <Grid Grid.Row="3"
-                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                      BorderThickness="0,1,0,0"
-                      Padding="12,8,12,12">
+        <!-- FOOTER: counts left, actions right. -->
+        <Grid Grid.Row="2"
+              Padding="10,6,8,6"
+              ColumnSpacing="12"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,1,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- FluentSeed beside the selection it shares. -->
+            <Grid Grid.Column="0" ColumnSpacing="12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <HyperlinkButton FontSize="11"
+                                 Padding="0" MinWidth="0" MinHeight="0"
+                                 VerticalAlignment="Center"
+                                 Click="ShareSelection_Click">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE72D;" FontSize="14" />
+                        <TextBlock x:Uid="ShareSelection" />
+                    </StackPanel>
+                </HyperlinkButton>
+                <TextBlock x:Name="StatusCounts"
+                           Grid.Column="1"
+                           FontSize="11"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           TextTrimming="CharacterEllipsis" />
+            </Grid>
 
-                <!-- Analyze:visible when idle; morphs into Cancel once a scan/clean starts -->
-                <Button x:Uid="BtnAnalyze"
-                            Grid.Column="0"
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Grid>
+                    <!-- Padding 12,0: the default cuts off descenders at 30 px. -->
+                    <Button x:Uid="BtnAnalyze"
                             Command="{x:Bind ViewModel.AnalyzeCommand}"
                             Style="{StaticResource AccentButtonStyle}"
                             Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay,
                                 Converter={StaticResource BoolToVisibilityConverter}}"
-                            MinWidth="110"
-                            Height="32" />
+                            MinWidth="96" Height="30" Padding="12,0" />
 
-                <!-- Cancel:same slot, only visible during an active scan or clean -->
-                <Button x:Uid="BtnCancel"
-                            Grid.Column="0"
+                    <Button x:Uid="BtnCancel"
                             Command="{x:Bind ViewModel.CancelCommand}"
                             Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
                                 Converter={StaticResource BoolToVisibilityConverter}}"
-                            MinWidth="110"
-                            Height="32" />
+                            MinWidth="96" Height="30" Padding="12,0" />
+                </Grid>
 
-                <!-- Run Cleaner:uses Click+code-behind because of the warning dialog flow.
-                         IsEnabled bound separately since Click bypasses Command.CanExecute. -->
                 <Button x:Uid="BtnRunCleaner"
-                            Grid.Column="2"
-                            Click="RunCleaner_Click"
-                            IsEnabled="{x:Bind ViewModel.CanRunCleaner, Mode=OneWay}"
-                            MinWidth="120"
-                            Height="32" />
-            </Grid>
+                        Click="RunCleaner_Click"
+                        IsEnabled="{x:Bind ViewModel.CanRunCleaner, Mode=OneWay}"
+                        MinWidth="104" Height="30" Padding="12,0" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

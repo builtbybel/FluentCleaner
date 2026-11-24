@@ -7,19 +7,10 @@ using System.Collections.ObjectModel;
 namespace FluentCleaner.ViewModels;
 
 //Terminal backend; pure command dispatcher
-// All my domain logic lives in the two Cli*Module classes below.
+// The domain logic lives in CliCleanerModule.
 public partial class CliViewModel : ObservableObject
 {
     private readonly CliCleanerModule _cleaner = new();   // winapp2 clean/analyze/list/categories
-    private readonly CliDebloatModule _appx    = new();   // appx debloater module
-
-    // Hidden/experimental terminal commands. Keeping them centralized makes it obvious
-    // which commands are not regular UI features.
-    private static readonly IReadOnlyDictionary<string, string[]> HiddenCommandSuggestions =
-        new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["backdrop"] = ["mica", "acrylic"]
-        };
 
     [ObservableProperty] public partial bool IsBusy { get; set; }
 
@@ -38,7 +29,6 @@ public partial class CliViewModel : ObservableObject
         IsBusy = true;
 
         var (dbs, entries) = await _cleaner.InitAsync();
-        await _appx.InitAsync();   // pre-load Winappx.ini so appx autocomplete works immediately
 
         Output.Add(ResourceService.Get("CLI_Welcome"));
         Output.Add(ResourceService.Fmt("CLI_Databases", dbs, entries));
@@ -63,17 +53,7 @@ public partial class CliViewModel : ObservableObject
 
         IEnumerable<string> source;
 
-        if (TryGetHiddenCommandSuggestions(verb, query, out var hidden))
-            // Hidden/experimental commands (backdrop …);centralized in HiddenCommandSuggestions
-            source = hidden;
-
-        else if (verb == "appx")
-        {
-            // "appx <sub>" ; delegates to CliDebloatModule (Winappx.ini entries)
-            prefix = "appx ";
-            source = _appx.GetSuggestions(query);
-        }
-        else if ((verb is "clean" or "analyze" or "scan") &&
+        if ((verb is "clean" or "analyze" or "scan") &&
                  query.StartsWith("category ", StringComparison.OrdinalIgnoreCase))
         {
             // "clean/analyze/scan category <name>";suggests category names via CliCleanerModule
@@ -90,20 +70,6 @@ public partial class CliViewModel : ObservableObject
                      .ToList();
     }
 
-    // Returns suggestions for experimental commands such as "backdrop".
-    // Normal cleaner entries are handled by GetSuggestions itself.
-    private static bool TryGetHiddenCommandSuggestions(string verb, string query, out IEnumerable<string> suggestions)
-    {
-        if (HiddenCommandSuggestions.TryGetValue(verb, out var values))
-        {
-            suggestions = values.Where(n => n.Contains(query, StringComparison.OrdinalIgnoreCase));
-            return true;
-        }
-
-        suggestions = [];
-        return false;
-    }
-
     // --- command dispatch -------------------------------------------------------
 
     public async Task ExecuteAsync(string input)
@@ -111,7 +77,7 @@ public partial class CliViewModel : ObservableObject
         input = input.Trim();
         if (string.IsNullOrWhiteSpace(input)) return;
 
-        Output.Add($"> {input}");
+        Output.Add($"fc> {input}");
 
         var parts = input.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
         var verb  = parts[0].ToLowerInvariant();
@@ -124,9 +90,7 @@ public partial class CliViewModel : ObservableObject
             case "scan":
             case "list":
             case "categories": await _cleaner.ExecuteAsync(verb, arg, Output, v => IsBusy = v); break;
-            case "appx":       await _appx.ExecuteAsync(arg, Output, v => IsBusy = v);          break;
             case "theme":      RunTheme(arg);                                                    break;
-            case "backdrop":   RunBackdrop(arg);                                                 break;
             case "drives":     RunDrives();                                                      break;
             case "version":    Output.Add(ResourceService.Fmt("CLI_Version", AppInfo.VersionString));       break;
             case "clear":      Output.Clear();                                                   break;
@@ -137,7 +101,7 @@ public partial class CliViewModel : ObservableObject
         }
     }
 
-    // --- builtins (drives, theme, backdrop, help, version, clear) ---------------
+    // --- builtins (drives, theme, help, version, clear) -------------------------
 
     private void RunDrives()
     {
@@ -176,29 +140,6 @@ public partial class CliViewModel : ObservableObject
         Output.Add(ResourceService.Fmt("CLI_ThemeSet", arg));
     }
 
-    // Hidden/experimental visual feature. This intentionally lives in Terminal
-    // only, so power users can opt in without adding another Settings UI switch.
-    private void RunBackdrop(string arg)
-    {
-        var value = arg.ToLowerInvariant() switch
-        {
-            "mica"    => "mica",
-            "acrylic" => "acrylic",
-            _         => ""
-        };
-
-        if (value == "")
-        {
-            Output.Add(ResourceService.Get("CLI_BackdropUsage"));
-            return;
-        }
-
-        AppSettings.Instance.Backdrop = value;
-        AppSettings.Instance.Save();
-        (Application.Current as App)?.ApplyBackdrop(value);
-        Output.Add(ResourceService.Fmt("CLI_BackdropSet", value));
-    }
-
     private void RunHelp()
     {
         foreach (var line in """
@@ -215,18 +156,8 @@ public partial class CliViewModel : ObservableObject
                 list [filter]              list entries
                 categories                 list categories
 
-              Debloat
-                appx list                  list all installed AppX packages
-                appx scan                  list bloatware from Winappx.ini only
-                appx remove <name>         remove a specific package
-                appx remove all            remove all detected bloatware
-
               Appearance
                 theme dark|light|system    change app theme
-
-              Experimental / hidden flags
-                These terminal-only flags have no Settings UI and may change or disappear.
-                backdrop mica|acrylic      switch window backdrop effect
 
               Other
                 drives                     show disk usage for all drives
