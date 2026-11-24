@@ -102,21 +102,21 @@
                 <NavigationViewItem x:Name="NavItemCleaner" x:Uid="NavCleaner" Content="Cleaner" Tag="Cleaner"
                                     ToolTipService.ToolTip="Cleaner (Ctrl+1)">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEA99;" />
+                        <FontIcon Glyph="&#xEA99;" Foreground="#38BDF8" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem x:Name="NavItemApps" x:Uid="NavApps" Content="Apps" Tag="Apps"
                                     ToolTipService.ToolTip="Apps Uninstaller (Ctrl+2)">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xECAA;" />
+                        <FontIcon Glyph="&#xECAA;" Foreground="#8B5CF6" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem x:Name="NavItemTweaks" x:Uid="NavTweaks" Content="Tweaks" Tag="Tweaks"
                                     ToolTipService.ToolTip="Windows Tweaks (Ctrl+3)">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE9E9;" />
+                        <FontIcon Glyph="&#xE9E9;" Foreground="#F97316" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
@@ -125,14 +125,14 @@
                 <NavigationViewItem x:Name="NavItemCustom" x:Uid="NavCustom" Content="Custom" Tag="Custom"
                                     ToolTipService.ToolTip="Custom &amp; Rules (Ctrl+4)">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE943;" />
+                        <FontIcon Glyph="&#xE943;" Foreground="#10B981" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem x:Name="NavItemTerminal" x:Uid="NavTerminal" Content="Terminal" Tag="Terminal"
                                     ToolTipService.ToolTip="Terminal CLI (Ctrl+5)">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE756;" />
+                        <FontIcon Glyph="&#xE756;" Foreground="#06B6D4" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
@@ -140,19 +140,19 @@
 
                 <NavigationViewItem Content="Cookies" Tag="Settings:Cookies">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE774;" />
+                        <FontIcon Glyph="&#xE774;" Foreground="#EAB308" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="Exclusions" Tag="Settings:Exclusions">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE72E;" />
+                        <FontIcon Glyph="&#xE72E;" Foreground="#F43F5E" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="Scheduler" Tag="Settings:Scheduler">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE823;" />
+                        <FontIcon Glyph="&#xE823;" Foreground="#6366F1" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
@@ -163,7 +163,7 @@
                                     SelectsOnInvoked="False"
                                     ToolTipService.ToolTip="Open FluentCleaner on GitHub">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE946;" />
+                        <FontIcon Glyph="&#xE946;" Foreground="#0078D4" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>

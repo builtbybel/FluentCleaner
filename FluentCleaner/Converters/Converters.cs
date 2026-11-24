@@ -61,6 +61,15 @@ public class HexToBrushConverter : IValueConverter
         if (value is string hex && !string.IsNullOrWhiteSpace(hex))
         {
             var clean = hex.TrimStart('#');
+            if (clean.Length == 8 &&
+                byte.TryParse(clean[0..2], System.Globalization.NumberStyles.HexNumber, null, out var a) &&
+                byte.TryParse(clean[2..4], System.Globalization.NumberStyles.HexNumber, null, out var r8) &&
+                byte.TryParse(clean[4..6], System.Globalization.NumberStyles.HexNumber, null, out var g8) &&
+                byte.TryParse(clean[6..8], System.Globalization.NumberStyles.HexNumber, null, out var b8))
+            {
+                return new SolidColorBrush(Color.FromArgb(a, r8, g8, b8));
+            }
+
             if (clean.Length == 6 &&
                 byte.TryParse(clean[0..2], System.Globalization.NumberStyles.HexNumber, null, out var r) &&
                 byte.TryParse(clean[2..4], System.Globalization.NumberStyles.HexNumber, null, out var g) &&
@@ -69,7 +78,7 @@ public class HexToBrushConverter : IValueConverter
                 return new SolidColorBrush(Color.FromArgb(255, r, g, b));
             }
         }
-        return new SolidColorBrush(Color.FromArgb(255, 0, 120, 212));
+        return new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>

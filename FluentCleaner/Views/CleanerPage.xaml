@@ -88,13 +88,14 @@
                         <!-- Compact inline actions when Hero is collapsed -->
                         <Button x:Uid="BtnAnalyze"
                                 Command="{x:Bind ViewModel.AnalyzeCommand}"
-                                Style="{StaticResource AccentButtonStyle}"
+                                Style="{StaticResource ElectricAccentButtonStyle}"
                                 Height="28"
                                 Padding="12,0"
                                 Visibility="{x:Bind ViewModel.IsHeroExpanded, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <Button Content="{x:Bind ViewModel.CleanButtonLabel, Mode=OneWay}"
                                 Click="RunCleaner_Click"
                                 IsEnabled="{x:Bind ViewModel.CanRunCleaner, Mode=OneWay}"
+                                Style="{StaticResource DarkSecondaryButtonStyle}"
                                 Height="28"
                                 Padding="12,0"
                                 Visibility="{x:Bind ViewModel.IsHeroExpanded, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
@@ -117,20 +118,20 @@
 
                 <!-- Expanded Hero Body: Multi-Segment Vector Donut + 2x2 Macro-Category Cards + Primary Actions -->
                 <Grid Grid.Row="1"
-                      ColumnSpacing="16"
+                      ColumnSpacing="20"
                       Visibility="{x:Bind ViewModel.IsHeroExpanded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="156" />
+                        <ColumnDefinition Width="160" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="184" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Native Multi-Segment Vector Storage Donut -->
+                    <!-- Native Multi-Segment Vector Storage Donut Centerpiece -->
                     <StackPanel Grid.Column="0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Spacing="6">
-                        <Grid Width="96" Height="96" HorizontalAlignment="Center">
+                        <Grid Width="124" Height="124" HorizontalAlignment="Center">
                             <ctrl:StorageDonutControl
                                 WindowsBytes="{x:Bind ViewModel.WindowsBytes, Mode=OneWay}"
                                 BrowsersBytes="{x:Bind ViewModel.BrowsersBytes, Mode=OneWay}"
@@ -140,54 +141,55 @@
                                 IsBusy="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
                             <StackPanel VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
-                                        Spacing="1">
+                                        Spacing="2">
                                 <TextBlock Text="{x:Bind ViewModel.HeroSizeDisplay, Mode=OneWay}"
-                                           FontSize="16"
-                                           FontWeight="SemiBold"
+                                           FontSize="18"
+                                           FontWeight="Bold"
                                            HorizontalAlignment="Center"
                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                                 <TextBlock Text="Reclaimable"
-                                           FontSize="10"
+                                           FontSize="11"
                                            HorizontalAlignment="Center"
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           Visibility="{x:Bind ViewModel.TotalBytesScanned, Mode=OneWay, Converter={StaticResource CountToVisibilityConverter}}" />
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             </StackPanel>
                         </Grid>
                         <TextBlock Text="{x:Bind ViewModel.HeroSubtitle, Mode=OneWay}"
                                    FontSize="11"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                    HorizontalAlignment="Center"
                                    TextAlignment="Center"
                                    TextTrimming="CharacterEllipsis" />
                     </StackPanel>
 
-                    <!-- 2x2 Macro-Category Toggle Cards with Donut-Matched Color Legend Dots -->
+                    <!-- 2x2 Macro-Category Toggle Cards (Spacious, Zero-Truncation Layout) -->
                     <ItemsRepeater Grid.Column="1"
                                    ItemsSource="{x:Bind ViewModel.MacroCategories, Mode=OneWay}"
                                    VerticalAlignment="Center">
                         <ItemsRepeater.Layout>
-                            <UniformGridLayout MinItemWidth="190"
-                                               MinItemHeight="62"
-                                               MinColumnSpacing="8"
-                                               MinRowSpacing="8"
+                            <UniformGridLayout MinItemWidth="240"
+                                               MaximumRowsOrColumns="2"
+                                               MinItemHeight="64"
+                                               MinColumnSpacing="12"
+                                               MinRowSpacing="10"
                                                ItemsStretch="Fill" />
                         </ItemsRepeater.Layout>
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="vm:MacroCategoryCardViewModel">
-                                <Border Style="{StaticResource SubtleCardStyle}" Padding="12,8">
-                                    <Grid RowSpacing="6">
+                                <Border Style="{StaticResource SubtleCardStyle}" Padding="14,10">
+                                    <Grid RowSpacing="8">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <Grid Grid.Row="0" ColumnSpacing="10">
+                                        <Grid Grid.Row="0" ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
+                                            <!-- 36x36 Soft Tint Category Container -->
                                             <Border Grid.Column="0"
                                                     Width="36" Height="36"
                                                     CornerRadius="8"
@@ -200,16 +202,16 @@
                                                           VerticalAlignment="Center" />
                                             </Border>
 
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                                 <TextBlock Text="{x:Bind Title}"
-                                                           FontSize="12"
+                                                           FontSize="13"
                                                            FontWeight="SemiBold"
-                                                           TextTrimming="CharacterEllipsis" />
-                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <TextBlock Text="{x:Bind SizeText, Mode=OneWay}"
                                                                FontSize="11"
                                                                FontWeight="SemiBold"
-                                                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                                               Foreground="{x:Bind AccentHex, Converter={StaticResource HexToBrushConverter}}" />
                                                     <TextBlock Text="{x:Bind CountSummary, Mode=OneWay}"
                                                                FontSize="11"
                                                                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
@@ -244,27 +246,29 @@
                                 Spacing="8">
                         <Button x:Uid="BtnAnalyze"
                                 Command="{x:Bind ViewModel.AnalyzeCommand}"
-                                Style="{StaticResource AccentButtonStyle}"
+                                Style="{StaticResource ElectricAccentButtonStyle}"
                                 Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                 ToolTipService.ToolTip="Scan selected rules (F5)"
                                 HorizontalAlignment="Stretch"
-                                Height="34" />
+                                Height="36" />
 
                         <Button x:Uid="BtnCancel"
                                 Command="{x:Bind ViewModel.CancelCommand}"
                                 Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                 ToolTipService.ToolTip="Cancel active operation (Esc)"
                                 HorizontalAlignment="Stretch"
-                                Height="34" />
+                                Height="36" />
 
                         <Button Content="{x:Bind ViewModel.CleanButtonLabel, Mode=OneWay}"
                                 Click="RunCleaner_Click"
                                 IsEnabled="{x:Bind ViewModel.CanRunCleaner, Mode=OneWay}"
+                                Style="{StaticResource DarkSecondaryButtonStyle}"
                                 ToolTipService.ToolTip="Clean selected items (Ctrl+Shift+C)"
                                 HorizontalAlignment="Stretch"
                                 Height="34" />
 
                         <Button Command="{x:Bind ViewModel.SelectDefaultsCommand}"
+                                Style="{StaticResource DarkSecondaryButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Height="30"
                                 ToolTipService.ToolTip="Reset cleaner selection to recommended defaults">
@@ -427,18 +431,12 @@
                                                           Padding="0"
                                                           VerticalAlignment="Center" />
 
-                                                <Border Grid.Column="1"
-                                                        Width="28" Height="28"
-                                                        CornerRadius="6"
-                                                        Background="{x:Bind IconBackgroundHex, Converter={StaticResource HexToBrushConverter}}"
-                                                        Margin="4,0,8,0"
-                                                        VerticalAlignment="Center">
-                                                    <FontIcon Glyph="{x:Bind IconGlyph}"
-                                                              FontSize="14"
-                                                              Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
-                                                              HorizontalAlignment="Center"
-                                                              VerticalAlignment="Center" />
-                                                </Border>
+                                                <FontIcon Grid.Column="1"
+                                                          Glyph="{x:Bind IconGlyph}"
+                                                          FontSize="15"
+                                                          Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
+                                                          Margin="6,0,8,0"
+                                                          VerticalAlignment="Center" />
 
                                                 <TextBlock Grid.Column="2"
                                                            Text="{x:Bind Name}"
@@ -449,7 +447,7 @@
                                                            VerticalAlignment="Center" />
 
                                                 <Border Grid.Column="3"
-                                                        Background="{x:Bind IconBackgroundHex, Converter={StaticResource HexToBrushConverter}}"
+                                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                                         CornerRadius="10"
                                                         Padding="7,2"
                                                         Margin="6,0,0,0"
@@ -736,10 +734,10 @@
                                 Visibility="{x:Bind ViewModel.IsShowingReady, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Border Width="56" Height="56"
                                 CornerRadius="28"
-                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                Background="#1A0284C7"
                                 HorizontalAlignment="Center">
                             <FontIcon Glyph="&#xEA99;" FontSize="24"
-                                      Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                      Foreground="#38BDF8" />
                         </Border>
 
                         <StackPanel Spacing="4">
@@ -758,7 +756,7 @@
                                     HorizontalAlignment="Center">
                             <Button x:Uid="BtnAnalyze"
                                     Command="{x:Bind ViewModel.AnalyzeCommand}"
-                                    Style="{StaticResource AccentButtonStyle}"
+                                    Style="{StaticResource ElectricAccentButtonStyle}"
                                     MinWidth="140"
                                     Height="36" />
                         </StackPanel>

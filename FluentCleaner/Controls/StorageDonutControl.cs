@@ -15,8 +15,8 @@ namespace FluentCleaner.Controls;
 public sealed class StorageDonutControl : Grid
 {
     private readonly Canvas _canvas = new();
-    private const double RingSize = 96;
-    private const double StrokeWidth = 9;
+    private const double RingSize = 124;
+    private const double StrokeWidth = 10;
 
     public static readonly DependencyProperty WindowsBytesProperty =
         DependencyProperty.Register(nameof(WindowsBytes), typeof(long), typeof(StorageDonutControl),
@@ -93,12 +93,34 @@ public sealed class StorageDonutControl : Grid
         {
             double pct = Math.Clamp(Progress, 0, 100);
             if (pct > 0.5)
-                AddArc(center, radius, 0, pct * 3.599, Color.FromArgb(255, 0, 120, 212));
+                AddArc(center, radius, 0, pct * 3.599, Color.FromArgb(255, 2, 132, 199));
             return;
         }
 
         long total = WindowsBytes + BrowsersBytes + DevAiBytes + AppsBytes;
-        if (total <= 0) return;
+
+        // If not scanned yet, render the vibrant 4-category color preview ring matching mockup
+        if (total <= 0)
+        {
+            var previewSlices = new (double Share, Color Color)[]
+            {
+                (0.25, Color.FromArgb(255, 0,   120, 212)), // Windows Azure (#0078D4)
+                (0.35, Color.FromArgb(255, 56,  189, 248)), // Browsers Sky Blue (#38BDF8)
+                (0.20, Color.FromArgb(255, 16,  185, 129)), // Dev & AI Emerald (#10B981)
+                (0.20, Color.FromArgb(255, 139, 92,  246)), // Apps & Tools Purple (#8B5CF6)
+            };
+
+            double gapDegPreview = 5.0;
+            double currentAnglePreview = 0.0;
+            foreach (var (share, color) in previewSlices)
+            {
+                double sweep = share * 360.0;
+                double drawSweep = Math.Max(3.0, sweep - gapDegPreview);
+                AddArc(center, radius, currentAnglePreview + gapDegPreview / 2.0, drawSweep, color);
+                currentAnglePreview += sweep;
+            }
+            return;
+        }
 
         var slices = new (long Bytes, Color Color)[]
         {
