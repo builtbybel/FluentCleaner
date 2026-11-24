@@ -8,11 +8,8 @@ using Microsoft.UI.Xaml.Controls.Primitives;   // FlyoutShowOptions
 
 namespace FluentCleaner.Plugins.Apps;
 
-/// <summary>
-/// Uninstaller for store packages and classic programs. Windows reports what is installed;
-/// AppRules.ini only classifies how safe each one is to remove.
-/// </summary>
-public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
+//apps tab: uninstall store apps and programs
+public sealed partial class AppsPage : Page, ISearchablePage, IPageActions, IRefreshablePage
 {
     public AppsPageViewModel ViewModel { get; } = new();
 
@@ -30,11 +27,12 @@ public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
         };
     }
 
+    private void Rules_Click(object sender, RoutedEventArgs e) =>
+        PluginPaths.Reveal("Apps", "AppRules.ini");
+
     // --- removing ------------------------------------------------------------
 
-    // Uninstalling cannot be undone from here, so the names go on screen once more and the
-    // user confirms before anything is started. The dialog lists them rather than counting
-    // them: a wrong tick is much easier to spot in a name than in a number.
+    // can't be undone, so confirm first;list the names, a wrong tick is easier to spot than in a number
     private async void Remove_Click(object sender, RoutedEventArgs e)
     {
         var picked = ViewModel.Rows.Where(row => row.IsSelected && row.CanRemove)
@@ -48,8 +46,7 @@ public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
         if (await ConfirmAsync(picked)) await ViewModel.RemoveAsync();
     }
 
-    // One dialog for both ways in, so a right-click can never be the quieter route to the
-    // same irreversible thing.
+    // same dialog for button and right-click
     private async Task<bool> ConfirmAsync(List<string> picked)
     {
         var listed = string.Join("\n", picked.Take(15));
@@ -58,12 +55,12 @@ public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
-            // Without this a dialog built in code renders light while the app is dark.
+            // else it's light in dark mode
             RequestedTheme = ActualTheme,
             Title = picked.Count == 1
                 ? ResourceService.Fmt("St_AppsConfirmTitleOne", picked[0])
                 : ResourceService.Fmt("St_AppsConfirmTitle", picked.Count),
-            // A single app is already named in the title; listing it again reads as a stutter.
+            // one app is already in the title
             Content = picked.Count == 1
                 ? null
                 : new TextBlock { Text = listed, TextWrapping = TextWrapping.Wrap },
@@ -77,8 +74,8 @@ public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
 
     // --- row context menu ----------------------------------------------------
 
-    private MenuFlyout? _rowMenu;            // built once, reused by every row
-    private MenuFlyoutItem? _removeItem;     // disabled for anything Windows protects
+    private MenuFlyout? _rowMenu;            // one menu for all rows
+    private MenuFlyoutItem? _removeItem;     // disabled for protected apps
     private AppRowViewModel? _menuRow;
 
     private void Row_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -97,7 +94,7 @@ public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
     private MenuFlyout BuildRowMenu()
     {
         _removeItem = new MenuFlyoutItem { Text = ResourceService.Get("MenuUninstallOne/Text") };
-        // Same confirmation as the button: one app is still one uninstall that cannot be undone.
+        // same confirm as the button
         _removeItem.Click += async (_, _) =>
         {
             if (_menuRow is not { } row || !row.CanRemove) return;
@@ -114,8 +111,7 @@ public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
             ViewModel.StatusText = ResourceService.Get("St_AppsIdCopied");
         };
 
-        // Only what acts on the clicked row; select all and select none are list actions and
-        // stay in the [...] menu, where they already were.
+        // only row stuff here, select all/none is in the [...] menu
         var menu = new MenuFlyout();
         menu.Items.Add(_removeItem);
         menu.Items.Add(new MenuFlyoutSeparator());
@@ -131,21 +127,15 @@ public sealed partial class AppsPage : Page, ISearchablePage, IPageActions
 
     public void BuildActions(MenuFlyout flyout)
     {
-        void Add(string label, Action action)
-        {
-            var item = new MenuFlyoutItem { Text = label };
-            item.Click += (_, _) => action();
-            flyout.Items.Add(item);
-        }
-
-        Add(ResourceService.Get("St_MenuSelectAll"), () => SetAll(true));
-        Add(ResourceService.Get("St_MenuSelectNone"), () => SetAll(false));
+        flyout.AddItem(ResourceService.Get("St_MenuSelectAll"), () => SetAll(true));
+        flyout.AddItem(ResourceService.Get("St_MenuSelectNone"), () => SetAll(false));
         flyout.Items.Add(new MenuFlyoutSeparator());
-        Add(ResourceService.Get("St_MenuRefresh"), async () => await ViewModel.ScanAsync());
+        flyout.AddItem(ResourceService.Get("St_MenuRefresh"), Refresh);
     }
 
-    // Only what Windows lets go: anything protected stays unticked even when the whole list
-    // is picked, so the confirmation can never be handed an app that cannot be removed.
+    public async void Refresh() => await ViewModel.ScanAsync();
+
+    // protected apps never get ticked
     private void SetAll(bool selected)
     {
         foreach (var row in ViewModel.Rows)

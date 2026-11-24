@@ -3,54 +3,42 @@
     NavigationCacheMode="Required"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    Background="Transparent">
 
-    <Grid Padding="12,12,12,12">
+    <!-- solid background like Windows Terminal (TerminalBrush in App.xaml);transparent was hard to read -->
+    <Grid Background="{ThemeResource TerminalBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-        <!-- output + input in one card; suggestion popup stays inside -->
-        <Border CornerRadius="8"
-                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="1">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <ScrollViewer x:Name="OutputScroller"
+                      Grid.Row="0"
+                      Padding="16,12"
+                      VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Output}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{x:Bind}"
+                                   FontFamily="Cascadia Mono, Consolas"
+                                   FontSize="13"
+                                   TextWrapping="WrapWholeWords"
+                                   IsTextSelectionEnabled="True"
+                                   Margin="0,1" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
-                <ScrollViewer x:Name="OutputScroller"
-                              Grid.Row="0"
-                              Padding="16"
-                              VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.Output}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <TextBlock Text="{x:Bind}"
-                                           FontFamily="Cascadia Code, Consolas"
-                                           FontSize="12"
-                                           TextWrapping="WrapWholeWords"
-                                           IsTextSelectionEnabled="True"
-                                           Margin="0,1" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <AutoSuggestBox x:Name="InputBox"
-                                x:Uid="TerminalPlaceholder"
-                                Grid.Row="1"
-                                Margin="8,0,8,8"
-                                QueryIcon="Send"
-                                FontFamily="Cascadia Code, Consolas"
-                                FontSize="12"
-                                MaxSuggestionListHeight="200"
-                                IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
-                                TextChanged="Input_TextChanged"
-                                QuerySubmitted="Input_QuerySubmitted" />
-            </Grid>
-        </Border>
-
+        <AutoSuggestBox x:Uid="TerminalPlaceholder"
+                        Grid.Row="1"
+                        Margin="12,0,12,12"
+                        QueryIcon="Send"
+                        FontFamily="Cascadia Mono, Consolas"
+                        FontSize="13"
+                        MaxSuggestionListHeight="200"
+                        IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                        TextChanged="Input_TextChanged"
+                        QuerySubmitted="Input_QuerySubmitted" />
     </Grid>
 </Page>
