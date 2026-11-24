@@ -2,8 +2,11 @@ using FluentCleaner.Models;
 using FluentCleaner.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System.Collections.ObjectModel;
+using System.Security.Principal;
 using System.Text;
 
 namespace FluentCleaner.ViewModels;
@@ -25,6 +28,9 @@ public partial class CleanerPageViewModel : ObservableObject
     private bool _suppressMacroToggle;                      // prevents re-entrant loops when syncing macro-card switches
     private CancellationTokenSource? _cts;                  // lives only during an active scan or clean
     private string? _lastAddedExclusionRule;                // supports 1-click Undo Exclusion from InfoBar
+    private static readonly bool IsElevated =
+        new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+    public DispatcherQueue? UiDispatcher { get; set; }
 
     // --- Observable state ---------------------------------------------------
     [ObservableProperty] public partial ObservableCollection<CleanerCategoryViewModel> Categories { get; set; } = [];
@@ -61,6 +67,7 @@ public partial class CleanerPageViewModel : ObservableObject
     [ObservableProperty] public partial string          BannerTitle       { get; set; } = "";
     [ObservableProperty] public partial string          BannerMessage     { get; set; } = "";
     [ObservableProperty] public partial bool            CanUndoExclusion  { get; set; }
+    [ObservableProperty] public partial bool            CanOfferElevation { get; set; }
 
     public string ProgressLabel => $"{ScanProgress:0}%";
 
@@ -81,6 +88,7 @@ public partial class CleanerPageViewModel : ObservableObject
     public bool IsFilterSelected => FilterMode == "Selected";
     public bool IsFilterHasSize  => FilterMode == "HasSize";
     public bool IsFilterInUse    => FilterMode == "InUse";
+    public bool IsFilterDanger   => FilterMode == "Danger";
 
     // Hero summary display
     public string HeroSizeDisplay => TotalBytesScanned > 0
@@ -155,8 +163,13 @@ public partial class CleanerPageViewModel : ObservableObject
     public bool   SelectedEntryIsSafe       => !SelectedEntryHasWarning;
     public string SelectedEntryWarningText  => SelectedEntryVm?.Warning ?? "";
     public string SelectedEntryRawText      => SelectedEntryVm?.RawSourceText ?? "";
-    public bool   SelectedEntryIsInUse      => SelectedEntryVm?.IsProcessRunning ?? false;
-    public string SelectedEntryInUseText    => SelectedEntryVm?.RunningWarningText ?? "";
+    public bool   SelectedEntryIsInUse         => SelectedEntryVm?.IsProcessRunning ?? false;
+    public string SelectedEntryInUseText       => SelectedEntryVm?.RunningWarningText ?? "";
+    public ImageSource? SelectedEntryAppIcon   => SelectedResultLine?.AppIconBitmap;
+    public bool   SelectedEntryHasAppIcon      => SelectedResultLine?.HasAppIcon ?? false;
+    public string SelectedEntryIconGlyph       => SelectedResultLine?.IconGlyph ?? "\uE71D";
+    public string SelectedEntryAccentHex       => SelectedResultLine?.AccentColorHex ?? "#38BDF8";
+    public string SelectedEntryIconBgHex       => SelectedResultLine?.IconBackgroundHex ?? "#2238BDF8";
 
     // --- Constructor --------------------------------------------------------
 
@@ -199,10 +212,11 @@ public partial class CleanerPageViewModel : ObservableObject
         catch { }
     }
 
-    public void ShowBanner(InfoBarSeverity severity, string title, string message, string? undoExclusionRule = null)
+    public void ShowBanner(InfoBarSeverity severity, string title, string message, string? undoExclusionRule = null, bool offerElevation = false)
     {
         _lastAddedExclusionRule = undoExclusionRule;
         CanUndoExclusion        = !string.IsNullOrWhiteSpace(undoExclusionRule);
+        CanOfferElevation       = offerElevation && !IsElevated;
         BannerSeverity          = severity;
         BannerTitle             = title;
         BannerMessage           = message;
@@ -282,6 +296,11 @@ public partial class CleanerPageViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedEntryRawText));
         OnPropertyChanged(nameof(SelectedEntryIsInUse));
         OnPropertyChanged(nameof(SelectedEntryInUseText));
+        OnPropertyChanged(nameof(SelectedEntryAppIcon));
+        OnPropertyChanged(nameof(SelectedEntryHasAppIcon));
+        OnPropertyChanged(nameof(SelectedEntryIconGlyph));
+        OnPropertyChanged(nameof(SelectedEntryAccentHex));
+        OnPropertyChanged(nameof(SelectedEntryIconBgHex));
         RebuildDetailLines(value);
     }
 
@@ -302,6 +321,7 @@ public partial class CleanerPageViewModel : ObservableObject
         OnPropertyChanged(nameof(IsFilterSelected));
         OnPropertyChanged(nameof(IsFilterHasSize));
         OnPropertyChanged(nameof(IsFilterInUse));
+        OnPropertyChanged(nameof(IsFilterDanger));
         RebuildVisibleCategories();
         if (value != "All") SetAllExpanded(true);
         RefreshCategoryState();
@@ -402,6 +422,7 @@ public partial class CleanerPageViewModel : ObservableObject
         _loadedEntries.RemoveAll(e => e.IsCustom);
         _loadedEntries.AddRange(await _customService.LoadEnabledEntriesAsync());
         TotalInstalledRules = _loadedEntries.Count;
+        AppIconResolverService.InvalidateMissCache();
         RebuildVisibleCategories();
         RefreshFooterMetadata();
         RefreshCategoryState();
@@ -489,11 +510,37 @@ public partial class CleanerPageViewModel : ObservableObject
         try
         {
             var scannedBytes      = _lastScan.Sum(r => r.TotalBytes);
-            (removed, freedBytes) = await CleanResultsAsync(_lastScan.ToList(), new Progress<string>(msg => StatusText = msg), cts.Token);
-            var skippedBytes      = scannedBytes - freedBytes;
+            var freedBreakdown    = new List<(CleanerEntry Entry, int Files, int Regs, int RequestedItems, int CleanedCount, long Bytes)>();
+            (removed, freedBytes) = await CleanResultsWithBreakdownAsync(_lastScan.ToList(), freedBreakdown, new Progress<string>(msg => StatusText = msg), cts.Token);
+            var skippedBytes      = Math.Max(0, scannedBytes - freedBytes);
+            var requestedItems    = freedBreakdown.Sum(x => x.RequestedItems);
+            var skippedItems      = Math.Max(0, requestedItems - removed);
+            var hasSkipped        = skippedBytes > 0 || skippedItems > 0;
 
             _lastScan.Clear();
             ResultLines.Clear();
+            foreach (var item in freedBreakdown.Where(x => x.CleanedCount > 0 || x.Bytes > 0).OrderByDescending(x => x.Bytes).ThenBy(x => x.Entry.Name, StringComparer.OrdinalIgnoreCase))
+            {
+                var catName = CategoryResolver.TryMapLangSecRef(item.Entry).Name;
+                var macro   = ResolveMacroGroup(catName);
+                var st      = ResolveCategoryStyling(catName, macro);
+                var bmp     = TryGetCategoryBitmap(catName, st.AppIconSource);
+                int freedFiles = Math.Min(item.Files, item.CleanedCount);
+                int freedRegs  = Math.Max(0, Math.Min(item.Regs, item.CleanedCount - freedFiles));
+                ResultLines.Add(new ScanResultLine(
+                    item.Entry.Name,
+                    freedFiles,
+                    freedRegs,
+                    $"Freed {ScanResult.FormatBytes(item.Bytes)}",
+                    null,
+                    catName,
+                    bmp,
+                    st.Glyph,
+                    st.AccentHex,
+                    st.BackgroundHex,
+                    isFreedSummary: true,
+                    sortBytes: item.Bytes));
+            }
             ClearAllEntrySizes();
 
             TotalSize         = "";
@@ -505,11 +552,17 @@ public partial class CleanerPageViewModel : ObservableObject
                 ? ResourceService.Fmt("St_CleanDone", ScanResult.FormatBytes(freedBytes), ScanResult.FormatBytes(skippedBytes))
                 : ResourceService.Fmt("St_CleanDoneSimple", removed, ScanResult.FormatBytes(freedBytes));
 
+            var skippedNote = skippedBytes > 0
+                ? $" ({ScanResult.FormatBytes(skippedBytes)} skipped due to locks or permissions.)"
+                : skippedItems > 0
+                    ? $" ({skippedItems:N0} items skipped due to locks or permissions.)"
+                    : "";
+
             ShowBanner(
-                InfoBarSeverity.Success,
+                hasSkipped && !IsElevated ? InfoBarSeverity.Warning : InfoBarSeverity.Success,
                 "Clean Complete",
-                $"Removed {removed:N0} items and reclaimed {ScanResult.FormatBytes(freedBytes)}." +
-                (skippedBytes > 0 ? $" ({ScanResult.FormatBytes(skippedBytes)} skipped due to file locks.)" : ""));
+                $"Removed {removed:N0} items and reclaimed {ScanResult.FormatBytes(freedBytes)}.{skippedNote}",
+                offerElevation: hasSkipped);
         }
         catch (OperationCanceledException)
         {
@@ -731,7 +784,12 @@ public partial class CleanerPageViewModel : ObservableObject
 
     // --- Macro-category classification & icons ------------------------------
 
-    private static string ResolveMacroGroup(string categoryName) => categoryName switch
+    private static string NormalizeMacroLookupKey(string categoryName) =>
+        categoryName.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase)
+            ? categoryName["Dangerous ".Length..]
+            : categoryName;
+
+    private static string ResolveMacroGroup(string categoryName) => NormalizeMacroLookupKey(categoryName) switch
     {
         "Windows" or "Microsoft Store" => "Windows",
         "Google Chrome" or "Microsoft Edge" or "Firefox" or "Opera" or "Opera GX"
@@ -786,10 +844,10 @@ public partial class CleanerPageViewModel : ObservableObject
     private void SortResultLinesBySize(bool descending = true)
     {
         var sorted = descending
-            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? 0)
+            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? l.SortBytes)
                          .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
                          .ToList()
-            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? 0)
+            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? l.SortBytes)
                          .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
                          .ToList();
         for (int i = 0; i < sorted.Count; i++)
@@ -818,7 +876,9 @@ public partial class CleanerPageViewModel : ObservableObject
                                       .Select(c => c.Name)
                                       .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        var scanLookup = _lastScan.ToDictionary(r => r.Entry.Name, r => r, StringComparer.OrdinalIgnoreCase);
+        var scanLookup = new Dictionary<string, ScanResult>(StringComparer.OrdinalIgnoreCase);
+        foreach (var r in _lastScan)
+            scanLookup[r.Entry.Name] = r;
 
         Categories.Clear();
 
@@ -832,20 +892,40 @@ public partial class CleanerPageViewModel : ObservableObject
 
         foreach (var group in groups)
         {
-            var macroGroup = ResolveMacroGroup(group.Key.Name);
-            var style      = ResolveCategoryStyling(group.Key.Name, macroGroup);
-            var catVm      = new CleanerCategoryViewModel(
+            bool isDangerousCat = group.Key.Name.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase);
+            if (FilterMode == "Danger" && !isDangerousCat) continue;
+
+            var macroGroup  = ResolveMacroGroup(group.Key.Name);
+            var style       = ResolveCategoryStyling(group.Key.Name, macroGroup);
+            var initialIcon = AppIconResolverService.TryGetBundledBitmap(group.Key.Name, style.AppIconSource)
+                           ?? AppIconResolverService.TryGetCached(group.Key.Name);
+
+            var catVm = new CleanerCategoryViewModel(
                 group.Key.Name,
                 macroGroup,
                 style.Glyph,
                 style.AccentHex,
                 style.BackgroundHex,
-                style.AppIconSource,
-                style.HasAppIcon,
+                initialIcon,
                 SetCategoryBulkSelected)
             {
                 IsExpanded = expandedNames.Contains(group.Key.Name)
             };
+
+            var groupEntries = group.Select(x => x.Entry).ToList();
+            if (catVm.AppIconBitmap is null && UiDispatcher is { } dq)
+            {
+                string resolvedCatName = group.Key.Name;
+                _ = AppIconResolverService.TryResolveDynamicAppIconAsync(
+                    resolvedCatName,
+                    groupEntries,
+                    dq,
+                    img =>
+                    {
+                        catVm.AppIconBitmap = img;
+                        UpdateResultLineIcons(resolvedCatName, img);
+                    });
+            }
 
             foreach (var item in group.OrderBy(x => x.Entry.Name, StringComparer.OrdinalIgnoreCase))
             {
@@ -853,7 +933,7 @@ public partial class CleanerPageViewModel : ObservableObject
                 {
                     IsSelected = settings.HasSavedCleanerSelection
                         ? saved.Contains(item.Entry.Name)
-                        : item.Entry.Default
+                        : (!isDangerousCat && item.Entry.Default)
                 };
 
                 if (scanLookup.TryGetValue(item.Entry.Name, out var existingScan))
@@ -866,6 +946,7 @@ public partial class CleanerPageViewModel : ObservableObject
                 {
                     "Selected" => entryVm.IsSelected,
                     "HasSize"  => entryVm.ScannedBytes > 0,
+                    "Danger"   => isDangerousCat,
                     _          => true
                 };
                 if (!include) continue;
@@ -1003,6 +1084,29 @@ public partial class CleanerPageViewModel : ObservableObject
 
     // --- Engine -------------------------------------------------------------
 
+    private ImageSource? TryGetCategoryBitmap(string categoryName, string? bundledIconSource) =>
+        AppIconResolverService.TryGetCached(categoryName)
+        ?? Categories.FirstOrDefault(c => string.Equals(c.Name, categoryName, StringComparison.OrdinalIgnoreCase))?.AppIconBitmap
+        ?? AppIconResolverService.TryGetBundledBitmap(categoryName, bundledIconSource);
+
+    private void UpdateResultLineIcons(string categoryName, ImageSource img)
+    {
+        foreach (var line in ResultLines)
+        {
+            if (string.Equals(line.CategoryName, categoryName, StringComparison.OrdinalIgnoreCase)
+                && line.AppIconBitmap is null)
+            {
+                line.AppIconBitmap = img;
+            }
+        }
+        if (SelectedResultLine is { } selected
+            && string.Equals(selected.CategoryName, categoryName, StringComparison.OrdinalIgnoreCase))
+        {
+            OnPropertyChanged(nameof(SelectedEntryAppIcon));
+            OnPropertyChanged(nameof(SelectedEntryHasAppIcon));
+        }
+    }
+
     private async Task<ScanResult> AnalyzeEntryInternalAsync(CleanerEntry entry, IProgress<string> progress, bool keepDetailSelection, CancellationToken token = default)
     {
         RemoveScanResult(entry);
@@ -1015,8 +1119,21 @@ public partial class CleanerPageViewModel : ObservableObject
         if (result.FilesToDelete.Count > 0 || result.RegistryToDelete.Count > 0)
         {
             var catName = CategoryResolver.TryMapLangSecRef(entry).Name;
-            line = new ScanResultLine(entry.Name, result.FilesToDelete.Count, result.RegistryToDelete.Count,
-                                      result.FormattedSize, result, catName);
+            var macro   = ResolveMacroGroup(catName);
+            var st      = ResolveCategoryStyling(catName, macro);
+            var bmp     = TryGetCategoryBitmap(catName, st.AppIconSource);
+            line = new ScanResultLine(
+                entry.Name,
+                result.FilesToDelete.Count,
+                result.RegistryToDelete.Count,
+                result.FormattedSize,
+                result,
+                catName,
+                bmp,
+                st.Glyph,
+                st.AccentHex,
+                st.BackgroundHex,
+                sortBytes: result.TotalBytes);
             ResultLines.Add(line);
         }
 
@@ -1033,6 +1150,31 @@ public partial class CleanerPageViewModel : ObservableObject
 
         StatusText = ResourceService.Fmt("St_EntryScanningProgress", entryVm.Name);
         return await AnalyzeEntryInternalAsync(entryVm.Entry, progress, keepDetailSelection: false);
+    }
+
+    private async Task<(int count, long bytes)> CleanResultsWithBreakdownAsync(
+        List<ScanResult> results,
+        List<(CleanerEntry Entry, int Files, int Regs, int RequestedItems, int CleanedCount, long Bytes)> breakdown,
+        IProgress<string> progress,
+        CancellationToken token = default)
+    {
+        int  count = 0;
+        long bytes = 0;
+        int  done  = 0;
+        int  total = results.Count;
+        foreach (var result in results)
+        {
+            int files = result.FilesToDelete.Count;
+            int regs  = result.RegistryToDelete.Count;
+            var (c, b) = await _cleaner.CleanAsync(result, progress, token);
+            count += c;
+            bytes += b;
+            breakdown.Add((result.Entry, files, regs, files + regs, c, b));
+            ScanProgress = total > 0 ? ++done * 100.0 / total : 100;
+            RemoveScanResult(result);
+            UpdateEntrySize(result.Entry, 0, "");
+        }
+        return (count, bytes);
     }
 
     private async Task<(int count, long bytes)> CleanResultsAsync(List<ScanResult> results, IProgress<string> progress, CancellationToken token = default)
@@ -1127,13 +1269,16 @@ public partial class CleanerPageViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedCountSummary));
     }
 
+    private static bool IsDangerousName(CleanerEntry entry) =>
+        CategoryResolver.TryMapLangSecRef(entry).Name.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase);
+
     private void SetAllDefaults()
     {
         _suppressSave = true;
         foreach (var cat in Categories)
         {
             foreach (var entry in cat.Entries)
-                entry.IsSelected = entry.Entry.Default;
+                entry.IsSelected = !IsDangerousName(entry.Entry) && entry.Entry.Default;
             cat.RefreshStats();
         }
         _suppressSave = false;
@@ -1151,11 +1296,20 @@ public partial class CleanerPageViewModel : ObservableObject
     private void SaveSelection()
     {
         if (_suppressSave) return;
-        AppSettings.Instance.SelectedEntries = Categories
-            .SelectMany(c => c.Entries)
-            .Where(e => e.IsSelected)
-            .Select(e => e.Name)
-            .ToHashSet();
+        var visibleEntries = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+        foreach (var entry in Categories.SelectMany(c => c.Entries))
+            visibleEntries[entry.Name] = entry.IsSelected;
+
+        var baseline = AppSettings.Instance.HasSavedCleanerSelection
+            ? AppSettings.Instance.SelectedEntries
+            : _loadedEntries.Where(e => e.Default && !IsDangerousName(e)).Select(e => e.Name);
+
+        var hiddenSaved = baseline.Where(name => !visibleEntries.ContainsKey(name));
+        AppSettings.Instance.SelectedEntries = visibleEntries
+            .Where(kv => kv.Value)
+            .Select(kv => kv.Key)
+            .Concat(hiddenSaved)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         AppSettings.Instance.CleanerSelectionInitialized = true;
         AppSettings.Instance.Save();
     }
@@ -1166,7 +1320,7 @@ public partial class CleanerPageViewModel : ObservableObject
 
         var selected = AppSettings.Instance.HasSavedCleanerSelection
             ? AppSettings.Instance.SelectedEntries.ToHashSet(StringComparer.OrdinalIgnoreCase)
-            : _loadedEntries.Where(e => e.Default).Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            : _loadedEntries.Where(e => e.Default && !IsDangerousName(e)).Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         if (entry.IsSelected) selected.Add(entry.Name);
         else                  selected.Remove(entry.Name);
@@ -1235,11 +1389,54 @@ public partial class MacroCategoryCardViewModel : ObservableObject
     }
 }
 
-public record ScanResultLine(string AppName, int FileCount, int RegCount, string Size, ScanResult? Result = null, string CategoryName = "")
+public partial class ScanResultLine : ObservableObject
 {
-    private string Category => Result is null ? "" : CategoryResolver.TryMapLangSecRef(Result.Entry).Name;
-    public string Glyph => CleanerCategoryViewModel.GlyphFor(Category);
-    public Microsoft.UI.Xaml.Media.SolidColorBrush IconBrush => CleanerCategoryViewModel.BrushFor(Category);
+    public string AppName { get; }
+    public int FileCount { get; }
+    public int RegCount { get; }
+    public string Size { get; }
+    public ScanResult? Result { get; }
+    public string CategoryName { get; }
+    public string IconGlyph { get; }
+    public string AccentColorHex { get; }
+    public string IconBackgroundHex { get; }
+    public bool IsFreedSummary { get; }
+    public long SortBytes { get; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasAppIcon))]
+    public partial ImageSource? AppIconBitmap { get; set; }
+
+    public bool HasAppIcon => AppIconBitmap is not null;
+    public bool ShowChevron => Result is not null;
+
+    public ScanResultLine(
+        string appName,
+        int fileCount,
+        int regCount,
+        string size,
+        ScanResult? result = null,
+        string categoryName = "",
+        ImageSource? appIconBitmap = null,
+        string iconGlyph = "\uE71D",
+        string accentColorHex = "#38BDF8",
+        string iconBackgroundHex = "#2238BDF8",
+        bool isFreedSummary = false,
+        long sortBytes = 0)
+    {
+        AppName           = appName;
+        FileCount         = fileCount;
+        RegCount          = regCount;
+        Size              = size;
+        Result            = result;
+        CategoryName      = categoryName;
+        AppIconBitmap     = appIconBitmap;
+        IconGlyph         = iconGlyph;
+        AccentColorHex    = accentColorHex;
+        IconBackgroundHex = iconBackgroundHex;
+        IsFreedSummary    = isFreedSummary;
+        SortBytes         = sortBytes;
+    }
 
     public string CountSummary
     {

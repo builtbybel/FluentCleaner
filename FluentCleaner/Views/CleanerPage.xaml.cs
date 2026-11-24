@@ -25,6 +25,7 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
     public CleanerPage()
     {
         InitializeComponent();
+        ViewModel.UiDispatcher = DispatcherQueue;
 
         var savedWidth = AppSettings.Instance.CleanerPaneWidth;
         if (savedWidth >= 240 && savedWidth <= 650)
@@ -168,6 +169,43 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
     }
 
     // --- Inline Filter Pills ---------------------------------------------------
+
+    private async void ShareSelection_Click(object sender, RoutedEventArgs e)
+    {
+        await FluentSeedDialog.OpenAsync(ViewModel, XamlRoot, ActualTheme);
+    }
+
+    private void RestartElevated_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var exe = Environment.ProcessPath;
+            if (string.IsNullOrWhiteSpace(exe)) return;
+            using var proc = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName        = exe,
+                UseShellExecute = true,
+                Verb            = "runas"
+            });
+            if (proc is null) return;
+
+            try
+            {
+                if (((App)Application.Current).MainWindow is { } win)
+                {
+                    var size = win.AppWindow.Size;
+                    AppSettings.Instance.WindowWidth  = size.Width;
+                    AppSettings.Instance.WindowHeight = size.Height;
+                    AppSettings.Instance.Save();
+                }
+            }
+            catch { }
+
+            Application.Current.Exit();
+            Environment.Exit(0);
+        }
+        catch { }
+    }
 
     private void FilterPill_Click(object sender, RoutedEventArgs e)
     {

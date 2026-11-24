@@ -26,15 +26,15 @@ public static class CategoryStylingResolver
 
         var trimmed = categoryName.Trim();
 
-        // 1. Winapp3 "Dangerous ..." categories: inherit parent app icon or glyph and apply danger palette
+        // 1. Winapp3 "Dangerous ..." categories: inherit full resolved icon/glyph (including browser patterns) with danger palette
         if (trimmed.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase))
         {
             var subCategory = trimmed["Dangerous ".Length..].Trim();
-            var appStyle = ResolveAppStyle(subCategory, macroGroup) ?? ResolveFallback(macroGroup);
+            var subStyle = Resolve(subCategory, macroGroup);
             return new CategoryStyle(
-                appStyle.AppIconSource,
-                appStyle.HasAppIcon,
-                appStyle.Glyph,
+                subStyle.AppIconSource,
+                subStyle.HasAppIcon,
+                subStyle.Glyph,
                 DangerAccentHex,
                 DangerBgHex
             );
@@ -59,43 +59,41 @@ public static class CategoryStylingResolver
 
     private static CategoryStyle? ResolveAppStyle(string name, string macroGroup) => name switch
     {
-        // --- Authentic Application Assets (HasAppIcon = true) ---
+        // --- Authentic Application Assets (HasAppIcon = true + non-empty Fluent fallback glyph) ---
         "Google Chrome" or "Chrome" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/chrome.png", true, "", "#FBBF24", "#22FBBF24"),
+            new CategoryStyle("ms-appx:///Assets/Icons/chrome.png", true, "\uE774", "#FBBF24", "#22FBBF24"),
 
         "Microsoft Edge" or "Edge" or "Edge Chromium" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/edge.png", true, "", "#38BDF8", "#2238BDF8"),
+            new CategoryStyle("ms-appx:///Assets/Icons/edge.png", true, "\uE774", "#38BDF8", "#2238BDF8"),
 
         "Firefox" or "Mozilla Firefox" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/firefox.png", true, "", "#FB923C", "#22FB923C"),
+            new CategoryStyle("ms-appx:///Assets/Icons/firefox.png", true, "\uE774", "#FB923C", "#22FB923C"),
 
         "Brave" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/brave.png", true, "", "#FB542B", "#22FB542B"),
+            new CategoryStyle("ms-appx:///Assets/Icons/brave.png", true, "\uE774", "#FB542B", "#22FB542B"),
 
         "Opera" or "Opera GX" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/opera.png", true, "", "#FF1B2D", "#22FF1B2D"),
+            new CategoryStyle("ms-appx:///Assets/Icons/opera.png", true, "\uE774", "#FF1B2D", "#22FF1B2D"),
 
         "Vivaldi" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/vivaldi.png", true, "", "#EF3939", "#22EF3939"),
+            new CategoryStyle("ms-appx:///Assets/Icons/vivaldi.png", true, "\uE774", "#EF3939", "#22EF3939"),
 
         "Adobe" or "Adobe Acrobat" or "Adobe Reader" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/adobe.png", true, "", "#ED2224", "#22ED2224"),
+            new CategoryStyle("ms-appx:///Assets/Icons/adobe.png", true, "\uE71D", "#ED2224", "#22ED2224"),
 
         "Microsoft PowerToys" or "PowerToys" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/powertoys.png", true, "", "#0078D7", "#220078D7"),
+            new CategoryStyle("ms-appx:///Assets/Icons/powertoys.png", true, "\uE74C", "#0078D7", "#220078D7"),
 
         "Windows" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/windows.png", true, "", "#0078D4", "#220078D4"),
+            new CategoryStyle("ms-appx:///Assets/Icons/windows.png", true, "\uE770", "#0078D4", "#220078D4"),
 
         "Microsoft Store" or "Windows Store" or "Store" =>
-            new CategoryStyle("ms-appx:///Assets/Icons/store.png", true, "", "#0078D4", "#220078D4"),
+            new CategoryStyle("ms-appx:///Assets/Icons/store.png", true, "\uE71D", "#0078D4", "#220078D4"),
 
         // --- Guaranteed-Safe Universal Fluent Glyphs (HasAppIcon = false, zero missing '▯' boxes) ---
-        // Applications grid: \uE71D (guaranteed in all Windows 10 & 11 font versions)
         "Applications" =>
             new CategoryStyle(null, false, "\uE71D", "#C084FC", "#22C084FC"),
 
-        // Developer & AI: \uE943 ({})
         "Developer Tools" or "Developer & AI" =>
             new CategoryStyle(null, false, "\uE943", "#34D399", "#2234D399"),
 
@@ -105,19 +103,15 @@ public static class CategoryStylingResolver
         "Command Palette" =>
             new CategoryStyle(null, false, "\uE756", "#38BDF8", "#2238BDF8"),
 
-        // Tools & Utilities: \uE74C (Wrench & Screwdriver)
         "Utilities" =>
             new CategoryStyle(null, false, "\uE74C", "#4ADE80", "#224ADE80"),
 
-        // Games: \uE7FC (Gamepad Controller)
         "Games" =>
             new CategoryStyle(null, false, "\uE7FC", "#A78BFA", "#22A78BFA"),
 
-        // Multimedia: \uE8B9 (Film / Media)
         "Multimedia" or "iTunes" or "Spotify" =>
             new CategoryStyle(null, false, "\uE8B9", "#F472B6", "#22F472B6"),
 
-        // International, Languages, Long
         "Language Files" =>
             new CategoryStyle(null, false, "\uE12B", "#818CF8", "#22818CF8"),
 
@@ -132,7 +126,7 @@ public static class CategoryStylingResolver
 
     private static CategoryStyle ResolveFallback(string macroGroup) => macroGroup switch
     {
-        "Windows"  => new CategoryStyle("ms-appx:///Assets/Icons/windows.png", true, "\uE71D", "#60A5FA", "#2260A5FA"),
+        "Windows"  => new CategoryStyle("ms-appx:///Assets/Icons/windows.png", true, "\uE770", "#60A5FA", "#2260A5FA"),
         "Browsers" => new CategoryStyle(null, false, "\uE774", "#FBBF24", "#22FBBF24"),
         "DevAi"    => new CategoryStyle(null, false, "\uE943", "#34D399", "#2234D399"),
         _          => new CategoryStyle(null, false, "\uE71D", "#C084FC", "#22C084FC")

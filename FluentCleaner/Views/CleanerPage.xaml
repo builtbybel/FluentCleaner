@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-    <Grid RowSpacing="0">
+    <Grid RowSpacing="0" KeyboardAcceleratorPlacementMode="Hidden">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="F5" Invoked="AccelAnalyze_Invoked" />
             <KeyboardAccelerator Key="C" Modifiers="Control,Shift" Invoked="AccelClean_Invoked" />
@@ -261,14 +261,14 @@
                                 HorizontalAlignment="Stretch"
                                 Height="34" />
 
-                        <Button Command="{x:Bind ViewModel.SelectDefaultsCommand}"
+                        <Button Click="ShareSelection_Click"
                                 Style="{StaticResource DarkSecondaryButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Height="30"
-                                ToolTipService.ToolTip="Reset cleaner selection to recommended defaults">
+                                ToolTipService.ToolTip="Share or import a FluentSeed selection profile">
                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE734;" FontSize="12" />
-                                <TextBlock Text="Select Defaults" FontSize="12" />
+                                <FontIcon Glyph="&#xE72D;" FontSize="12" />
+                                <TextBlock Text="Share Selection" FontSize="12" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -290,6 +290,13 @@
                         Command="{x:Bind ViewModel.UndoLastExclusionCommand}"
                         Visibility="{x:Bind ViewModel.CanUndoExclusion, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </InfoBar.ActionButton>
+            <InfoBar.Content>
+                <Button Content="Restart as administrator"
+                        Click="RestartElevated_Click"
+                        Style="{StaticResource ElectricAccentButtonStyle}"
+                        Margin="0,0,0,10"
+                        Visibility="{x:Bind ViewModel.CanOfferElevation, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </InfoBar.Content>
         </InfoBar>
 
         <!-- =================================================================== -->
@@ -320,7 +327,7 @@
 
                         <TextBlock Text="Categories &amp; Rules"
                                    Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   Foreground="#F8FAFC"
+                                   Foreground="{ThemeResource EnterpriseTextPrimaryBrush}"
                                    VerticalAlignment="Center" />
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
@@ -349,36 +356,45 @@
                     </Grid>
 
                     <!-- Inline Filter Pills -->
-                    <StackPanel Grid.Row="1"
-                                Orientation="Horizontal"
-                                Spacing="6"
-                                Padding="12,0,12,8">
-                        <ToggleButton Content="All"
-                                      Tag="All"
-                                      IsChecked="{x:Bind ViewModel.IsFilterAll, Mode=OneWay}"
-                                      Click="FilterPill_Click"
-                                      Style="{StaticResource FilterPillStyle}" />
-                        <ToggleButton Content="Selected"
-                                      Tag="Selected"
-                                      IsChecked="{x:Bind ViewModel.IsFilterSelected, Mode=OneWay}"
-                                      Click="FilterPill_Click"
-                                      Style="{StaticResource FilterPillStyle}" />
-                        <ToggleButton Content="Has Size"
-                                      Tag="HasSize"
-                                      IsChecked="{x:Bind ViewModel.IsFilterHasSize, Mode=OneWay}"
-                                      Click="FilterPill_Click"
-                                      Style="{StaticResource FilterPillStyle}" />
-                        <ToggleButton Content="In Use"
-                                      Tag="InUse"
-                                      IsChecked="{x:Bind ViewModel.IsFilterInUse, Mode=OneWay}"
-                                      Click="FilterPill_Click"
-                                      Style="{StaticResource FilterPillStyle}" />
-                    </StackPanel>
+                    <ScrollViewer Grid.Row="1"
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Disabled"
+                                  HorizontalScrollMode="Auto"
+                                  Margin="12,0,12,8">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <ToggleButton Content="All"
+                                          Tag="All"
+                                          IsChecked="{x:Bind ViewModel.IsFilterAll, Mode=OneWay}"
+                                          Click="FilterPill_Click"
+                                          Style="{StaticResource FilterPillStyle}" />
+                            <ToggleButton Content="Selected"
+                                          Tag="Selected"
+                                          IsChecked="{x:Bind ViewModel.IsFilterSelected, Mode=OneWay}"
+                                          Click="FilterPill_Click"
+                                          Style="{StaticResource FilterPillStyle}" />
+                            <ToggleButton Content="Has Size"
+                                          Tag="HasSize"
+                                          IsChecked="{x:Bind ViewModel.IsFilterHasSize, Mode=OneWay}"
+                                          Click="FilterPill_Click"
+                                          Style="{StaticResource FilterPillStyle}" />
+                            <ToggleButton Content="In Use"
+                                          Tag="InUse"
+                                          IsChecked="{x:Bind ViewModel.IsFilterInUse, Mode=OneWay}"
+                                          Click="FilterPill_Click"
+                                          Style="{StaticResource FilterPillStyle}" />
+                            <ToggleButton Content="Winapp3"
+                                          Tag="Danger"
+                                          IsChecked="{x:Bind ViewModel.IsFilterDanger, Mode=OneWay}"
+                                          Click="FilterPill_Click"
+                                          Style="{StaticResource FilterPillStyle}"
+                                          ToolTipService.ToolTip="Show aggressive Winapp3 (Dangerous) categories" />
+                        </StackPanel>
+                    </ScrollViewer>
 
                     <Border Grid.Row="1"
                             VerticalAlignment="Bottom"
                             Height="1"
-                            Background="#1E293B" />
+                            Background="{ThemeResource EnterpriseBorderBrush}" />
 
                     <!-- Empty state -->
                     <StackPanel Grid.Row="2"
@@ -410,12 +426,34 @@
                                               Padding="0"
                                               CornerRadius="6">
                                         <Expander.Resources>
-                                            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#162032" />
-                                            <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#1E293B" />
-                                            <SolidColorBrush x:Key="ExpanderHeaderBackgroundPressed" Color="#0F172A" />
-                                            <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="#1E293B" />
-                                            <SolidColorBrush x:Key="ExpanderContentBackground" Color="#0D131F" />
-                                            <SolidColorBrush x:Key="ExpanderContentBorderBrush" Color="#1E293B" />
+                                            <ResourceDictionary>
+                                                <ResourceDictionary.ThemeDictionaries>
+                                                    <ResourceDictionary x:Key="Light">
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#F8FAFC" />
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#F1F5F9" />
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBackgroundPressed" Color="#E2E8F0" />
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="#E2E8F0" />
+                                                        <SolidColorBrush x:Key="ExpanderContentBackground" Color="#FFFFFF" />
+                                                        <SolidColorBrush x:Key="ExpanderContentBorderBrush" Color="#E2E8F0" />
+                                                    </ResourceDictionary>
+                                                    <ResourceDictionary x:Key="Dark">
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#162032" />
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#1E293B" />
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBackgroundPressed" Color="#0D131F" />
+                                                        <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="#1E293B" />
+                                                        <SolidColorBrush x:Key="ExpanderContentBackground" Color="#0D131F" />
+                                                        <SolidColorBrush x:Key="ExpanderContentBorderBrush" Color="#1E293B" />
+                                                    </ResourceDictionary>
+                                                    <ResourceDictionary x:Key="HighContrast">
+                                                        <StaticResource x:Key="ExpanderHeaderBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+                                                        <StaticResource x:Key="ExpanderHeaderBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+                                                        <StaticResource x:Key="ExpanderHeaderBackgroundPressed" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                                                        <StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+                                                        <StaticResource x:Key="ExpanderContentBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                                                        <StaticResource x:Key="ExpanderContentBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+                                                    </ResourceDictionary>
+                                                </ResourceDictionary.ThemeDictionaries>
+                                            </ResourceDictionary>
                                         </Expander.Resources>
                                         <Expander.Header>
                                             <Grid HorizontalAlignment="Stretch" ColumnSpacing="6">
@@ -435,21 +473,25 @@
                                                           Padding="0"
                                                           VerticalAlignment="Center" />
 
-                                                <!-- 28x28 Vibrant Container for Category Icon (Authentic App Icon + Fluent Fallback) -->
+                                                <!-- 28x28 Vibrant Container for Category Icon (Real App Logo + Colorful Fluent Icon) -->
                                                 <Border Grid.Column="1"
                                                         Width="28" Height="28"
                                                         CornerRadius="6"
                                                         Background="{x:Bind IconBackgroundHex, Converter={StaticResource HexToBrushConverter}}"
                                                         Margin="4,0,6,0"
                                                         VerticalAlignment="Center">
-                                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                        <!-- Mode A: Authentic Application Icon (High-DPI PNG) -->
-                                                        <Image Source="{x:Bind AppIconSource, Mode=OneWay}"
+                                                    <Grid Width="28" Height="28">
+                                                        <!-- Mode A: Strongly-typed ImageSource? (never fails x:Bind when null) -->
+                                                        <Image Source="{x:Bind AppIconBitmap, Mode=OneWay}"
                                                                Width="18" Height="18"
+                                                               Stretch="Uniform"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
                                                                Visibility="{x:Bind HasAppIcon, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                                                        <!-- Mode B: Universal Fluent FontIcon Fallback -->
-                                                        <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}"
+                                                        <!-- Mode B: Vibrant Colorful Fluent Icon for non-app categories -->
+                                                        <FontIcon Glyph="{x:Bind IconGlyph}"
+                                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                                   FontSize="14"
                                                                   Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
                                                                   Visibility="{x:Bind HasAppIcon, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}"
@@ -458,18 +500,30 @@
                                                     </Grid>
                                                 </Border>
 
-                                                <TextBlock Grid.Column="2"
-                                                           Text="{x:Bind Name}"
-                                                           FontSize="13"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="#F8FAFC"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           ToolTipService.ToolTip="{x:Bind Name}"
-                                                           VerticalAlignment="Center" />
+                                                <Grid Grid.Column="2" ColumnDefinitions="*,Auto" ColumnSpacing="6" VerticalAlignment="Center">
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{x:Bind DisplayName}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{ThemeResource EnterpriseTextPrimaryBrush}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               ToolTipService.ToolTip="{x:Bind Name}"
+                                                               VerticalAlignment="Center" />
+                                                    <Border Grid.Column="1"
+                                                            Background="#22F87171"
+                                                            BorderBrush="#88F87171"
+                                                            BorderThickness="1"
+                                                            CornerRadius="4"
+                                                            Padding="5,1"
+                                                            VerticalAlignment="Center"
+                                                            Visibility="{x:Bind IsDangerous, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        <TextBlock Text="Winapp3" FontSize="9" FontWeight="SemiBold" Foreground="{ThemeResource EnterpriseDangerTextBrush}" />
+                                                    </Border>
+                                                </Grid>
 
                                                 <Border Grid.Column="3"
-                                                        Background="#1E293B"
-                                                        BorderBrush="#334155"
+                                                        Background="{ThemeResource EnterpriseBadgeBgBrush}"
+                                                        BorderBrush="{ThemeResource EnterpriseBadgeBorderBrush}"
                                                         BorderThickness="1"
                                                         CornerRadius="10"
                                                         Padding="8,2"
@@ -478,7 +532,7 @@
                                                     <TextBlock Text="{x:Bind HeaderBadgeText, Mode=OneWay}"
                                                                FontSize="10"
                                                                FontWeight="SemiBold"
-                                                               Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
+                                                               Foreground="{ThemeResource EnterpriseTextPrimaryBrush}"
                                                                VerticalAlignment="Center" />
                                                 </Border>
 
@@ -488,7 +542,7 @@
                                                         Width="24" Height="24" Padding="0"
                                                         Background="Transparent"
                                                         BorderThickness="0">
-                                                    <FontIcon Glyph="&#xE712;" FontSize="12" Foreground="#94A3B8" />
+                                                    <FontIcon Glyph="&#xE712;" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                                     <Button.Flyout>
                                                         <MenuFlyout Placement="Bottom">
                                                             <MenuFlyoutItem x:Uid="MenuSelectAll" Command="{x:Bind SelectAllCommand}" />
@@ -526,7 +580,7 @@
                                                                           Foreground="OrangeRed"
                                                                           VerticalAlignment="Center"
                                                                           Visibility="{x:Bind HasWarning, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                                                <TextBlock Text="{x:Bind Name}"
+                                                                <TextBlock Text="{x:Bind ShortName}"
                                                                            FontSize="12"
                                                                            TextTrimming="CharacterEllipsis"
                                                                            ToolTipService.ToolTip="{x:Bind Name}" />
@@ -540,8 +594,8 @@
                                                                         VerticalAlignment="Center"
                                                                         ToolTipService.ToolTip="{x:Bind RunningWarningText, Mode=OneWay}">
                                                                     <StackPanel Orientation="Horizontal" Spacing="3">
-                                                                        <FontIcon Glyph="&#xE7BA;" FontSize="9" Foreground="#FFFFB900" VerticalAlignment="Center" />
-                                                                        <TextBlock Text="In Use" FontSize="10" Foreground="#FFFFB900" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                                        <FontIcon Glyph="&#xE7BA;" FontSize="9" Foreground="{ThemeResource EnterpriseWarningTextBrush}" VerticalAlignment="Center" />
+                                                                        <TextBlock Text="In Use" FontSize="10" Foreground="{ThemeResource EnterpriseWarningTextBrush}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                                                     </StackPanel>
                                                                 </Border>
                                                             </StackPanel>
@@ -637,7 +691,7 @@
                         <TextBlock Text="Scan Results"
                                    Grid.Column="0"
                                    Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   Foreground="#F8FAFC"
+                                   Foreground="{ThemeResource EnterpriseTextPrimaryBrush}"
                                    VerticalAlignment="Center" />
 
                         <StackPanel Grid.Column="1"
@@ -702,15 +756,39 @@
                         </Button>
 
                         <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Spacing="1">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="{x:Bind ViewModel.SelectedAppName, Mode=OneWay}"
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                <Border Grid.Column="0"
+                                        Width="24" Height="24"
+                                        CornerRadius="5"
+                                        Background="{x:Bind ViewModel.SelectedEntryIconBgHex, Mode=OneWay, Converter={StaticResource HexToBrushConverter}}"
+                                        VerticalAlignment="Center">
+                                    <Grid Width="24" Height="24">
+                                        <Image Source="{x:Bind ViewModel.SelectedEntryAppIcon, Mode=OneWay}"
+                                               Width="16" Height="16"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Visibility="{x:Bind ViewModel.SelectedEntryHasAppIcon, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <FontIcon Glyph="{x:Bind ViewModel.SelectedEntryIconGlyph, Mode=OneWay}"
+                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontSize="12"
+                                                  Foreground="{x:Bind ViewModel.SelectedEntryAccentHex, Mode=OneWay, Converter={StaticResource HexToBrushConverter}}"
+                                                  Visibility="{x:Bind ViewModel.SelectedEntryHasAppIcon, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" />
+                                    </Grid>
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{x:Bind ViewModel.SelectedAppName, Mode=OneWay}"
                                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                                           VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{x:Bind ViewModel.SelectedEntrySizeText, Mode=OneWay}"
+                                <TextBlock Grid.Column="2"
+                                           Text="{x:Bind ViewModel.SelectedEntrySizeText, Mode=OneWay}"
                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                            FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
-                            </StackPanel>
+                            </Grid>
                             <TextBlock Text="{x:Bind ViewModel.SelectedEntryCountSummary, Mode=OneWay}"
                                        FontSize="11"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -736,8 +814,8 @@
                                     CornerRadius="12"
                                     Padding="10,3">
                                 <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE7BA;" FontSize="10" Foreground="#FFFFB900" VerticalAlignment="Center" />
-                                    <TextBlock Text="Review Warning" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFB900" />
+                                    <FontIcon Glyph="&#xE7BA;" FontSize="10" Foreground="{ThemeResource EnterpriseWarningTextBrush}" VerticalAlignment="Center" />
+                                    <TextBlock Text="Review Warning" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource EnterpriseWarningTextBrush}" />
                                 </StackPanel>
                             </Border>
                         </StackPanel>
@@ -816,12 +894,36 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="{x:Bind AppName}"
+                                    <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                        <Border Grid.Column="0"
+                                                Width="22" Height="22"
+                                                CornerRadius="5"
+                                                Background="{x:Bind IconBackgroundHex, Converter={StaticResource HexToBrushConverter}}"
+                                                VerticalAlignment="Center">
+                                            <Grid Width="22" Height="22">
+                                                <Image Source="{x:Bind AppIconBitmap, Mode=OneWay}"
+                                                       Width="14" Height="14"
+                                                       Stretch="Uniform"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Visibility="{x:Bind HasAppIcon, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                <FontIcon Glyph="{x:Bind IconGlyph}"
+                                                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                          FontSize="11"
+                                                          Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
+                                                          Visibility="{x:Bind HasAppIcon, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{x:Bind AppName}"
                                                    FontSize="13"
                                                    FontWeight="SemiBold"
+                                                   VerticalAlignment="Center"
                                                    TextTrimming="CharacterEllipsis" />
-                                        <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                        <Border Grid.Column="2"
+                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                                 CornerRadius="4"
                                                 Padding="6,1"
                                                 VerticalAlignment="Center"
@@ -830,7 +932,7 @@
                                                        FontSize="10"
                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                         </Border>
-                                    </StackPanel>
+                                    </Grid>
 
                                     <TextBlock Grid.Row="1" Grid.Column="0"
                                                Text="{x:Bind CountSummary}"
@@ -848,6 +950,7 @@
                                                    VerticalAlignment="Center" />
                                         <FontIcon Glyph="&#xE76C;" FontSize="10"
                                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                  Visibility="{x:Bind ShowChevron, Converter={StaticResource BoolToVisibilityConverter}}"
                                                   VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Grid>
