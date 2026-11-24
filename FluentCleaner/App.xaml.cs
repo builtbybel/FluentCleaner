@@ -1,4 +1,4 @@
-using FluentCleaner.Services;
+﻿using FluentCleaner.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -76,6 +76,10 @@ public partial class App : Application
         ApplyTheme(AppSettings.Instance.Theme);
         MainWindow.Activate();
 
+        // window first, then read Winapp2 in the background while the first tab gets built.
+        // before Activate the window came up 66 ms later
+        ViewModels.CleanerPageViewModel.StartPreload();
+
         //Remember size for next launch
         MainWindow.Closed += (_, _) =>
         {
@@ -139,7 +143,7 @@ public partial class App : Application
         };
     }
 
-    // Mica by default, acrylic if the user set it via terminal. No Settings UI for this on purpose
+    // Settings > Appearance > Backdrop. Mica is default, Mica Alt is more colorful
     public void ApplyBackdrop(string? backdrop)
     {
         if (MainWindow is null) return;
@@ -147,6 +151,7 @@ public partial class App : Application
         MainWindow.SystemBackdrop = backdrop?.ToLowerInvariant() switch
         {
             "acrylic" => new DesktopAcrylicBackdrop(),
+            "micaalt" => new MicaBackdrop { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt },
             _         => new MicaBackdrop()
         };
     }

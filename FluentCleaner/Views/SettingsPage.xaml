@@ -7,7 +7,8 @@
     xmlns:settings="using:FluentCleaner.Views.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    Background="Transparent">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -16,12 +17,6 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
-            <!-- Update banner;shown only when a newer version is available -->
-            <InfoBar x:Name="UpdateBar"
-                     IsOpen="False"
-                     IsClosable="True"
-                     Severity="Error" />
-
             <!-- Donation banner -->
             <InfoBar x:Name="DonationBanner"
                      x:Uid="DonationBar"
@@ -52,7 +47,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Local settings navigation;no nested Frame or back stack needed. -->
+        <!-- Section navigation -->
         <ListView x:Name="SettingsNav"
                   Margin="12,20,0,20"
                   Padding="0"
@@ -110,6 +105,30 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock x:Uid="LblBackdrop" FontWeight="SemiBold" />
+                        <TextBlock x:Uid="LblBackdropDesc"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Style="{StaticResource CaptionTextBlockStyle}" />
+                    </StackPanel>
+                    <ComboBox Grid.Column="1"
+                              SelectedIndex="{x:Bind ViewModel.BackdropIndex, Mode=TwoWay}"
+                              MinWidth="140" VerticalAlignment="Center">
+                        <ComboBoxItem x:Uid="BackdropMica" />
+                        <ComboBoxItem x:Uid="BackdropMicaAlt" />
+                        <ComboBoxItem x:Uid="BackdropAcrylic" />
+                    </ComboBox>
+                </Grid>
+            </Border>
+
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="18,14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
                         <TextBlock x:Uid="LblLanguage" FontWeight="SemiBold" />
                         <TextBlock x:Uid="LblLanguageDesc"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -119,8 +138,14 @@
                               ItemsSource="{x:Bind ViewModel.Languages}"
                               SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}"
                               SelectionChanged="LangCombo_SelectionChanged"
-                              DisplayMemberPath="Name"
-                              MinWidth="140" VerticalAlignment="Center" />
+                              MinWidth="140" VerticalAlignment="Center">
+                        <!-- x:Bind, not DisplayMemberPath: that needs reflection, which AOT lacks. -->
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:LanguageOption">
+                                <TextBlock Text="{x:Bind Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </Grid>
             </Border>
 
@@ -136,13 +161,12 @@
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 </StackPanel>
 
-                <!-- ProgressRing shown while downloading -->
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="6">
                         <ProgressRing Width="14" Height="14"
                                       IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
                                       Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
                                           Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="Downloading…" FontSize="11"
+                        <TextBlock x:Uid="LblDownloading" FontSize="11"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    VerticalAlignment="Center"
                                    Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
@@ -164,7 +188,6 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- Icon -->
                             <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
                                     Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                     Margin="0,0,12,0" VerticalAlignment="Center">
@@ -172,15 +195,13 @@
                                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
                             </Border>
 
-                            <!-- Name + info -->
                             <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
-                                <TextBlock x:Uid="LblWinapp2" FontWeight="SemiBold" />
+                                <TextBlock x:Name="Winapp2Label" x:Uid="LblWinapp2" FontWeight="SemiBold" />
                                 <TextBlock Text="{x:Bind ViewModel.Winapp2Info, Mode=OneWay}"
                                            FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             </StackPanel>
 
-                            <!-- Update button -->
                             <Button x:Uid="BtnUpdateWinapp2"
                                     Grid.Column="2"
                                     Command="{x:Bind ViewModel.DownloadLatestCommand}"
@@ -188,15 +209,14 @@
                                     Visibility="{x:Bind ViewModel.EnableWinapp2, Mode=OneWay,
                                         Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                            <!-- Toggle -->
                             <ToggleSwitch Grid.Column="3"
                                           IsOn="{x:Bind ViewModel.EnableWinapp2, Mode=TwoWay}"
+                                          AutomationProperties.LabeledBy="{x:Bind Winapp2Label}"
                                           OnContent="" OffContent=""
                                           MinWidth="0" Margin="0,0,-8,0"
                                           VerticalAlignment="Center" />
                         </Grid>
 
-                        <!-- Divider -->
                         <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" />
 
                         <!-- ── Winapp3 row ── -->
@@ -208,17 +228,15 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- Icon -->
                             <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
                                     Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                     Margin="0,0,12,0" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE7BA;" FontSize="18" Foreground="OrangeRed" />
                             </Border>
 
-                            <!-- Name + info -->
                             <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock x:Uid="LblWinapp3" FontWeight="SemiBold" />
+                                    <TextBlock x:Name="Winapp3Label" x:Uid="LblWinapp3" FontWeight="SemiBold" />
                                     <Border Background="OrangeRed" CornerRadius="3"
                                             Padding="4,1" VerticalAlignment="Center">
                                         <TextBlock x:Uid="LblWinapp3Tag" FontSize="10"
@@ -228,7 +246,7 @@
                                 <TextBlock FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                     <Run Text="{x:Bind ViewModel.Winapp3Info, Mode=OneWay}" />
-                                    <Run Text="  —  more aggressive entries, use at your own risk."
+                                    <Run x:Name="RunWinapp3Desc"
                                          Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                                 </TextBlock>
                             </StackPanel>
@@ -246,73 +264,14 @@
                                             Converter={StaticResource BoolToVisibilityConverter}}" />
                             </StackPanel>
 
-                            <!-- Toggle -->
                             <ToggleSwitch Grid.Column="3"
                                           IsOn="{x:Bind ViewModel.EnableWinapp3, Mode=TwoWay}"
+                                          AutomationProperties.LabeledBy="{x:Bind Winapp3Label}"
                                           OnContent="" OffContent=""
                                           MinWidth="0" Margin="0,0,-8,0"
                                           VerticalAlignment="Center" />
                         </Grid>
 
-                        <!-- Divider -->
-                        <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" />
-
-                        <!-- Winappx row -->
-                        <Grid MinHeight="72" Padding="18,0" ColumnSpacing="14">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="112" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Icon -->
-                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
-                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
-                                    Margin="0,0,12,0" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE977;" FontSize="18"
-                                          Foreground="{ThemeResource SystemFillColorSuccessBrush}" />
-                            </Border>
-
-                            <!-- Name + info -->
-                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock x:Uid="LblWinappx" FontWeight="SemiBold" />
-                                    <Border Background="{ThemeResource SystemFillColorSuccessBrush}"
-                                            CornerRadius="3" Padding="4,1" VerticalAlignment="Center">
-                                        <TextBlock x:Uid="LblWinappxTag" FontSize="10" Foreground="White" />
-                                    </Border>
-                                </StackPanel>
-                                <TextBlock FontSize="11"
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}">
-                                    <Run Text="{x:Bind ViewModel.WinappxInfo, Mode=OneWay}" />
-                                    <Run Text="  —  AppX / bloatware entries for the terminal debloater."
-                                         Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-                                </TextBlock>
-                            </StackPanel>
-
-                            <!-- Download (not yet on disk) / Update (already downloaded) -->
-                            <StackPanel Grid.Column="2" Orientation="Horizontal"
-                                        HorizontalAlignment="Right" Spacing="6">
-                                <Button x:Uid="BtnDownloadWinappx"
-                                        Command="{x:Bind ViewModel.DownloadWinappxCommand}"
-                                        Visibility="{x:Bind ViewModel.WinappxNotAvailable, Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibilityConverter}}" />
-                                <Button x:Uid="BtnUpdateWinappx"
-                                        Command="{x:Bind ViewModel.DownloadWinappxCommand}"
-                                        Visibility="{x:Bind ViewModel.WinappxAvailable, Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibilityConverter}}" />
-                            </StackPanel>
-
-                            <!-- Toggle -->
-                            <ToggleSwitch Grid.Column="3"
-                                          IsOn="{x:Bind ViewModel.EnableWinappx, Mode=TwoWay}"
-                                          OnContent="" OffContent=""
-                                          MinWidth="0" Margin="0,0,-8,0"
-                                          VerticalAlignment="Center" />
-                        </Grid>
-
-                        <!-- Divider -->
                         <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" />
 
                         <!--Status / error text -->
@@ -323,7 +282,6 @@
                                    Visibility="{x:Bind ViewModel.StatusText, Mode=OneWay,
                                        Converter={StaticResource NullToVisibilityConverter}}" />
 
-                        <!-- Divider -->
                         <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}"
                                    Visibility="{x:Bind ViewModel.StatusText, Mode=OneWay,
                                        Converter={StaticResource NullToVisibilityConverter}}" />
@@ -336,7 +294,6 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- Icon -->
                             <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
                                     Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                     Margin="0,0,12,0" VerticalAlignment="Center">
@@ -380,7 +337,7 @@
 
             </StackPanel>
 
-            <!-- Cookie Manager stays encapsulated;the settings shell only hosts it. -->
+            <!-- Cookie manager (own control) -->
             <settings:CookiesSettingsView x:Name="CookiesSection" Visibility="Collapsed" />
 
             <!-- Post-clean tasks  -->
@@ -393,7 +350,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="2">
-                        <TextBlock x:Uid="SectionPostClean" FontSize="13" FontWeight="SemiBold" />
+                        <TextBlock x:Name="PostCleanLabel" x:Uid="SectionPostClean" FontSize="13" FontWeight="SemiBold" />
                         <TextBlock x:Uid="LblPostCleanDesc"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -401,6 +358,7 @@
 
                     <ToggleSwitch Grid.Column="1"
                                   IsOn="{x:Bind ViewModel.PostCleanEnabled, Mode=TwoWay}"
+                                  AutomationProperties.LabeledBy="{x:Bind PostCleanLabel}"
                                   OnContent=""
                                   OffContent=""
                                   MinWidth="0"
@@ -408,7 +366,7 @@
                                   VerticalAlignment="Center" />
                 </Grid>
 
-                <!-- just Plain code-style text box;user types one command per line -->
+                <!-- One command per line. -->
                 <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
@@ -420,15 +378,15 @@
                              FontSize="12"
                              MinHeight="116"
                              IsEnabled="{x:Bind ViewModel.PostCleanEnabled, Mode=OneWay}"
+                             AutomationProperties.LabeledBy="{x:Bind PostCleanLabel}"
                              TextWrapping="NoWrap"
                              BorderThickness="0"
                              Padding="12"
                              PlaceholderText="cleanmgr.exe /sageset:1&#x0a;cleanmgr.exe /sagerun:1&#x0a;start &quot;&quot; ms-settings:storagesense&#x0a;taskkill /f /im explorer.exe &amp; start explorer.exe" />
                 </Border>
             </StackPanel>
-            <!-- End post-clean tasks -->
 
-            <!-- Global exclusions — paths that are never cleaned, no matter what the database says -->
+            <!-- Global exclusions -->
             <StackPanel x:Name="ExclusionsSection" Spacing="10" Visibility="Collapsed">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -437,7 +395,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="2">
-                        <TextBlock x:Uid="SectionExclusions" FontSize="13" FontWeight="SemiBold" />
+                        <TextBlock x:Name="ExclusionsLabel" x:Uid="SectionExclusions" FontSize="13" FontWeight="SemiBold" />
                         <TextBlock x:Uid="LblExclusionsDesc"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -445,6 +403,7 @@
 
                     <ToggleSwitch Grid.Column="1"
                                   IsOn="{x:Bind ViewModel.GlobalExclusionsEnabled, Mode=TwoWay}"
+                                  AutomationProperties.LabeledBy="{x:Bind ExclusionsLabel}"
                                   OnContent=""
                                   OffContent=""
                                   MinWidth="0"
@@ -463,16 +422,16 @@
                              FontSize="12"
                              MinHeight="116"
                              IsEnabled="{x:Bind ViewModel.GlobalExclusionsEnabled, Mode=OneWay}"
+                             AutomationProperties.LabeledBy="{x:Bind ExclusionsLabel}"
                              TextWrapping="NoWrap"
                              BorderThickness="0"
                              Padding="12"
                              PlaceholderText="PATH|%LocalAppData%\Microsoft\Edge*\User Data\*\Service Worker&#x0a;FILE|%AppData%\Mozilla\Firefox\Profiles\|places.sqlite&#x0a;REG|HKCU\Software\Example" />
                 </Border>
 
-                <!-- Built-in protected paths;always skipped, read-only, just so the user can see them -->
+                <!-- Built-in protected paths, read-only. -->
                 <HyperlinkButton x:Uid="LnkProtectedPaths" Padding="0" Click="ProtectedPaths_Click" />
             </StackPanel>
-            <!-- End global exclusions -->
 
             <!-- History -->
             <StackPanel x:Name="HistorySection" Spacing="10" Visibility="Collapsed">
@@ -492,13 +451,14 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                <TextBlock x:Uid="LblCleanHistory" FontSize="13" />
+                                <TextBlock x:Name="CleanHistoryLabel" x:Uid="LblCleanHistory" FontSize="13" />
                                 <TextBlock Text="{x:Bind ViewModel.HistorySummary, Mode=OneWay}"
                                            FontSize="12"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             </StackPanel>
                             <ToggleSwitch Grid.Column="1"
                                           IsOn="{x:Bind ViewModel.CleanHistoryEnabled, Mode=TwoWay}"
+                                          AutomationProperties.LabeledBy="{x:Bind CleanHistoryLabel}"
                                           OnContent="" OffContent="" MinWidth="0" />
                         </Grid>
                     </Expander.Header>
@@ -739,8 +699,7 @@
             <StackPanel x:Name="AboutSection" Spacing="10" Visibility="Collapsed">
                 <TextBlock x:Uid="SectionAbout" FontSize="13" FontWeight="SemiBold" />
 
-            <Expander x:Name="AboutExpander"
-                      HorizontalAlignment="Stretch"
+            <Expander HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Stretch">
                 <Expander.Header>
                     <Grid Margin="4,10">
@@ -750,7 +709,6 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Icon -->
                         <Border Grid.Column="0"
                                 Width="36" Height="36"
                                 CornerRadius="8"
@@ -758,7 +716,6 @@
                             <Image Source="ms-appx:///Assets/AppIconAlt.ico" Stretch="UniformToFill" />
                         </Border>
 
-                        <!-- Name + copyright -->
                         <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                 <TextBlock Text="FluentCleaner" FontWeight="SemiBold" />
@@ -775,14 +732,13 @@
                             <TextBlock x:Uid="LblCopyright"
                                        FontSize="11"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <!-- Translator credit: filled per language in Resources.resw, hidden when empty -->
+                            <!-- Translator credit, hidden when the language leaves it empty. -->
                             <TextBlock x:Name="lblTranslatorCredit"
                                        FontSize="11"
                                        Visibility="Collapsed"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                         </StackPanel>
 
-                        <!-- Version -->
                         <TextBlock Grid.Column="2"
                                    Text="{x:Bind AppVersion}"
                                    FontSize="13"

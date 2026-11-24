@@ -6,13 +6,12 @@ namespace FluentCleaner.Views;
 
 public sealed partial class NewCleanerDialog : ContentDialog
 {
-    public string EntryName    => nameBox.Text.Trim();
-    public string EntryContent => contentBox.Text.Trim();
-    public bool   IsScript     => btnPs1.IsChecked == true;
+    private readonly CustomEntryVm? _existing;
 
     public NewCleanerDialog(CustomEntryVm? existing)
     {
         InitializeComponent();
+        _existing = existing;
 
         // Localized strings that can't use x:Uid (ContentDialog buttons) or share plain code-side keys.
         PrimaryButtonText       = ResourceService.Get("DlgNewCleanerSave");
@@ -21,7 +20,6 @@ public sealed partial class NewCleanerDialog : ContentDialog
         nameBox.PlaceholderText = ResourceService.Get("DlgNewCleanerNamePlaceholder");
         promptBox.PlaceholderText = ResourceService.Get("DlgNewCleanerAiPlaceholder");
         contentLabel.Text       = ResourceService.Get("DlgNewCleanerContentLabel");
-        testBtn.Content         = ResourceService.Get("DlgNewCleanerTest");
 
         Title = existing is null ? ResourceService.Get("DlgNewCleanerTitleNew") : ResourceService.Fmt("DlgNewCleanerTitleEdit", existing.Name);
 
@@ -31,38 +29,43 @@ public sealed partial class NewCleanerDialog : ContentDialog
 
         if (existing is not null)
         {
-            nameBox.Text     = existing.Name;
-            btnIni.IsChecked = !existing.IsScript;
-            btnPs1.IsChecked =  existing.IsScript;
-            btnIni.IsEnabled = false;
-            btnPs1.IsEnabled = false;
-
+            nameBox.Text = existing.Name;
             try { contentBox.Text = File.ReadAllText(existing.FilePath); } catch { }
         }
-
-        //Test only makes sense for ini;scripts can't be dry-run
-        testBtn.Visibility = IsScript ? Visibility.Collapsed : Visibility.Visible;
+        Input_Changed(this, null);
     }
 
     // --- Event handlers --------------------------------------------------
-    private void TypeBtn_Click(object sender, RoutedEventArgs e)
+
+    // Save needs a name and some content; any old error goes away once you type.
+    private void Input_Changed(object sender, TextChangedEventArgs? e)
     {
-        var isPs1 = sender == btnPs1;
-        btnIni.IsChecked = !isPs1;
-        btnPs1.IsChecked =  isPs1;
-        testBtn.Visibility = isPs1 ? Visibility.Collapsed : Visibility.Visible;
+        IsPrimaryButtonEnabled = nameBox.Text.Trim().Length > 0 && contentBox.Text.Trim().Length > 0;
+        errorText.Visibility   = Visibility.Collapsed;
     }
 
-    // opens the current draft in Rule Lab so it can be dry-run before saving
-    private void TestBtn_Click(object sender, RoutedEventArgs e)
+    // Saves here rather than in the page, so a failed save keeps the dialog open with the text in it.
+    private void Save_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        if (IsScript) return;
-        var name = EntryName.Length > 0 ? EntryName : "Draft";
-        new RuleLabWindow(name, contentBox.Text, RequestedTheme).Activate();
+        var name = nameBox.Text.Trim();
+        string? error = null;
+        try
+        {
+            if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                error = ResourceService.Get("DlgNewCleanerNameInvalid");
+            else if (!CustomEntryService.Save(_existing?.FilePath, name, contentBox.Text.Trim()))
+                error = ResourceService.Get("DlgNewCleanerNameTaken");
+        }
+        catch (Exception ex) { error = ResourceService.Fmt("DlgNewCleanerSaveFailed", ex.Message); }
+
+        if (error is null) return;
+        args.Cancel          = true;
+        errorText.Text       = error;
+        errorText.Visibility = Visibility.Visible;
     }
 
     private void TemplateBtn_Click(object sender, RoutedEventArgs e) =>
-        contentBox.Text = IsScript ? Ps1Template : IniTemplate;
+        contentBox.Text = IniTemplate;
 
     private async void GenerateBtn_Click(object sender, RoutedEventArgs e)
     {
@@ -71,9 +74,7 @@ public sealed partial class NewCleanerDialog : ContentDialog
 
         generateBtn.IsEnabled = false;
         generateBtn.Content   = ResourceService.Get("DlgNewCleanerGenerating");
-        contentBox.Text       = IsScript
-            ? await AiExplainer.GenerateScriptAsync(desc)
-            : await AiExplainer.GenerateEntryAsync(desc);
+        contentBox.Text       = await AiExplainer.GenerateEntryAsync(desc);
         generateBtn.IsEnabled = true;
         generateBtn.Content   = ResourceService.Get("DlgNewCleanerGenerateBtn");
     }
@@ -102,8 +103,4 @@ public sealed partial class NewCleanerDialog : ContentDialog
         "; Hives: HKCU  HKLM  HKCR  HKU  HKCC\n" +
         "RegKey1=HKCU\\Software\\MyApp\\RecentFiles\n" +
         "RegKey2=HKCU\\Software\\MyApp\\Settings|LastSession";
-
-    private const string Ps1Template =
-        "# PowerShell Cleanup Script\n" +
-        "# Paste your PowerShell code here.\n";
 }

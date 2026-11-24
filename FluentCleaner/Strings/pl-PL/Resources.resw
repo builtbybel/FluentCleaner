@@ -20,36 +20,25 @@
   <data name="NavTerminal.Content"><value>Terminal</value></data>
   <data name="NavCustom.Content"><value>Użytkownika</value></data>
   <data name="SearchBox.PlaceholderText"><value>Szukaj</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Strony akcji</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Podoba Ci się FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Jeżeli ta aplikacja oszczędza Ci czas, rozważ wsparcie jej tworzenia.</value></data>
   <data name="Donation_OtherAmount"><value>Inna kwota…</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Daj gwiazdkę na GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Może później</value></data>
-  <data name="St_NoActions"><value>Brak akcji na tej stronie</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>Winapp2.ini wczytuja się automatycznie przy uruchomieniu.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Kategorie akcji</value></data>
   <data name="MenuSelectAll.Text"><value>Zaznacz wszystko</value></data>
   <data name="MenuSelectNone.Text"><value>Odznacz wszystko</value></data>
   <data name="MenuSelectDefaults.Text"><value>Zaznacz domyślne</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Analiza kategorii</value></data>
-  <data name="MenuCleanCategory.Text"><value>Czyszczenie kategorii</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Akcje dla ustawień</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Analiza</value></data>
-  <data name="MenuCleanEntry.Text"><value>Wyczyść</value></data>
   <data name="MenuExplainEntry.Text"><value>Wyjaśnij z AI</value></data>
   <data name="MenuShowSource.Text"><value>Pokaż źródło</value></data>
   <data name="LblAIDesc.Text"><value>Right-click any entry on the Cleaner page → Explain with AI. Choose Groq, OpenAI or Anthropic. Nothing is sent without your explicit action. Requires your own API key.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Once your key is saved, the Custom Cleaners page also unlocks AI — describe what to clean and it generates a ready-to-use Winapp2 entry or PowerShell script for you.</value></data>
-  <data name="ResultsHeader.Text"><value>Wyniki</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Powrót do wyników</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Usuń teraz te pliki</value></data>
   <data name="MenuExcludeFile.Text"><value>Wyklucz plik</value></data>
   <data name="MenuExcludeFolder.Text"><value>Wyklucz folder</value></data>
@@ -61,15 +50,9 @@
   <data name="St_MenuSelectAll"><value>Zaznacz wszystko</value></data>
   <data name="St_MenuSelectNone"><value>Odznacz wszystko</value></data>
   <data name="St_MenuSelectDefaults"><value>Zaznacz domyślne</value></data>
-  <data name="St_MenuExpandAll"><value>Rozwiń wszystko</value></data>
-  <data name="St_MenuCollapseAll"><value>Zwiń wszystko</value></data>
-  <data name="St_MenuSortDesc"><value>Sortuj wg wielkości ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Sortuj wg wielkości ↑</value></data>
   <data name="St_MenuRefresh"><value>Odśwież</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>Pliki</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Rejestr</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>plików</value></data>
@@ -92,7 +75,6 @@
   <data name="DlgSourceCopy"><value>Kopiuj</value></data>
   <data name="DlgSourceReport"><value>Zgłoś ustawienie</value></data>
   <data name="DlgSourceDryRun"><value>Przetestuj</value></data>
-  <data name="RuleLabTitle"><value>Edytor zasad — {0}</value></data>
   <data name="DlgSourceHint"><value>Edytuj zasady, następnie kliknij Przetestuj, aby podejrzeć wyniki.</value></data>
   <data name="DlgSourceScanning"><value>Skanowanie…</value></data>
   <data name="DlgSourceNoEntry"><value>No valid entry — needs a Detect and a FileKey.</value></data>
@@ -110,8 +92,6 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Wczytuję Winapp2.ini...</value></data>
-  <data name="St_SearchFound"><value>Pokazuje {0} pasujących ustawień.</value></data>
-  <data name="St_SearchNone"><value>Brak pasujących ustawień.</value></data>
   <data name="St_ParsingDatabases"><value>Parsowanie baz danych...</value></data>
   <data name="St_AnalysisReady"><value>Analiza gotowa - znaleziono — {0} aplikacji w {1} ustawieniach.</value></data>
   <data name="St_NothingSelected"><value>Nic nie zaznaczono.</value></data>
@@ -145,9 +125,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>Wsparcie FluentCleaner</value></data>
   <data name="DonationBar.Message"><value>Wybierz kwotę i walutę dla PayPal, lub wesprzyj projekt przez Ko-fi. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Wesprzyj projekt</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Wpłać przez PayPal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Wpłać przez Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Wygląd</value></data>
   <data name="LblTheme.Text"><value>Motyw aplikacji</value></data>
   <data name="LblThemeDesc.Text"><value>Wybierz jak FluentCleaner ma wyglądać na Twoim urządzeniu.</value></data>
@@ -170,8 +147,6 @@
   <data name="BtnBrowse.Content"><value>Przeglądaj…</value></data>
   <data name="BtnApplyPath.Content"><value>Zastosuj</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Usuń bazę użytkownika</value></data>
-  <data name="RestartBar.Title"><value>Wymagany restart</value></data>
-  <data name="RestartBar.Message"><value>Proszę zrestartować FluentCleaner, aby wczytać zaktualizowane bazy.</value></data>
   <data name="SectionPostClean.Text"><value>Zadanie po czyszczeniu</value></data>
   <data name="LblPostCleanDesc.Text"><value>Jedno polecenie na linię — uruchamiane sekwencyjne po zakończeniu każdego czyszczenia.</value></data>
   <data name="SectionExclusions.Text"><value>Wykluczenia globalne</value></data>
@@ -220,18 +195,11 @@
   <data name="St_HistoryItems"><value>{0} pozycji</value></data>
   <data name="St_FileNotFound"><value>Nie znaleziono pliku: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Zapisano ścieżkę użytkownika.</value></data>
-  <data name="St_Download"><value>Pobierz</value></data>
   <data name="St_Downloading"><value>Pobieranie {0}…</value></data>
   <data name="St_Downloaded"><value>{0} pobrane — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>Błąd pobierania: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Nie pobrano</value></data>
   <data name="St_FileInfo"><value>{0} wpisów  •  {1} KB  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Dostępna aktualizacja — {0}</value></data>
-  <data name="St_UpdateMessage"><value>Nowa wersja FluentCleaner jest gotowan do pobrania.</value></data>
-  <data name="St_UpToDate"><value>Aplikacja aktualna</value></data>
-  <data name="St_UpToDateMessage"><value>Wersja {0} jest najnowsza.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Dostępna aktualizacja — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Szukaj aktualizacji</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Podaj najpierw klucz API.</value></data>
   <data name="St_ApiKeyTesting"><value>Testujęg…</value></data>
   <data name="Scheduler_FreqDaily"><value>Codziennie</value></data>
@@ -259,28 +227,16 @@
   <data name="MenuEditEntry.Text"><value>Edytuj</value></data>
   <data name="MenuDeleteEntry.Text"><value>Usuń</value></data>
   <data name="MenuTestEntry.Text"><value>Przetestuj w Edytorze zasad</value></data>
-  <data name="MenuRunEntry.Text"><value>Uruchom</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Nowy Cleaner</value></data>
-  <data name="BtnRunScript.Text"><value>uruchom</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} cleaner · {1} włączone</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} skrypt(ów)</value></data>
-  <data name="St_CustomMenuNew"><value>Nowe zasady użytkownika</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Otwórz folder użytkownika</value></data>
-  <data name="St_CustomMenuReddit"><value>Zapytaj na Reddit</value></data>
-  <data name="St_CustomMenuNeowin"><value>Forum Neowin</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Udostępnij na GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Toggle failed: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Usunąć "{0}"?</value></data>
   <data name="St_CustomDeleteMessage"><value>This removes the custom cleaner permanently.</value></data>
   <data name="St_CustomDeleteConfirm"><value>usuń</value></data>
   <data name="St_CustomDeleteCancel"><value>Anuluj</value></data>
-  <data name="St_CustomRunning"><value>Uruchamiam {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: could not read script — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: zakończono poprawnie.</value></data>
-  <data name="St_CustomFailed"><value>{0}: błędnie (kod {1}).</value></data>
   <data name="St_CustomEntryNone"><value>no entries parsed</value></data>
   <data name="St_CustomEntryOne"><value>1 wpis · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} wpsiów · {1}</value></data>
@@ -290,15 +246,12 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Zapisz</value></data>
   <data name="DlgNewCleanerCancel"><value>Anuluj</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Wpis Winapp2 (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>Skrypt PowerShell (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Nazwa</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>Mój cleaner</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generuj z AI - opisz co chcesz wyczyścić (wyniki mogą być różne)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Generuj</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Generuj</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Zwartość</value></data>
-  <data name="DlgNewCleanerTest"><value>Testuj w Edytorze zasad</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Wczytaj szablon</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Nowy cleaner użytkownika</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Edytor — {0}</value></data>
@@ -307,7 +260,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>No API key configured for the selected provider. Go to Settings → AI explanations to add one.</value></data>
   <data name="AI_ApiError"><value>{0} błąd API: {1}</value></data>
   <data name="AI_NoResponse"><value>Nie otrzymano odpowiedzi.</value></data>
   <data name="AI_NetworkError"><value>Could not reach {0}: {1}</value></data>
@@ -325,8 +277,6 @@
   <data name="CLI_NoDrives"><value>  Nie znaleziono dysków.</value></data>
   <data name="CLI_ThemeUsage"><value>  Użycie: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  Motym ustawiony na '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Użycie: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  Przełączanie okien ustawione na '{0}'.</value></data>
   <data name="CLI_NoMatch"><value>  No entries matching '{0}'.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} pozycji · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Gotowe — {0} pozycji usuniętych · {1} zolnionych.</value></data>
@@ -364,4 +314,9 @@
   <data name="Cookies_TextFiles"><value>Pliki tekstowe</value></data>
   <data name="Cleaning_CleanedCookies"><value>Wyczyszczono {0} ciasteczek: {1}</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Ustawienia i nie tylko</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Ustawienia</value></data>
+  <data name="AppMenuDonate.Text"><value>Wesprzyj projekt</value></data>
+  <data name="AppMenuUpdates.Text"><value>Szukaj aktualizacji</value></data>
 </root>

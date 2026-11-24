@@ -9,9 +9,8 @@ using WinRT.Interop;
 
 namespace FluentCleaner.Views;
 
-public sealed partial class SettingsPage : Page, IPageActions
+public sealed partial class SettingsPage : Page
 {
-    private static readonly HttpClient _http = new();
     private static readonly Dictionary<string, int[]> DonationAmounts = new()
     {
         ["EUR"] = [5, 10, 25, 50, 100, 200, 500, 1000],
@@ -22,7 +21,6 @@ public sealed partial class SettingsPage : Page, IPageActions
         ["AUD"] = [10, 20, 50, 100, 200, 400, 750, 1500],
         ["JPY"] = [500, 1000, 2500, 5000, 10000, 20000, 50000, 100000, 150000]
     };
-    private string? _updateVersion; // null = up to date, string = new version available
     private bool _pageReady; // true when the page has finished loading and is ready to handle events
     private string _groqKey = "";
     private string _openAiKey = "";
@@ -37,6 +35,9 @@ public sealed partial class SettingsPage : Page, IPageActions
     public SettingsPage()
     {
         InitializeComponent();
+
+        // x:Uid doesn't reach a Run.
+        RunWinapp3Desc.Text = ResourceService.Get("LblWinapp3Desc/Text");
         _navigationReady = true;
         ShowSettingsSection("General");
         InitializeDonationOptions();
@@ -45,7 +46,6 @@ public sealed partial class SettingsPage : Page, IPageActions
         {
             _pageReady = false;
             ViewModel.Refresh();                                    //sync database toggles, paths, theme
-            await CheckForUpdateAsync(silent: true);               //silent update check; banner only if newer version found
             LoadAiSettings();
             await LoadSchedulerSettingsAsync();
 
@@ -59,8 +59,7 @@ public sealed partial class SettingsPage : Page, IPageActions
         };
     }
 
-    // The settings page has one local navigator and one content surface. Keeping the
-    // sections here avoids a second Frame/router while still killing the long one-pager.
+    // Sections are shown and hidden in place; no second Frame needed.
     private void SettingsNav_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_navigationReady || SettingsNav.SelectedItem is not ListViewItem item) return;
@@ -86,6 +85,10 @@ public sealed partial class SettingsPage : Page, IPageActions
     {
         if (!_pageReady) return;
 
+        // Only one ContentDialog at a time; the choice is saved either way.
+        if (Microsoft.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot)
+                .Any(p => p.Child is ContentDialog)) return;
+
         var result = await new ContentDialog
         {
             XamlRoot          = XamlRoot,
@@ -101,60 +104,6 @@ public sealed partial class SettingsPage : Page, IPageActions
         {
             Process.Start(Environment.ProcessPath!);
             Application.Current.Exit();
-        }
-    }
-
-    // --- Update check --------------------------------------------
-
-    private async Task CheckForUpdateAsync(bool silent = false)
-    {
-        try
-        {
-            var latest = (await _http.GetStringAsync(AppLinks.VersionCheck))
-                .Trim();
-
-            _updateVersion = Version.TryParse(latest, out var remote) &&
-                             Version.TryParse(AppInfo.VersionString, out var local) &&
-                             remote > local ? latest : null;
-        }
-        catch { _updateVersion = null; }
-
-        if (_updateVersion is not null)
-        {
-            UpdateBar.Severity = InfoBarSeverity.Error;
-            UpdateBar.Title   = ResourceService.Fmt("St_UpdateAvailable", _updateVersion);
-            UpdateBar.Message = ResourceService.Get("St_UpdateMessage");
-
-            var btn = new Button { Content = ResourceService.Get("St_Download"), Style = (Style)Application.Current.Resources["AccentButtonStyle"] };
-            btn.Click += async (_, _) => await AppLinks.OpenAsync(AppLinks.Releases);
-            UpdateBar.ActionButton = btn;
-            UpdateBar.IsOpen = true;
-        }
-        else if (!silent)
-        {
-            UpdateBar.Severity     = InfoBarSeverity.Success;
-            UpdateBar.Title        = ResourceService.Get("St_UpToDate");
-            UpdateBar.Message      = ResourceService.Fmt("St_UpToDateMessage", AppInfo.DisplayVersion);
-            UpdateBar.ActionButton = null;
-            UpdateBar.IsOpen       = true;
-        }
-    }
-
-    // --- IPageActions --------------------------------------------
-
-    public void BuildActions(MenuFlyout flyout)
-    {
-        if (_updateVersion is not null)
-        {
-            var updateItem = new MenuFlyoutItem { Text = ResourceService.Fmt("St_MenuUpdate", _updateVersion) };
-            updateItem.Click += async (_, _) => await AppLinks.OpenAsync(AppLinks.Releases);
-            flyout.Items.Add(updateItem);
-        }
-        else
-        {
-            var checkItem = new MenuFlyoutItem { Text = ResourceService.Get("St_MenuCheckUpdates") };
-            checkItem.Click += async (_, _) => await CheckForUpdateAsync();
-            flyout.Items.Add(checkItem);
         }
     }
 
@@ -187,7 +136,6 @@ public sealed partial class SettingsPage : Page, IPageActions
 
     private async void Link_GitHub(object sender, RoutedEventArgs e)   => await AppLinks.OpenAsync(AppLinks.GitHub);
     private async void Link_Issues(object sender, RoutedEventArgs e)   => await AppLinks.OpenAsync(AppLinks.Issues);
-    private async void Link_Releases(object sender, RoutedEventArgs e) => await AppLinks.OpenAsync(AppLinks.Releases);
     private async void Link_Donate(object sender, RoutedEventArgs e)
     {
         if (DonationAmountBox.SelectedItem is string)
@@ -398,7 +346,7 @@ public sealed partial class SettingsPage : Page, IPageActions
             ViewModel.CustomPath = file.Path;
     }
 
-    // Shows the built-in protected paths read-only;these are always skipped, no matter what the database says
+    // Built-in protected paths, always skipped whatever the database says.
     private async void ProtectedPaths_Click(object sender, RoutedEventArgs e)
     {
         var list = new TextBox

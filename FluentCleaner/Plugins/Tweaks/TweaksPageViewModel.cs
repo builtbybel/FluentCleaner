@@ -7,13 +7,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FluentCleaner.Plugins.Tweaks;
 
-/// <summary>
-/// The tweak catalogue page. Holds no rules of its own: everything comes from the .ini files in
-/// Rules\, read by <see cref="TweakDatabase"/>, so a new rule pack never needs a new build.
-/// </summary>
+//tweaks page;no rules in here, everything comes from the ini files (TweakDatabase)
 public sealed partial class TweaksPageViewModel : ObservableObject
 {
-    /// <summary>Every rule that fits this PC, filtered by <see cref="SearchText"/>.</summary>
+    //rules for this PC, filtered
     public ObservableCollection<TweakRowViewModel> Rows { get; } = [];
 
     private List<TweakRowViewModel> _all = [];
@@ -36,13 +33,13 @@ public sealed partial class TweaksPageViewModel : ObservableObject
 
     // --- filters -------------------------------------------------------------
 
-    /// <summary>"All categories" plus every category the loaded rule files actually use.</summary>
+    //"All categories" + the ones used in the ini files
     public ObservableCollection<string> Categories { get; } = [];
 
-    /// <summary>The first entry of <see cref="Categories"/>; selecting it filters nothing.</summary>
+    //first entry = no filter
     public string AllCategories { get; } = ResourceService.Get("St_TweaksAllCategories");
 
-    // Nullable: a bound ComboBox hands back null the moment its item source is emptied.
+    // nullable, the ComboBox sets null when its list gets cleared
     [ObservableProperty] public partial string? CategoryFilter { get; set; } = "";
     [ObservableProperty] public partial bool OnlyOpen { get; set; }
 
@@ -51,10 +48,10 @@ public sealed partial class TweaksPageViewModel : ObservableObject
 
     // --- selection -----------------------------------------------------------
 
-    /// <summary>The row whose description the detail strip shows. Null hides the strip.</summary>
+    //row shown in the detail strip;null = strip hidden
     [ObservableProperty] public partial TweakRowViewModel? SelectedRow { get; set; }
 
-    // NullToVisibilityConverter only answers for strings, so the strip binds to this instead.
+    // NullToVisibilityConverter only works with strings
     public bool HasSelection => SelectedRow is not null;
 
     partial void OnSelectedRowChanged(TweakRowViewModel? value) => OnPropertyChanged(nameof(HasSelection));
@@ -66,10 +63,10 @@ public sealed partial class TweaksPageViewModel : ObservableObject
     [ObservableProperty] public partial string InfoMessage { get; set; } = "";
     [ObservableProperty] public partial InfoBarSeverity InfoSeverity { get; set; } = InfoBarSeverity.Informational;
 
-    /// <summary>A rule asked for it, so the strip offers the restart instead of just naming it.</summary>
+    //a rule wants explorer restarted, show the button
     [ObservableProperty] public partial bool NeedsExplorerRestart { get; set; }
 
-    /// <summary>Ends Explorer and waits for it to come back; values read only at startup take effect.</summary>
+    //restarts explorer so the new values get read
     [RelayCommand]
     private void RestartExplorer()
     {
@@ -80,7 +77,7 @@ public sealed partial class TweaksPageViewModel : ObservableObject
 
     // --- scanning ------------------------------------------------------------
 
-    /// <summary>Reads the catalogue and checks every rule against this PC.</summary>
+    //loads the rules and checks each one
     [RelayCommand]
     public async Task ScanAsync()
     {
@@ -88,8 +85,7 @@ public sealed partial class TweaksPageViewModel : ObservableObject
         IsBusy = true;
         Progress = 0;
 
-        // try/finally, not just a happy path: anything that throws in here would otherwise
-        // leave IsBusy stuck true, and both buttons disabled for the rest of the session.
+        // finally, or a throw leaves IsBusy stuck and the buttons dead
         try
         {
             var progress = new Progress<WorkProgress>(p =>
@@ -98,7 +94,7 @@ public sealed partial class TweaksPageViewModel : ObservableObject
                 Progress = p.Total == 0 ? 0 : p.Completed * 100.0 / p.Total;
             });
 
-            // Scanner reads the registry for every rule; off the UI thread so the list stays alive.
+            // background thread, UI stays responsive
             var findings = await Task.Run(() => Scanner.Scan(progress));
 
             _all = findings.Select(f => new TweakRowViewModel(f)).ToList();
@@ -121,12 +117,8 @@ public sealed partial class TweaksPageViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Rebuilds the category list from what the rule files actually contain, so a pack's own
-    /// category appears without the app knowing its name. Only touched when the set really
-    /// changed: clearing a bound collection makes the ComboBox push a null selection through,
-    /// and a second scan would then wipe the filter it is supposed to keep.
-    /// </summary>
+    //categories from the ini files.
+    //only cleared if they changed;Clear() makes the ComboBox set null and the filter would be lost
     private void RefreshCategories()
     {
         var wanted = new List<string> { AllCategories };
@@ -143,14 +135,11 @@ public sealed partial class TweaksPageViewModel : ObservableObject
 
     private bool CanApply => !IsBusy;
 
-    /// <summary>Writes every ticked rule, or puts it back when it is already applied.</summary>
+    //applies the ticked rules, already applied ones get reset
     [RelayCommand(CanExecute = nameof(CanApply))]
     public Task ApplyAsync() => RunAsync(_all.Select(row => row.Finding).ToList());
 
-    /// <summary>
-    /// Runs one rule straight from its context menu, whatever is ticked elsewhere. The tick
-    /// is set on a copy of the list, so a right-click never changes the user's selection.
-    /// </summary>
+    //one rule from the context menu;the tick is restored afterwards
     public async Task ApplyOneAsync(TweakRowViewModel row)
     {
         var finding = row.Finding;
@@ -160,9 +149,7 @@ public sealed partial class TweaksPageViewModel : ObservableObject
         finally { finding.Wanted = wasWanted && !finding.Done; row.Refresh(); }
     }
 
-    // The applier reads Wanted off the findings it is handed, so both callers differ only in
-    // which findings they pass. try/finally for the same reason as the scan: a throw in here
-    // would otherwise leave the page permanently busy.
+    // used by both apply all and apply one;finally same as in ScanAsync
     private async Task RunAsync(List<Finding> findings)
     {
         if (IsBusy) return;
@@ -202,10 +189,7 @@ public sealed partial class TweaksPageViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Turns the applier's report into the strip above the list. Three things are worth saying
-    /// out loud: rights that were missing, a shell that has to restart, and rules that failed.
-    /// </summary>
+    //report -> infobar: admin missing, restart needed, failed rules
     private void Announce(Report report)
     {
         NeedsExplorerRestart = report.Restart.Contains("explorer");
@@ -230,8 +214,7 @@ public sealed partial class TweaksPageViewModel : ObservableObject
 
     public int SelectedCount => _all.Count(row => row.IsSelected);
 
-    // Rebuilt rather than filtered in place: the list is ~100 rows, so clarity beats cleverness.
-    // The three filters are independent and all have to pass.
+    // ~100 rows, just rebuild the list;all three filters have to match
     private void Rebuild()
     {
         var needle = SearchText.Trim();

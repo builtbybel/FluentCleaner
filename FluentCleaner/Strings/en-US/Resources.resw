@@ -146,11 +146,13 @@
   <data name="Cat_Multimedia"><value>Multimedia</value></data>
   <data name="Cat_Utilities"><value>Utilities</value></data>
   <data name="Cat_Windows"><value>Windows</value></data>
+  <data name="St_UpdatedTo"><value>FluentCleaner was updated to {0}.</value></data>
+  <data name="BtnWhatsNew.Content"><value>What's new</value></data>
   <data name="Cat_OtherApplications"><value>Other Applications</value></data>
 
   <data name="MenuSelectAll.Text"><value>Select all</value></data>
   <data name="MenuSelectNone.Text"><value>Select none</value></data>
-  <data name="MenuSelectDefaults.Text"><value>Restore defaults</value></data>
+  <data name="MenuSelectDefaults.Text"><value>Restore default state</value></data>
   <data name="MenuAnalyzeNamed"><value>Analyze {0}</value></data>
   <data name="MenuCleanNamed"><value>Clean {0}</value></data>
   <data name="MenuExplainEntry.Text"><value>Explain with AI</value></data>
@@ -167,7 +169,7 @@
   <!-- Cleaner Page — IPageActions (built in code) -->
   <data name="St_MenuSelectAll"><value>Select all</value></data>
   <data name="St_MenuSelectNone"><value>Select none</value></data>
-  <data name="St_MenuSelectDefaults"><value>Restore defaults</value></data>
+  <data name="St_MenuSelectDefaults"><value>Restore default state</value></data>
   <data name="St_MenuRefresh"><value>Refresh</value></data>
 
   <!-- Cleaner Page — detail view labels -->
@@ -193,7 +195,6 @@
   <data name="DlgSourceCopy"><value>Copy</value></data>
   <data name="DlgSourceReport"><value>Report entry</value></data>
   <data name="DlgSourceDryRun"><value>Dry Run</value></data>
-  <data name="RuleLabTitle"><value>Rule Lab — {0}</value></data>
   <data name="DlgSourceHint"><value>Edit the rules, then Dry Run to preview the hits.</value></data>
   <data name="DlgSourceScanning"><value>Scanning…</value></data>
   <data name="DlgSourceNoEntry"><value>No valid entry — needs a Detect and a FileKey.</value></data>
@@ -272,8 +273,8 @@
   <data name="LblWinapp2.Text"><value>Winapp2</value></data>
   <data name="BtnUpdateWinapp2.Content"><value>Update</value></data>
   <data name="LblWinapp3.Text"><value>Winapp3</value></data>
-  <data name="LblWinapp3Tag.Text"><value>experimental</value></data>
-  <data name="LblWinapp3Desc.Text"><value>  —  more aggressive entries, use at your own risk.</value></data>
+  <data name="LblWinapp3Tag.Text"><value>aggressive · own risk</value></data>
+  <data name="LblWinapp3Desc.Text"><value>  —  some rules delete across the whole drive. None start ticked: tick only what you need and check the preview before cleaning.</value></data>
   <data name="BtnDownloadWinapp3.Content"><value>Download</value></data>
   <data name="BtnUpdateWinapp3.Content"><value>Update</value></data>
   <data name="TxtCustomPath.PlaceholderText"><value>Custom database path (.ini)</value></data>
@@ -385,7 +386,6 @@
   <data name="DlgNewCleanerGenerate.Content"><value>Generate</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Generate</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Content</value></data>
-  <data name="DlgNewCleanerTest"><value>Test in Rule Lab</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Load template</value></data>
   <data name="DlgNewCleanerNameTaken"><value>There's already a custom cleaner with that name.</value></data>
   <data name="DlgNewCleanerNameInvalid"><value>A name can't contain \ / : * ? " &lt; &gt; |</value></data>

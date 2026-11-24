@@ -64,11 +64,13 @@ internal static class CookieService
             .ToArray();
     }
 
-    //one selected website removes that domain and its subdomains from every supported profile
-    public static int DeleteDomains(IEnumerable<string> domains)
+    //one selected website removes that domain and its subdomains from every supported profile,
+    //except for anything the keep list protects
+    public static int DeleteDomains(IEnumerable<string> domains, IEnumerable<string> domainsToKeep)
     {
         var selectedDomains = NormalizeDomains(domains);
         if (selectedDomains.Length == 0) return 0;
+        var keptDomains = NormalizeDomains(domainsToKeep);
         var unavailable = 0;
 
         foreach (var store in DiscoverStores())
@@ -78,21 +80,14 @@ internal static class CookieService
                 using var database = new WinSqlite(store.DatabasePath);
                 var column = store.Kind == StoreKind.Chromium ? "host_key" : "host";
                 var table = store.Kind == StoreKind.Chromium ? "cookies" : "moz_cookies";
+                var deleteExpression = BuildDeleteExpression(column, selectedDomains, keptDomains);
+
                 database.Execute("BEGIN IMMEDIATE");
                 try
                 {
-                    database.PopulateTempDomainTable("_target_domains", selectedDomains);
-                    database.Execute($@"
-                        DELETE FROM {table}
-                        WHERE lower(ltrim({column}, '.')) IN (SELECT domain FROM _target_domains)
-                           OR (
-                               instr(lower(ltrim({column}, '.')), '.') > 0
-                               AND substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1) IN (SELECT domain FROM _target_domains)
-                           )
-                           OR (
-                               instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') > 0
-                               AND substr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') + 1) IN (SELECT domain FROM _target_domains)
-                           )");
+                    database.Execute($"DELETE FROM {table} WHERE {deleteExpression}");
+                    database.Execute("COMMIT");
+                }
                     database.Execute("COMMIT");
                 }
                 catch
@@ -200,6 +195,27 @@ internal static class CookieService
         .Distinct(StringComparer.OrdinalIgnoreCase)
         .ToArray();
 
+    //a keep entry protects the domain and its subdomains, same rule as the cleaner
+    public static bool IsProtected(string domain, HashSet<string> keptDomains)
+    {
+        var current = domain;
+        while (true)
+        {
+            if (keptDomains.Contains(current)) return true;
+            var dot = current.IndexOf('.');
+            if (dot < 0) return false;
+            current = current.Substring(dot + 1);
+        }
+    }
+
+    private static string BuildDeleteExpression(string column, string[] selectedDomains, string[] keptDomains)
+    {
+        var selected = BuildDomainExpression(column, selectedDomains);
+        return keptDomains.Length == 0
+            ? selected
+            : $"({selected}) AND NOT ({BuildDomainExpression(column, keptDomains)})";
+    }
+
     private static string BuildDomainExpression(string column, IEnumerable<string> domains) =>
         string.Join(" OR ", domains.Select(domain =>
         {
@@ -304,6 +320,14 @@ internal static class CookieService
     private static (string Browser, string Root)[] BuildFirefoxRoots()
     {
         var roaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        return [("Mozilla Firefox", Path.Combine(roaming, "Mozilla", "Firefox", "Profiles"))];
+        var local   = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        return
+        [
+            ("Mozilla Firefox", Path.Combine(roaming, "Mozilla", "Firefox", "Profiles")),
+            // Firefox from the Microsoft Store keeps its profiles here. Without it the keep list
+            // didn't apply there, and Winapp2 deleted that cookies.sqlite whole.
+            ("Mozilla Firefox", Path.Combine(local, "Packages", "Mozilla.Firefox_n80bbvh6b1yt2",
+                                             "LocalCache", "Roaming", "Mozilla", "Firefox", "Profiles"))
+        ];
     }
 }

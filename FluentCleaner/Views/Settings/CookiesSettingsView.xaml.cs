@@ -147,13 +147,14 @@ public sealed partial class CookiesSettingsView : UserControl
     {
         var domains = AvailableList.SelectedItems.Cast<string>().ToArray();
         if (_loading || domains.Length == 0) return;
+        var kept = _kept.ToArray();
 
         _loading = true;
         RefreshButton.IsEnabled = false;
         IntelligentScanButton.IsEnabled = false;
         StatusText.Text = ResourceService.Get("Cookies_Scanning");
         var unavailable = 0;
-        try { unavailable = await Task.Run(() => CookieService.DeleteDomains(domains)); }
+        try { unavailable = await Task.Run(() => CookieService.DeleteDomains(domains, kept)); }
         finally
         {
             _loading = false;
@@ -248,7 +249,7 @@ public sealed partial class CookiesSettingsView : UserControl
 
     private void RefreshLists()
     {
-        AvailableList.ItemsSource = Filter(_detected.Where(domain => !_kept.Contains(domain)), AvailableSearch.Text);
+        AvailableList.ItemsSource = Filter(_detected.Where(domain => !CookieService.IsProtected(domain, _kept)), AvailableSearch.Text);
         KeptList.ItemsSource = Filter(_kept, KeptSearch.Text);
     }
 

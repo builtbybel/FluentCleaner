@@ -4,10 +4,7 @@ using FluentCleaner.Services;
 
 namespace FluentCleaner.Plugins.Apps;
 
-/// <summary>
-/// One installed app in the list. Wraps the engine's <see cref="InstalledApp"/>; the tick box
-/// writes straight through to <c>Selected</c>, which is what the removal loop reads.
-/// </summary>
+//one row in the apps list, wraps InstalledApp;tick box writes to Selected
 public sealed partial class AppRowViewModel : ObservableObject
 {
     internal InstalledApp App { get; }
@@ -20,11 +17,8 @@ public sealed partial class AppRowViewModel : ObservableObject
 
     public string Name => App.Name;
 
-    /// <summary>
-    /// A store package reports its publisher as a full certificate subject
-    /// ("CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, …"); only the common
-    /// name is worth a column. A classic program already reports a plain name.
-    /// </summary>
+    //store apps give "CN=Microsoft Corporation, O=..., L=..." -> only the CN part.
+    //classic programs already have a plain name
     public string Publisher
     {
         get
@@ -38,12 +32,12 @@ public sealed partial class AppRowViewModel : ObservableObject
         }
     }
 
-    /// <summary>Store app or classic program — they are removed in completely different ways.</summary>
+    //store app or program
     public string Kind => App.IsProgram
         ? ResourceService.Get("St_AppProgram")
         : ResourceService.Get("St_AppPackage");
 
-    /// <summary>What AppRules.ini made of it, or why Windows will not let it go.</summary>
+    //removed, protected, safe or personal
     public string SafetyLabel => App.Removed
         ? ResourceService.Get("St_AppRemoved")
         : App.Safety switch
@@ -53,25 +47,22 @@ public sealed partial class AppRowViewModel : ObservableObject
             _ => ResourceService.Get("St_AppPersonal"),
         };
 
-    /// <summary>
-    /// What identifies this app to Windows: the package family name for a store app, the
-    /// uninstall key for a classic program. Worth copying when writing a script or searching.
-    /// </summary>
+    //package family name or uninstall key, for copy
     public string Identifier => App.Family.StartsWith("prog:", StringComparison.Ordinal)
         ? App.Family.Substring(5)
         : App.Family;
 
-    /// <summary>False for anything Windows needs; the tick box is disabled for those.</summary>
+    //false = tick box disabled
     public bool CanRemove => App.CanRemove;
 
-    /// <summary>Greys out a row that this session already uninstalled.</summary>
+    //greyed out when already removed
     public double RowOpacity => App.Removed ? 0.45 : 1.0;
 
     [ObservableProperty] public partial bool IsSelected { get; set; }
 
     partial void OnIsSelectedChanged(bool value) => App.Selected = value;
 
-    /// <summary>Re-reads the engine's own state after a removal run.</summary>
+    //after a removal run
     internal void Refresh()
     {
         IsSelected = App.Selected;
