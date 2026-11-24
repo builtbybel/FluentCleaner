@@ -74,6 +74,25 @@
                 <Setter Property="CornerRadius" Value="4" />
                 <Setter Property="FontSize" Value="11" />
             </Style>
+
+            <!-- Electric vibrant blue primary button (consistent cyan/blue across all systems) -->
+            <Style x:Key="ElectricAccentButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#0284C7" />
+                <Setter Property="Foreground" Value="#FFFFFF" />
+                <Setter Property="BorderBrush" Value="#38BDF8" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+
+            <!-- Dark slate secondary button -->
+            <Style x:Key="DarkSecondaryButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#1E293B" />
+                <Setter Property="Foreground" Value="#F1F5F9" />
+                <Setter Property="BorderBrush" Value="#334155" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="6" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
