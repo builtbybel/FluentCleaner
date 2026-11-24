@@ -477,4 +477,13 @@
   <data name="SC_Apply"><value>Apply and analyze</value></data>
   <data name="SC_Restore"><value>Previous selection</value></data>
   <data name="SC_Close"><value>Close</value></data>
+
+  <data name="St_Download"><value>Download Update</value></data>
+  <data name="St_DownloadVersion"><value>Download v{0}</value></data>
+  <data name="St_UpdateAvailable"><value>Update available — v{0}</value></data>
+  <data name="St_UpdateMessage"><value>A new release of FluentCleaner is ready. Installed: v{0} · Latest: v{1}</value></data>
+  <data name="St_UpToDate"><value>You're up to date</value></data>
+  <data name="St_UpToDateMessage"><value>FluentCleaner {0} is the latest version.</value></data>
+  <data name="St_MenuUpdate"><value>⬆ Update available — v{0}</value></data>
+  <data name="St_MenuCheckUpdates"><value>Check for updates</value></data>
 </root>

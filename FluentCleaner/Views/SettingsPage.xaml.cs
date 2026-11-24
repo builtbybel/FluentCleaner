@@ -4,6 +4,7 @@ using FluentCleaner.Services;
 using FluentCleaner.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -62,6 +63,28 @@ public sealed partial class SettingsPage : Page, IPageActions
 
     // The settings page has one local navigator and one content surface. Keeping the
     // sections here avoids a second Frame/router while still killing the long one-pager.
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (e.Parameter is string section && !string.IsNullOrWhiteSpace(section))
+            NavigateToSection(section);
+    }
+
+    public void NavigateToSection(string section)
+    {
+        for (int i = 0; i < SettingsNav.Items.Count; i++)
+        {
+            if (SettingsNav.Items[i] is ListViewItem item &&
+                string.Equals(item.Tag as string, section, StringComparison.OrdinalIgnoreCase))
+            {
+                SettingsNav.SelectedIndex = i;
+                ShowSettingsSection(section);
+                return;
+            }
+        }
+        ShowSettingsSection(section);
+    }
+
     private void SettingsNav_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_navigationReady || SettingsNav.SelectedItem is not ListViewItem item) return;
@@ -122,11 +145,15 @@ public sealed partial class SettingsPage : Page, IPageActions
 
         if (_updateVersion is not null)
         {
-            UpdateBar.Severity = InfoBarSeverity.Error;
+            UpdateBar.Severity = InfoBarSeverity.Informational;
             UpdateBar.Title   = ResourceService.Fmt("St_UpdateAvailable", _updateVersion);
-            UpdateBar.Message = ResourceService.Get("St_UpdateMessage");
+            UpdateBar.Message = ResourceService.Fmt("St_UpdateMessage", AppInfo.DisplayVersion, _updateVersion);
 
-            var btn = new Button { Content = ResourceService.Get("St_Download"), Style = (Style)Application.Current.Resources["AccentButtonStyle"] };
+            var downloadLabel = ResourceService.Fmt("St_DownloadVersion", _updateVersion);
+            if (string.IsNullOrWhiteSpace(downloadLabel) || downloadLabel.StartsWith("St_"))
+                downloadLabel = ResourceService.Get("St_Download");
+
+            var btn = new Button { Content = downloadLabel, Style = (Style)Application.Current.Resources["AccentButtonStyle"] };
             btn.Click += async (_, _) => await AppLinks.OpenAsync(AppLinks.Releases);
             UpdateBar.ActionButton = btn;
             UpdateBar.IsOpen = true;
