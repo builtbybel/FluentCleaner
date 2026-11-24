@@ -111,13 +111,39 @@ public partial class App : Application
             throw;
         }
 
-        //Remember size for next launch
+        //Remember size for next launch and guarantee complete process termination on close
         MainWindow.Closed += (_, _) =>
         {
-            var size = MainWindow.AppWindow.Size;
-            AppSettings.Instance.WindowWidth  = size.Width;
-            AppSettings.Instance.WindowHeight = size.Height;
-            AppSettings.Instance.Save();
+            try
+            {
+                var size = MainWindow.AppWindow.Size;
+                AppSettings.Instance.WindowWidth  = size.Width;
+                AppSettings.Instance.WindowHeight = size.Height;
+                AppSettings.Instance.Save();
+            }
+            catch { }
+            finally
+            {
+                Microsoft.UI.Xaml.Application.Current.Exit();
+                Environment.Exit(0);
+            }
+        };
+
+        MainWindow.AppWindow.Closing += (_, _) =>
+        {
+            try
+            {
+                var size = MainWindow.AppWindow.Size;
+                AppSettings.Instance.WindowWidth  = size.Width;
+                AppSettings.Instance.WindowHeight = size.Height;
+                AppSettings.Instance.Save();
+            }
+            catch { }
+            finally
+            {
+                Microsoft.UI.Xaml.Application.Current.Exit();
+                Environment.Exit(0);
+            }
         };
     }
 
