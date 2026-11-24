@@ -16,7 +16,7 @@ public partial class BoolToVisibilityConverter : IValueConverter
 }
 
 /// <summary>Converts a bool to Collapsed when true, Visible when false.</summary>
-public class InverseBoolToVisibilityConverter : IValueConverter
+public partial class InverseBoolToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
         value is true ? Visibility.Collapsed : Visibility.Visible;
@@ -38,7 +38,7 @@ public partial class NullToVisibilityConverter : IValueConverter
 }
 
 /// <summary>Shows UI only when a numeric count is greater than zero.</summary>
-public class CountToVisibilityConverter : IValueConverter
+public partial class CountToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
         value switch
@@ -54,7 +54,7 @@ public class CountToVisibilityConverter : IValueConverter
 }
 
 /// <summary>Converts a #RRGGBB or #AARRGGBB hex string into a SolidColorBrush.</summary>
-public class HexToBrushConverter : IValueConverter
+public partial class HexToBrushConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {

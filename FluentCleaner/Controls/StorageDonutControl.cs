@@ -12,7 +12,7 @@ namespace FluentCleaner.Controls;
 /// Pure native WinUI 3 multi-segment vector donut chart for storage breakdown.
 /// Zero third-party dependencies; DPI-independent; Light & Dark theme aware.
 /// </summary>
-public sealed class StorageDonutControl : Grid
+public sealed partial class StorageDonutControl : UserControl
 {
     private readonly Canvas _canvas = new();
     private const double RingSize = 124;
@@ -55,7 +55,7 @@ public sealed class StorageDonutControl : Grid
         Height = RingSize;
         _canvas.Width  = RingSize;
         _canvas.Height = RingSize;
-        Children.Add(_canvas);
+        Content = _canvas;
         Loaded += (_, _) => Redraw();
         ActualThemeChanged += (_, _) => Redraw();
     }
