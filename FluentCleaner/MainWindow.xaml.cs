@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using System.Net.Http;
 using Windows.System;
 
 namespace FluentCleaner;
@@ -14,7 +15,7 @@ namespace FluentCleaner;
 public sealed partial class MainWindow : Window
 {
     public string InsiderSubtitle   => AppInfo.InsiderSubtitle;
-    public string VersionFooterText => $"v{AppInfo.DisplayVersion} · Open Source";
+    public string VersionFooterText => $"v{AppInfo.DisplayVersion}";
 
     public MainWindow()
     {
@@ -126,8 +127,71 @@ public sealed partial class MainWindow : Window
 
     private async void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
-        if (args.InvokedItemContainer is NavigationViewItem { Tag: "GitHub" })
-            await AppLinks.OpenAsync(AppLinks.GitHub);
+        if (args.InvokedItemContainer is NavigationViewItem item)
+        {
+            if (item.Tag is "VersionCheck" or "GitHub")
+            {
+                await CheckForUpdatesAsync();
+            }
+        }
+    }
+
+    private async Task CheckForUpdatesAsync()
+    {
+        if (Content?.XamlRoot is null) return;
+
+        try
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(8) };
+            var latest = (await http.GetStringAsync(AppLinks.VersionCheck)).Trim();
+            bool hasUpdate = Version.TryParse(latest, out var remote) &&
+                             Version.TryParse(AppInfo.VersionString, out var local) &&
+                             remote > local;
+
+            if (hasUpdate)
+            {
+                var dialog = new ContentDialog
+                {
+                    XamlRoot          = Content.XamlRoot,
+                    RequestedTheme    = (Content as FrameworkElement)?.ActualTheme ?? ElementTheme.Default,
+                    Title             = ResourceService.Fmt("St_UpdateAvailable", latest),
+                    Content           = ResourceService.Fmt("St_UpdateMessage", AppInfo.DisplayVersion, latest),
+                    PrimaryButtonText = ResourceService.Get("St_Download"),
+                    CloseButtonText   = ResourceService.Get("DlgRestartLater"),
+                    DefaultButton     = ContentDialogButton.Primary
+                };
+                if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    await AppLinks.OpenAsync(AppLinks.Releases);
+                }
+            }
+            else
+            {
+                var dialog = new ContentDialog
+                {
+                    XamlRoot        = Content.XamlRoot,
+                    RequestedTheme  = (Content as FrameworkElement)?.ActualTheme ?? ElementTheme.Default,
+                    Title           = ResourceService.Get("St_UpToDate"),
+                    Content         = ResourceService.Fmt("St_UpToDateMessage", AppInfo.DisplayVersion),
+                    CloseButtonText = "OK",
+                    DefaultButton   = ContentDialogButton.Close
+                };
+                await dialog.ShowAsync();
+            }
+        }
+        catch
+        {
+            var dialog = new ContentDialog
+            {
+                XamlRoot        = Content.XamlRoot,
+                RequestedTheme  = (Content as FrameworkElement)?.ActualTheme ?? ElementTheme.Default,
+                Title           = "Version Check",
+                Content         = $"Unable to connect to the update server at this time. You are running v{AppInfo.DisplayVersion}.",
+                CloseButtonText = "OK",
+                DefaultButton   = ContentDialogButton.Close
+            };
+            await dialog.ShowAsync();
+        }
     }
 
     // --- Page actions flyout --------------------------------------------------

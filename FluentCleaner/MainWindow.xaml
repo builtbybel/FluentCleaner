@@ -158,12 +158,12 @@
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem Tag="GitHub"
+                <NavigationViewItem Tag="VersionCheck"
                                     Content="{x:Bind VersionFooterText}"
                                     SelectsOnInvoked="False"
-                                    ToolTipService.ToolTip="Open FluentCleaner on GitHub">
+                                    ToolTipService.ToolTip="Check for updates">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE946;" Foreground="#0078D4" />
+                        <FontIcon Glyph="&#xE946;" Foreground="#38BDF8" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
