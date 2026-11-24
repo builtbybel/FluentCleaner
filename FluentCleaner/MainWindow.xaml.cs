@@ -6,6 +6,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Net.Http;
 using Windows.System;
@@ -44,6 +45,10 @@ public sealed partial class MainWindow : Window
         {
             NavFrame.Navigate(typeof(CleanerPage));
         }
+
+        ApplyNavPanePinState(
+            AppSettings.Instance.IsNavPanePinned,
+            openIfPinned: AppSettings.Instance.IsNavPanePinned);
     }
 
     // --- Keyboard Accelerators ------------------------------------------------
@@ -73,10 +78,67 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    // --- TitleBar pane toggle -------------------------------------------------
+    // --- TitleBar pane toggle & Pin -------------------------------------------
 
     private void TitleBar_PaneToggleRequested(TitleBar sender, object args) =>
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
+
+    private void BtnPinNav_Click(object sender, RoutedEventArgs e)
+    {
+        bool nextPinned = !AppSettings.Instance.IsNavPanePinned;
+        AppSettings.Instance.IsNavPanePinned = nextPinned;
+        AppSettings.Instance.Save();
+
+        ApplyNavPanePinState(nextPinned, openIfPinned: true);
+        if (!nextPinned)
+            NavView.IsPaneOpen = false;
+    }
+
+    private void NavView_PaneOpening(NavigationView sender, object args) =>
+        UpdatePaneHeaderVisibility(true);
+
+    private void NavView_PaneClosed(NavigationView sender, object args) =>
+        UpdatePaneHeaderVisibility(false);
+
+    private void ApplyNavPanePinState(bool pinned, bool openIfPinned)
+    {
+        NavView.PaneDisplayMode = pinned
+            ? NavigationViewPaneDisplayMode.Left
+            : NavigationViewPaneDisplayMode.LeftCompact;
+
+        if (pinned && openIfPinned)
+            NavView.IsPaneOpen = true;
+        else if (!pinned && !openIfPinned)
+            NavView.IsPaneOpen = false;
+
+        UpdatePinButtonVisuals(pinned);
+        UpdatePaneHeaderVisibility(NavView.IsPaneOpen);
+    }
+
+    private void UpdatePaneHeaderVisibility(bool isOpen) =>
+        NavPaneHeaderGrid.Visibility = isOpen ? Visibility.Visible : Visibility.Collapsed;
+
+    private void UpdatePinButtonVisuals(bool pinned)
+    {
+        PinNavIcon.Glyph = pinned ? "\uE840" : "\uE718";
+        var brushKey = pinned ? "AccentTextFillColorPrimaryBrush" : "TextFillColorSecondaryBrush";
+        if (Application.Current.Resources.TryGetValue(brushKey, out var res) && res is Brush brush)
+            PinNavIcon.Foreground = brush;
+
+        var label = pinned ? "Unpin navigation bar (collapse to rail)" : "Pin navigation bar side-by-side";
+        Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(BtnPinNav, pinned ? "Unpin navigation bar" : "Pin navigation bar");
+        ToolTipService.SetToolTip(BtnPinNav, label);
+    }
+
+    private void CollapseUnpinnedOverlay()
+    {
+        if (AppSettings.Instance.IsNavPanePinned) return;
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            if (!AppSettings.Instance.IsNavPanePinned && NavView.IsPaneOpen)
+                NavView.IsPaneOpen = false;
+        });
+    }
 
     // --- Navigation -----------------------------------------------------------
 
@@ -114,6 +176,7 @@ public sealed partial class MainWindow : Window
         }
 
         SyncSearchState();
+        CollapseUnpinnedOverlay();
     }
 
     private void NavigateToSettings(string section, NavigationTransitionInfo transition)
@@ -130,6 +193,7 @@ public sealed partial class MainWindow : Window
 
     private async void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
+        CollapseUnpinnedOverlay();
         if (args.InvokedItemContainer is NavigationViewItem item)
         {
             if (item.Tag is "VersionCheck" or "GitHub")

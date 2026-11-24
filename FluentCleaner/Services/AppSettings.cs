@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace FluentCleaner.Services;
@@ -72,6 +72,9 @@ public class AppSettings
 
     // remembered hero summary expanded state on CleanerPage
     public bool CleanerHeroExpanded { get; set; } = true;
+
+    // remembered navigation rail pin state (false = 48px icon rail, true = pinned 232px inline)
+    public bool IsNavPanePinned { get; set; } = false;
 
     // Junk growth tracker; logged after every successful clean run
     public bool CleanHistoryEnabled { get; set; } = true;

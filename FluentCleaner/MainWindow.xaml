@@ -93,8 +93,49 @@
                         IsPaneToggleButtonVisible="False"
                         CompactPaneLength="48"
                         OpenPaneLength="232"
+                        CompactModeThresholdWidth="480"
+                        ExpandedModeThresholdWidth="640"
+                        PaneOpening="NavView_PaneOpening"
+                        PaneClosed="NavView_PaneClosed"
                         SelectionChanged="NavView_SelectionChanged"
                         ItemInvoked="NavView_ItemInvoked">
+
+            <NavigationView.PaneHeader>
+                <Grid x:Name="NavPaneHeaderGrid"
+                      Height="36"
+                      Padding="14,4,8,2"
+                      Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="MENU"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                               VerticalAlignment="Center" />
+
+                    <Button Grid.Column="1"
+                            x:Name="BtnPinNav"
+                            Click="BtnPinNav_Click"
+                            Width="28" Height="28"
+                            Padding="0"
+                            CornerRadius="6"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            AutomationProperties.Name="Pin navigation bar"
+                            ToolTipService.ToolTip="Pin navigation bar side-by-side"
+                            VerticalAlignment="Center">
+                        <FontIcon x:Name="PinNavIcon"
+                                  Glyph="&#xE718;"
+                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                  FontSize="12"
+                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    </Button>
+                </Grid>
+            </NavigationView.PaneHeader>
 
             <NavigationView.MenuItems>
                 <NavigationViewItemHeader Content="CORE" />
