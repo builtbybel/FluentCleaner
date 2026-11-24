@@ -17,35 +17,24 @@
   <data name="NavTerminal.Content"><value>Terminál</value></data>
   <data name="NavCustom.Content"><value>Egyéni</value></data>
   <data name="SearchBox.PlaceholderText"><value>Keresés</value></data>
-  <data name="BtnPageActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Oldal műveletei</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>Tetszik a FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Ha ez az alkalmazás időt spórol neked, fontold meg a fejlesztés támogatását.</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
-  <data name="BtnDonateGitHub.Content"><value>Csillagozd a GitHubon</value></data>
   <data name="BtnDonateLater.Content"><value>Talán később</value></data>
-  <data name="St_NoActions"><value>Ehhez az oldalhoz nincsenek műveletek</value></data>
 
   <!-- ============================================================
        CLEANER PAGE — static XAML strings (x:Uid)
   ============================================================ -->
   <data name="CleanerHint.Text"><value>A Winapp2.ini automatikusan betöltődik induláskor.</value></data>
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Kategória műveletei</value></data>
   <data name="MenuSelectAll.Text"><value>Összes kijelölése</value></data>
   <data name="MenuSelectNone.Text"><value>Kijelölés törlése</value></data>
   <data name="MenuSelectDefaults.Text"><value>Alapértelmezettek kijelölése</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Kategória elemzése</value></data>
-  <data name="MenuCleanCategory.Text"><value>Kategória tisztítása</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Bejegyzés műveletei</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Elemzés</value></data>
-  <data name="MenuCleanEntry.Text"><value>Tisztítás</value></data>
   <data name="MenuExplainEntry.Text"><value>Magyarázat AI-val</value></data>
   <data name="MenuShowSource.Text"><value>Forrás megjelenítése</value></data>
   <data name="LblAIDesc.Text"><value>Kattints jobb gombbal bármelyik bejegyzésre a Tisztítás oldalon → Magyarázat AI-val. Válassz a Groq, OpenAI vagy Anthropic közül. Semmi sem kerül elküldésre a kifejezett hozzájárulásod nélkül. Saját API-kulcs szükséges.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Miután elmentetted a kulcsot, az Egyéni tisztítók oldalon is elérhetővé válik az AI — írd le, mit szeretnél tisztítani, és kész Winapp2-bejegyzést vagy PowerShell-szkriptet generál neked.</value></data>
-  <data name="ResultsHeader.Text"><value>Eredmények</value></data>
-  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Vissza az eredményekhez</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Fájlok törlése most</value></data>
   <data name="MenuExcludeFile.Text"><value>Fájl kizárása</value></data>
   <data name="MenuExcludeFolder.Text"><value>Mappa kizárása</value></data>
@@ -57,15 +46,9 @@
   <data name="St_MenuSelectAll"><value>Összes kijelölése</value></data>
   <data name="St_MenuSelectNone"><value>Kijelölés törlése</value></data>
   <data name="St_MenuSelectDefaults"><value>Alapértelmezettek kijelölése</value></data>
-  <data name="St_MenuExpandAll"><value>Összes kibontása</value></data>
-  <data name="St_MenuCollapseAll"><value>Összes összecsukása</value></data>
-  <data name="St_MenuSortDesc"><value>Rendezés méret szerint ↓</value></data>
-  <data name="St_MenuSortAsc"><value>Rendezés méret szerint ↑</value></data>
   <data name="St_MenuRefresh"><value>Frissítés</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  <data name="DetailHeaderFiles.Text"><value>Fájlok</value></data>
-  <data name="DetailHeaderRegistry.Text"><value>Rendszerleíró adatbázis</value></data>
 
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>fájl</value></data>
@@ -88,7 +71,6 @@
   <data name="DlgSourceCopy"><value>Másolás</value></data>
   <data name="DlgSourceReport"><value>Bejegyzés jelentése</value></data>
   <data name="DlgSourceDryRun"><value>Próbafuttatás</value></data>
-  <data name="RuleLabTitle"><value>Szabálylabor — {0}</value></data>
   <data name="DlgSourceHint"><value>Szerkeszd a szabályokat, majd futtass egy próbafuttatást a találatok előnézetéhez.</value></data>
   <data name="DlgSourceScanning"><value>Vizsgálat…</value></data>
   <data name="DlgSourceNoEntry"><value>Nincs érvényes bejegyzés — Detect és FileKey szükséges.</value></data>
@@ -106,8 +88,6 @@
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Winapp2.ini betöltése...</value></data>
-  <data name="St_SearchFound"><value>{0} egyező bejegyzés megjelenítve.</value></data>
-  <data name="St_SearchNone"><value>Nincs egyező bejegyzés.</value></data>
   <data name="St_ParsingDatabases"><value>Adatbázisok feldolgozása...</value></data>
   <data name="St_AnalysisReady"><value>Elemzés kész — {0} alkalmazás található {1} bejegyzésben.</value></data>
   <data name="St_NothingSelected"><value>Nincs kijelölés.</value></data>
@@ -141,9 +121,6 @@
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>A FluentCleaner nyílt forráskódúvá válik.</value></data>
   <data name="DonationBar.Message"><value>Sok munka fekszik ebben a projektben — ha segít neked, és szívesen megköszönnéd, egy adomány sokat jelentene. ♥</value></data>
-  <data name="BtnDonate.Content"><value>Projekt támogatása</value></data>
-  <data name="MenuDonatePayPal.Text"><value>Adományozás PayPal-lal</value></data>
-  <data name="MenuDonateKoFi.Text"><value>Adományozás Ko-fi-n</value></data>
   <data name="SectionAppearance.Text"><value>Megjelenés</value></data>
   <data name="LblTheme.Text"><value>Alkalmazás témája</value></data>
   <data name="LblThemeDesc.Text"><value>Válaszd ki, hogyan nézzen ki a FluentCleaner az eszközödön.</value></data>
@@ -166,8 +143,6 @@
   <data name="BtnBrowse.Content"><value>Tallózás…</value></data>
   <data name="BtnApplyPath.Content"><value>Alkalmaz</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Egyéni adatbázis eltávolítása</value></data>
-  <data name="RestartBar.Title"><value>Újraindítás szükséges</value></data>
-  <data name="RestartBar.Message"><value>Indítsd újra a FluentCleanert a frissített adatbázis betöltéséhez.</value></data>
   <data name="SectionPostClean.Text"><value>Tisztítás utáni feladatok</value></data>
   <data name="LblPostCleanDesc.Text"><value>Soronként egy parancs — minden tisztítási kör után egymás után lefutnak.</value></data>
   <data name="SectionExclusions.Text"><value>Globális kizárások</value></data>
@@ -216,18 +191,11 @@
   <data name="St_HistoryItems"><value>{0} elem</value></data>
   <data name="St_FileNotFound"><value>A fájl nem található: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Egyéni elérési út elmentve.</value></data>
-  <data name="St_Download"><value>Letöltés</value></data>
   <data name="St_Downloading"><value>{0} letöltése…</value></data>
   <data name="St_Downloaded"><value>{0} letöltve — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>A letöltés sikertelen: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>Nincs letöltve</value></data>
   <data name="St_FileInfo"><value>{0} bejegyzés  •  {1} KB  •  {2}</value></data>
-  <data name="St_UpdateAvailable"><value>Frissítés elérhető — {0}</value></data>
-  <data name="St_UpdateMessage"><value>A FluentCleaner új verziója letölthető.</value></data>
-  <data name="St_UpToDate"><value>Naprakész vagy</value></data>
-  <data name="St_UpToDateMessage"><value>A(z) {0} verzió a legfrissebb.</value></data>
-  <data name="St_MenuUpdate"><value>⬆  Frissítés elérhető — {0}</value></data>
-  <data name="St_MenuCheckUpdates"><value>Frissítések keresése</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Először add meg az API-kulcsot.</value></data>
   <data name="St_ApiKeyTesting"><value>Tesztelés…</value></data>
   <data name="Scheduler_FreqDaily"><value>Naponta</value></data>
@@ -255,28 +223,16 @@
   <data name="MenuEditEntry.Text"><value>Szerkesztés</value></data>
   <data name="MenuDeleteEntry.Text"><value>Törlés</value></data>
   <data name="MenuTestEntry.Text"><value>Tesztelés a Szabálylaborban</value></data>
-  <data name="MenuRunEntry.Text"><value>Futtatás</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Új tisztító</value></data>
-  <data name="BtnRunScript.Text"><value>Futtatás</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} tisztító · {1} engedélyezve</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} szkript</value></data>
-  <data name="St_CustomMenuNew"><value>Új egyéni tisztító</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Egyéni mappa megnyitása</value></data>
-  <data name="St_CustomMenuReddit"><value>Kérdezz a Redditen</value></data>
-  <data name="St_CustomMenuNeowin"><value>Neowin fórumok</value></data>
-  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
-  <data name="St_CustomMenuShare"><value>Tisztító megosztása GitHubon</value></data>
   <data name="St_CustomToggleFailed"><value>A váltás sikertelen: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>Törlöd ezt: „{0}”?</value></data>
   <data name="St_CustomDeleteMessage"><value>Ez véglegesen eltávolítja az egyéni tisztítót.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Törlés</value></data>
   <data name="St_CustomDeleteCancel"><value>Mégse</value></data>
-  <data name="St_CustomRunning"><value>{0} futtatása...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: a szkript nem olvasható — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: sikeresen befejeződött.</value></data>
-  <data name="St_CustomFailed"><value>{0}: sikertelen (kilépési kód: {1}).</value></data>
   <data name="St_CustomEntryNone"><value>nincs feldolgozott bejegyzés</value></data>
   <data name="St_CustomEntryOne"><value>1 bejegyzés · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} bejegyzés · {1}</value></data>
@@ -286,15 +242,12 @@
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Mentés</value></data>
   <data name="DlgNewCleanerCancel"><value>Mégse</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Winapp2-bejegyzés (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>PowerShell-szkript (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Név</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>Saját tisztító</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generálás AI-val – írd le, mit szeretnél tisztítani (az eredmény változó lehet)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Generálás</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Generálás</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Tartalom</value></data>
-  <data name="DlgNewCleanerTest"><value>Tesztelés a Szabálylaborban</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Sablon betöltése</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Új egyéni tisztító</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Szerkesztés — {0}</value></data>
@@ -303,7 +256,6 @@
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
-  <data name="AI_NoKey"><value>Nincs beállítva API-kulcs a kiválasztott szolgáltatóhoz. Menj a Beállítások → AI-magyarázatok részhez, hogy hozzáadj egyet.</value></data>
   <data name="AI_ApiError"><value>{0} API-hiba: {1}</value></data>
   <data name="AI_NoResponse"><value>Nem érkezett válasz.</value></data>
   <data name="AI_NetworkError"><value>Nem sikerült elérni: {0}: {1}</value></data>
@@ -321,8 +273,6 @@
   <data name="CLI_NoDrives"><value>  Nem található meghajtó.</value></data>
   <data name="CLI_ThemeUsage"><value>  Használat: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  Téma beállítva: '{0}'.</value></data>
-  <data name="CLI_BackdropUsage"><value>  Használat: backdrop mica | acrylic</value></data>
-  <data name="CLI_BackdropSet"><value>  Háttér beállítva: '{0}'.</value></data>
   <data name="CLI_NoMatch"><value>  Nincs egyező bejegyzés: '{0}'.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} elem · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Kész — {0} elem eltávolítva · {1} felszabadítva.</value></data>
@@ -333,4 +283,9 @@
   <data name="CLI_ListEntries"><value>  — {0} bejegyzés.</value></data>
   <data name="CLI_ListCategories"><value>  — {0} kategória.</value></data>
 
+  <data name="BtnAppMenu.ToolTipService.ToolTip"><value>Beállítások és egyebek</value></data>
+  <data name="BtnAppMenu.AutomationProperties.Name"><value>App menu</value></data>
+  <data name="AppMenuSettings.Text"><value>Beállítások</value></data>
+  <data name="AppMenuDonate.Text"><value>Projekt támogatása</value></data>
+  <data name="AppMenuUpdates.Text"><value>Frissítések keresése</value></data>
 </root>

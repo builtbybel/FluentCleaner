@@ -2,28 +2,26 @@
 
 namespace FluentCleaner.Plugins.Apps;
 
-//decides how safe it is to remove an installed app: AppRules.ini says what is known, and the
-//list below is the safety net the ini can never argue its way past.
+//how safe is it to remove an app? AppRules.ini + a hardcoded list the ini can't override
 internal sealed class AppRules
 {
-    //packages windows itself needs; nothing a rule file says may lower these
+    //windows needs these;always protected, whatever the ini says
     private static readonly string[] Required = {
         "*_cw5n1h2txyewy", "Microsoft.WindowsStore", "Microsoft.DesktopAppInstaller",
         "Microsoft.SecHealthUI", "Microsoft.UI.Xaml", "Microsoft.VCLibs",
         "Microsoft.NET.Native", "Microsoft.WindowsAppRuntime", "Microsoft.MicrosoftEdge"
     };
-    private readonly List<(string Pattern, AppSafety Safety)> _rules = new();    // what the ini said
-    private readonly List<(string Pattern, AppSafety Safety)> _programs = new(); // the same for classic programs
+    private readonly List<(string Pattern, AppSafety Safety)> _rules = new();    // store apps from the ini
+    private readonly List<(string Pattern, AppSafety Safety)> _programs = new(); // classic programs from the ini
 
-    //reads AppRules.ini out of this plugin's own folder; a missing file leaves every app Personal,
-    //which only means nothing is pre-ticked - the Required net above still holds
+    //no AppRules.ini = all Personal (nothing pre-ticked), Required still applies
     public static AppRules Load()
     {
         var path = Path.Combine(PluginPaths.Dir("Apps"), "AppRules.ini");
         return File.Exists(path) ? Parse(File.ReadAllLines(path)) : new AppRules();
     }
 
-    //turns the ini into pattern and safety pairs; Action=apps names packages, Action=programs names text
+    //Action=apps -> Package= patterns, Action=programs -> Program= text
     internal static AppRules Parse(IEnumerable<string> lines)
     {
         var result = new AppRules();
@@ -59,22 +57,22 @@ internal sealed class AppRules
         return result;
     }
 
-    //compares a package family against one ini pattern: a leading * matches the end, otherwise the start
+    //*xyz = ends with, xyz = starts with
     internal static bool Matches(string family, string pattern) => pattern.StartsWith("*")
         ? pattern.Length > 1 && family.EndsWith(pattern.Substring(1), StringComparison.OrdinalIgnoreCase)
         : pattern.Length > 0 && family.StartsWith(pattern, StringComparison.OrdinalIgnoreCase);
 
-    //a program rule hits when its text stands in the displayed name or in the publisher
+    //program rule: text in name or publisher
     internal static bool Mentions(InstalledApp app, string pattern) =>
         app.Name.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0
         || app.Publisher.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0;
 
-    //the safety level of one app: anything windows needs is protected, the rest is what the ini says
+    //windows stuff = protected, rest from the ini
     public AppSafety Classify(InstalledApp app)
     {
         if (app.NonRemovable || app.IsFramework || app.IsResourcePackage
             || Required.Any(pattern => Matches(app.Family, pattern))) return AppSafety.Protected;
-        //a classic program has no family to compare, so its rules read the name and the publisher
+        //programs have no family name, match by name/publisher
         if (app.IsProgram)
             return _programs.Where(rule => Mentions(app, rule.Pattern)).Select(rule => rule.Safety)
                 .DefaultIfEmpty(AppSafety.Personal).Max();

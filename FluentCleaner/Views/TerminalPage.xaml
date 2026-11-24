@@ -19,7 +19,7 @@
 
         <!-- output + input in one card; suggestion popup stays inside -->
         <Border Grid.Row="1" CornerRadius="8"
-                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                Background="{ThemeResource TerminalBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1">
             <Grid>

@@ -24,12 +24,15 @@
   <!-- Main Window — tab strip and address bar (x:Uid) -->
   <data name="BtnNewTab.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Nueva pestaña</value></data>
   <data name="BtnDetailBack.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Atrás</value></data>
+  <data name="BtnSearchIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Buscar</value></data>
+  <data name="BtnSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Configuración</value></data>
   <!-- Main Window — donation TeachingTip -->
   <data name="DonationBanner.Title"><value>¿Resulta útil FluentCleaner?</value></data>
   <data name="DonationBanner.Subtitle"><value>Apoyar su desarrollo contribuye a que la aplicación siga mejorando.</value></data>
   <data name="Donation_OtherAmount"><value>Otra cantidad…</value></data>
   <data name="BtnDonatePayPal.Content"><value>PayPal</value></data>
   <data name="BtnDonateKoFi.Content"><value>Ko-fi</value></data>
+  <data name="BtnDonateGitHub.Content"><value>Estrella en GitHub</value></data>
   <data name="BtnDonateLater.Content"><value>Quizá más tarde</value></data>
 
   <!-- ============================================================
@@ -136,7 +139,7 @@
   <data name="ColContents.Text"><value>Contenido</value></data>
   <data name="ColSize.Text"><value>Tamaño</value></data>
   <data name="ColType.Text"><value>Tipo</value></data>
-  <data name="BtnRestartElevated.Content"><value>Reiniciar como administrador</value></data>
+  <data name="BtnRestartElevated.Text"><value>Reiniciar como administrador</value></data>
   
  <!-- Cleaner Page — category labels. Only the generic ones CategoryResolver
        defines are listed; brand names (Firefox, Spotify, …) and section names that
@@ -148,21 +151,15 @@
   <data name="Cat_Windows"><value>Windows</value></data>
   <data name="Cat_OtherApplications"><value>Otras aplicaciones</value></data> 
   
-  <data name="BtnCategoryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Acciones (categoría)</value></data>
   <data name="MenuSelectAll.Text"><value>Seleccionar todo</value></data>
   <data name="MenuSelectNone.Text"><value>No seleccionar nada</value></data>
   <data name="MenuSelectDefaults.Text"><value>Seleccionar predeterminados</value></data>
-  <data name="MenuAnalyzeCategory.Text"><value>Analizar categoría</value></data>
-  <data name="MenuCleanCategory.Text"><value>Limpiar categoría</value></data>
-  <data name="BtnEntryActions.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Acciones (entrada)</value></data>
-  <data name="MenuAnalyzeEntry.Text"><value>Analizar</value></data>
-  <data name="MenuCleanEntry.Text"><value>Limpiar</value></data>
   <data name="MenuExplainEntry.Text"><value>Explicar con IA</value></data>
   <data name="MenuShowSource.Text"><value>Mostrar fuente</value></data>
   <data name="LblAIDesc.Text"><value>Clic → botón […] → Explicar con IA, en cualquier entrada de la página Limpiador.
 Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del usuario. Requiere clave API propia.</value></data>
   <data name="LblAICustomHint.Text"><value>💡 Una vez guardada la clave, la página Limpiadores personalizados también desbloquea la IA — describir lo que se desea limpiar y se generará una entrada Winapp2 o un script de PowerShell listo para usar.</value></data>
-  <data name="ResultsHeader.Text"><value>Resultados</value></data>
+  <data name="BtnBackToResults.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Volver a resultados</value></data>
   <data name="BtnCleanDetail.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Eliminar estos archivos ahora</value></data>
   <data name="MenuExcludeFile.Text"><value>Excluir archivo</value></data>
   <data name="MenuExcludeFolder.Text"><value>Excluir carpeta</value></data>
@@ -174,12 +171,14 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="St_MenuSelectAll"><value>Seleccionar todo</value></data>
   <data name="St_MenuSelectNone"><value>No seleccionar nada</value></data>
   <data name="St_MenuSelectDefaults"><value>Seleccionar predeterminados</value></data>
-  <data name="St_MenuExpandAll"><value>Expandir todo</value></data>
-  <data name="St_MenuCollapseAll"><value>Colapsar todo</value></data>
+  <data name="St_MenuSortDesc"><value>Ordenar por tamaño ↓</value></data>
+  <data name="St_MenuSortAsc"><value>Ordenar por tamaño ↑</value></data>
   <data name="St_MenuRefresh"><value>Actualizar</value></data>
 
   <!-- Cleaner Page — detail view labels -->
-  
+  <data name="DetailHeaderFiles.Text"><value>Archivos</value></data>
+  <data name="DetailHeaderRegistry.Text"><value>Registro</value></data>
+
   <!-- Cleaner Page — result line suffixes (used in code) -->
   <data name="SuffixFiles"><value>archivos</value></data>
   <data name="SuffixRegistry"><value>registro</value></data>
@@ -201,7 +200,6 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="DlgSourceCopy"><value>Copiar</value></data>
   <data name="DlgSourceReport"><value>Informar</value></data>
   <data name="DlgSourceDryRun"><value>Prueba</value></data>
-  <data name="RuleLabTitle"><value>Laboratorio de reglas — {0}</value></data>
   <data name="DlgSourceHint"><value>Editar reglas, en su caso, y luego ejecutar 'Prueba' para detectar los elementos afectados.</value></data>
   <data name="DlgSourceScanning"><value>Analizando…</value></data>
   <data name="DlgSourceNoEntry"><value>Entrada/Regla no válida — se necesitan claves tipo Detect y FileKey.</value></data>
@@ -219,17 +217,12 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
        STATUS MESSAGES — CleanerPageViewModel (format strings)
   ============================================================ -->
   <data name="St_Loading"><value>Cargando Winapp2.ini...</value></data>
-  <data name="St_SearchFound"><value>Mostrando {0} entradas coincidentes.</value></data>
   
   <!-- Cleaner Page — status bar (built in code from these parts) -->
   <data name="St_StatusEntries"><value>{0} de {1} entradas</value></data>
   <data name="St_StatusSelected"><value>{0} seleccionados</value></data>
-  <data name="St_StatusFound"><value>{0} encontrados</value></data>
-  <data name="St_StatusResult"><value>{0} archivos, {1} entradas del Registro ({2})</value></data>
   <data name="St_DetailMore"><value>… y {0:N0} más</value></data>
-  <data name="St_Administrator"><value>Administrador</value></data>
     
-  <data name="St_SearchNone"><value>No hay entradas coincidentes.</value></data>
   <data name="St_ParsingDatabases"><value>Analizando bases de datos...</value></data>
   <data name="St_AnalysisReady"><value>Análisis listo — {0} aplicaciones encontradas en {1} entradas.</value></data>
   <data name="St_NothingSelected"><value>No hay nada seleccionado.</value></data>
@@ -266,17 +259,15 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <!-- Settings Page — donation InfoBar -->
   <data name="DonationBar.Title"><value>Apoyar a FluentCleaner</value></data>
   <data name="DonationBar.Message"><value>Elegir cantidad y divisa para PayPal, o apoyar el proyecto a través de Ko-fi. ♥</value></data>
+  <data name="BtnDonate.Content"><value>Apoyar el proyecto</value></data>
+  <data name="MenuDonatePayPal.Text"><value>Donar a través de PayPal</value></data>
+  <data name="MenuDonateKoFi.Text"><value>Donar a través de Ko-fi</value></data>
   <data name="SectionAppearance.Text"><value>Apariencia</value></data>
   <data name="LblTheme.Text"><value>Tema de la aplicación</value></data>
   <data name="LblThemeDesc.Text"><value>Elegir el aspecto que tendrá FluentCleaner en el dispositivo.</value></data>
   <data name="ThemeSystem.Content"><value>Predeterminado del sistema</value></data>
   <data name="ThemeLight.Content"><value>Claro</value></data>
   <data name="ThemeDark.Content"><value>Oscuro</value></data>
-  <data name="LblBackdrop.Text"><value>Trasfondo de ventana</value></data>
-  <data name="LblBackdropDesc.Text"><value>Material utilizado tras las pestañas y las barras de herramientas. Mica Alt es más colorido, mientras que Acrílico es translúcido.</value></data>
-  <data name="BackdropMica.Content"><value>Mica</value></data>
-  <data name="BackdropMicaAlt.Content"><value>Mica Alt</value></data>
-  <data name="BackdropAcrylic.Content"><value>Acrílico</value></data>
   <data name="LblLanguage.Text"><value>Idioma</value></data>
   <data name="LblLanguageDesc.Text"><value>Elegir el idioma de visualización. Es necesario reiniciar para aplicar.</value></data>
   <data name="St_LangAuto"><value>Predeterminado del sistema</value></data>
@@ -293,6 +284,8 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="BtnBrowse.Content"><value>Buscar…</value></data>
   <data name="BtnApplyPath.Content"><value>Aplicar</value></data>
   <data name="BtnRemovePath.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip"><value>Borrar base de datos personalizada</value></data>
+  <data name="RestartBar.Title"><value>Reinicio requerido</value></data>
+  <data name="RestartBar.Message"><value>Reiniciar FluentCleaner para cargar la base de datos actualizada.</value></data>
   <data name="SectionPostClean.Text"><value>Tareas posteriores a la limpieza</value></data>
   <data name="LblPostCleanDesc.Text"><value>Un comando por línea — se ejecuta secuencialmente después de cada limpieza.</value></data>
   <data name="SectionExclusions.Text"><value>Exclusiones globales</value></data>
@@ -341,11 +334,17 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="St_HistoryItems"><value>{0} elementos</value></data>
   <data name="St_FileNotFound"><value>Archivo no encontrado: {0}</value></data>
   <data name="St_CustomPathSaved"><value>Ruta personalizada guardada.</value></data>
+  <data name="St_Download"><value>Descargar</value></data>
   <data name="St_Downloading"><value>Descargando {0}…</value></data>
   <data name="St_Downloaded"><value>{0} descargado — {1} KB</value></data>
   <data name="St_DownloadFailed"><value>Error al descargar: {0}</value></data>
   <data name="St_FileInfoNotDownloaded"><value>No se ha descargado</value></data>
   <data name="St_FileInfo"><value>{0} entradas  •  {1} KB  •  {2}</value></data>
+  <data name="St_UpdateAvailable"><value>Actualización disponible — {0}</value></data>
+  <data name="St_UpdateMessage"><value>Una nueva versión de FluentCleaner está lista para descargar.</value></data>
+  <data name="St_UpToDate"><value>Aplicación actualizada</value></data>
+  <data name="St_UpToDateMessage"><value>La versión {0} es la más reciente.</value></data>
+  <data name="St_MenuUpdate"><value>⬆  Actualización disponible — {0}</value></data>
   <data name="St_ApiKeyMissing"><value>⚠ Introducir primero una clave API</value></data>
   <data name="St_ApiKeyTesting"><value>Probando…</value></data>
   <data name="Scheduler_FreqDaily"><value>Diariamente</value></data>
@@ -373,22 +372,22 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="MenuEditEntry.Text"><value>Editar</value></data>
   <data name="MenuDeleteEntry.Text"><value>Eliminar</value></data>
   <data name="MenuTestEntry.Text"><value>Probar en laboratorio de reglas</value></data>
+  <data name="MenuRunEntry.Text"><value>Ejecutar</value></data>
   <data name="BtnNewCleaner.Content"><value>+ Nuevo limpiador</value></data>
-  <data name="BtnRunScript.Text"><value>Ejecutar</value></data>
 
   <!-- Custom Page — code strings -->
   <data name="St_CustomStatus"><value>{0} limpiador(es) · {1} activado(s)</value></data>
-  <data name="St_CustomStatusScripts"><value>{0} script(s)</value></data>
+  <data name="St_CustomMenuNew"><value>Nuevo limpiador personalizado</value></data>
   <data name="St_CustomMenuOpenFolder"><value>Abrir carpeta Custom</value></data>
+  <data name="St_CustomMenuReddit"><value>Preguntar en Reddit</value></data>
+  <data name="St_CustomMenuNeowin"><value>Foros de Neowin</value></data>
+  <data name="St_CustomMenuDeskmodder"><value>Deskmodder.de</value></data>
+  <data name="St_CustomMenuShare"><value>Compartir limpiador en GitHub</value></data>
   <data name="St_CustomToggleFailed"><value>Error al conmutar: {0}</value></data>
   <data name="St_CustomDeleteTitle"><value>¿Eliminar "{0}"?</value></data>
   <data name="St_CustomDeleteMessage"><value>Esta acción elimina el limpiador personalizado permanentemente.</value></data>
   <data name="St_CustomDeleteConfirm"><value>Eliminar</value></data>
   <data name="St_CustomDeleteCancel"><value>Cancelar</value></data>
-  <data name="St_CustomRunning"><value>Ejecutando {0}...</value></data>
-  <data name="St_CustomScriptError"><value>{0}: no se ha podido leer el script — {1}</value></data>
-  <data name="St_CustomCompleted"><value>{0}: finalizado correctamente.</value></data>
-  <data name="St_CustomFailed"><value>{0}: error (salida {1}).</value></data>
   <data name="St_CustomEntryNone"><value>no hay entradas analizadas</value></data>
   <data name="St_CustomEntryOne"><value>1 entrada · {0}</value></data>
   <data name="St_CustomEntryMany"><value>{0} entradas · {1}</value></data>
@@ -398,15 +397,12 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <!-- New Cleaner Dialog -->
   <data name="DlgNewCleanerSave"><value>Guardar</value></data>
   <data name="DlgNewCleanerCancel"><value>Cancelar</value></data>
-  <data name="DlgNewCleanerTypeIni.Content"><value>Entrada Winapp2 (.ini)</value></data>
-  <data name="DlgNewCleanerTypePs1.Content"><value>Script PowerShell (.ps1)</value></data>
   <data name="DlgNewCleanerNameHeader"><value>Nombre</value></data>
   <data name="DlgNewCleanerNamePlaceholder"><value>Mi Limpiador</value></data>
   <data name="DlgNewCleanerAiPlaceholder"><value>Generar con IA - describe qué limpiar (el resultado puede variar)</value></data>
   <data name="DlgNewCleanerGenerate.Content"><value>Generar</value></data>
   <data name="DlgNewCleanerGenerateBtn"><value>Generar</value></data>
   <data name="DlgNewCleanerContentLabel"><value>Contenido</value></data>
-  <data name="DlgNewCleanerTest"><value>Probar en Laboratorio de reglas</value></data>
   <data name="DlgNewCleanerLoadTemplate.Content"><value>Cargar plantilla</value></data>
   <data name="DlgNewCleanerTitleNew"><value>Nuevo limpiador personalizado</value></data>
   <data name="DlgNewCleanerTitleEdit"><value>Editar — {0}</value></data>
@@ -415,6 +411,7 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <!-- ============================================================
        AI EXPLAINER
   ============================================================ -->
+  <data name="AI_NoKey"><value>No hay clave API configurada para el proveedor seleccionado. Ir a Configuración → IA → Explicaciones con IA para agregar una.</value></data>
   <data name="AI_ApiError"><value>{0} error de API: {1}</value></data>
   <data name="AI_NoResponse"><value>No se ha recibido respuesta.</value></data>
   <data name="AI_NetworkError"><value>No se ha podido contactar con {0}: {1}</value></data>
@@ -432,6 +429,8 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="CLI_NoDrives"><value>  No se han encontrado unidades.</value></data>
   <data name="CLI_ThemeUsage"><value>  Utilizar: theme dark | light | system</value></data>
   <data name="CLI_ThemeSet"><value>  Tema establecido en '{0}'.</value></data>
+  <data name="CLI_BackdropUsage"><value>  Utilizar: backdrop mica | acrylic</value></data>
+  <data name="CLI_BackdropSet"><value>  Trasfondo (backdrop) establecido en '{0}'.</value></data>
   <data name="CLI_NoMatch"><value>  No hay entradas coincidentes con '{0}'.</value></data>
   <data name="CLI_CleanEntry"><value>  {0}: {1} elememtos · {2}</value></data>
   <data name="CLI_CleanDone"><value>  Hecho — {0} elementos borrados · {1} liberado.</value></data>
@@ -474,18 +473,17 @@ Elegir Groq, OpenAI o Anthropic. No se envía nada sin la acción explícita del
   <data name="AppMenuSettings.Text"><value>Configuración</value></data>
   <data name="AppMenuDonate.Text"><value>Apoyar el proyecto</value></data>
   <data name="AppMenuUpdates.Text"><value>Buscar actualizaciones</value></data>
-  <data name="AppMenuSetupCode.Text"><value>Compartir selección</value></data>
-  <data name="SC_Title"><value>FluentSeed</value></data>
-  <data name="SC_Intro"><value>Un FluentSeed es la selección de limpieza actual del usuario en una sola línea de texto. Cualquier otro usuario que lo pegue aquí obtendrá las mismas entradas seleccionadas. Sin archivos, sin rutas, sin nada relacionado con el equipo.</value></data>
+  <data name="ShareSelection.Text"><value>Compartir selección</value></data>
+  <data name="SC_Title"><value>Código de configutación</value></data>
+  <data name="SC_Intro"><value>Un código de configuración es la selección de limpieza actual del usuario en una sola línea de texto. Al publicarlo o enviarlo, cualquier otro usuario puede pegarlo aquí para obtener las mismas entradas marcadas. Solo contiene identificadores breves de los nombres de las entradas: no incluye archivos, rutas ni nada relacionado con el equipo.</value></data>
   <data name="SC_OwnHeader"><value>Selección del usuario</value></data>
-  <data name="SC_OwnSummary"><value>{0} entradas seleccionadas</value></data>
-  <data name="SC_OwnEmpty"><value>Aún no hay ninguna opción seleccionada en el limpiador.</value></data>
+  <data name="SC_OwnSummary"><value>{0} entradas marcadas</value></data>
+  <data name="SC_OwnEmpty"><value>Aún no hay ninguna opción marcada en el limpiador.</value></data>
   <data name="SC_Copy"><value>Copiar</value></data>
   <data name="SC_Copied"><value>Copiado</value></data>
-  <data name="SC_CopyLink"><value>Copiar enlace</value></data>
-  <data name="SC_PasteHeader"><value>Utilizar un FluentSeed</value></data>
-  <data name="SC_PastePlaceholder"><value>Pegar un FluentSeed empezando por FC1-</value></data>
-  <data name="SC_Invalid"><value>Eso no es un FluentSeed.</value></data>
+  <data name="SC_PasteHeader"><value>Utilizar código</value></data>
+  <data name="SC_PastePlaceholder"><value>Pegar código empezando por FC1-</value></data>
+  <data name="SC_Invalid"><value>Eso no es un código de configuración.</value></data>
   <data name="SC_Match"><value>{0} de {1} entradas localizadas en este equipo</value></data>
   <data name="SC_None"><value>Ninguna de estas entradas es aplicable a este equipo.</value></data>
   <data name="SC_NotInstalled"><value>{0} son para aplicaciones no instaladas.</value></data>

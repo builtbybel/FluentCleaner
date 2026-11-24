@@ -23,5 +23,7 @@ public static class AppInfo
     // used as TitleBar.Subtitle; empty string hides the subtitle area
     public static string InsiderSubtitle => IsInsider ? "Insider" : "";
 
+    // Windows 11 is build 22000 and up. The tweak catalogue gates rules on it (OsVersion=10|11),
+    // since a good share of them address the Windows 11 shell and do nothing on 10.
     public static bool IsEleven => Environment.OSVersion.Version.Build >= 22000;
 }

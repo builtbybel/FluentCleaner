@@ -750,31 +750,11 @@ public partial class CleanerPageViewModel : ObservableObject
         _          => "\uE74C"
     };
 
-    private static (string glyph, string accentHex, string bgHex) ResolveCategoryStyling(string categoryName, string macroGroup) => categoryName switch
+    private static (string glyph, string accentHex, string bgHex) ResolveCategoryStyling(string categoryName, string macroGroup)
     {
-        "Windows" or "Microsoft Store" => ("\uE782", "#60A5FA", "#2260A5FA"), // Clean Electric Azure
-        "Google Chrome"                => ("\uE774", "#FBBF24", "#22FBBF24"), // High-Voltage Chrome Gold
-        "Microsoft Edge"               => ("\uE774", "#38BDF8", "#2238BDF8"), // Vibrant Sky Blue
-        "Firefox"                      => ("\uE774", "#FB923C", "#22FB923C"), // Radiant Firefox Orange
-        "Brave"                        => ("\uE774", "#FB7185", "#22FB7185"), // Brave Coral
-        "Opera" or "Opera GX"          => ("\uE774", "#F87171", "#22F87171"), // Opera Red
-        "Vivaldi" or "Arc Browser"     => ("\uE774", "#22D3EE", "#2222D3EE"), // Vivaldi Cyan
-        "Developer Tools" or "Developer & AI" => ("\uE943", "#34D399", "#2234D399"), // Electric Emerald
-        "Multimedia" or "iTunes" or "Spotify" => ("\uE8B9", "#F472B6", "#22F472B6"), // Neon Hot Pink
-        "Utilities"                    => ("\uE74C", "#4ADE80", "#224ADE80"), // Vivid Lime Green
-        "Games"                        => ("\uE7FC", "#A78BFA", "#22A78BFA"), // Vivid Gamepad Purple
-        "Applications"                 => ("\uE71D", "#C084FC", "#22C084FC"), // Electric Violet
-        "Adobe"                        => ("\uE8B7", "#F87171", "#22F87171"), // Coral Red Document
-        "Internet"                     => ("\uE774", "#22D3EE", "#2222D3EE"), // Bright Ocean Cyan
-        "Microsoft PowerToys"          => ("\uEDA2", "#FCD34D", "#22FCD34D"), // Bright PowerTools Amber
-        _ => macroGroup switch
-        {
-            "Windows"  => ("\uE782", "#60A5FA", "#2260A5FA"),
-            "Browsers" => ("\uE774", "#FBBF24", "#22FBBF24"),
-            "DevAi"    => ("\uE943", "#34D399", "#2234D399"),
-            _          => ("\uE71D", "#C084FC", "#22C084FC")
-        }
-    };
+        var style = CategoryStylingResolver.Resolve(categoryName, macroGroup);
+        return (style.Glyph, style.AccentHex, style.BackgroundHex);
+    }
 
     private void SetMacroGroupSelected(string macroKey, bool isSelected)
     {
@@ -1190,6 +1170,30 @@ public partial class CleanerPageViewModel : ObservableObject
         AppSettings.Instance.CleanerSelectionInitialized = true;
         AppSettings.Instance.Save();
     }
+
+    // --- Compatibility with FluentSeed & Upstream Extensions ---
+    public Task Ready => Task.CompletedTask;
+    public IReadOnlyList<CleanerEntry> LoadedEntries => _loadedEntries;
+
+    public static List<string> DatabasePaths()
+    {
+        var paths = AppSettings.Instance.ResolveDatabasePaths().ToList();
+        if (paths.Count == 0) paths.Add(Path.Combine(AppContext.BaseDirectory, "Winapp2.ini"));
+        return paths;
+    }
+
+    public void ApplySelection(IEnumerable<string> names)
+    {
+        var set = names.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        AppSettings.Instance.SelectedEntries = set;
+        AppSettings.Instance.CleanerSelectionInitialized = true;
+        AppSettings.Instance.Save();
+
+        _suppressSave = true;
+        foreach (var entry in Categories.SelectMany(c => c.Entries))
+            entry.IsSelected = set.Contains(entry.Name);
+        _suppressSave = false;
+    }
 }
 
 public partial class MacroCategoryCardViewModel : ObservableObject
@@ -1228,6 +1232,10 @@ public partial class MacroCategoryCardViewModel : ObservableObject
 
 public record ScanResultLine(string AppName, int FileCount, int RegCount, string Size, ScanResult? Result = null, string CategoryName = "")
 {
+    private string Category => Result is null ? "" : CategoryResolver.TryMapLangSecRef(Result.Entry).Name;
+    public string Glyph => CleanerCategoryViewModel.GlyphFor(Category);
+    public Microsoft.UI.Xaml.Media.SolidColorBrush IconBrush => CleanerCategoryViewModel.BrushFor(Category);
+
     public string CountSummary
     {
         get

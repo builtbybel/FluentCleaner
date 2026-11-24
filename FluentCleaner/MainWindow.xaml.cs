@@ -242,4 +242,10 @@ public sealed partial class MainWindow : Window
         if (!compact)
             TitleSearchBox.Width = width < 760 ? 220 : 320;
     }
+
+    public T? OpenTab<T>(string title = "") where T : class
+    {
+        NavFrame.Navigate(typeof(T));
+        return NavFrame.Content as T;
+    }
 }

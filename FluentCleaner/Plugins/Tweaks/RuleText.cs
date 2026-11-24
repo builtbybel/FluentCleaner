@@ -1,25 +1,25 @@
 namespace FluentCleaner.Plugins.Tweaks;
 
 /// <summary>
-/// Rule wording from <c>Lang\&lt;language&gt;.ini</c>, so WinRules.ini stays as it came from
-/// upstream. Section = rule name, keys Name and Detail; anything missing keeps the English.
+/// Translated rule texts from <c>Lang\&lt;language&gt;.ini</c>, WinRules.ini itself stays english.
+/// Section = rule name, keys Name and Detail;missing ones stay english.
 /// </summary>
 internal static class RuleText
 {
-    // part -> text, per rule name. Loaded for one language and dropped when it changes.
+    // rule name -> part -> text, for one language
     private static Dictionary<string, Dictionary<string, string>>? _byRule;
     private static string _loadedFor = "";
     private static readonly object Gate = new();
 
-    /// <summary>Drops the cache so a language file added at runtime is picked up.</summary>
+    /// <summary>Clears the cache, so new language files get picked up.</summary>
     public static void Forget()
     {
         lock (Gate) { _byRule = null; _loadedFor = ""; }
     }
 
     /// <summary>
-    /// The translated <paramref name="part"/> ("Name" or "Detail") of the rule called
-    /// <paramref name="rule"/>, or <paramref name="fallback"/> when there is none.
+    /// Translated <paramref name="part"/> ("Name" or "Detail") of <paramref name="rule"/>,
+    /// or <paramref name="fallback"/>.
     /// </summary>
     public static string Get(string part, string rule, string fallback)
     {
@@ -33,8 +33,7 @@ internal static class RuleText
 
     // --- loading -------------------------------------------------------------
 
-    // The scanner asks from a background thread while the list asks from the UI thread, so
-    // the load happens once behind a lock rather than twice in parallel.
+    // scanner (background) and list (UI thread) both call this, so lock it
     private static Dictionary<string, Dictionary<string, string>> Map()
     {
         var language = Language();
@@ -46,8 +45,7 @@ internal static class RuleText
         }
     }
 
-    // What the app is actually showing: the user's own choice when they made one, otherwise
-    // whatever Windows decided for us.
+    // user's language override, else whatever windows uses
     private static string Language()
     {
         try
@@ -55,12 +53,12 @@ internal static class RuleText
             var chosen = Microsoft.Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride;
             if (!string.IsNullOrEmpty(chosen)) return chosen;
         }
-        catch { /* fall through to the thread culture */ }
+        catch { /* fall back to the thread culture */ }
 
         return System.Globalization.CultureInfo.CurrentUICulture.Name;
     }
 
-    // de-DE.ini, then de.ini. Exact names only, so de-DE.example.ini never counts as German.
+    // de-DE.ini, then de.ini (exact names, de-DE.example.ini doesn't count)
     private static Dictionary<string, Dictionary<string, string>> Read(string language)
     {
         var empty = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
@@ -79,8 +77,7 @@ internal static class RuleText
         return empty;
     }
 
-    // Sections of key=value, same shape as the rule files. A locked or broken file leaves the
-    // app in English rather than taking it down: wording is never worth a crash.
+    // same format as the rule files;broken/locked file = stays english, no crash
     private static Dictionary<string, Dictionary<string, string>> Parse(string file)
     {
         var byRule = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
@@ -99,7 +96,7 @@ internal static class RuleText
             {
                 var name = line.Trim('[', ']').Trim();
                 if (name.Length == 0) { current = null; continue; }
-                // A repeated heading adds to the first rather than replacing it.
+                // same heading twice = merged
                 if (!byRule.TryGetValue(name, out current))
                     byRule[name] = current = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 continue;
@@ -107,8 +104,7 @@ internal static class RuleText
 
             if (current is null) continue;
             var split = line.IndexOf('=');
-            // Translations are kept whole: no trailing comment is cut off, because a semicolon
-            // belongs in a sentence far more often than it starts a note here.
+            // no comment stripping here, a ; in a translated sentence is normal text
             if (split > 0) current[line.Substring(0, split).Trim()] = line.Substring(split + 1).Trim();
         }
 

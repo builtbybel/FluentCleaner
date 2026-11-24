@@ -2,15 +2,14 @@
 
 namespace FluentCleaner.Plugins.Tweaks;
 
-//the only class that knows the tweak ini format. every registry tweak stands in those files,
-//so a new tweak is a few lines of text and never a new build.
+//reads the tweak ini files;new tweaks = just edit the ini, no new build
 internal static class TweakDatabase
 {
-    private static List<Tweak>? _all;                   // cached until a catalogue or plugin change
+    private static List<Tweak>? _all;                   // cached until Forget()
 
-    public static List<Tweak> All => _all ??= Read();   // every tweak, by category and then by name
+    public static List<Tweak> All => _all ??= Read();   // sorted by category, then name
 
-    //back to disk on the next read: rule packs and language files alike
+    //reload rules and language files on next access
     public static void Forget()
     {
         _all = null;
@@ -19,8 +18,7 @@ internal static class TweakDatabase
 
     // --- reading -------------------------------------------------------------
 
-    //reads every tweak ini of the rules folder; a later file that repeats a section replaces it,
-    //which is how a plugin corrects a tweak instead of only adding one
+    //reads all ini files in the folder;same section name later = replaces the earlier one
     private static List<Tweak> Read()
     {
         var byName = new Dictionary<string, Tweak>(StringComparer.OrdinalIgnoreCase);
@@ -33,12 +31,11 @@ internal static class TweakDatabase
         return byName.Values.OrderBy(tweak => tweak.Category).ThenBy(tweak => tweak.Name).ToList();
     }
 
-    //this plugin's own folder beside the exe; the translations sit in Lang\ underneath it,
-    //which this never reads, because GetFiles does not descend
+    //Plugins\Tweaks next to the exe;Lang\ below is not read here (GetFiles isn't recursive)
     private static string Dir => PluginPaths.Dir("Tweaks");
 
-    //winrules.ini first, then every other ini beside it in name order. no file has to be
-    //excluded by name any more: the app uninstaller keeps AppRules.ini in its own folder
+    //WinRules.ini first, then the other ini files by name.
+    //AppRules.ini is in the Apps folder, so nothing to exclude here
     private static IEnumerable<string> Files()
     {
         var own = Path.Combine(Dir, "WinRules.ini");
@@ -49,8 +46,7 @@ internal static class TweakDatabase
 
     // --- one file ------------------------------------------------------------
 
-    //reads one file into tweaks: each section is collected as key and value and built at the next
-    //heading, so the last line of the file still closes the last tweak
+    //collects key=value per section, builds the tweak at the next [heading] or at the end
     private static List<Tweak> Parse(string file)
     {
         var tweaks = new List<Tweak>();
@@ -80,8 +76,7 @@ internal static class TweakDatabase
         return tweaks;
     }
 
-    //builds one tweak out of a section; null when it names no value at all, which is a half
-    //written section and not something the user should be offered
+    //section -> tweak;null if it has no value at all (half written section)
     private static Tweak? Build(string name, Dictionary<string, string> section)
     {
         string Get(string key, string fallback = "") =>
@@ -99,8 +94,8 @@ internal static class TweakDatabase
             Recommended = Get("DefaultSelected").Equals("true", StringComparison.OrdinalIgnoreCase)
         };
 
-        //path and valuename hold the first value, path2 the second, and the numbers end where a
-        //valuename is missing; a later value that names no path repeats the path of the first
+        //Path/ValueName, Path2/ValueName2...;stops at the first missing ValueName.
+        //no PathN = same path as the first one
         for (var number = 1; ; number++)
         {
             var suffix = number == 1 ? "" : number.ToString();
@@ -120,7 +115,7 @@ internal static class TweakDatabase
         return tweak.Entries.Count > 0 ? tweak : null;
     }
 
-    //cuts a trailing comment off a value; only a space in front of the semicolon makes it one
+    //cuts off a trailing " ;comment" (needs the space before ;)
     private static string Clean(string value)
     {
         var text = value.Trim();
@@ -128,7 +123,7 @@ internal static class TweakDatabase
         return comment < 0 ? text : text.Substring(0, comment).Trim();
     }
 
-    //reads the lines of a file; a locked or unreadable one is a missing plugin, not a crash
+    //locked/unreadable file = skipped, no crash
     private static string[] SafeLines(string file)
     {
         try { return File.ReadAllLines(file); }

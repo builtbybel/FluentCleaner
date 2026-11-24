@@ -1,9 +1,15 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace FluentCleaner.Services;
 
 public record CleanHistoryEntry(DateTime Date, long BytesFreed, int ItemsRemoved);
+
+// Reading and writing code generated at build time instead of discovered by reflection at
+// run time. Required for the AOT build, which has no reflection to fall back on.
+[JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true, WriteIndented = true)]
+[JsonSerializable(typeof(AppSettings))]
+internal partial class SettingsJson : JsonSerializerContext;
 
 // App-wide settings, persisted as a single settings.json and exposed through the
 // static Instance. The Classic app reads/writes the SAME file; keys it owns
@@ -23,12 +29,6 @@ public class AppSettings
     [JsonIgnore]
     public static bool IsPortable => SettingsFile == PortablePath;
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        WriteIndented = true
-    };
-
     static AppSettings() => Instance = Load();
 
     // --- persisted settings -----------------------------------------------
@@ -47,7 +47,6 @@ public class AppSettings
     // which built-in databases to load on startup
     public bool EnableWinapp2 { get; set; } = true;
     public bool EnableWinapp3 { get; set; } = false;
-    public bool EnableWinappx { get; set; } = true;   // AppX/bloatware database for terminal debloater
 
     // post-clean commands;one per line; global on/off switch
     public bool   PostCleanEnabled  { get; set; } = false;
@@ -61,7 +60,7 @@ public class AppSettings
     // Website domains protected by the Cookie Manager during browser cleaning.
     public List<string> CookieDomainsToKeep { get; set; } = [];
 
-    // backdrop style; micaalt by default for Windows 11 depth
+    // Window material, chosen in Settings: "mica" (default), "micaalt" or "acrylic".
     public string Backdrop { get; set; } = "micaalt";
 
     // remembered window size; restored on next launch
@@ -92,10 +91,13 @@ public class AppSettings
     public bool ModernSchedulerShutdownAfter { get; set; }
 
     // true once the user dismisses the startup donation tip
-    public bool DonationDismissed { get; set; } = false;
 
     // UI language override; "" = follow Windows, "en-US" / "de-DE" = forced
     public string Language { get; set; } = "";
+
+    // Last Modern version that ran; the cleaner says "what's new" once when it changes.
+    // Its own key, because Classic shares this file and has different version numbers.
+    public string? ModernLastVersion { get; set; }
 
     // Classic writes keys this app doesn't type (WindowX/WindowY). Keep them across
     // a save instead of dropping them from the shared file.
@@ -138,7 +140,7 @@ public class AppSettings
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(SettingsFile)!);
-            File.WriteAllText(SettingsFile, JsonSerializer.Serialize(this, JsonOptions));
+            File.WriteAllText(SettingsFile, JsonSerializer.Serialize(this, SettingsJson.Default.AppSettings));
         }
         catch { }
     }
@@ -148,7 +150,7 @@ public class AppSettings
         try
         {
             if (!File.Exists(SettingsFile)) return new();
-            var s = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsFile), JsonOptions) ?? new();
+            var s = JsonSerializer.Deserialize(File.ReadAllText(SettingsFile), SettingsJson.Default.AppSettings) ?? new();
             s.CustomWinapp2Path = NormalizePath(s.CustomWinapp2Path);
             return s;
         }
@@ -156,12 +158,12 @@ public class AppSettings
     }
 
     public static void ExportTo(string path)
-        => File.WriteAllText(path, JsonSerializer.Serialize(Instance, JsonOptions));
+        => File.WriteAllText(path, JsonSerializer.Serialize(Instance, SettingsJson.Default.AppSettings));
 
     public static void ImportFrom(string path)
     {
         var json = File.ReadAllText(path);
-        var s = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions) ?? new();
+        var s = JsonSerializer.Deserialize(json, SettingsJson.Default.AppSettings) ?? new();
         s.CustomWinapp2Path = NormalizePath(s.CustomWinapp2Path);
         Instance = s;
         Instance.Save();

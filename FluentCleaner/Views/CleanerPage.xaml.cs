@@ -226,7 +226,7 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
     private void DetailRuleLab_Click(object sender, RoutedEventArgs e)
     {
         if (ViewModel.SelectedEntryVm is { } vm)
-            new RuleLabWindow(vm.Entry.Name, vm.Entry.RawText, ActualTheme).Activate();
+            RuleLabPage.Open(vm.Entry.Name, vm.Entry.RawText);
     }
 
     private async void DetailClean_Click(object sender, RoutedEventArgs e)
@@ -290,7 +290,7 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
     private void EntrySource_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not MenuFlyoutItem { Tag: CleanerEntryViewModel vm }) return;
-        new RuleLabWindow(vm.Entry.Name, vm.Entry.RawText, ActualTheme).Activate();
+        RuleLabPage.Open(vm.Entry.Name, vm.Entry.RawText);
     }
 
     private async void CatAnalyze_Click(object sender, RoutedEventArgs e)
