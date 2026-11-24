@@ -88,8 +88,6 @@ internal static class CookieService
                     database.Execute($"DELETE FROM {table} WHERE {deleteExpression}");
                     database.Execute("COMMIT");
                 }
-                    database.Execute("COMMIT");
-                }
                 catch
                 {
                     try { database.Execute("ROLLBACK"); } catch { }
