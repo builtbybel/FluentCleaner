@@ -6,8 +6,6 @@ public static class AppInfo
 {
     public const bool IsInsider = false;
 
-    public static bool IsEleven => Environment.OSVersion.Version.Build >= 22000;
-
     // Returns version as 26.03.01
     public static string VersionString
     {
