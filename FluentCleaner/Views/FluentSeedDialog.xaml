@@ -1,0 +1,69 @@
+<ContentDialog
+    x:Class="FluentCleaner.Views.FluentSeedDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    DefaultButton="Primary"
+    CornerRadius="8">
+
+    <StackPanel Spacing="20" MaxWidth="460">
+
+        <TextBlock x:Name="Intro"
+                   TextWrapping="Wrap"
+                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+        <!-- own seed: 2 line preview, Copy takes the whole seed -->
+        <StackPanel Spacing="8">
+            <Grid>
+                <TextBlock x:Name="OwnHeader"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="8">
+                    <!-- link is fine for X, every link counts as 23 chars there -->
+                    <Button x:Name="CopyLinkButton" Click="CopyLink_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon x:Name="CopyLinkGlyph" Glyph="&#xE71B;" FontSize="14" />
+                            <TextBlock x:Name="CopyLinkText" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="CopyButton" Click="Copy_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon x:Name="CopyGlyph" Glyph="&#xE8C8;" FontSize="14" />
+                            <TextBlock x:Name="CopyText" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <Border x:Name="OwnCodeBox"
+                    Padding="12,10"
+                    CornerRadius="4"
+                    BorderThickness="1"
+                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                <TextBlock x:Name="OwnCode"
+                           FontFamily="Cascadia Mono, Consolas"
+                           FontSize="13"
+                           TextWrapping="Wrap"
+                           MaxLines="2"
+                           TextTrimming="CharacterEllipsis"
+                           IsTextSelectionEnabled="True" />
+            </Border>
+            <TextBlock x:Name="OwnSummary"
+                       FontSize="12"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+
+        <!-- someone else's seed, checked while typing/pasting -->
+        <StackPanel Spacing="8">
+            <TextBlock x:Name="PasteHeader" Style="{StaticResource BodyStrongTextBlockStyle}" />
+            <TextBox x:Name="PasteBox"
+                     FontFamily="Cascadia Mono, Consolas"
+                     FontSize="13"
+                     TextWrapping="Wrap"
+                     MaxHeight="88"
+                     IsSpellCheckEnabled="False"
+                     TextChanged="PasteBox_TextChanged" />
+            <InfoBar x:Name="PasteResult" IsClosable="False" />
+        </StackPanel>
+
+    </StackPanel>
+</ContentDialog>

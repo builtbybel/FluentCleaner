@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using FluentCleaner.Models;
 using Microsoft.Win32;
 
@@ -14,6 +15,11 @@ public class DetectionService
 {
     private readonly PathExpander _expander = new();
 
+    // winapp2 repeats paths (4775 detect lines, 3408 distinct), check each once.
+    // concurrent because loading runs parallel. new instance per read = fresh cache
+    private readonly ConcurrentDictionary<string, bool> _regSeen  = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, bool> _fileSeen = new(StringComparer.OrdinalIgnoreCase);
+
     public bool IsInstalled(CleanerEntry entry)
     {
         if (entry.SpecialDetect is not null)
@@ -24,11 +30,14 @@ public class DetectionService
                 return result;
         }
 
-        foreach (var reg  in entry.DetectKeys)  if (CheckRegistry(reg))  return true;
-        foreach (var file in entry.DetectFiles) if (CheckFile(file))     return true;
+        foreach (var reg  in entry.DetectKeys)  if (CheckRegistryCached(reg)) return true;
+        foreach (var file in entry.DetectFiles) if (CheckFile(file))          return true;
 
         return false;
     }
+
+    private bool CheckRegistryCached(string regPath) =>
+        _regSeen.GetOrAdd(regPath, static path => CheckRegistry(path));
 
     private static bool CheckRegistry(string regPath)
     {
@@ -63,14 +72,16 @@ public class DetectionService
     private static RegistryKey? OpenKey(string hive, string subKey) =>
         RegistryHelpers.OpenHive(hive)?.OpenSubKey(subKey, writable: false);
 
-    private bool CheckFile(string rawPath)
-    {
-        try
+    private bool CheckFile(string rawPath) =>
+        _fileSeen.GetOrAdd(rawPath, path =>
         {
-            return _expander.ResolvePaths(rawPath).Any(p => File.Exists(p) || Directory.Exists(p));
-        }
-        catch { return false; }
-    }
+            try
+            {
+                return _expander.ResolvePaths(path)
+                    .Any(p => File.Exists(p) || Directory.Exists(p));
+            }
+            catch { return false; }
+        });
 
     // SpecialDetect is just a shorthand https://github.com/MoscaDotTo/Winapp2?tab=readme-ov-file#deletion-routines
     // DET_CHROME beats writing out the full path every time

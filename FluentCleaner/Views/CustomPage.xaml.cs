@@ -6,10 +6,10 @@ using System.Collections.ObjectModel;
 
 namespace FluentCleaner.Views;
 
+// Lists the user's own Winapp2 entries. CustomEntryService does all the file work;
+// the enabled ones show up in the cleaner on its next visit.
 public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
 {
-    private static string CustomDir => CustomEntryService.CustomDir;
-
     private readonly ObservableCollection<CustomEntryVm> _entries = [];
     private readonly List<CustomEntryVm> _allEntries = [];   //unfiltered source of truth
     private string _search = "";
@@ -18,68 +18,29 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
     {
         InitializeComponent();
         listCustom.ItemsSource = _entries;
-        _ = LoadEntriesAsync();
+        LoadEntries();
     }
 
     // --- Loading -----------------------------------------------------------
 
-    // INI:loads enabled + disabled (toggle controls state, active ones go into Cleaner)
-    // PS1:loads only active scripts (no toggle; run directly from here)
-    private async Task LoadEntriesAsync()
+    private async void LoadEntries()
     {
-        _allEntries.Clear();
-
-        var loaded = await Task.Run(() =>
+        var loaded = await Task.Run(() => CustomEntryService.ListFiles().Select(path => new CustomEntryVm
         {
-            if (!Directory.Exists(CustomDir))
-                return [];
+            Name       = CustomEntryService.NameOf(path),
+            FilePath   = path,
+            EntryCount = CustomEntryService.CountEntries(path),
+            IsEnabled  = CustomEntryService.IsEnabled(path)   // safe: IsEnabledChanged not yet subscribed
+        }).ToList());
 
-            // INI:both enabled + disabled (toggle controls state)
-            // PS1:only active scripts (no toggle, no .disabled concept)
-            var allFiles =
-                Directory.GetFiles(CustomDir, "*.ini")
-                .Concat(Directory.GetFiles(CustomDir, "*.ini.disabled"))
-                .Concat(Directory.GetFiles(CustomDir, "*.ps1")
-                    .Where(f => !f.EndsWith(".disabled", StringComparison.OrdinalIgnoreCase)))
-                .OrderBy(Path.GetFileName);
-
-            var list = new List<CustomEntryVm>();
-            foreach (var file in allFiles)
-            {
-                var isPs1 = file.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase);
-                var isOn  = isPs1 || !file.EndsWith(".disabled", StringComparison.OrdinalIgnoreCase);
-
-                // Strip extension(s): .ini.disabled >> name, .ini >> name, etc.
-                var name = isOn
-                    ? Path.GetFileNameWithoutExtension(file)
-                    : Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(file));
-
-                var vm = new CustomEntryVm
-                {
-                    Name        = name,
-                    FilePath    = file,
-                    IsScript    = isPs1,
-                    EntryCount  = isPs1 ? 0 : CountEntries(file),
-                    Description = isPs1 ? ReadScriptDescription(file) : null,
-                    IsEnabled   = isOn   //safe: IsEnabledChanged not yet subscribed
-                };
-                list.Add(vm);
-            }
-            return list;
-        });
-
-        // Back on UI thread;wire up events and populate the observable collection
+        _allEntries.Clear();
         foreach (var vm in loaded)
         {
             vm.IsEnabledChanged += OnEntryToggled;
             _allEntries.Add(vm);
         }
-
         ApplyFilter();
     }
-
-    //just a thin synchronous wrapper used after edits/deletes where we're already on the UI thread.
-    private void LoadEntries() => _ = LoadEntriesAsync();
 
     // --- ISearchablePage ----------------------------------------------------------
 
@@ -93,16 +54,8 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
     {
         var q = _search.Trim();
         _entries.Clear();
-
-        var filtered = string.IsNullOrEmpty(q)
-            ? _allEntries
-            : _allEntries.Where(e =>
-                e.Name.Contains(q, StringComparison.OrdinalIgnoreCase) ||
-                (e.Description?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false));
-
-        foreach (var e in filtered)
+        foreach (var e in _allEntries.Where(e => q.Length == 0 || e.Name.Contains(q, StringComparison.OrdinalIgnoreCase)))
             _entries.Add(e);
-
         UpdateUi();
     }
 
@@ -111,103 +64,47 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
         var any = _entries.Count > 0;
         panelEmpty.Visibility = any ? Visibility.Collapsed : Visibility.Visible;
         panelList.Visibility  = any ? Visibility.Visible   : Visibility.Collapsed;
-
-        var iniEntries = _entries.Where(e => !e.IsScript).ToList();
-        var scriptCount = _entries.Count(e => e.IsScript);
-        var enabledCount = iniEntries.Count(e => e.IsEnabled);
-
-        var parts = new List<string>();
-        if (iniEntries.Count > 0) parts.Add(ResourceService.Fmt("St_CustomStatus", iniEntries.Count, enabledCount));
-        if (scriptCount > 0)      parts.Add(ResourceService.Fmt("St_CustomStatusScripts", scriptCount));
-
-        lblStatus.Text = parts.Count > 0 ? string.Join(" · ", parts) : "";
+        lblStatus.Text = any ? ResourceService.Fmt("St_CustomStatus", _entries.Count, _entries.Count(e => e.IsEnabled)) : "";
     }
 
     // --- IPageActions ----------------------------------------------------------
 
     public void BuildActions(MenuFlyout flyout)
     {
-        var newItem = new MenuFlyoutItem { Text = ResourceService.Get("St_CustomMenuNew") };
-        newItem.Click += async (_, _) => await ShowEditorAsync(null);
-        flyout.Items.Add(newItem);
-
-        var openFolder = new MenuFlyoutItem { Text = ResourceService.Get("St_CustomMenuOpenFolder") };
-        openFolder.Click += (_, _) =>
+        // same text as the button
+        flyout.AddItem(ResourceService.Get("BtnNewCleaner/Content"), async () => await ShowEditorAsync(null));
+        flyout.AddItem(ResourceService.Get("St_CustomMenuOpenFolder"), () =>
         {
-            Directory.CreateDirectory(CustomDir);
+            Directory.CreateDirectory(CustomEntryService.CustomDir);
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
-                FileName        = CustomDir,
+                FileName        = CustomEntryService.CustomDir,
                 UseShellExecute = true
             });
-        };
-        flyout.Items.Add(openFolder);
-
-        flyout.Items.Add(new MenuFlyoutSeparator());
-
-        void AddLink(string label, string url)
-        {
-            var item = new MenuFlyoutItem { Text = label };
-            item.Click += async (_, _) => await AppLinks.OpenAsync(url);
-            flyout.Items.Add(item);
-        }
-
-        AddLink(ResourceService.Get("St_CustomMenuReddit"),    AppLinks.Reddit);
-        AddLink(ResourceService.Get("St_CustomMenuNeowin"),    AppLinks.Neowin);
-        AddLink(ResourceService.Get("St_CustomMenuDeskmodder"),AppLinks.Deskmodder);
-        flyout.Items.Add(new MenuFlyoutSeparator());
-        AddLink(ResourceService.Get("St_CustomMenuShare"),     AppLinks.ShareCleaner);
-    }
-
-    // counts [SectionHeaders] in the file as a quick proxy for entry count
-    private static int CountEntries(string path)
-    {
-        try { return File.ReadLines(path).Count(l => l.StartsWith('[') && l.EndsWith(']')); }
-        catch { return 0; }
-    }
-
-    // reads the first non-empty # comment line from a .ps1 file as a short description
-    private static string? ReadScriptDescription(string path)
-    {
-        try
-        {
-            return File.ReadLines(path)
-                       .Select(l => l.Trim())
-                       .FirstOrDefault(l => l.StartsWith('#') && l.Length > 1)
-                       ?[1..]   //strip the leading #
-                       .Trim();
-        }
-        catch { return null; }
+        });
     }
 
     // --- Toggle ------------------------------------------------------------
 
-    //Fires when the user flips a ToggleSwitch. Safe during load because
-    //IsEnabledChanged is subscribed only after the VMs are created
+    // Subscribed only after the VMs exist, so loading never renames anything.
     private void OnEntryToggled(object? sender, bool isEnabled)
     {
-        if (sender is not CustomEntryVm vm || vm.IsScript) return;
-
-        var newPath = isEnabled
-            ? Path.Combine(CustomDir, vm.Name + ".ini")
-            : Path.Combine(CustomDir, vm.Name + ".ini.disabled");
-
-        if (string.Equals(newPath, vm.FilePath, StringComparison.OrdinalIgnoreCase))
-            return;
+        if (sender is not CustomEntryVm vm || CustomEntryService.IsEnabled(vm.FilePath) == isEnabled) return;
 
         try
         {
-            File.Move(vm.FilePath, newPath, overwrite: true);
-            vm.FilePath = newPath;
+            vm.FilePath = CustomEntryService.SetEnabled(vm.FilePath, isEnabled);
             UpdateUi();
         }
         catch (Exception ex)
         {
+            // the switch goes back to what the file says, once the binding has finished its update
+            DispatcherQueue.TryEnqueue(() => vm.IsEnabled = CustomEntryService.IsEnabled(vm.FilePath));
             lblStatus.Text = ResourceService.Fmt("St_CustomToggleFailed", ex.Message);
         }
     }
 
-    // --- New / Edit / Delete -----------------------------------------------
+    // --- New / Edit / Test / Delete ------------------------------------------
 
     private async void BtnNew_Click(object sender, RoutedEventArgs e) =>
         await ShowEditorAsync(null);
@@ -221,17 +118,14 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
     // opens the ini in the Rule Lab so you can dry-run it right after building
     private async void TestInLab_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not MenuFlyoutItem { Tag: CustomEntryVm vm } || vm.IsScript) return;
+        if (sender is not MenuFlyoutItem { Tag: CustomEntryVm vm }) return;
 
-        string content;
-        try   { content = await File.ReadAllTextAsync(vm.FilePath); }
-        catch (Exception ex)
+        try
         {
-            lblStatus.Text = ResourceService.Fmt("St_CustomScriptError", vm.Name, ex.Message);
-            return;
+            var content = await File.ReadAllTextAsync(vm.FilePath);
+            RuleLabPage.Open(vm.Name, content);
         }
-
-        new RuleLabWindow(vm.Name, content, ActualTheme).Activate();
+        catch (Exception ex) { lblStatus.Text = $"{vm.Name}: {ex.Message}"; }
     }
 
     private async void Delete_Click(object sender, RoutedEventArgs e)
@@ -252,67 +146,12 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
 
         if (await dialog.ShowAsync() != ContentDialogResult.Primary) return;
 
-        try { File.Delete(vm.FilePath); } catch { }
+        try { File.Delete(vm.FilePath); }
+        catch (Exception ex) { lblStatus.Text = $"{vm.Name}: {ex.Message}"; return; }
         LoadEntries();
     }
 
-    private async void RunScript_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not Button { Tag: CustomEntryVm vm } || !vm.IsScript) return;
-
-        lblStatus.Text = ResourceService.Fmt("St_CustomRunning", vm.Name);
-        int exitCode = -1;
-
-        void Report(string line) =>
-            DispatcherQueue.TryEnqueue(() => lblStatus.Text = line);
-
-        // Pipe script content via stdin so PowerShell doesn't need -File
-        string scriptContent;
-        try   { scriptContent = await File.ReadAllTextAsync(vm.FilePath); }
-        catch (Exception ex)
-        {
-            lblStatus.Text = ResourceService.Fmt("St_CustomScriptError", vm.Name, ex.Message);
-            return;
-        }
-
-        try
-        {
-            var psi = new System.Diagnostics.ProcessStartInfo(
-                "powershell.exe",
-                "-NoProfile -ExecutionPolicy Bypass -Command -")
-            {
-                RedirectStandardInput  = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError  = true,
-                UseShellExecute        = false,
-                CreateNoWindow         = true
-            };
-
-            using var p = new System.Diagnostics.Process { StartInfo = psi };
-            p.OutputDataReceived += (_, ev) => { if (ev.Data is not null) Report(ev.Data); };
-            p.ErrorDataReceived  += (_, ev) => { if (ev.Data is not null) Report("ERR: " + ev.Data); };
-            p.Start();
-            p.BeginOutputReadLine();
-            p.BeginErrorReadLine();
-
-            // Write the script to stdin and close the stream so PowerShell knows we're done
-            await p.StandardInput.WriteAsync(scriptContent);
-            p.StandardInput.Close();
-
-            await p.WaitForExitAsync();
-            exitCode = p.ExitCode;
-        }
-        catch (Exception ex)
-        {
-            lblStatus.Text = $"{vm.Name}: error — {ex.Message}";
-            return;
-        }
-
-        lblStatus.Text = exitCode == 0
-            ? ResourceService.Fmt("St_CustomCompleted", vm.Name)
-            : ResourceService.Fmt("St_CustomFailed", vm.Name, exitCode);
-    }
-
+    // The dialog saves on its own, so a failed save keeps it open with the text still in it.
     private async Task ShowEditorAsync(CustomEntryVm? existing)
     {
         var dialog = new NewCleanerDialog(existing)
@@ -321,42 +160,22 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
             RequestedTheme = ActualTheme
         };
 
-        if (await dialog.ShowAsync() != ContentDialogResult.Primary) return;
-
-        var name    = dialog.EntryName;
-        var content = dialog.EntryContent;
-        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(content)) return;
-
-        var ext = dialog.IsScript ? ".ps1" : ".ini";
-
-        try
-        {
-            Directory.CreateDirectory(CustomDir);
-            if (existing is not null && File.Exists(existing.FilePath))
-                File.Delete(existing.FilePath);
-            File.WriteAllText(Path.Combine(CustomDir, name + ext), content);
+        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             LoadEntries();
-        }
-        catch { }
     }
 }
 
 // =============================================================================
-// View model for a single row in the custom cleaners list
+// View model for a single card in the custom cleaners list
 // Kept in this file intentionally;it exists solely to back the CustomPage UI
 // =============================================================================
 public sealed class CustomEntryVm : ObservableObject
 {
-    public required string  Name        { get; init; }
-    public          string  FilePath    { get; set; } = "";
-    public          int     EntryCount  { get; init; }
-    public          bool    IsScript    { get; init; }
-    public          string? Description { get; init; }
+    public required string Name       { get; init; }
+    public          string FilePath   { get; set; } = "";
+    public          int    EntryCount { get; init; }
 
-    public Visibility ScriptVisibility => IsScript ? Visibility.Visible   : Visibility.Collapsed;
-    public Visibility IniVisibility    => IsScript ? Visibility.Collapsed : Visibility.Visible;
-
-    // card visuals: accent strip + dimming for disabled entries
+    // card visuals: dimming for disabled entries
     public double EnabledOpacity => IsEnabled ? 1.0 : 0.7;
 
     public string StatusText => EntryCount switch
@@ -376,9 +195,9 @@ public sealed class CustomEntryVm : ObservableObject
         {
             if (SetProperty(ref _isEnabled, value))
             {
-                OnPropertyChanged(nameof(StatusText));   //1 entry · enabled/disabled
-                OnPropertyChanged(nameof(EnabledOpacity));//card dimming
-                IsEnabledChanged?.Invoke(this, value);      //file rename .disabled
+                OnPropertyChanged(nameof(StatusText));     //1 entry · enabled/disabled
+                OnPropertyChanged(nameof(EnabledOpacity)); //card dimming
+                IsEnabledChanged?.Invoke(this, value);     //file rename .disabled
             }
         }
     }

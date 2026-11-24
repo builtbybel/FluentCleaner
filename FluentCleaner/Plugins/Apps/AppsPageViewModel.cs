@@ -7,10 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FluentCleaner.Plugins.Apps;
 
-/// <summary>
-/// The app uninstaller. Windows reports what is installed; AppRules.ini only says how safe each
-/// one is to remove, so a rule pack can reclassify without the app knowing any app names.
-/// </summary>
+//app uninstaller;windows lists the apps, AppRules.ini only says how safe they are to remove
 public sealed partial class AppsPageViewModel : ObservableObject
 {
     public ObservableCollection<AppRowViewModel> Rows { get; } = [];
@@ -36,7 +33,7 @@ public sealed partial class AppsPageViewModel : ObservableObject
 
     // --- filters -------------------------------------------------------------
 
-    /// <summary>All, then one entry per safety level.</summary>
+    //all + one per safety level
     public ObservableCollection<string> SafetyFilters { get; } =
     [
         ResourceService.Get("St_AppsAllLevels"),
@@ -58,12 +55,12 @@ public sealed partial class AppsPageViewModel : ObservableObject
     [ObservableProperty] public partial string InfoMessage { get; set; } = "";
     [ObservableProperty] public partial InfoBarSeverity InfoSeverity { get; set; } = InfoBarSeverity.Informational;
 
-    /// <summary>How many rows are ticked; the remove button names the number.</summary>
+    //ticked rows, shown on the remove button
     public int SelectedCount => _all.Count(row => row.IsSelected);
 
     // --- scanning ------------------------------------------------------------
 
-    /// <summary>Asks Windows what is installed: the uninstall keys first, then the store packages.</summary>
+    //uninstall keys first, then store apps
     [RelayCommand]
     public async Task ScanAsync()
     {
@@ -72,8 +69,7 @@ public sealed partial class AppsPageViewModel : ObservableObject
         Indeterminate = true;
         Progress = 0;
 
-        // try/finally: anything thrown in here would otherwise leave IsBusy stuck true and
-        // every button on the page disabled for the rest of the session.
+        // finally, or a throw leaves IsBusy stuck and the buttons dead
         try
         {
             var progress = new Progress<WorkProgress>(p =>
@@ -88,8 +84,7 @@ public sealed partial class AppsPageViewModel : ObservableObject
             _all = scan.Apps.Select(a => new AppRowViewModel(a)).ToList();
             Rebuild();
 
-            // A failed inventory still leaves the registry-side programs listed, so this is a
-            // partial result rather than nothing, and it has to say which half is missing.
+            // store apps failed, programs are still there;show what's missing
             if (scan.Error.Length > 0)
             {
                 InfoSeverity = InfoBarSeverity.Warning;
@@ -112,18 +107,13 @@ public sealed partial class AppsPageViewModel : ObservableObject
 
     private bool CanRemove => !IsBusy;
 
-    /// <summary>
-    /// Uninstalls every ticked app. Store packages go through PowerShell, classic programs
-    /// through their own uninstaller; a program that only opened a window counts as started,
-    /// not removed, because its outcome is the maker's to decide.
-    /// </summary>
+    //removes the ticked apps;store via powershell, programs via their uninstaller.
+    //uninstaller window still open = "started", not removed
     [RelayCommand(CanExecute = nameof(CanRemove))]
     public Task RemoveAsync() =>
         RunAsync(_all.Where(row => row.IsSelected && row.CanRemove).Select(row => row.App).ToList());
 
-    /// <summary>
-    /// Uninstalls one app straight from its context menu, whatever is ticked elsewhere.
-    /// </summary>
+    //one app from the context menu, ignores the ticks
     public Task RemoveOneAsync(AppRowViewModel row) =>
         row.CanRemove ? RunAsync([row.App]) : Task.CompletedTask;
 
@@ -154,7 +144,7 @@ public sealed partial class AppsPageViewModel : ObservableObject
                     if (gone) { removed++; app.Removed = true; app.Selected = false; }
                     else started++;
                 }
-                //one failed uninstall stays ticked for a retry and does not stop the next app
+                //failed one stays ticked, next app goes on
                 catch (Exception ex) { failed.Add(app.Name + ": " + ex.Message); }
 
                 Indeterminate = false;
