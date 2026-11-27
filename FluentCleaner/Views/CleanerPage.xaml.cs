@@ -115,7 +115,20 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions, I
             ResourceService.Fmt("St_StatusSelected", entries.Count(entry => entry.IsSelected));
     }
 
-    // Offered in the run header after a clean that skipped files (OfferElevation).
+    // Offered in the run header after a clean that skipped files (HasLockedFiles / OfferElevation).
+    private async void UnlockLockedFiles_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.LastLockedFiles.Count == 0) return;
+
+        var dialog = new FileLocksmithDialog(ViewModel.LastLockedFiles)
+        {
+            XamlRoot       = XamlRoot,
+            RequestedTheme = ActualTheme
+        };
+        await dialog.ShowAsync();
+        ViewModel.RecordAdditionalLocksmithClean(dialog.AdditionalRemovedCount, dialog.AdditionalFreedBytes);
+    }
+
     private void RestartElevated_Click(object sender, RoutedEventArgs e)
     {
         var exe = Environment.ProcessPath;

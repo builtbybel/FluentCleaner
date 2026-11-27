@@ -33,6 +33,9 @@ public partial class CleanerPageViewModel : ObservableObject
     [ObservableProperty] public partial double  ScanProgress  { get; set; }                                               // 0–100; drives the real progress bar
     [ObservableProperty] public partial bool    IsBusy        { get; set; }                                               // locked while a scan or clean is running
     [ObservableProperty] public partial bool    OfferElevation { get; set; }                                              // last clean skipped files and we're not admin: header offers a restart
+    [ObservableProperty] public partial bool    HasLockedFiles { get; set; }
+    [ObservableProperty] public partial string  UnlockFilesLabel { get; set; } = "Unlock Locked Files";
+    public List<LockedFileItem> LastLockedFiles { get; } = [];
 
     private static readonly bool IsElevated =
         new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
@@ -296,8 +299,13 @@ public partial class CleanerPageViewModel : ObservableObject
             var scannedBytes          = _lastScan.Sum(r => r.TotalBytes);
             var cleanedLines          = ResultLines.ToList();   // the clean loop removes each row as it goes
             var freedPerEntry         = new Dictionary<ScanResult, long>();
+            LastLockedFiles.Clear();
+            HasLockedFiles            = false;
             (removed, freedBytes)     = await CleanResultsAsync(_lastScan.ToList(), new Progress<string>(msg => StatusText = msg), cts.Token,
                                                                 (result, bytes) => freedPerEntry[result] = bytes);
+            HasLockedFiles            = LastLockedFiles.Count > 0;
+            if (HasLockedFiles)
+                UnlockFilesLabel      = $"Unlock Files ({LastLockedFiles.Count:N0} · {ScanResult.FormatBytes(LastLockedFiles.Sum(f => f.SizeBytes))})";
             var skippedBytes          = scannedBytes - freedBytes;
 
             // list stays after cleaning (like CCleaner), each row shows what it really freed.
@@ -667,6 +675,26 @@ public partial class CleanerPageViewModel : ObservableObject
         return await AnalyzeEntryInternalAsync(entryVm.Entry, progress, keepDetailSelection: false);
     }
 
+    public void RecordAdditionalLocksmithClean(int removed, long freedBytes, IReadOnlyList<LockedFileItem>? remaining = null)
+    {
+        if (remaining is not null)
+        {
+            LastLockedFiles.Clear();
+            LastLockedFiles.AddRange(remaining.Where(f => File.Exists(f.FilePath)));
+        }
+        else
+        {
+            LastLockedFiles.RemoveAll(f => !File.Exists(f.FilePath));
+        }
+
+        HasLockedFiles = LastLockedFiles.Count > 0;
+        if (HasLockedFiles)
+            UnlockFilesLabel = $"Unlock Files ({LastLockedFiles.Count:N0} · {ScanResult.FormatBytes(LastLockedFiles.Sum(f => f.SizeBytes))})";
+
+        if (freedBytes > 0)
+            StatusText = $"File Locksmith freed an additional {ScanResult.FormatBytes(freedBytes)} ({removed:N0} files).";
+    }
+
     // Shared clean loop; used by single-entry, category, and full RunCleaner flows.
     // onCleaned reports what each entry actually freed; only Run Cleaner listens.
     private async Task<(int count, long bytes)> CleanResultsAsync(List<ScanResult> results, IProgress<string> progress, CancellationToken token = default,
@@ -678,7 +706,10 @@ public partial class CleanerPageViewModel : ObservableObject
         int  total = results.Count;
         foreach (var result in results)
         {
-            var (c, b) = await _cleaner.CleanAsync(result, progress, token);
+            var outcome = await _cleaner.CleanDetailedAsync(result, progress, token);
+            var (c, b) = (outcome.RemovedCount, outcome.FreedBytes);
+            if (outcome.LockedFiles.Count > 0)
+                LastLockedFiles.AddRange(outcome.LockedFiles);
             count += c;
             bytes += b;
             onCleaned?.Invoke(result, b);

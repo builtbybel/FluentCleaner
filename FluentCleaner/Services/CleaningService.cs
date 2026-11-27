@@ -19,7 +19,14 @@ public class CleaningService
         => Task.Run(() => Analyze(entry, progress, token), token);
 
     public Task<(int count, long bytes)> CleanAsync(ScanResult result, IProgress<string>? progress = null, CancellationToken token = default)
-        => Task.Run(() => Clean(result, progress, token), token);
+        => Task.Run(() =>
+        {
+            var outcome = CleanDetailed(result, progress, token);
+            return (outcome.RemovedCount, outcome.FreedBytes);
+        }, token);
+
+    public Task<CleanOutcome> CleanDetailedAsync(ScanResult result, IProgress<string>? progress = null, CancellationToken token = default)
+        => Task.Run(() => CleanDetailed(result, progress, token), token);
 
     // --- Analyze --------------------------------------------------
 
@@ -168,10 +175,11 @@ public class CleaningService
     /* Deletes everything the Analyze phase queued up.
        Files that are in use or already gone get skipped silently;no point in spamming errors. 
      Also returns the count of successfully deleted items and the total bytes freed.*/
-    private (int count, long bytes) Clean(ScanResult result, IProgress<string>? progress, CancellationToken token = default)
+    private CleanOutcome CleanDetailed(ScanResult result, IProgress<string>? progress, CancellationToken token = default)
     {
         int count = 0;
         long bytes = 0;
+        var lockedFiles = new List<LockedFileItem>();
         var registryExclusions = BuildRegistryExclusions(result.Entry);
 
         foreach (var file in result.FilesToDelete)
@@ -196,12 +204,32 @@ public class CleaningService
                 }
 
                 var size = new FileInfo(file).Length;
-                File.Delete(file);
-                count++;
-                bytes += size;
-                progress?.Report(ResourceService.Fmt("Prog_Deleted", file));
+                try
+                {
+                    var attrs = File.GetAttributes(file);
+                    if ((attrs & (FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System)) != 0)
+                        File.SetAttributes(file, attrs & ~(FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System));
+
+                    File.Delete(file);
+                    count++;
+                    bytes += size;
+                    progress?.Report(ResourceService.Fmt("Prog_Deleted", file));
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    if (TryTruncateFile(file))
+                    {
+                        count++;
+                        bytes += size;
+                        progress?.Report(ResourceService.Fmt("Prog_Deleted", file));
+                    }
+                    else if (File.Exists(file))
+                    {
+                        lockedFiles.Add(new LockedFileItem(file, size, result.Entry.Name, ex.Message));
+                    }
+                }
             }
-            catch { } //in use or already gone; skip silently
+            catch { } //already gone or inaccessible metadata; skip silently
         }
 
         foreach (var regItem in result.RegistryToDelete)
@@ -226,7 +254,21 @@ public class CleaningService
         if (result.FilesToDelete.Any(f => f.Contains(@"\$Recycle.Bin\", StringComparison.OrdinalIgnoreCase)))
             SHUpdateRecycleBinIcon();
 
-        return (count, bytes);
+        return new CleanOutcome(count, bytes, lockedFiles);
+    }
+
+    internal static bool TryTruncateFile(string path)
+    {
+        try
+        {
+            using var fs = new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
+            fs.SetLength(0);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     /* Deletes a registry value or key tree. If a REG exclusion sits below the target,

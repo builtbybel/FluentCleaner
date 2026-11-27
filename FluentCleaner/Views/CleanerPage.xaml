@@ -239,18 +239,29 @@
                                    VerticalAlignment="Center" />
                         <!-- Same spot as the size, which is empty after a clean. Only shows when that
                              clean skipped files and the app runs without admin rights. -->
-                        <HyperlinkButton Grid.Column="1"
-                                         FontSize="12"
-                                         Padding="0" MinWidth="0" MinHeight="0"
-                                         VerticalAlignment="Center"
-                                         Click="RestartElevated_Click"
-                                         Visibility="{x:Bind ViewModel.OfferElevation, Mode=OneWay,
-                                             Converter={StaticResource BoolToVisibilityConverter}}">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xEA18;" FontSize="14" />
-                                <TextBlock x:Uid="BtnRestartElevated" />
-                            </StackPanel>
-                        </HyperlinkButton>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <HyperlinkButton FontSize="12"
+                                             Padding="0" MinWidth="0" MinHeight="0"
+                                             Click="UnlockLockedFiles_Click"
+                                             Visibility="{x:Bind ViewModel.HasLockedFiles, Mode=OneWay,
+                                                 Converter={StaticResource BoolToVisibilityConverter}}"
+                                             ToolTipService.ToolTip="Inspect locking processes (File Locksmith) or schedule deletion on reboot">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE785;" FontSize="14" />
+                                    <TextBlock Text="{x:Bind ViewModel.UnlockFilesLabel, Mode=OneWay}" />
+                                </StackPanel>
+                            </HyperlinkButton>
+                            <HyperlinkButton FontSize="12"
+                                             Padding="0" MinWidth="0" MinHeight="0"
+                                             Click="RestartElevated_Click"
+                                             Visibility="{x:Bind ViewModel.OfferElevation, Mode=OneWay,
+                                                 Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xEA18;" FontSize="14" />
+                                    <TextBlock x:Uid="BtnRestartElevated" />
+                                </StackPanel>
+                            </HyperlinkButton>
+                        </StackPanel>
                     </Grid>
                     <!-- Stays after the run (at 100 %, like CCleaner), so the header keeps its height. -->
                     <Grid ColumnSpacing="10">
