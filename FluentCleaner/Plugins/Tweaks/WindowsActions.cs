@@ -11,9 +11,12 @@ internal static class WindowsActions
     private const uint SmtoAbortIfHung = 0x0002;    // skip hung apps
 
     //tells Explorer and open apps to reload theme/taskbar settings
-    public static void NotifyShellSettingsChanged() =>
+    public static void NotifyShellSettingsChanged()
+    {
         SendMessageTimeout(new IntPtr(HwndBroadcast), WmSettingChange, IntPtr.Zero,
             "ImmersiveColorSet", SmtoAbortIfHung, 100, out _);
+        Services.ShellNotification.NotifyAssocChanged();
+    }
 
     //kills explorer in this session and waits for it to come back;
     //some values are only read at startup. errors are ignored
