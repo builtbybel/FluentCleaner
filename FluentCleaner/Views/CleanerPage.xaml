@@ -685,11 +685,33 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <ProgressBar Grid.Row="0"
-                                 Maximum="100"
-                                 Height="3"
-                                 Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}"
-                                 Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <StackPanel Grid.Row="0"
+                                Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Spacing="4"
+                                Padding="0,0,0,4">
+                        <ProgressBar Maximum="100"
+                                     Height="3"
+                                     Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" />
+                        <Grid Padding="14,0,14,0" ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                                       FontSize="11"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{x:Bind ViewModel.ScanTelemetryText, Mode=OneWay}"
+                                       FontFamily="Cascadia Mono,Consolas"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </StackPanel>
 
                     <!-- HEADER: RESULTS LIST MODE -->
                     <Grid Grid.Row="1"

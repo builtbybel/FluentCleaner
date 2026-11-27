@@ -44,6 +44,7 @@ public partial class CleanerPageViewModel : ObservableObject
     [ObservableProperty] public partial string  TotalSize  { get; set; } = "";
     [ObservableProperty] public partial long    TotalBytesScanned { get; set; }
     [ObservableProperty] public partial double  ScanProgress { get; set; }
+    [ObservableProperty] public partial string  ScanTelemetryText { get; set; } = "";
     [ObservableProperty] public partial bool    IsBusy { get; set; }
     [ObservableProperty] public partial bool    IsHeroExpanded { get; set; } = AppSettings.Instance.CleanerHeroExpanded;
     [ObservableProperty] public partial bool    IsRuleSourceExpanded { get; set; } = true;
