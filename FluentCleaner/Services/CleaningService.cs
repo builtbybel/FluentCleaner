@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System.IO.Enumeration;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace FluentCleaner.Services;
 
@@ -85,7 +86,7 @@ public class CleaningService
         {
             if (!Directory.Exists(dir)) continue;
 
-            foreach (var f in EnumerateFilesSafe(dir, patterns, excluded, recurse, progress, token))
+            foreach (var f in EnumerateFilesSafe(dir, patterns, excluded, recurse, fileKey.IncludeRegex, fileKey.ExcludeRegex, progress, token))
                 if (!IsExcluded(f, excluded) && !IsProtected(f))
                     yield return f;
         }
@@ -95,12 +96,24 @@ public class CleaningService
        8.3 short-name aliases,we don't). HashSet drops files that match more than one pattern.
        Reparse points skipped;Windows ships with fun traps like
      C:\Users\All Users >> C:\ProgramData >> All Users >>....forever */
-    private static IEnumerable<string> EnumerateFilesSafe(string root, string[] patterns, List<ExclusionRule> excluded, bool recurse, IProgress<string>? progress = null, CancellationToken token = default)
+    private static IEnumerable<string> EnumerateFilesSafe(
+        string root,
+        string[] patterns,
+        List<ExclusionRule> excluded,
+        bool recurse,
+        Regex? includeRegex = null,
+        Regex? excludeRegex = null,
+        IProgress<string>? progress = null,
+        CancellationToken token = default)
     {
-        //Whole-root check:skip an excluded branch before touching anything below it
+        // Whole-root check: skip an excluded branch before touching anything below it
         var scanRoot = root.TrimEnd('\\') + "\\";
         if (excluded.Any(rule => rule.Pattern is null &&
             scanRoot.StartsWith(rule.DirPrefix, StringComparison.OrdinalIgnoreCase)))
+            yield break;
+
+        // Directory-level regex pruning: if excludeRegex matches this folder, skip it entirely
+        if (excludeRegex is not null && SafeIsMatch(excludeRegex, scanRoot))
             yield break;
 
         progress?.Report(root);
@@ -112,8 +125,16 @@ public class CleaningService
             try { files = Directory.EnumerateFiles(root, p); }
             catch { files = []; }
             foreach (var f in files)
-                if (seen.Add(f))   //skip if another pattern already matched this file
+            {
+                if (excludeRegex is not null && SafeIsMatch(excludeRegex, f))
+                    continue;
+
+                if (includeRegex is not null && !SafeIsMatch(includeRegex, f))
+                    continue;
+
+                if (seen.Add(f))   // skip if another pattern already matched this file
                     yield return f;
+            }
         }
 
         if (!recurse) yield break;
@@ -131,10 +152,22 @@ public class CleaningService
 
         foreach (var sub in dirs)
         {
-            token.ThrowIfCancellationRequested(); //one check per folder is enough;no need to go per-file
-            foreach (var f in EnumerateFilesSafe(sub, patterns, excluded, recurse: true, progress, token))
+            token.ThrowIfCancellationRequested(); // one check per folder is enough; no need to go per-file
+
+            // Directory-level regex pruning before recursing into children
+            var subScan = sub.TrimEnd('\\') + "\\";
+            if (excludeRegex is not null && SafeIsMatch(excludeRegex, subScan))
+                continue;
+
+            foreach (var f in EnumerateFilesSafe(sub, patterns, excluded, recurse: true, includeRegex, excludeRegex, progress, token))
                 yield return f;
         }
+    }
+
+    private static bool SafeIsMatch(Regex regex, string input)
+    {
+        try { return regex.IsMatch(input); }
+        catch (RegexMatchTimeoutException) { return false; }
     }
 
     // Checks whether a registry key/value exists before queuing it for deletion
