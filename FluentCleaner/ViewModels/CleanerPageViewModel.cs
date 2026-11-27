@@ -2,78 +2,380 @@ using FluentCleaner.Models;
 using FluentCleaner.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System.Collections.ObjectModel;
 using System.Security.Principal;
+using System.Text;
 
 namespace FluentCleaner.ViewModels;
 
 // Main state holder for the Cleaner page.
-// It keeps the page dumb: XAML binds to plain properties, services do the actual work.
+// Keeps the page thin: XAML binds to observable state and commands, services do the work.
 public partial class CleanerPageViewModel : ObservableObject
 {
     // --- Services & fields --------------------------------------------------
-    private readonly CleaningService   _cleaner       = new();
+    private readonly Winapp2Parser      _parser        = new();
+    private readonly DetectionService   _detection     = new();
+    private readonly CleaningService    _cleaner       = new();
     private readonly CustomEntryService _customService = new();
 
     private readonly List<ScanResult> _lastScan = [];       // hand-off between "Analyze" and "Clean"
-    private List<CleanerEntry> _loadedEntries    = [];      // installed main-DB entries + all enabled custom entries (custom skips IsInstalled)
-    private List<string> _lastPaths = [];                   // stored so Refresh can reload without the paths being passed again
-    private bool _suppressSave;                             // prevents N disk writes when SelectAll/SelectNone fires per-entry callbacks
-    private CancellationTokenSource? _cts;                  // lives only during an active scan or clean; null = nothing running
-
-    // --- Observable state ---------------------------------------------------
-    [ObservableProperty] public partial ObservableCollection<CleanerCategoryViewModel> Categories { get; set; } = [];    // left panel: category tree
-    [ObservableProperty] public partial ObservableCollection<ScanResultLine>           ResultLines { get; set; } = [];    // right panel: per-app results after Analyze
-    [ObservableProperty] public partial ObservableCollection<DetailLine>               DetailLines { get; set; } = [];    // right panel: file/registry paths when a result row is open
-    [ObservableProperty] public partial ScanResultLine?                                SelectedResultLine { get; set; }   // which result row is currently open in detail view
-    [ObservableProperty] public partial string  SearchText { get; set; } = "";                                            // search box
-    [ObservableProperty] public partial string  StatusText { get; set; } = ResourceService.Get("St_Loading");                     // run header above the results
-    [ObservableProperty] public partial string  TotalSize     { get; set; } = "";                                        // sum of all scan results
-    [ObservableProperty] public partial int     CatalogueCount { get; set; }                                             // entries in the databases, before the installed check
-    [ObservableProperty] public partial double  ScanProgress  { get; set; }                                               // 0–100; drives the real progress bar
-    [ObservableProperty] public partial bool    IsBusy        { get; set; }                                               // locked while a scan or clean is running
-    [ObservableProperty] public partial bool    OfferElevation { get; set; }                                              // last clean skipped files and we're not admin: header offers a restart
-
+    private List<CleanerEntry> _loadedEntries    = [];      // installed main-DB entries + all enabled custom entries
+    private List<string> _lastPaths = [];                   // stored so Refresh can reload without paths re-passed
+    private bool _suppressSave;                             // prevents N disk writes during bulk selection updates
+    private bool _suppressMacroToggle;                      // prevents re-entrant loops when syncing macro-card switches
+    private CancellationTokenSource? _cts;                  // lives only during an active scan or clean
+    private string? _lastAddedExclusionRule;                // supports 1-click Undo Exclusion from InfoBar
     private static readonly bool IsElevated =
         new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-    public string ProgressLabel => $"{ScanProgress:0}%";                                                                   // text next to progress bar
+    public DispatcherQueue? UiDispatcher { get; set; }
 
-    // Derived; no own state, everything computed from the observable properties above
-    public bool   IsEmpty       => Categories.Count == 0;                          // left panel is empty (nothing loaded yet)
-    public bool   IsNotEmpty    => Categories.Count > 0;                           // left panel has content
-    public bool   HasSearchText => !string.IsNullOrWhiteSpace(SearchText);         // search box is filled
-    public bool   IsShowingDetail  => SelectedResultLine is not null;              // right panel: detail view showing file paths for one entry
-    public bool   IsShowingList    => SelectedResultLine is null;                  // right panel: normal results list after Analyze
-    public string SelectedAppName  => SelectedResultLine?.AppName ?? "";           // name of the open entry shown in the detail header
-    public bool   CanRunCleaner    => !IsBusy && Categories.Count > 0;            // bound to IsEnabled on Run Cleaner: Click handler can't disable the button itself
-    public bool   IsNotBusy        => !IsBusy;                                     // flips the Analyze/Cancel button: true =show Analyze, false =show Cancel
-    public bool   HasRun           => TotalSize.Length > 0 || ResultLines.Count > 0; // run header: from the first Analyze on, not during the start-up load
+    // --- Observable state ---------------------------------------------------
+    [ObservableProperty] public partial ObservableCollection<CleanerCategoryViewModel> Categories { get; set; } = [];
+    [ObservableProperty] public partial ObservableCollection<ScanResultLine>           ResultLines { get; set; } = [];
+    [ObservableProperty] public partial ObservableCollection<DetailLine>               DetailLines { get; set; } = [];
+    [ObservableProperty] public partial ObservableCollection<MacroCategoryCardViewModel> MacroCategories { get; set; } = [];
+    [ObservableProperty] public partial ScanResultLine?                                SelectedResultLine { get; set; }
+    [ObservableProperty] public partial string  SearchText { get; set; } = "";
+    [ObservableProperty] public partial string  FilterMode { get; set; } = "All"; // All | Selected | HasSize | InUse
+    [ObservableProperty] public partial string  StatusText { get; set; } = ResourceService.Get("St_Loading");
+    [ObservableProperty] public partial string  TotalSize  { get; set; } = "";
+    [ObservableProperty] public partial long    TotalBytesScanned { get; set; }
+    [ObservableProperty] public partial double  ScanProgress { get; set; }
+    [ObservableProperty] public partial string  ScanTelemetryText { get; set; } = "";
+    [ObservableProperty] public partial bool    IsBusy { get; set; }
+    [ObservableProperty] public partial bool    IsHeroExpanded { get; set; } = AppSettings.Instance.CleanerHeroExpanded;
+    [ObservableProperty] public partial bool    IsRuleSourceExpanded { get; set; } = true;
+    [ObservableProperty] public partial int     TotalInstalledRules { get; set; }
+    [ObservableProperty] public partial int     TotalDatabaseRules { get; set; }
+
+    // Live 4-segment breakdown bytes for StorageDonutControl
+    [ObservableProperty] public partial long WindowsBytes  { get; set; }
+    [ObservableProperty] public partial long BrowsersBytes { get; set; }
+    [ObservableProperty] public partial long DevAiBytes    { get; set; }
+    [ObservableProperty] public partial long AppsBytes     { get; set; }
+
+    // Real system drive telemetry (System.IO.DriveInfo) + Projected reclaim preview
+    private long _driveFreeBytes;
+    private long _driveTotalBytes;
+
+    [ObservableProperty] public partial string SystemDriveLabel                { get; set; } = "System Drive";
+    [ObservableProperty] public partial string SystemDriveUsageText            { get; set; } = "";
+    [ObservableProperty] public partial double SystemDriveUsedPercent          { get; set; }
+    [ObservableProperty] public partial double SystemDriveProjectedUsedPercent { get; set; }
+
+    public string SystemDriveDisplayText =>
+        TotalBytesScanned > 0 && _driveTotalBytes > 0
+            ? $"{ScanResult.FormatBytes(_driveFreeBytes)} → {ScanResult.FormatBytes(Math.Min(_driveTotalBytes, _driveFreeBytes + TotalBytesScanned))} free"
+            : SystemDriveUsageText;
+
+    // Dismissible action feedback InfoBar (Clean outcome / Undo Exclusion)
+    [ObservableProperty] public partial bool            BannerOpen        { get; set; }
+    [ObservableProperty] public partial InfoBarSeverity BannerSeverity    { get; set; } = InfoBarSeverity.Informational;
+    [ObservableProperty] public partial string          BannerTitle       { get; set; } = "";
+    [ObservableProperty] public partial string          BannerMessage     { get; set; } = "";
+    [ObservableProperty] public partial bool            CanUndoExclusion  { get; set; }
+    [ObservableProperty] public partial bool            CanOfferElevation { get; set; }
+
+    public string ProgressLabel => $"{ScanProgress:0}%";
+
+    // --- Derived UI state ---------------------------------------------------
+    public bool   IsEmpty           => Categories.Count == 0;
+    public bool   IsNotEmpty        => Categories.Count > 0;
+    public bool   HasSearchText     => !string.IsNullOrWhiteSpace(SearchText);
+    public bool   IsShowingDetail   => SelectedResultLine is not null;
+    public bool   IsShowingList     => SelectedResultLine is null && ResultLines.Count > 0;
+    public bool   IsShowingReady    => SelectedResultLine is null && ResultLines.Count == 0;
+    public bool   CanExportReport   => _lastScan.Count > 0;
+    public string SelectedAppName   => SelectedResultLine?.AppName ?? "";
+    public bool   CanRunCleaner     => !IsBusy && Categories.Count > 0;
+    public bool   IsNotBusy         => !IsBusy;
+
+    // Filter pill active states
+    public bool IsFilterAll      => FilterMode == "All";
+    public bool IsFilterSelected => FilterMode == "Selected";
+    public bool IsFilterHasSize  => FilterMode == "HasSize";
+    public bool IsFilterInUse    => FilterMode == "InUse";
+    public bool IsFilterDanger   => FilterMode == "Danger";
+
+    // Hero summary display
+    public string HeroSizeDisplay => TotalBytesScanned > 0
+        ? TotalSize
+        : (IsBusy ? ProgressLabel : "Ready");
+
+    public string HeroSubtitle => TotalBytesScanned > 0
+        ? $"{_lastScan.Sum(r => r.FilesToDelete.Count + r.RegistryToDelete.Count):N0} items reclaimable"
+        : (TotalInstalledRules > 0 ? $"{TotalInstalledRules} installed rules" : "Loading rules…");
+
+    public string CleanButtonLabel => TotalBytesScanned > 0
+        ? $"Clean {TotalSize}"
+        : ResourceService.Get("BtnRunCleaner.Content") is var lbl && !string.IsNullOrWhiteSpace(lbl) && lbl != "BtnRunCleaner.Content"
+            ? lbl
+            : "Run Cleaner";
+
+    public string LastCleanSummary
+    {
+        get
+        {
+            var history = AppSettings.Instance.CleanHistory;
+            if (history.Count == 0) return "No cleans recorded yet";
+            var last = history[^1];
+            var age  = DateTime.Now - last.Date;
+            string when = age.TotalMinutes < 2  ? "just now"
+                        : age.TotalHours   < 1  ? $"{(int)age.TotalMinutes}m ago"
+                        : age.TotalDays    < 1  ? $"{(int)age.TotalHours}h ago"
+                        : age.TotalDays    < 7  ? $"{(int)age.TotalDays}d ago"
+                        : last.Date.ToString("MMM d");
+            return $"Last cleaned {when} · {ScanResult.FormatBytes(last.BytesFreed)}";
+        }
+    }
+
+    public string LifetimeReclaimedText
+    {
+        get
+        {
+            var total = AppSettings.Instance.CleanHistory.Sum(h => h.BytesFreed);
+            return total > 0 ? $"Lifetime reclaimed: {ScanResult.FormatBytes(total)}" : "Lifetime reclaimed: 0 B";
+        }
+    }
+
+    public string ProtectedCookiesText => $"{AppSettings.Instance.CookieDomainsToKeep.Count} cookies protected";
+    public string ExclusionsBadgeText  => AppSettings.Instance.GlobalExclusionsEnabled
+        ? $"{AppSettings.Instance.GlobalExclusions.Count} exclusions active"
+        : "Exclusions off";
+    public string DatabaseBadgeText    => AppSettings.Instance.EnableWinapp3
+        ? "Winapp2 + Winapp3 Active"
+        : "Winapp2.ini Active";
+
+    public string SelectedCountSummary
+    {
+        get
+        {
+            int sel = Categories.Sum(c => c.SelectedCount);
+            int tot = Categories.Sum(c => c.TotalCount);
+            return $"{sel}/{tot} selected";
+        }
+    }
+
+    // Inspector metadata for the currently open result row
+    public CleanerEntryViewModel? SelectedEntryVm =>
+        SelectedResultLine is null
+            ? null
+            : Categories.SelectMany(c => c.Entries)
+                        .FirstOrDefault(e => string.Equals(e.Name, SelectedResultLine.AppName, StringComparison.OrdinalIgnoreCase));
+
+    public string SelectedEntryCategoryName => SelectedEntryVm?.CategoryName ?? SelectedResultLine?.CategoryName ?? "";
+    public string SelectedEntrySizeText     => SelectedResultLine?.Size ?? "";
+    public string SelectedEntryCountSummary => SelectedResultLine?.CountSummary ?? "";
+    public bool   SelectedEntryHasWarning   => SelectedEntryVm?.HasWarning ?? false;
+    public bool   SelectedEntryIsSafe       => !SelectedEntryHasWarning;
+    public string SelectedEntryWarningText  => SelectedEntryVm?.Warning ?? "";
+    public string SelectedEntryRawText      => SelectedEntryVm?.RawSourceText ?? "";
+    public bool   SelectedEntryIsInUse         => SelectedEntryVm?.IsProcessRunning ?? false;
+    public string SelectedEntryInUseText       => SelectedEntryVm?.RunningWarningText ?? "";
+    public ImageSource? SelectedEntryAppIcon   => SelectedResultLine?.AppIconBitmap;
+    public bool   SelectedEntryHasAppIcon      => SelectedResultLine?.HasAppIcon ?? false;
+    public string SelectedEntryIconGlyph       => SelectedResultLine?.IconGlyph ?? "\uE71D";
+    public string SelectedEntryAccentHex       => SelectedResultLine?.AccentColorHex ?? "#38BDF8";
+    public string SelectedEntryIconBgHex       => SelectedResultLine?.IconBackgroundHex ?? "#2238BDF8";
+
+    // --- Constructor --------------------------------------------------------
+
+    public CleanerPageViewModel()
+    {
+        InitializeMacroCards();
+        RefreshSystemDriveInfo();
+        ResultLines.CollectionChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(IsShowingList));
+            OnPropertyChanged(nameof(IsShowingReady));
+            OnPropertyChanged(nameof(CanExportReport));
+        };
+    }
+
+    private void InitializeMacroCards()
+    {
+        MacroCategories =
+        [
+            new("Windows",  "Windows & System", "\uE770", "#0078D4", SetMacroGroupSelected),
+            new("Browsers", "Browsers",         "\uE774", "#38BDF8", SetMacroGroupSelected),
+            new("DevAi",    "Developer & AI",   "\uE943", "#10B981", SetMacroGroupSelected),
+            new("Apps",     "Apps & Utilities", "\uE74C", "#8B5CF6", SetMacroGroupSelected),
+        ];
+    }
+
+    public void RefreshSystemDriveInfo()
+    {
+        try
+        {
+            var root = Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\";
+            var drive = new DriveInfo(root);
+            if (!drive.IsReady || drive.TotalSize <= 0) return;
+
+            _driveFreeBytes        = drive.AvailableFreeSpace;
+            _driveTotalBytes       = drive.TotalSize;
+            long used = drive.TotalSize - drive.AvailableFreeSpace;
+            SystemDriveLabel       = $"Local Disk ({root.TrimEnd('\\')})";
+            SystemDriveUsageText   = $"{ScanResult.FormatBytes(drive.AvailableFreeSpace)} free of {ScanResult.FormatBytes(drive.TotalSize)}";
+            SystemDriveUsedPercent = Math.Clamp(used * 100.0 / drive.TotalSize, 0, 100);
+            UpdateProjectedDriveMetrics();
+        }
+        catch { }
+    }
+
+    private void UpdateProjectedDriveMetrics()
+    {
+        if (_driveTotalBytes > 0)
+        {
+            long projectedFree = Math.Min(_driveTotalBytes, _driveFreeBytes + TotalBytesScanned);
+            long projectedUsed = Math.Max(0, _driveTotalBytes - projectedFree);
+            SystemDriveProjectedUsedPercent = Math.Clamp(projectedUsed * 100.0 / _driveTotalBytes, 0, 100);
+        }
+        OnPropertyChanged(nameof(SystemDriveDisplayText));
+    }
+
+    public void ShowBanner(InfoBarSeverity severity, string title, string message, string? undoExclusionRule = null, bool offerElevation = false)
+    {
+        _lastAddedExclusionRule = undoExclusionRule;
+        CanUndoExclusion        = !string.IsNullOrWhiteSpace(undoExclusionRule);
+        CanOfferElevation       = offerElevation && !IsElevated;
+        BannerSeverity          = severity;
+        BannerTitle             = title;
+        BannerMessage           = message;
+        BannerOpen              = true;
+    }
+
+    [RelayCommand]
+    private void UndoLastExclusion()
+    {
+        if (string.IsNullOrWhiteSpace(_lastAddedExclusionRule)) return;
+
+        var settings = AppSettings.Instance;
+        settings.GlobalExclusions.RemoveAll(r => string.Equals(r, _lastAddedExclusionRule, StringComparison.OrdinalIgnoreCase));
+        settings.Save();
+
+        StatusText              = $"Removed exclusion: {_lastAddedExclusionRule}";
+        _lastAddedExclusionRule = null;
+        CanUndoExclusion        = false;
+        BannerOpen              = false;
+        RefreshFooterMetadata();
+    }
+
+    // --- Audit Report Export (Markdown & CSV) -------------------------------
+
+    public string BuildAuditReport(bool csvFormat)
+    {
+        var sb = new StringBuilder();
+        var now = DateTime.Now;
+
+        if (csvFormat)
+        {
+            sb.AppendLine("Timestamp,Category,Rule,ItemType,PathOrKey,EntryBytes");
+            foreach (var r in _lastScan.OrderByDescending(x => x.TotalBytes))
+            {
+                var cat = CategoryResolver.TryMapLangSecRef(r.Entry).Name;
+                foreach (var f in r.FilesToDelete)
+                    sb.AppendLine($"\"{now:O}\",\"{EscapeCsv(cat)}\",\"{EscapeCsv(r.Entry.Name)}\",\"File\",\"{EscapeCsv(f)}\",{r.TotalBytes}");
+                foreach (var reg in r.RegistryToDelete)
+                    sb.AppendLine($"\"{now:O}\",\"{EscapeCsv(cat)}\",\"{EscapeCsv(r.Entry.Name)}\",\"Registry\",\"{EscapeCsv(reg.ToString())}\",{r.TotalBytes}");
+            }
+            return sb.ToString();
+        }
+
+        sb.AppendLine("# FluentCleaner Storage Audit Report");
+        sb.AppendLine($"- **Generated:** {now:yyyy-MM-dd HH:mm:ss}");
+        sb.AppendLine($"- **System Drive:** {SystemDriveLabel} ({SystemDriveUsageText})");
+        sb.AppendLine($"- **Total Reclaimable:** {ScanResult.FormatBytes(_lastScan.Sum(r => r.TotalBytes))}");
+        sb.AppendLine($"- **Matched Rules:** {_lastScan.Count} | **Files:** {_lastScan.Sum(r => r.FilesToDelete.Count):N0} | **Registry Keys:** {_lastScan.Sum(r => r.RegistryToDelete.Count):N0}");
+        sb.AppendLine();
+        sb.AppendLine("| Category | Rule | Files | Registry | Size |");
+        sb.AppendLine("|---|---|---:|---:|---:|");
+        foreach (var r in _lastScan.OrderByDescending(x => x.TotalBytes))
+        {
+            var cat = CategoryResolver.TryMapLangSecRef(r.Entry).Name;
+            sb.AppendLine($"| {cat} | {r.Entry.Name} | {r.FilesToDelete.Count:N0} | {r.RegistryToDelete.Count:N0} | {r.FormattedSize} |");
+        }
+        return sb.ToString();
+    }
+
+    private static string EscapeCsv(string s) => s.Replace("\"", "\"\"");
 
     // --- Property change hooks ----------------------------------------------
 
-    // When the user clicks a result row, the right panel flips from summary mode to detail mode.
     partial void OnSelectedResultLineChanged(ScanResultLine? value)
     {
         OnPropertyChanged(nameof(IsShowingDetail));
         OnPropertyChanged(nameof(IsShowingList));
+        OnPropertyChanged(nameof(IsShowingReady));
         OnPropertyChanged(nameof(SelectedAppName));
+        OnPropertyChanged(nameof(SelectedEntryVm));
+        OnPropertyChanged(nameof(SelectedEntryCategoryName));
+        OnPropertyChanged(nameof(SelectedEntrySizeText));
+        OnPropertyChanged(nameof(SelectedEntryCountSummary));
+        OnPropertyChanged(nameof(SelectedEntryHasWarning));
+        OnPropertyChanged(nameof(SelectedEntryIsSafe));
+        OnPropertyChanged(nameof(SelectedEntryWarningText));
+        OnPropertyChanged(nameof(SelectedEntryRawText));
+        OnPropertyChanged(nameof(SelectedEntryIsInUse));
+        OnPropertyChanged(nameof(SelectedEntryInUseText));
+        OnPropertyChanged(nameof(SelectedEntryAppIcon));
+        OnPropertyChanged(nameof(SelectedEntryHasAppIcon));
+        OnPropertyChanged(nameof(SelectedEntryIconGlyph));
+        OnPropertyChanged(nameof(SelectedEntryAccentHex));
+        OnPropertyChanged(nameof(SelectedEntryIconBgHex));
         RebuildDetailLines(value);
     }
 
-    // Search rebuilds the visible category list from scratch; just simple, no weird state to debug
     partial void OnSearchTextChanged(string value)
     {
         RebuildVisibleCategories();
-        if (!string.IsNullOrWhiteSpace(value)) SetAllExpanded(true); //results are useless if they're all collapsed
+        if (!string.IsNullOrWhiteSpace(value)) SetAllExpanded(true);
         RefreshCategoryState();
-        OnPropertyChanged(nameof(HasSearchText));   // the footer counts show what the filter left
+        StatusText = Categories.Count > 0
+            ? ResourceService.Fmt("St_SearchFound", CountVisibleEntries())
+            : ResourceService.Get("St_SearchNone");
+        OnPropertyChanged(nameof(HasSearchText));
     }
 
-    // keep the progress/1-100 label in sync with the bar
-    partial void OnScanProgressChanged(double value) => OnPropertyChanged(nameof(ProgressLabel));
+    partial void OnFilterModeChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsFilterAll));
+        OnPropertyChanged(nameof(IsFilterSelected));
+        OnPropertyChanged(nameof(IsFilterHasSize));
+        OnPropertyChanged(nameof(IsFilterInUse));
+        OnPropertyChanged(nameof(IsFilterDanger));
+        RebuildVisibleCategories();
+        if (value != "All") SetAllExpanded(true);
+        RefreshCategoryState();
+    }
 
-    // Results only ever change inside a run, so TotalSize and IsBusy cover the header's visibility.
-    partial void OnTotalSizeChanged(string value) => OnPropertyChanged(nameof(HasRun));
+    partial void OnIsHeroExpandedChanged(bool value)
+    {
+        AppSettings.Instance.CleanerHeroExpanded = value;
+        AppSettings.Instance.Save();
+    }
+
+    partial void OnScanProgressChanged(double value)
+    {
+        OnPropertyChanged(nameof(ProgressLabel));
+        OnPropertyChanged(nameof(HeroSizeDisplay));
+    }
+
+    partial void OnTotalSizeChanged(string value)
+    {
+        OnPropertyChanged(nameof(HeroSizeDisplay));
+        OnPropertyChanged(nameof(CleanButtonLabel));
+    }
+
+    partial void OnTotalBytesScannedChanged(long value)
+    {
+        OnPropertyChanged(nameof(HeroSizeDisplay));
+        OnPropertyChanged(nameof(HeroSubtitle));
+        OnPropertyChanged(nameof(CleanButtonLabel));
+        UpdateProjectedDriveMetrics();
+    }
 
     partial void OnIsBusyChanged(bool value)
     {
@@ -81,31 +383,34 @@ public partial class CleanerPageViewModel : ObservableObject
         RunCleanerCommand.NotifyCanExecuteChanged();
         RefreshCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanRunCleaner));
-        OnPropertyChanged(nameof(IsNotBusy));   // flips the Analyze<>Cancel button pair in the XAML
-        OnPropertyChanged(nameof(HasRun));
+        OnPropertyChanged(nameof(IsNotBusy));
+        OnPropertyChanged(nameof(HeroSizeDisplay));
     }
 
     // --- Commands -----------------------------------------------------------
-    [RelayCommand] private void Cancel() => _cts?.Cancel();  // Abort the active scan or clean; the running async method catches OperationCanceledException and resets IsBusy
-    [RelayCommand] private void SelectAll()      => SetAllSelected(true);
-    [RelayCommand] private void SelectNone()     => SetAllSelected(false);
-    [RelayCommand] private void SelectDefaults() => SetAllDefaults();
+    [RelayCommand] private void Cancel()               => _cts?.Cancel();
+    [RelayCommand] private void SelectAll()            => SetAllSelected(true);
+    [RelayCommand] private void SelectNone()           => SetAllSelected(false);
+    [RelayCommand] private void SelectDefaults()       => SetAllDefaults();
+    [RelayCommand] private void ExpandAll()            => SetAllExpanded(true);
+    [RelayCommand] private void CollapseAll()          => SetAllExpanded(false);
+    [RelayCommand] private void SortResultsDesc()      => SortResultLinesBySize(descending: true);
+    [RelayCommand] private void SortResultsAsc()       => SortResultLinesBySize(descending: false);
+    [RelayCommand] private void ClearDetail()          => SelectedResultLine = null;
+    [RelayCommand] private void ToggleHero()           => IsHeroExpanded = !IsHeroExpanded;
+    [RelayCommand] private void ToggleRuleSource()     => IsRuleSourceExpanded = !IsRuleSourceExpanded;
+    [RelayCommand] private void SetFilter(string mode) => FilterMode = mode;
 
-    // Back button in the detail pane.
-    [RelayCommand] private void ClearDetail() => SelectedResultLine = null;
-
-    // Cleans only the entry currently shown in the detail pane.
-    [RelayCommand] private async Task CleanSelected()
+    [RelayCommand]
+    private async Task CleanSelected()
     {
-        var entry = Categories.SelectMany(c => c.Entries)
-                              .FirstOrDefault(e => e.Name == SelectedResultLine?.AppName);
+        var entry = SelectedEntryVm;
         if (entry is not null) await CleanSingleEntryAsync(entry);
     }
 
     // --- Load ---------------------------------------------------------------
-    // Parse Winapp2, keep only installed apps, then build the left pane from that.
     [RelayCommand(CanExecute = nameof(CanRefresh))]
-    private async Task RefreshAsync() => await LoadWinapp2Async(_lastPaths);  // reloads from disk
+    private async Task RefreshAsync() => await LoadWinapp2Async(_lastPaths);
     private bool CanRefresh() => !IsBusy && _lastPaths.Count > 0;
 
     public async Task LoadWinapp2Async(IList<string> filePaths)
@@ -114,119 +419,55 @@ public partial class CleanerPageViewModel : ObservableObject
         IsBusy     = true;
         StatusText = ResourceService.Get("St_ParsingDatabases");
 
-        // first load uses the preload from App, Refresh or another database reads again
-        var preload = _preload;
-        _preload = null;
-        var catalogue = preload is { } p && p.Paths.SequenceEqual(filePaths, StringComparer.OrdinalIgnoreCase)
-            ? await p.Read
-            : await ReadCatalogueAsync(filePaths);
+        var allEntries = new List<CleanerEntry>();
+        foreach (var path in filePaths)
+            allEntries.AddRange(await _parser.ParseFileAsync(path));
 
-        _loadedEntries = catalogue.Installed;
+        allEntries = allEntries.DistinctBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ToList();
+        TotalDatabaseRules = allEntries.Count;
+
+        _loadedEntries = await Task.Run(() => allEntries.Where(_detection.IsInstalled).ToList());
+
+        _loadedEntries.RemoveAll(e => e.IsCustom);
+        _loadedEntries.AddRange(await _customService.LoadEnabledEntriesAsync());
+        TotalInstalledRules = _loadedEntries.Count;
+
         RebuildVisibleCategories();
+        RefreshFooterMetadata();
+        RefreshSystemDriveInfo();
 
-        CatalogueCount = catalogue.Total;
-        StatusText = ResourceService.Fmt("St_AnalysisReady", _loadedEntries.Count, catalogue.Total);
+        StatusText = ResourceService.Fmt("St_AnalysisReady", _loadedEntries.Count, allEntries.Count);
         RefreshCategoryState();
         IsBusy = false;
-        _ready.TrySetResult();
     }
 
-    // --- FluentSeeds (the rest lives in FluentSeedDialog) --------------------
-
-    private readonly TaskCompletionSource _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
-    public Task Ready => _ready.Task;                                   // first catalogue load is in
-    public IReadOnlyList<CleanerEntry> LoadedEntries => _loadedEntries;
-
-    // replaces the whole selection (saved + visible), one write
-    public void ApplySelection(IEnumerable<string> names)
-    {
-        var set = names.ToHashSet(StringComparer.OrdinalIgnoreCase);
-        AppSettings.Instance.SelectedEntries = set;
-        AppSettings.Instance.CleanerSelectionInitialized = true;
-        AppSettings.Instance.Save();
-
-        _suppressSave = true;
-        foreach (var entry in Categories.SelectMany(c => c.Entries))
-            entry.IsSelected = set.Contains(entry.Name);
-        _suppressSave = false;
-    }
-
-    // --- Catalogue read -----------------------------------------------------
-
-    // installed entries + total count in the databases
-    public sealed record Catalogue(List<CleanerEntry> Installed, int Total);
-
-    // Started by App right after the window shows, handed to the first page load.
-    private static (List<string> Paths, Task<Catalogue> Read)? _preload;
-
-    // database paths from settings, else the bundled Winapp2.ini
-    public static List<string> DatabasePaths()
-    {
-        var paths = AppSettings.Instance.ResolveDatabasePaths().ToList();
-        if (paths.Count == 0) paths.Add(Path.Combine(AppContext.BaseDirectory, "Winapp2.ini"));
-        return paths;
-    }
-
-    // reads Winapp2 in the background while the first tab gets built (list was 260 ms late before)
-    public static void StartPreload()
-    {
-        var paths = DatabasePaths();
-        _preload = (paths, ReadCatalogueAsync(paths));
-    }
-
-    // parse, dedupe, installed check, custom entries;no UI, so it can run before the page exists
-    private static Task<Catalogue> ReadCatalogueAsync(IList<string> paths) => Task.Run(async () =>
-    {
-        var parser = new Winapp2Parser();
-        var all = new List<CleanerEntry>();
-        foreach (var path in paths)
-            all.AddRange(await parser.ParseFileAsync(path));
-
-        // Deduplicate entries that appear in multiple databases (by name)
-        all = all.DistinctBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ToList();
-
-        // parallel, it's mostly waiting on disk/registry. new detector each time, no stale cache
-        var detection = new DetectionService();
-        var installed = all.AsParallel().AsOrdered().Where(detection.IsInstalled).ToList();
-
-        // Layer the user's custom entries on top (skip IsInstalled)
-        installed.RemoveAll(e => e.IsCustom);
-        installed.AddRange(await new CustomEntryService().LoadEnabledEntriesAsync());
-
-        return new Catalogue(installed, all.Count);
-    });
-
-    // --- Custom Entries ------------------------------------------------------------
-    // Re-reads only the Custom/folder;skips the full Winapp2 reload.
-    // CleanerPage calls this on every visit so changes from CustomPage show up immediately
     public async Task RefreshCustomEntriesAsync()
     {
         if (IsBusy) return;
         _loadedEntries.RemoveAll(e => e.IsCustom);
         _loadedEntries.AddRange(await _customService.LoadEnabledEntriesAsync());
+        TotalInstalledRules = _loadedEntries.Count;
+        AppIconResolverService.InvalidateMissCache();
         RebuildVisibleCategories();
+        RefreshFooterMetadata();
         RefreshCategoryState();
     }
 
+    public void RefreshFooterMetadata()
+    {
+        OnPropertyChanged(nameof(HeroSubtitle));
+        OnPropertyChanged(nameof(LastCleanSummary));
+        OnPropertyChanged(nameof(LifetimeReclaimedText));
+        OnPropertyChanged(nameof(ProtectedCookiesText));
+        OnPropertyChanged(nameof(ExclusionsBadgeText));
+        OnPropertyChanged(nameof(DatabaseBadgeText));
+    }
+
     // --- Analyze & Clean ----------------------------------------------------
-    //  Same two operations (Analyze / Clean) exist at three scopes:
-    //
-    //    All entries   >>  AnalyzeAsync()             RunCleanerAsync()       << toolbar buttons
-    //    Single entry  >>  AnalyzeSingleEntryAsync()  CleanSingleEntryAsync() << row context menu
-    //    Category      >>  AnalyzeCategoryAsync()     CleanCategoryAsync()    << category context menu
-    //
-    //  All six ultimately route through:
-    //    AnalyzeEntryInternalAsync()  — one entry at a time, builds the ScanResult
-    //    EnsureEntryScanAsync()       — scans on demand if not yet done
-    //    CleanResultsAsync()          — shared delete loop
 
-    // --- All entries --------------------------------------------------------
-
-    // Full scan over whatever is currently checked.
     [RelayCommand(CanExecute = nameof(CanAnalyze))]
     private async Task AnalyzeAsync()
     {
-        // Analyze only what is currently checked in the left pane.
         var selected = GetSelectedEntries();
         if (selected.Count == 0) { StatusText = ResourceService.Get("St_NothingSelected"); return; }
 
@@ -239,8 +480,7 @@ public partial class CleanerPageViewModel : ObservableObject
         {
             long totalBytes = 0; int totalFiles = 0; int totalReg = 0; int done = 0;
             int total = selected.Count;
-            var progress = new Progress<string>(msg =>
-                StatusText = msg);             //live percent + entry name
+            var progress = new Progress<string>(msg => StatusText = msg);
 
             foreach (var entry in selected)
             {
@@ -248,16 +488,22 @@ public partial class CleanerPageViewModel : ObservableObject
                 totalBytes += result.TotalBytes;
                 totalFiles += result.FilesToDelete.Count;
                 totalReg   += result.RegistryToDelete.Count;
-                TotalSize    = ScanResult.FormatBytes(totalBytes);                      //live size counter
-                ScanProgress = ++done * 100.0 / total;                                  //progress per entry
+                TotalBytesScanned = totalBytes;
+                TotalSize         = ScanResult.FormatBytes(totalBytes);
+                ScanProgress      = ++done * 100.0 / total;
             }
-            SortResultLinesBySize(descending: true);  //biggest entries first
+            SortResultLinesBySize(descending: true);
+            RefreshAllCategoryAndMacroStats();
             StatusText = ResourceService.Fmt("St_ScanComplete", totalFiles, totalReg, TotalSize);
+            OnPropertyChanged(nameof(CanExportReport));
         }
         catch (OperationCanceledException)
         {
-            StatusText = ResourceService.Get("St_ScanCancelled");
-            TotalSize  = "";
+            SortResultLinesBySize(descending: true);
+            RefreshAllCategoryAndMacroStats();
+            StatusText        = ResourceService.Get("St_ScanCancelled");
+            TotalSize         = "";
+            TotalBytesScanned = 0;
         }
         finally
         {
@@ -266,24 +512,19 @@ public partial class CleanerPageViewModel : ObservableObject
         }
     }
 
-    // Analyze is only useful once we actually have something loaded.
     private bool CanAnalyze() => !IsBusy && Categories.Count > 0;
 
-    // Full clean pass over the last scan results.
     [RelayCommand(CanExecute = nameof(CanClean))]
     private async Task RunCleanerAsync()
     {
-        // Hitting Clean without a scan first is okay.
-        // We quietly do the scan and then continue.
         if (_lastScan.Count == 0)
             await AnalyzeAsync();
 
-        // If analyze was cancelled (or found nothing), bail out before we start deleting.
         if (_lastScan.Count == 0) return;
 
         IsBusy             = true;
         SelectedResultLine = null;
-        ScanProgress       = 0;                                                     // reset from Analyze's 100%
+        ScanProgress       = 0;
         StatusText         = ResourceService.Get("St_Cleaning");
 
         using var cts = new CancellationTokenSource();
@@ -293,35 +534,65 @@ public partial class CleanerPageViewModel : ObservableObject
         int  removed    = 0;
         try
         {
-            var scannedBytes          = _lastScan.Sum(r => r.TotalBytes);
-            var cleanedLines          = ResultLines.ToList();   // the clean loop removes each row as it goes
-            var freedPerEntry         = new Dictionary<ScanResult, long>();
-            (removed, freedBytes)     = await CleanResultsAsync(_lastScan.ToList(), new Progress<string>(msg => StatusText = msg), cts.Token,
-                                                                (result, bytes) => freedPerEntry[result] = bytes);
-            var skippedBytes          = scannedBytes - freedBytes;
+            var scannedBytes      = _lastScan.Sum(r => r.TotalBytes);
+            var freedBreakdown    = new List<(CleanerEntry Entry, int Files, int Regs, int RequestedItems, int CleanedCount, long Bytes)>();
+            (removed, freedBytes) = await CleanResultsWithBreakdownAsync(_lastScan.ToList(), freedBreakdown, new Progress<string>(msg => StatusText = msg), cts.Token);
+            var skippedBytes      = Math.Max(0, scannedBytes - freedBytes);
+            var requestedItems    = freedBreakdown.Sum(x => x.RequestedItems);
+            var skippedItems      = Math.Max(0, requestedItems - removed);
+            var hasSkipped        = skippedBytes > 0 || skippedItems > 0;
 
-            // list stays after cleaning (like CCleaner), each row shows what it really freed.
-            // Contents stays empty, the engine counts files/registry/cookies as one number
-            foreach (var line in cleanedLines)
-                ResultLines.Add(line with
-                {
-                    FileCount = 0, RegCount = 0,
-                    Size = ScanResult.FormatBytes(line.Result is { } r ? freedPerEntry.GetValueOrDefault(r) : 0)
-                });
             _lastScan.Clear();
+            ResultLines.Clear();
+            foreach (var item in freedBreakdown.Where(x => x.CleanedCount > 0 || x.Bytes > 0).OrderByDescending(x => x.Bytes).ThenBy(x => x.Entry.Name, StringComparer.OrdinalIgnoreCase))
+            {
+                var catName = CategoryResolver.TryMapLangSecRef(item.Entry).Name;
+                var macro   = ResolveMacroGroup(catName);
+                var st      = ResolveCategoryStyling(catName, macro);
+                var bmp     = TryGetCategoryBitmap(catName, st.AppIconSource);
+                int freedFiles = Math.Min(item.Files, item.CleanedCount);
+                int freedRegs  = Math.Max(0, Math.Min(item.Regs, item.CleanedCount - freedFiles));
+                ResultLines.Add(new ScanResultLine(
+                    item.Entry.Name,
+                    freedFiles,
+                    freedRegs,
+                    $"Freed {ScanResult.FormatBytes(item.Bytes)}",
+                    null,
+                    catName,
+                    bmp,
+                    st.Glyph,
+                    st.AccentHex,
+                    st.BackgroundHex,
+                    isFreedSummary: true,
+                    sortBytes: item.Bytes));
+            }
             ClearAllEntrySizes();
 
-            TotalSize      = "";
-            OfferElevation = skippedBytes > 0 && !IsElevated;   // admin rights might get the rest
+            TotalSize         = "";
+            TotalBytesScanned = 0;
+            RefreshAllCategoryAndMacroStats();
+            RefreshSystemDriveInfo();
+
             StatusText = skippedBytes > 0
                 ? ResourceService.Fmt("St_CleanDone", ScanResult.FormatBytes(freedBytes), ScanResult.FormatBytes(skippedBytes))
                 : ResourceService.Fmt("St_CleanDoneSimple", removed, ScanResult.FormatBytes(freedBytes));
+
+            var skippedNote = skippedBytes > 0
+                ? $" ({ScanResult.FormatBytes(skippedBytes)} skipped due to locks or permissions.)"
+                : skippedItems > 0
+                    ? $" ({skippedItems:N0} items skipped due to locks or permissions.)"
+                    : "";
+
+            ShowBanner(
+                hasSkipped && !IsElevated ? InfoBarSeverity.Warning : InfoBarSeverity.Success,
+                "Clean Complete",
+                $"Removed {removed:N0} items and reclaimed {ScanResult.FormatBytes(freedBytes)}.{skippedNote}",
+                offerElevation: hasSkipped);
         }
         catch (OperationCanceledException)
         {
-            //Partial clean is fine;whatever got deleted is gone.
-            //just leaving the remaining results in the list so the user can see what was not cleaned yet
             UpdateTotalsFromLastScan();
+            RefreshAllCategoryAndMacroStats();
             StatusText = freedBytes > 0
                 ? ResourceService.Fmt("St_CleanCancelledBytes", ScanResult.FormatBytes(freedBytes))
                 : ResourceService.Get("St_CleanCancelled");
@@ -332,32 +603,26 @@ public partial class CleanerPageViewModel : ObservableObject
             IsBusy = false;
         }
 
-        // Log the clean run in HISTORY so the user can track their junk growth over time if they want
         if (AppSettings.Instance.CleanHistoryEnabled && freedBytes > 0)
         {
             var history = AppSettings.Instance.CleanHistory;
             history.Add(new CleanHistoryEntry(DateTime.Now, freedBytes, removed));
-            while (history.Count > 50) history.RemoveAt(0);             // cap at 50; oldest out
+            while (history.Count > 50) history.RemoveAt(0);
             AppSettings.Instance.Save();
+            RefreshFooterMetadata();
         }
 
-        // After the clean run, if the user configured any post-clean commands
         await RunPostCleanTasksAsync();
     }
 
-    // --- Post-clean tasks -----------------------------------------------------
-
-    // Splits the free-text command box and runs each line via cmd so pipes work
     private static async Task RunPostCleanTasksAsync()
     {
-        if (!AppSettings.Instance.PostCleanEnabled)
-            return;
+        if (!AppSettings.Instance.PostCleanEnabled) return;
 
         var lines = AppSettings.Instance.PostCleanCommands
             .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        if (lines.Length == 0)
-            return;
+        if (lines.Length == 0) return;
 
         foreach (var line in lines)
         {
@@ -365,25 +630,23 @@ public partial class CleanerPageViewModel : ObservableObject
             {
                 using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
-                    FileName    = "cmd.exe",
-                    Arguments   = $"/c {line}",
+                    FileName        = "cmd.exe",
+                    Arguments       = $"/c {line}",
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow  = true
                 });
 
                 if (process is not null)
                     await process.WaitForExitAsync();
             }
-            catch { /* broken command never crashes the app */ }
+            catch { }
         }
     }
 
-    // Same rule as Analyze: no loaded entries, no cleaning.
     private bool CanClean() => !IsBusy && Categories.Count > 0;
 
     // --- Single entry -------------------------------------------------------
 
-    // Quick scan for a single entry from the little context menu, here [...] button
     public async Task AnalyzeSingleEntryAsync(CleanerEntryViewModel entryVm)
     {
         if (IsBusy) return;
@@ -399,11 +662,15 @@ public partial class CleanerPageViewModel : ObservableObject
             var result = await AnalyzeEntryInternalAsync(entryVm.Entry,
                 new Progress<string>(msg => StatusText = msg), keepDetailSelection: true, cts.Token);
 
-            StatusText = ResourceService.Fmt("St_EntryScanned", entryVm.Name, result.FilesToDelete.Count, result.RegistryToDelete.Count);
+            SortResultLinesBySize(descending: true);
             UpdateTotalsFromLastScan();
+            RefreshAllCategoryAndMacroStats();
+            StatusText = ResourceService.Fmt("St_EntryScanned", entryVm.Name, result.FilesToDelete.Count, result.RegistryToDelete.Count);
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
+            RefreshAllCategoryAndMacroStats();
             StatusText = ResourceService.Get("St_ScanCancelled");
         }
         finally
@@ -413,7 +680,6 @@ public partial class CleanerPageViewModel : ObservableObject
         }
     }
 
-    // Clean one entry. If it was never scanned, we scan it on the fly first
     public async Task CleanSingleEntryAsync(CleanerEntryViewModel entryVm)
     {
         if (IsBusy) return;
@@ -436,14 +702,19 @@ public partial class CleanerPageViewModel : ObservableObject
 
             var (removed, freedBytes) = await _cleaner.CleanAsync(result, new Progress<string>(msg => StatusText = msg), cts.Token);
             RemoveScanResult(result);
-            entryVm.SizeText = "";
+            entryVm.SizeText     = "";
+            entryVm.ScannedBytes = 0;
 
             UpdateTotalsFromLastScan();
+            RefreshAllCategoryAndMacroStats();
+            RefreshSystemDriveInfo();
             StatusText = ResourceService.Fmt("St_EntryCleanDone", entryVm.Name, removed, ScanResult.FormatBytes(freedBytes));
+            ShowBanner(InfoBarSeverity.Success, entryVm.Name, $"Cleaned {removed:N0} items · Freed {ScanResult.FormatBytes(freedBytes)}.");
         }
         catch (OperationCanceledException)
         {
             UpdateTotalsFromLastScan();
+            RefreshAllCategoryAndMacroStats();
             StatusText = ResourceService.Get("St_CleanCancelled");
         }
         finally
@@ -455,7 +726,6 @@ public partial class CleanerPageViewModel : ObservableObject
 
     // --- Category -----------------------------------------------------------
 
-    // Batch scan for one whole category.
     public async Task AnalyzeCategoryAsync(CleanerCategoryViewModel categoryVm)
     {
         if (IsBusy) return;
@@ -469,20 +739,23 @@ public partial class CleanerPageViewModel : ObservableObject
         {
             var selected = categoryVm.Entries.Where(e => e.IsSelected).ToList();
             int done = 0, total = selected.Count;
-            var progress = new Progress<string>(msg =>
-                StatusText = msg);
+            var progress = new Progress<string>(msg => StatusText = msg);
 
             foreach (var entryVm in selected)
             {
                 await AnalyzeEntryInternalAsync(entryVm.Entry, progress, keepDetailSelection: false, cts.Token);
-                ScanProgress = ++done * 100.0 / total;
+                ScanProgress = total > 0 ? ++done * 100.0 / total : 100;
             }
 
+            SortResultLinesBySize(descending: true);
             UpdateTotalsFromLastScan();
+            RefreshAllCategoryAndMacroStats();
             StatusText = ResourceService.Fmt("St_CategoryScanned", categoryVm.Name, selected.Count);
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
+            RefreshAllCategoryAndMacroStats();
             StatusText = ResourceService.Get("St_ScanCancelled");
         }
         finally
@@ -492,7 +765,6 @@ public partial class CleanerPageViewModel : ObservableObject
         }
     }
 
-    // Batch clean for one category. Missing scans are generated first so the user can stay lazy.
     public async Task CleanCategoryAsync(CleanerCategoryViewModel categoryVm)
     {
         if (IsBusy) return;
@@ -510,25 +782,24 @@ public partial class CleanerPageViewModel : ObservableObject
         var (removed, freedBytes) = await CleanResultsAsync(results, progress);
 
         UpdateTotalsFromLastScan();
+        RefreshAllCategoryAndMacroStats();
+        RefreshSystemDriveInfo();
         StatusText = ResourceService.Fmt("St_CategoryCleanDone", categoryVm.Name, removed, ScanResult.FormatBytes(freedBytes));
+        ShowBanner(InfoBarSeverity.Success, categoryVm.Name, $"Cleaned {removed:N0} items · Freed {ScanResult.FormatBytes(freedBytes)}.");
         IsBusy     = false;
     }
 
     // --- Warnings -----------------------------------------------------------
 
-    // Warnings for the main "Run Cleaner" button.
     public IReadOnlyList<string> GetWarningsForSelectedEntries() =>
         BuildWarnings(Categories.SelectMany(c => c.Entries).Where(e => e.IsSelected));
 
-    // Warnings for a single entry clean action.
     public IReadOnlyList<string> GetWarningsForEntry(CleanerEntryViewModel entryVm) =>
-        BuildWarnings(new[] { entryVm });
+        BuildWarnings([entryVm]);
 
-    // Warnings for a category clean action (selected entries only).
     public IReadOnlyList<string> GetWarningsForCategory(CleanerCategoryViewModel categoryVm) =>
         BuildWarnings(categoryVm.Entries.Where(e => e.IsSelected));
 
-    // Collect warning text once and dedupe it so the dialog does not spam duplicates.
     private static IReadOnlyList<string> BuildWarnings(IEnumerable<CleanerEntryViewModel> entries) =>
         entries
             .Where(e => !string.IsNullOrWhiteSpace(e.Warning))
@@ -536,14 +807,74 @@ public partial class CleanerPageViewModel : ObservableObject
             .Distinct(StringComparer.Ordinal)
             .ToList();
 
+    // --- Macro-category classification & icons ------------------------------
+
+    private static string NormalizeMacroLookupKey(string categoryName) =>
+        categoryName.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase)
+            ? categoryName["Dangerous ".Length..]
+            : categoryName;
+
+    private static string ResolveMacroGroup(string categoryName) => NormalizeMacroLookupKey(categoryName) switch
+    {
+        "Windows" or "Microsoft Store" => "Windows",
+        "Google Chrome" or "Microsoft Edge" or "Firefox" or "Opera" or "Opera GX"
+            or "Brave" or "Vivaldi" or "Arc Browser" or "Safari" or "Internet"
+            or "Avast Secure Browser" or "AVG Secure Browser"
+            or "Norton Private Browser" or "Avira Secure Browser" => "Browsers",
+        "Developer Tools" or "Developer & AI" => "DevAi",
+        _ => "Apps"
+    };
+
+    private static string ResolveCategoryIcon(string macroGroup) => macroGroup switch
+    {
+        "Windows"  => "\uE770",
+        "Browsers" => "\uE774",
+        "DevAi"    => "\uE943",
+        _          => "\uE74C"
+    };
+
+    private static CategoryStyle ResolveCategoryStyling(string categoryName, string macroGroup) =>
+        CategoryStylingResolver.Resolve(categoryName, macroGroup);
+
+    private void SetMacroGroupSelected(string macroKey, bool isSelected)
+    {
+        if (_suppressMacroToggle) return;
+
+        _suppressSave = true;
+        foreach (var cat in Categories.Where(c => c.MacroGroup == macroKey))
+        {
+            foreach (var entry in cat.Entries)
+                entry.IsSelected = isSelected;
+            cat.RefreshStats();
+        }
+        _suppressSave = false;
+        SaveSelection();
+        RefreshAllCategoryAndMacroStats();
+    }
+
+    private void SetCategoryBulkSelected(CleanerCategoryViewModel cat, bool isSelected)
+    {
+        _suppressSave = true;
+        foreach (var entry in cat.Entries)
+            entry.IsSelected = isSelected;
+        _suppressSave = false;
+        cat.RefreshStats();
+        SaveSelection();
+        RefreshMacroCardsOnly();
+        OnPropertyChanged(nameof(SelectedCountSummary));
+    }
+
     // --- Private helpers ----------------------------------------------------
 
-    // Also called by the size column header in CleanerPage.
-    public void SortResultLinesBySize(bool descending = true)
+    private void SortResultLinesBySize(bool descending = true)
     {
         var sorted = descending
-            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? 0).ToList()
-            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? 0).ToList();
+            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? l.SortBytes)
+                         .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
+                         .ToList()
+            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? l.SortBytes)
+                         .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
+                         .ToList();
         for (int i = 0; i < sorted.Count; i++)
         {
             int from = ResultLines.IndexOf(sorted[i]);
@@ -551,102 +882,283 @@ public partial class CleanerPageViewModel : ObservableObject
         }
     }
 
-    // Search just rebuilds the category list from the original loaded entries.
-    // That sounds brute-force, but at this scale it is simple and fast enough
     private void RebuildVisibleCategories()
     {
-        var visible = string.IsNullOrWhiteSpace(SearchText)
+        var query = SearchText.Trim();
+        var visible = string.IsNullOrWhiteSpace(query)
             ? _loadedEntries
-            : _loadedEntries.Where(e => e.Name.Contains(SearchText.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+            : _loadedEntries.Where(e =>
+                e.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                CategoryResolver.TryMapLangSecRef(e).Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+              .ToList();
 
         RebuildCategories(visible);
     }
 
-    // Turn a flat entry list into grouped view models for the left pane.
     private void RebuildCategories(List<CleanerEntry> entries)
     {
+        var expandedNames = Categories.Where(c => c.IsExpanded)
+                                      .Select(c => c.Name)
+                                      .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var scanLookup = new Dictionary<string, ScanResult>(StringComparer.OrdinalIgnoreCase);
+        foreach (var r in _lastScan)
+            scanLookup[r.Entry.Name] = r;
+
         Categories.Clear();
 
         var groups = entries
             .Select(e => new { Entry = e, Category = CategoryResolver.TryMapLangSecRef(e) })
             .GroupBy(x => x.Category)
-            .OrderBy(g => g.Key.Order)
-            .ThenBy(g => g.Key.Name, StringComparer.OrdinalIgnoreCase);
+            .OrderBy(g => g.Key.Name, StringComparer.OrdinalIgnoreCase);
 
         var settings = AppSettings.Instance;
-        var saved = settings.SelectedEntries;
+        var saved    = settings.SelectedEntries;
 
         foreach (var group in groups)
         {
-            var catVm = new CleanerCategoryViewModel(group.Key.Name);
+            bool isDangerousCat = group.Key.Name.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase);
+            if (FilterMode == "Danger" && !isDangerousCat) continue;
+
+            var macroGroup  = ResolveMacroGroup(group.Key.Name);
+            var style       = ResolveCategoryStyling(group.Key.Name, macroGroup);
+            var initialIcon = AppIconResolverService.TryGetBundledBitmap(group.Key.Name, style.AppIconSource)
+                           ?? AppIconResolverService.TryGetCached(group.Key.Name);
+
+            var catVm = new CleanerCategoryViewModel(
+                group.Key.Name,
+                macroGroup,
+                style.Glyph,
+                style.AccentHex,
+                style.BackgroundHex,
+                initialIcon,
+                SetCategoryBulkSelected)
+            {
+                IsExpanded = expandedNames.Contains(group.Key.Name)
+            };
+
+            var groupEntries = group.Select(x => x.Entry).ToList();
+            if (UiDispatcher is { } dq)
+            {
+                string resolvedCatName = group.Key.Name;
+                // Always prefer real installed Windows .exe/MSIX app logo or native Windows 11 System32 icon
+                _ = AppIconResolverService.TryResolveNativeIconAsync(
+                    resolvedCatName,
+                    groupEntries,
+                    dq,
+                    img =>
+                    {
+                        catVm.AppIconBitmap = img;
+                        UpdateResultLineIcons(resolvedCatName, img);
+                    });
+            }
+
             foreach (var item in group.OrderBy(x => x.Entry.Name, StringComparer.OrdinalIgnoreCase))
             {
-                var entryVm = new CleanerEntryViewModel(item.Entry);
+                var entryVm = new CleanerEntryViewModel(item.Entry, group.Key.Name)
+                {
+                    IsSelected = settings.HasSavedCleanerSelection
+                        ? saved.Contains(item.Entry.Name)
+                        : (!isDangerousCat && item.Entry.Default)
+                };
 
-                entryVm.IsSelected = settings.HasSavedCleanerSelection
-                    ? saved.Contains(item.Entry.Name)
-                    : item.Entry.Default;
+                if (scanLookup.TryGetValue(item.Entry.Name, out var existingScan))
+                {
+                    entryVm.ScannedBytes = existingScan.TotalBytes;
+                    entryVm.SizeText     = existingScan.FormattedSize;
+                }
 
-                // Auto-save whenever the user toggles a single checkbox.
-                // Important: pass the changed row so search results don't overwrite
-                // the full saved selection with only the currently visible entries.
+                bool include = FilterMode switch
+                {
+                    "Selected" => entryVm.IsSelected,
+                    "HasSize"  => entryVm.ScannedBytes > 0,
+                    "Danger"   => isDangerousCat,
+                    _          => true
+                };
+                if (!include) continue;
+
                 entryVm.PropertyChanged += (_, e) =>
                 {
                     if (e.PropertyName == nameof(CleanerEntryViewModel.IsSelected))
+                    {
                         SaveSelection(entryVm);
+                        catVm.RefreshStats();
+                        RefreshMacroCardsOnly();
+                        OnPropertyChanged(nameof(SelectedCountSummary));
+                    }
                 };
 
                 catVm.Entries.Add(entryVm);
             }
-            Categories.Add(catVm);
+
+            if (catVm.Entries.Count > 0)
+            {
+                catVm.RefreshStats();
+                Categories.Add(catVm);
+            }
         }
+
+        RefreshMacroCardsOnly();
+        _ = RefreshRunningProcessesAsync();
     }
 
-    // All the little "derived state" toggles live here so we do not forget one
+    public async Task RefreshRunningProcessesAsync()
+    {
+        try
+        {
+            var snapshot = await ProcessDetectionService.GetRunningProcessesAsync();
+            foreach (var category in Categories.ToList())
+            {
+                foreach (var entryVm in category.Entries.ToList())
+                {
+                    bool isRunning = ProcessDetectionService.IsProcessRunning(entryVm.Entry, out var procName, snapshot);
+                    entryVm.IsProcessRunning   = isRunning;
+                    entryVm.RunningProcessName = procName;
+                    entryVm.RunningWarningText = isRunning
+                        ? ResourceService.Fmt("St_ProcessRunningWarning", procName)
+                        : string.Empty;
+
+                    if (FilterMode == "InUse" && !isRunning)
+                        category.Entries.Remove(entryVm);
+                }
+
+                category.RefreshStats();
+                if (FilterMode == "InUse" && category.Entries.Count == 0)
+                    Categories.Remove(category);
+            }
+            RefreshCategoryState();
+        }
+        catch { }
+    }
+
+    private void RefreshAllCategoryAndMacroStats()
+    {
+        foreach (var cat in Categories)
+            cat.RefreshStats();
+
+        RefreshMacroCardsOnly();
+        OnPropertyChanged(nameof(SelectedCountSummary));
+    }
+
+    private void RefreshMacroCardsOnly()
+    {
+        _suppressMacroToggle = true;
+        long grandTotal = Math.Max(1, Categories.Sum(c => c.ScannedBytes));
+
+        long winBytes = 0, brwBytes = 0, devBytes = 0, appBytes = 0;
+
+        foreach (var card in MacroCategories)
+        {
+            var matchingCats = Categories.Where(c => c.MacroGroup == card.Key).ToList();
+            int totalEntries = matchingCats.Sum(c => c.TotalCount);
+            int selEntries   = matchingCats.Sum(c => c.SelectedCount);
+            long bytes       = matchingCats.Sum(c => c.ScannedBytes);
+
+            switch (card.Key)
+            {
+                case "Windows":  winBytes = bytes; break;
+                case "Browsers": brwBytes = bytes; break;
+                case "DevAi":    devBytes = bytes; break;
+                default:         appBytes = bytes; break;
+            }
+
+            card.IsEnabled    = selEntries > 0;
+            card.CountSummary = $"{selEntries}/{totalEntries} rules";
+            card.SizeText     = bytes > 0 ? ScanResult.FormatBytes(bytes) : "0 B";
+            card.SharePercent = bytes > 0 ? Math.Clamp(bytes * 100.0 / grandTotal, 4.0, 100.0) : 0.0;
+        }
+
+        WindowsBytes  = winBytes;
+        BrowsersBytes = brwBytes;
+        DevAiBytes    = devBytes;
+        AppsBytes     = appBytes;
+
+        _suppressMacroToggle = false;
+    }
+
     private void RefreshCategoryState()
     {
         OnPropertyChanged(nameof(IsEmpty));
         OnPropertyChanged(nameof(IsNotEmpty));
         OnPropertyChanged(nameof(HasSearchText));
         OnPropertyChanged(nameof(CanRunCleaner));
+        OnPropertyChanged(nameof(SelectedCountSummary));
         AnalyzeCommand.NotifyCanExecuteChanged();
         RunCleanerCommand.NotifyCanExecuteChanged();
     }
 
-    // Resets all result state before a new scan or clean run
     private void BeginResultsRun(string status)
     {
         IsBusy             = true;
+        BannerOpen         = false;
         SelectedResultLine = null;
         ResultLines.Clear();
         _lastScan.Clear();
-        TotalSize    = "0 B";                                                           // visible immediately so the user sees the counter start
-        OfferElevation = false;                                                         // a new run starts without the last clean's offer
-        ScanProgress = 0;                                                               // reset progress bar to zero
-        StatusText   = status;
+        ClearAllEntrySizes();
+        TotalBytesScanned = 0;
+        WindowsBytes = BrowsersBytes = DevAiBytes = AppsBytes = 0;
+        TotalSize         = "0 B";
+        ScanProgress      = 0;
+        StatusText        = status;
     }
 
-    // Snapshot the currently checked entries from the visible list
     private List<CleanerEntry> GetSelectedEntries() =>
         Categories.SelectMany(c => c.Entries).Where(e => e.IsSelected).Select(e => e.Entry).ToList();
 
-    // --- Engine (shared by all three scopes above) --------------------------
+    private int CountVisibleEntries() =>
+        Categories.Sum(c => c.Entries.Count);
 
-    // Central scan method; called by single-entry, category, and full analyze flows.
-    // keepDetailSelection: if true, opens the detail view for this entry after scanning.
+    // --- Engine -------------------------------------------------------------
+
+    private ImageSource? TryGetCategoryBitmap(string categoryName, string? bundledIconSource) =>
+        AppIconResolverService.TryGetCached(categoryName)
+        ?? Categories.FirstOrDefault(c => string.Equals(c.Name, categoryName, StringComparison.OrdinalIgnoreCase))?.AppIconBitmap
+        ?? AppIconResolverService.TryGetBundledBitmap(categoryName, bundledIconSource);
+
+    private void UpdateResultLineIcons(string categoryName, ImageSource img)
+    {
+        foreach (var line in ResultLines)
+        {
+            if (string.Equals(line.CategoryName, categoryName, StringComparison.OrdinalIgnoreCase))
+            {
+                line.AppIconBitmap = img;
+            }
+        }
+        if (SelectedResultLine is { } selected
+            && string.Equals(selected.CategoryName, categoryName, StringComparison.OrdinalIgnoreCase))
+        {
+            OnPropertyChanged(nameof(SelectedEntryAppIcon));
+            OnPropertyChanged(nameof(SelectedEntryHasAppIcon));
+        }
+    }
+
     private async Task<ScanResult> AnalyzeEntryInternalAsync(CleanerEntry entry, IProgress<string> progress, bool keepDetailSelection, CancellationToken token = default)
     {
-        RemoveScanResult(entry);        // Re-analyzing an entry should replace the old result, not stack duplicates forever
+        RemoveScanResult(entry);
 
         var result = await _cleaner.AnalyzeAsync(entry, progress, token);
         _lastScan.Add(result);
-        UpdateEntrySize(entry, result.TotalBytes > 0 ? result.FormattedSize : "");   // no "0 B" noise in the tree
+        UpdateEntrySize(entry, result.TotalBytes, result.FormattedSize);
 
         ScanResultLine? line = null;
         if (result.FilesToDelete.Count > 0 || result.RegistryToDelete.Count > 0)
         {
-            line = new ScanResultLine(entry.Name, result.FilesToDelete.Count, result.RegistryToDelete.Count,
-                                      result.FormattedSize, result);
+            var catName = CategoryResolver.TryMapLangSecRef(entry).Name;
+            var macro   = ResolveMacroGroup(catName);
+            var st      = ResolveCategoryStyling(catName, macro);
+            var bmp     = TryGetCategoryBitmap(catName, st.AppIconSource);
+            line = new ScanResultLine(
+                entry.Name,
+                result.FilesToDelete.Count,
+                result.RegistryToDelete.Count,
+                result.FormattedSize,
+                result,
+                catName,
+                bmp,
+                st.Glyph,
+                st.AccentHex,
+                st.BackgroundHex,
+                sortBytes: result.TotalBytes);
             ResultLines.Add(line);
         }
 
@@ -656,8 +1168,6 @@ public partial class CleanerPageViewModel : ObservableObject
         return result;
     }
 
-    // "Clean" without prior "Analyze"; scans on the fly before deleting.
-    // Already have a result? Use it directly.
     private async Task<ScanResult> EnsureEntryScanAsync(CleanerEntryViewModel entryVm, IProgress<string> progress)
     {
         var existing = _lastScan.FirstOrDefault(r => r.Entry == entryVm.Entry);
@@ -667,10 +1177,32 @@ public partial class CleanerPageViewModel : ObservableObject
         return await AnalyzeEntryInternalAsync(entryVm.Entry, progress, keepDetailSelection: false);
     }
 
-    // Shared clean loop; used by single-entry, category, and full RunCleaner flows.
-    // onCleaned reports what each entry actually freed; only Run Cleaner listens.
-    private async Task<(int count, long bytes)> CleanResultsAsync(List<ScanResult> results, IProgress<string> progress, CancellationToken token = default,
-                                                                  Action<ScanResult, long>? onCleaned = null)
+    private async Task<(int count, long bytes)> CleanResultsWithBreakdownAsync(
+        List<ScanResult> results,
+        List<(CleanerEntry Entry, int Files, int Regs, int RequestedItems, int CleanedCount, long Bytes)> breakdown,
+        IProgress<string> progress,
+        CancellationToken token = default)
+    {
+        int  count = 0;
+        long bytes = 0;
+        int  done  = 0;
+        int  total = results.Count;
+        foreach (var result in results)
+        {
+            int files = result.FilesToDelete.Count;
+            int regs  = result.RegistryToDelete.Count;
+            var (c, b) = await _cleaner.CleanAsync(result, progress, token);
+            count += c;
+            bytes += b;
+            breakdown.Add((result.Entry, files, regs, files + regs, c, b));
+            ScanProgress = total > 0 ? ++done * 100.0 / total : 100;
+            RemoveScanResult(result);
+            UpdateEntrySize(result.Entry, 0, "");
+        }
+        return (count, bytes);
+    }
+
+    private async Task<(int count, long bytes)> CleanResultsAsync(List<ScanResult> results, IProgress<string> progress, CancellationToken token = default)
     {
         int  count = 0;
         long bytes = 0;
@@ -681,22 +1213,19 @@ public partial class CleanerPageViewModel : ObservableObject
             var (c, b) = await _cleaner.CleanAsync(result, progress, token);
             count += c;
             bytes += b;
-            onCleaned?.Invoke(result, b);
-            ScanProgress = ++done * 100.0 / total;                                  //live clean progress
+            ScanProgress = total > 0 ? ++done * 100.0 / total : 100;
             RemoveScanResult(result);
-            UpdateEntrySize(result.Entry, "");
+            UpdateEntrySize(result.Entry, 0, "");
         }
         return (count, bytes);
     }
 
-    // Convenience overload when all we have is the entry object.
     private void RemoveScanResult(CleanerEntry entry)
     {
         var existing = _lastScan.FirstOrDefault(r => r.Entry == entry);
         if (existing is not null) RemoveScanResult(existing);
     }
 
-    // Remove a stale scan result from both backing stores; memory and visible results list.
     private void RemoveScanResult(ScanResult result)
     {
         _lastScan.Remove(result);
@@ -704,79 +1233,83 @@ public partial class CleanerPageViewModel : ObservableObject
         if (line is not null) ResultLines.Remove(line);
     }
 
-    // Keep the little size label next to a checkbox in sync with the latest scan.
-    private void UpdateEntrySize(CleanerEntry entry, string sizeText)
+    private void UpdateEntrySize(CleanerEntry entry, long bytes, string sizeText)
     {
         var vm = Categories.SelectMany(c => c.Entries).FirstOrDefault(e => e.Entry == entry);
-        if (vm is not null) vm.SizeText = sizeText;
+        if (vm is not null)
+        {
+            vm.ScannedBytes = bytes;
+            vm.SizeText     = sizeText;
+        }
     }
 
-    // After a full clean pass, all per-entry size badges are stale anyway.
     private void ClearAllEntrySizes()
     {
         foreach (var entry in Categories.SelectMany(c => c.Entries))
-            entry.SizeText = "";
+        {
+            entry.ScannedBytes = 0;
+            entry.SizeText     = "";
+        }
     }
 
-    // Recompute the big total on the right from the current in-memory scan list.
     private void UpdateTotalsFromLastScan()
     {
-        TotalSize = _lastScan.Count > 0
-            ? ScanResult.FormatBytes(_lastScan.Sum(r => r.TotalBytes))
-            : "";
+        var sum = _lastScan.Sum(r => r.TotalBytes);
+        TotalBytesScanned = sum;
+        TotalSize         = _lastScan.Count > 0 ? ScanResult.FormatBytes(sum) : "";
+        OnPropertyChanged(nameof(CanExportReport));
     }
 
-    // detail rows for the open result, built as a list and set in one go.
-    // adding row by row = one notification per path, 526,000 temp files froze the window
     private void RebuildDetailLines(ScanResultLine? line)
     {
-        var rows = new List<DetailLine>();
-        if (line?.Result is { } result)
-        {
-            AddDetailGroup(rows, ResourceService.Get("SuffixFiles"),    result.FilesToDelete);
-            AddDetailGroup(rows, ResourceService.Get("SuffixRegistry"), result.RegistryToDelete.Select(r => r.ToString()));
-        }
-        DetailLines = new ObservableCollection<DetailLine>(rows);
+        DetailLines.Clear();
+        if (line?.Result is not { } result) return;
+
+        AddDetailGroup(ResourceService.Get("SuffixFiles"),    result.FilesToDelete, isRegistry: false);
+        AddDetailGroup(ResourceService.Get("SuffixRegistry"), result.RegistryToDelete.Select(r => r.ToString()), isRegistry: true);
     }
 
-    // max paths shown per group;way more and the ListView draws rows over other elements (broken at 200,000).
-    // display only, cleaning still deletes everything from the scan result
-    private const int MaxDetailRows = 10_000;
-
-    // The detail panel is just header rows plus plain text rows.
-    private static void AddDetailGroup(List<DetailLine> rows, string title, IEnumerable<string> lines)
+    private void AddDetailGroup(string title, IEnumerable<string> lines, bool isRegistry)
     {
         var list = lines.ToList();
         if (list.Count == 0) return;
-        //header wants a capital;the raw suffix is lowercase for the "3988 files" line
         if (title.Length > 0) title = char.ToUpper(title[0]) + title[1..];
-        rows.Add(new DetailLine($"{title} ({list.Count})", IsHeader: true));
-        foreach (var line in list.Take(MaxDetailRows))
-            rows.Add(new DetailLine(line, IsHeader: false));
-
-        // header style, not clickable, no exclude menu
-        if (list.Count > MaxDetailRows)
-            rows.Add(new DetailLine(ResourceService.Fmt("St_DetailMore", list.Count - MaxDetailRows), IsHeader: true));
+        DetailLines.Add(new DetailLine($"{title} ({list.Count})", IsHeader: true, IsRegistry: isRegistry));
+        foreach (var line in list)
+            DetailLines.Add(new DetailLine(line, IsHeader: false, IsRegistry: isRegistry));
     }
 
     private void SetAllSelected(bool value)
     {
         _suppressSave = true;
-        foreach (var entry in Categories.SelectMany(c => c.Entries))
-            entry.IsSelected = value;
+        foreach (var cat in Categories)
+        {
+            foreach (var entry in cat.Entries)
+                entry.IsSelected = value;
+            cat.RefreshStats();
+        }
         _suppressSave = false;
         SaveSelection();
+        RefreshMacroCardsOnly();
+        OnPropertyChanged(nameof(SelectedCountSummary));
     }
 
-    // Restores every entry to its Default=True/False value from the database.
-    // Uses the same suppress-save pattern as SetAllSelected to avoid N disk writes.
+    private static bool IsDangerousName(CleanerEntry entry) =>
+        CategoryResolver.TryMapLangSecRef(entry).Name.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase);
+
     private void SetAllDefaults()
     {
         _suppressSave = true;
-        foreach (var entry in Categories.SelectMany(c => c.Entries))
-            entry.IsSelected = entry.Entry.Default;
+        foreach (var cat in Categories)
+        {
+            foreach (var entry in cat.Entries)
+                entry.IsSelected = !IsDangerousName(entry.Entry) && entry.Entry.Default;
+            cat.RefreshStats();
+        }
         _suppressSave = false;
         SaveSelection();
+        RefreshMacroCardsOnly();
+        OnPropertyChanged(nameof(SelectedCountSummary));
     }
 
     private void SetAllExpanded(bool value)
@@ -788,29 +1321,31 @@ public partial class CleanerPageViewModel : ObservableObject
     private void SaveSelection()
     {
         if (_suppressSave) return;
-        AppSettings.Instance.SelectedEntries = Categories
-            .SelectMany(c => c.Entries)
-            .Where(e => e.IsSelected)
-            .Select(e => e.Name)
-            .ToHashSet();
+        var visibleEntries = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+        foreach (var entry in Categories.SelectMany(c => c.Entries))
+            visibleEntries[entry.Name] = entry.IsSelected;
+
+        var baseline = AppSettings.Instance.HasSavedCleanerSelection
+            ? AppSettings.Instance.SelectedEntries
+            : _loadedEntries.Where(e => e.Default && !IsDangerousName(e)).Select(e => e.Name);
+
+        var hiddenSaved = baseline.Where(name => !visibleEntries.ContainsKey(name));
+        AppSettings.Instance.SelectedEntries = visibleEntries
+            .Where(kv => kv.Value)
+            .Select(kv => kv.Key)
+            .Concat(hiddenSaved)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         AppSettings.Instance.CleanerSelectionInitialized = true;
         AppSettings.Instance.Save();
     }
 
-    // Single-entry save, in think this is the only correct way to persist a checkbox toggle
-    // Search decouples whats **visible* (Categories) from whats *saved* (AppSettings).
-    // During a search, Categories only holds the matching subset, so writing back
-    // Categories.SelectMany(...) would silently drop every entry not in the results.
-    // Instead we read here the full persisted set, apply exactly one add/remove, write it back.
-    // The visible list is never used as the source of truth, only the one changed row is.
     private void SaveSelection(CleanerEntryViewModel entry)
     {
         if (_suppressSave) return;
 
-        // Seed from defaults only until the user saves a selection for the first time.
         var selected = AppSettings.Instance.HasSavedCleanerSelection
             ? AppSettings.Instance.SelectedEntries.ToHashSet(StringComparer.OrdinalIgnoreCase)
-            : _loadedEntries.Where(e => e.Default).Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            : _loadedEntries.Where(e => e.Default && !IsDangerousName(e)).Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         if (entry.IsSelected) selected.Add(entry.Name);
         else                  selected.Remove(entry.Name);
@@ -819,34 +1354,134 @@ public partial class CleanerPageViewModel : ObservableObject
         AppSettings.Instance.CleanerSelectionInitialized = true;
         AppSettings.Instance.Save();
     }
+
+    // --- Compatibility with FluentSeed & Upstream Extensions ---
+    public Task Ready => Task.CompletedTask;
+    public IReadOnlyList<CleanerEntry> LoadedEntries => _loadedEntries;
+
+    public static List<string> DatabasePaths()
+    {
+        var paths = AppSettings.Instance.ResolveDatabasePaths().ToList();
+        if (paths.Count == 0) paths.Add(Path.Combine(AppContext.BaseDirectory, "Winapp2.ini"));
+        return paths;
+    }
+
+    public void ApplySelection(IEnumerable<string> names)
+    {
+        var set = names.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        AppSettings.Instance.SelectedEntries = set;
+        AppSettings.Instance.CleanerSelectionInitialized = true;
+        AppSettings.Instance.Save();
+
+        _suppressSave = true;
+        foreach (var entry in Categories.SelectMany(c => c.Entries))
+            entry.IsSelected = set.Contains(entry.Name);
+        _suppressSave = false;
+    }
 }
 
-public record ScanResultLine(string AppName, int FileCount, int RegCount, string Size, ScanResult? Result = null)
+public partial class MacroCategoryCardViewModel : ObservableObject
 {
-    // Its category's icon, so the list shows at a glance where the space comes from.
-    private string Category => Result is null ? "" : CategoryResolver.TryMapLangSecRef(Result.Entry).Name;
-    public string Glyph => CleanerCategoryViewModel.GlyphFor(Category);
-    public Microsoft.UI.Xaml.Media.SolidColorBrush IconBrush => CleanerCategoryViewModel.BrushFor(Category);
+    private readonly Action<string, bool> _onToggled;
 
-    // "3988 files | 2 registry"
+    public string Key           { get; }
+    public string Title         { get; }
+    public string IconGlyph     { get; }
+    public string AccentHex     { get; }
+    public string BackgroundHex => AccentHex switch
+    {
+        "#0078D4" => "#1F0078D4",
+        "#38BDF8" => "#1F0284C7",
+        "#10B981" => "#1F10B981",
+        "#8B5CF6" => "#1F8B5CF6",
+        _         => "#1A888888"
+    };
+
+    [ObservableProperty] public partial bool   IsEnabled    { get; set; } = true;
+    [ObservableProperty] public partial string SizeText     { get; set; } = "0 B";
+    [ObservableProperty] public partial string CountSummary { get; set; } = "0/0 rules";
+    [ObservableProperty] public partial double SharePercent { get; set; }
+
+    partial void OnIsEnabledChanged(bool value) => _onToggled(Key, value);
+
+    public MacroCategoryCardViewModel(string key, string title, string iconGlyph, string accentHex, Action<string, bool> onToggled)
+    {
+        Key        = key;
+        Title      = title;
+        IconGlyph  = iconGlyph;
+        AccentHex  = accentHex;
+        _onToggled = onToggled;
+    }
+}
+
+public partial class ScanResultLine : ObservableObject
+{
+    public string AppName { get; }
+    public int FileCount { get; }
+    public int RegCount { get; }
+    public string Size { get; }
+    public ScanResult? Result { get; }
+    public string CategoryName { get; }
+    public string IconGlyph { get; }
+    public string AccentColorHex { get; }
+    public string IconBackgroundHex { get; }
+    public bool IsFreedSummary { get; }
+    public long SortBytes { get; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasAppIcon))]
+    public partial ImageSource? AppIconBitmap { get; set; }
+
+    public bool HasAppIcon => AppIconBitmap is not null;
+    public bool ShowChevron => Result is not null;
+
+    public ScanResultLine(
+        string appName,
+        int fileCount,
+        int regCount,
+        string size,
+        ScanResult? result = null,
+        string categoryName = "",
+        ImageSource? appIconBitmap = null,
+        string iconGlyph = "\uE71D",
+        string accentColorHex = "#38BDF8",
+        string iconBackgroundHex = "#2238BDF8",
+        bool isFreedSummary = false,
+        long sortBytes = 0)
+    {
+        AppName           = appName;
+        FileCount         = fileCount;
+        RegCount          = regCount;
+        Size              = size;
+        Result            = result;
+        CategoryName      = categoryName;
+        AppIconBitmap     = appIconBitmap;
+        IconGlyph         = iconGlyph;
+        AccentColorHex    = accentColorHex;
+        IconBackgroundHex = iconBackgroundHex;
+        IsFreedSummary    = isFreedSummary;
+        SortBytes         = sortBytes;
+    }
+
     public string CountSummary
     {
         get
         {
             var parts = new List<string>();
-            if (FileCount > 0) parts.Add($"{FileCount} {ResourceService.Get("SuffixFiles")}");
-            if (RegCount  > 0) parts.Add($"{RegCount} {ResourceService.Get("SuffixRegistry")}");
+            if (FileCount > 0) parts.Add($"{FileCount:N0} {ResourceService.Get("SuffixFiles")}");
+            if (RegCount  > 0) parts.Add($"{RegCount:N0} {ResourceService.Get("SuffixRegistry")}");
             return string.Join(" · ", parts);
         }
     }
 
-    // Compact single-line used in the detail panel header
     public string Summary => FileCount > 0 || RegCount > 0
-        ? $"{FileCount} {ResourceService.Get("SuffixFilesSingular")}, {RegCount} {ResourceService.Get("SuffixRegistryItems")}  {Size}"
+        ? $"{FileCount:N0} {ResourceService.Get("SuffixFilesSingular")}, {RegCount:N0} {ResourceService.Get("SuffixRegistryItems")}  {Size}"
         : ResourceService.Get("LabelCleaningComplete");
 }
 
-public record DetailLine(string Text, bool IsHeader)
+public record DetailLine(string Text, bool IsHeader, bool IsRegistry = false)
 {
-    public bool IsNotHeader => !IsHeader;
+    public bool   IsNotHeader     => !IsHeader;
+    public bool   CanExcludeFile  => !IsHeader && !IsRegistry;
+    public string IconGlyph       => IsRegistry ? "\uE74C" : "\uE8A5";
 }

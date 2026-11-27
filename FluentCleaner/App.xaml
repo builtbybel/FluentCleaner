@@ -9,32 +9,155 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Two surfaces, Regedit-style. Panel: under every tab and the selected tab itself,
-                 WinUI's layer-on-Mica-Alt values so the backdrop only tints through a little.
-                 Content: the opaque sheet lists sit on, Notepad's editor tone. High contrast gets
-                 the solid base for both; WinUI's own layer brush is plain red there. -->
+            <!-- Theme-adaptive Enterprise Palette:
+                 Dark preserves the crisp obsidian slate look; Light renders clean alabaster surfaces. -->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="ShellPanelBrush" Color="#B3FFFFFF" />
                     <SolidColorBrush x:Key="ShellContentBrush" Color="#F9F9F9" />
-                    <!-- Terminal: solid, never see-through. Light keeps the solid base grey. -->
                     <SolidColorBrush x:Key="TerminalBrush" Color="#F3F3F3" />
+
+                    <SolidColorBrush x:Key="EnterpriseCardBgBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="EnterpriseSubtleCardBgBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="EnterpriseBorderBrush" Color="#E2E8F0" />
+                    <SolidColorBrush x:Key="EnterpriseTextPrimaryBrush" Color="#0F172A" />
+                    <SolidColorBrush x:Key="EnterpriseBadgeBgBrush" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="EnterpriseBadgeBorderBrush" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="EnterpriseSecondaryBtnBgBrush" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="EnterpriseSecondaryBtnFgBrush" Color="#0F172A" />
+                    <SolidColorBrush x:Key="EnterpriseSecondaryBtnBorderBrush" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="EnterpriseDangerTextBrush" Color="#DC2626" />
+                    <SolidColorBrush x:Key="EnterpriseWarningTextBrush" Color="#B45309" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="ShellPanelBrush" Color="#0FFFFFFF" />
                     <SolidColorBrush x:Key="ShellContentBrush" Color="#282828" />
-                    <!-- Windows Terminal's own black (Campbell scheme). -->
                     <SolidColorBrush x:Key="TerminalBrush" Color="#0C0C0C" />
+
+                    <SolidColorBrush x:Key="EnterpriseCardBgBrush" Color="#111827" />
+                    <SolidColorBrush x:Key="EnterpriseSubtleCardBgBrush" Color="#162032" />
+                    <SolidColorBrush x:Key="EnterpriseBorderBrush" Color="#1E293B" />
+                    <SolidColorBrush x:Key="EnterpriseTextPrimaryBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="EnterpriseBadgeBgBrush" Color="#1E293B" />
+                    <SolidColorBrush x:Key="EnterpriseBadgeBorderBrush" Color="#334155" />
+                    <SolidColorBrush x:Key="EnterpriseSecondaryBtnBgBrush" Color="#1E293B" />
+                    <SolidColorBrush x:Key="EnterpriseSecondaryBtnFgBrush" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="EnterpriseSecondaryBtnBorderBrush" Color="#334155" />
+                    <SolidColorBrush x:Key="EnterpriseDangerTextBrush" Color="#F87171" />
+                    <SolidColorBrush x:Key="EnterpriseWarningTextBrush" Color="#FBBF24" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <StaticResource x:Key="ShellPanelBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                     <StaticResource x:Key="ShellContentBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                     <StaticResource x:Key="TerminalBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+
+                    <StaticResource x:Key="EnterpriseCardBgBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+                    <StaticResource x:Key="EnterpriseSubtleCardBgBrush" ResourceKey="CardBackgroundFillColorSecondaryBrush" />
+                    <StaticResource x:Key="EnterpriseBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+                    <StaticResource x:Key="EnterpriseTextPrimaryBrush" ResourceKey="TextFillColorPrimaryBrush" />
+                    <StaticResource x:Key="EnterpriseBadgeBgBrush" ResourceKey="SubtleFillColorSecondaryBrush" />
+                    <StaticResource x:Key="EnterpriseBadgeBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />
+                    <StaticResource x:Key="EnterpriseSecondaryBtnBgBrush" ResourceKey="ControlFillColorDefaultBrush" />
+                    <StaticResource x:Key="EnterpriseSecondaryBtnFgBrush" ResourceKey="TextFillColorPrimaryBrush" />
+                    <StaticResource x:Key="EnterpriseSecondaryBtnBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />
+                    <StaticResource x:Key="EnterpriseDangerTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
+                    <StaticResource x:Key="EnterpriseWarningTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+            <conv:HexToBrushConverter x:Key="HexToBrushConverter" />
+
+            <!-- Monospace font shared by Rule Preview, TweaksPage, and Terminal -->
+            <FontFamily x:Key="MonoFont">Cascadia Code, Consolas, Courier New</FontFamily>
+
+            <!-- Column header button style required by AppsPage and TweaksPage -->
+            <Style x:Key="ColumnHeaderStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="0,6" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            </Style>
+
+            <!-- Primary elevated surface card (Fluent 2 Layer/Card) -->
+            <Style x:Key="SurfaceCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+            </Style>
+
+            <!-- Theme-adaptive obsidian (Dark) / alabaster (Light) surface card -->
+            <Style x:Key="DarkSlateCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource EnterpriseCardBgBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource EnterpriseBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+            </Style>
+
+            <!-- Secondary nested card (Macro-Category toggles & Inspector panels) -->
+            <Style x:Key="SubtleCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource EnterpriseSubtleCardBgBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource EnterpriseBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="6" />
+            </Style>
+
+            <!-- Compact pill toggle button for filter bar -->
+            <Style x:Key="FilterPillStyle" TargetType="ToggleButton">
+                <Setter Property="Padding" Value="10,4" />
+                <Setter Property="MinHeight" Value="26" />
+                <Setter Property="MinWidth" Value="0" />
+                <Setter Property="CornerRadius" Value="13" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{ThemeResource EnterpriseBorderBrush}" />
+            </Style>
+
+            <!-- Subtle icon-only or icon+label toolbar button -->
+            <Style x:Key="SubtleToolbarButtonStyle" TargetType="Button">
+                <Setter Property="Padding" Value="8,5" />
+                <Setter Property="MinHeight" Value="28" />
+                <Setter Property="MinWidth" Value="0" />
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="FontSize" Value="12" />
+            </Style>
+
+            <!-- Compact inline Exclude button on file preview rows -->
+            <Style x:Key="InlineActionButtonStyle" TargetType="Button">
+                <Setter Property="Padding" Value="8,3" />
+                <Setter Property="MinHeight" Value="24" />
+                <Setter Property="MinWidth" Value="0" />
+                <Setter Property="CornerRadius" Value="4" />
+                <Setter Property="FontSize" Value="11" />
+            </Style>
+
+            <!-- Electric vibrant blue primary button (consistent cyan/blue across all systems) -->
+            <Style x:Key="ElectricAccentButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#0284C7" />
+                <Setter Property="Foreground" Value="#FFFFFF" />
+                <Setter Property="BorderBrush" Value="#38BDF8" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+
+            <!-- Theme-adaptive secondary button -->
+            <Style x:Key="DarkSecondaryButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{ThemeResource EnterpriseSecondaryBtnBgBrush}" />
+                <Setter Property="Foreground" Value="{ThemeResource EnterpriseSecondaryBtnFgBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource EnterpriseSecondaryBtnBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="6" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

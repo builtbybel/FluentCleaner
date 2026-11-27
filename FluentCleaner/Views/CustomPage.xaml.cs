@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentCleaner.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -65,6 +65,19 @@ public sealed partial class CustomPage : Page, IPageActions, ISearchablePage
         panelEmpty.Visibility = any ? Visibility.Collapsed : Visibility.Visible;
         panelList.Visibility  = any ? Visibility.Visible   : Visibility.Collapsed;
         lblStatus.Text = any ? ResourceService.Fmt("St_CustomStatus", _entries.Count, _entries.Count(e => e.IsEnabled)) : "";
+    }
+
+    private async void NewCleanerHeader_Click(object sender, RoutedEventArgs e) =>
+        await ShowEditorAsync(null);
+
+    private void OpenFolderHeader_Click(object sender, RoutedEventArgs e)
+    {
+        Directory.CreateDirectory(CustomEntryService.CustomDir);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName        = CustomEntryService.CustomDir,
+            UseShellExecute = true
+        });
     }
 
     // --- IPageActions ----------------------------------------------------------

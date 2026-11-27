@@ -4,6 +4,7 @@ using FluentCleaner.Services;
 using FluentCleaner.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -39,6 +40,7 @@ public sealed partial class SettingsPage : Page
         // x:Uid doesn't reach a Run.
         RunWinapp3Desc.Text = ResourceService.Get("LblWinapp3Desc/Text");
         _navigationReady = true;
+        SettingsNav.SelectedIndex = 3;
         ShowSettingsSection("General");
         InitializeDonationOptions();
         AiProviderBox.ItemsSource = new[] { "Groq", "OpenAI", "Anthropic" };
@@ -57,6 +59,30 @@ public sealed partial class SettingsPage : Page
 
             _pageReady = true;
         };
+    }
+
+    // The settings page has one local navigator and one content surface. Keeping the
+    // sections here avoids a second Frame/router while still killing the long one-pager.
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (e.Parameter is string section && !string.IsNullOrWhiteSpace(section))
+            NavigateToSection(section);
+    }
+
+    public void NavigateToSection(string section)
+    {
+        for (int i = 0; i < SettingsNav.Items.Count; i++)
+        {
+            if (SettingsNav.Items[i] is ListViewItem item &&
+                string.Equals(item.Tag as string, section, StringComparison.OrdinalIgnoreCase))
+            {
+                SettingsNav.SelectedIndex = i;
+                ShowSettingsSection(section);
+                return;
+            }
+        }
+        ShowSettingsSection(section);
     }
 
     // Sections are shown and hidden in place; no second Frame needed.
@@ -81,29 +107,39 @@ public sealed partial class SettingsPage : Page
         SettingsScroll.ChangeView(null, 0, null, true);
     }
 
+    private bool _isShowingDialog;
+
     private async void LangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!_pageReady) return;
+        if (!_pageReady || _isShowingDialog) return;
+        _isShowingDialog = true;
 
-        // Only one ContentDialog at a time; the choice is saved either way.
-        if (Microsoft.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot)
-                .Any(p => p.Child is ContentDialog)) return;
-
-        var result = await new ContentDialog
+        try
         {
-            XamlRoot          = XamlRoot,
-            RequestedTheme    = ActualTheme,
-            Title             = ResourceService.Get("DlgRestartTitle"),
-            Content           = ResourceService.Get("DlgRestartMessage"),
-            PrimaryButtonText = ResourceService.Get("DlgRestartNow"),
-            CloseButtonText   = ResourceService.Get("DlgRestartLater"),
-            DefaultButton     = ContentDialogButton.Primary
-        }.ShowAsync();
+            var result = await new ContentDialog
+            {
+                XamlRoot          = XamlRoot,
+                RequestedTheme    = ActualTheme,
+                Title             = ResourceService.Get("DlgRestartTitle"),
+                Content           = ResourceService.Get("DlgRestartMessage"),
+                PrimaryButtonText = ResourceService.Get("DlgRestartNow"),
+                CloseButtonText   = ResourceService.Get("DlgRestartLater"),
+                DefaultButton     = ContentDialogButton.Primary
+            }.ShowAsync();
 
-        if (result == ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
+            {
+                Process.Start(Environment.ProcessPath!);
+                Application.Current.Exit();
+            }
+        }
+        catch (System.Runtime.InteropServices.COMException)
         {
-            Process.Start(Environment.ProcessPath!);
-            Application.Current.Exit();
+            // Suppress secondary dialog invocation if one is already transitioning
+        }
+        finally
+        {
+            _isShowingDialog = false;
         }
     }
 

@@ -5,7 +5,21 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <Grid>
+    <!-- Styles come from Styles/Shell.xaml, the same ones the cleaner list uses, so both
+         tools read as one app rather than two pasted together. -->
+    <Grid Padding="16,12,16,14" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="2">
+            <TextBlock Text="Windows Tweaks" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="Audit, apply, or revert Windows privacy, telemetry, and shell configuration rules." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+
+        <Border Grid.Row="1" Style="{StaticResource SurfaceCardStyle}">
+            <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <!-- progress -->
@@ -23,12 +37,6 @@
             <!-- actions -->
         </Grid.RowDefinitions>
 
-        <!-- content background from headers to description;filters and footer stay on the panel like in the cleaner -->
-        <Border Grid.Row="3" Grid.RowSpan="3"
-                Background="{ThemeResource ShellContentBrush}"
-                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                BorderThickness="0,1,0,0" />
-
         <ProgressBar Grid.Row="0"
                      Height="2"
                      Maximum="100"
@@ -37,7 +45,8 @@
                      Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay,
                          Converter={StaticResource BoolToVisibilityConverter}}" />
 
-        <!-- result of the last run: admin missing, restart needed, failed rules -->
+        <!-- What the last run did, and what it could not do: missing rights, a shell that has
+             to restart, rules that failed. Silent success would leave the user guessing. -->
         <InfoBar Grid.Row="1"
                  Margin="10,6,22,0"
                  IsOpen="{x:Bind ViewModel.InfoOpen, Mode=TwoWay}"
@@ -52,7 +61,7 @@
             </InfoBar.ActionButton>
         </InfoBar>
 
-        <!-- category + "open only" filter -->
+        <!-- Category and "open only": the two cuts that make a 94 row catalogue workable. -->
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     Spacing="10"
@@ -69,8 +78,10 @@
                       IsChecked="{x:Bind ViewModel.OnlyOpen, Mode=TwoWay}" />
         </StackPanel>
 
-        <!-- same padding and 28px checkbox column as the rows, so headers line up -->
-        <Grid Grid.Row="3" Height="28" Padding="10,0,22,0">
+        <!-- Padding matches the row template below so header and value share a left edge. -->
+        <!-- Leading 28 px mirrors the tick box column of the rows, so every heading stands
+             over the values it names. -->
+        <Grid Grid.Row="3" Padding="10,0,22,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="28" />
                 <ColumnDefinition Width="*" />
@@ -78,19 +89,21 @@
                 <ColumnDefinition Width="110" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="1" x:Uid="ColTweak" Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-            <TextBlock Grid.Column="2" x:Uid="ColCategory" Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-            <TextBlock Grid.Column="3" x:Uid="ColState" Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"
-                       HorizontalAlignment="Right" />
+            <Button Grid.Column="1" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColTweak" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Button>
+            <Button Grid.Column="2" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColCategory" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Button>
+            <Button Grid.Column="3" Style="{StaticResource ColumnHeaderStyle}" IsHitTestVisible="False">
+                <TextBlock x:Uid="ColState" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            </Button>
         </Grid>
 
         <Border Grid.Row="3" VerticalAlignment="Bottom" Height="1"
                 Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
-        <!-- empty: not scanned yet or nothing matches the filter -->
+        <!-- Nothing scanned yet, or the filters matched nothing. -->
         <StackPanel Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8"
                     Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay,
                         Converter={StaticResource BoolToVisibilityConverter}}">
@@ -102,7 +115,8 @@
                        TextAlignment="Center" />
         </StackPanel>
 
-        <!-- selection = detail strip, checkbox = apply;two different things -->
+        <!-- Single selection drives the description strip; the tick box is separate, so
+             reading what a rule does never changes what will be written. -->
         <ListView Grid.Row="4"
                   ItemsSource="{x:Bind ViewModel.Rows, Mode=OneWay}"
                   SelectedItem="{x:Bind ViewModel.SelectedRow, Mode=TwoWay}"
@@ -119,8 +133,8 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TweakRowViewModel">
-                    <!-- RightTapped instead of ContextFlyout (one menu, not one per row).
-                         Transparent or the gaps don't get clicks -->
+                    <!-- RightTapped, not a ContextFlyout: that would build one menu per row.
+                         Transparent, or the gaps between the columns are not hit testable. -->
                     <Grid Height="30" Padding="10,0,22,0"
                           Background="Transparent"
                           RightTapped="Row_RightTapped">
@@ -131,11 +145,12 @@
                             <ColumnDefinition Width="110" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- checkbox without text, else a click on the name ticks it.
-                             box = tick, rest of the row = select -->
+                        <!-- The box alone, with no content: a CheckBox that carries the label
+                             swallows every click on the name, so ticking a rule and selecting
+                             it became the same gesture and its own hover band fought the row's.
+                             Box ticks, everything else selects. -->
                         <CheckBox Grid.Column="0"
                                   IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
-                                  AutomationProperties.Name="{x:Bind Title}"
                                   MinWidth="0"
                                   Padding="0"
                                   VerticalAlignment="Center" />
@@ -144,7 +159,8 @@
                                     Orientation="Horizontal"
                                     Spacing="5"
                                     VerticalAlignment="Center">
-                            <!-- shield = needs admin (HKLM or policy key) -->
+                            <!-- Needs the machine hive or a policy key, so a standard user
+                                 cannot write it; flagged before the run, not after. -->
                             <FontIcon Glyph="&#xE72E;" FontSize="11"
                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                       VerticalAlignment="Center"
@@ -163,7 +179,7 @@
                                    VerticalAlignment="Center"
                                    TextTrimming="CharacterEllipsis" />
 
-                        <!-- state only, apply/reset is in the right-click menu -->
+                        <!-- State, not action: the action word is in the right click menu. -->
                         <StackPanel Grid.Column="3"
                                     Orientation="Horizontal"
                                     Spacing="4"
@@ -192,7 +208,8 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- detail strip: description + registry values of the selected rule -->
+        <!-- What the selected rule actually does, in the catalogue's own words, plus every
+             registry value it writes. Tooltips need hovering and waiting; this does not. -->
         <Grid Grid.Row="5"
               Padding="10,8,22,8"
               BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
@@ -204,7 +221,7 @@
                            FontSize="12"
                            TextWrapping="Wrap" />
                 <TextBlock Text="{x:Bind ViewModel.SelectedRow.RegistryPaths, Mode=OneWay}"
-                           FontFamily="Cascadia Mono,Consolas"
+                           FontFamily="{StaticResource MonoFont}"
                            FontSize="11"
                            TextWrapping="Wrap"
                            IsTextSelectionEnabled="True"
@@ -212,47 +229,38 @@
             </StackPanel>
         </Grid>
 
-        <!-- footer, same as CleanerPage: status left, buttons right -->
+        <!-- Action bar -->
         <Grid Grid.Row="6"
-              Padding="10,6,8,6"
-              ColumnSpacing="12"
               BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-              BorderThickness="0,1,0,0">
+              BorderThickness="0,1,0,0"
+              Padding="10,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- link to WinRules.ini, looks like "Share selection" in the cleaner -->
-            <HyperlinkButton FontSize="11"
-                             Padding="0" MinWidth="0" MinHeight="0"
-                             VerticalAlignment="Center"
-                             Click="Rules_Click">
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <FontIcon Glyph="&#xEA86;" FontSize="14" />
-                    <TextBlock Text="WinRules.ini" />
-                </StackPanel>
-            </HyperlinkButton>
+            <Button x:Uid="BtnTweaksScan"
+                    Grid.Column="0"
+                    Command="{x:Bind ViewModel.ScanCommand}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                    MinWidth="104" Height="30" />
 
             <TextBlock Grid.Column="1"
                        Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
-                       FontSize="11"
+                       FontSize="12"
+                       Margin="12,0"
                        VerticalAlignment="Center"
                        TextTrimming="CharacterEllipsis"
                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button x:Uid="BtnTweaksScan"
-                        Command="{x:Bind ViewModel.ScanCommand}"
-                        Style="{StaticResource AccentButtonStyle}"
-                        IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
-                        MinWidth="96" Height="30" Padding="12,0" />
-
-                <Button x:Uid="BtnTweaksApply"
-                        Command="{x:Bind ViewModel.ApplyCommand}"
-                        MinWidth="104" Height="30" Padding="12,0" />
-            </StackPanel>
+            <Button x:Uid="BtnTweaksApply"
+                    Grid.Column="2"
+                    Command="{x:Bind ViewModel.ApplyCommand}"
+                    MinWidth="112" Height="30" />
         </Grid>
+    </Grid>
+        </Border>
     </Grid>
 </Page>

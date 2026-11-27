@@ -1,33 +1,45 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using FluentCleaner.Services;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using FluentCleaner.Models;
+using FluentCleaner.Services;
+using Microsoft.UI.Xaml.Media;
 
 namespace FluentCleaner.ViewModels;
 
-// Groups a bunch of entries under a shared label (e.g. "Google Chrome").
-// Select/deselect all lives here because it only touches its own entries.
-// Analyze/clean are handled by the page VM; see CleanerPage.xaml.cs.
+// Groups cleaner entries under a shared label (e.g. "Google Chrome", "Developer Tools").
+// Surfaces live selection counts, 3-state category checkbox, rolled-up size,
+// strongly-typed AppIconBitmap (avoiding null string Image.Source binding errors), and bulk actions.
 public partial class CleanerCategoryViewModel : ObservableObject
 {
+    private readonly Action<CleanerCategoryViewModel, bool>? _onBulkSelect;
+    private bool _syncingCheckState;
+
     public string Name { get; }
+    public string IconGlyph { get; }
+    public string MacroGroup { get; }
+    public string AccentColorHex { get; }
+    public string IconBackgroundHex { get; }
+    public bool   IsDangerous { get; }
     public ObservableCollection<CleanerEntryViewModel> Entries { get; } = new();
 
-    [ObservableProperty] public partial bool IsExpanded { get; set; } = false;
+    // Strongly-typed ImageSource? fixes WinUI 3 ConvertValue(ImageSource, null) crashes on non-app categories
+    [ObservableProperty] public partial ImageSource? AppIconBitmap { get; set; }
+    [ObservableProperty] public partial bool         IsExpanded { get; set; } = false;
+    [ObservableProperty] public partial int          SelectedCount { get; set; }
+    [ObservableProperty] public partial int          TotalCount { get; set; }
+    [ObservableProperty] public partial long         ScannedBytes { get; set; }
+    [ObservableProperty] public partial string       CategorySizeText { get; set; } = "";
+    [ObservableProperty] public partial bool         HasRunningProcess { get; set; }
+    [ObservableProperty] public partial bool?        IsCategoryChecked { get; set; } = false;
 
-    [RelayCommand] private void Toggle() => IsExpanded = !IsExpanded;                                         // the category row in the tree
+    public bool   HasAppIcon       => AppIconBitmap is not null;
+    public string SelectionSummary => $"{SelectedCount}/{TotalCount}";
+    public bool   HasScannedSize   => ScannedBytes > 0;
+    public string HeaderBadgeText  => HasScannedSize
+        ? $"{SelectionSummary} · {CategorySizeText}"
+        : SelectionSummary;
 
-    [RelayCommand] private void SelectAll() => Entries.ToList().ForEach(e => e.IsSelected = true);           // check every entry in this category
-
-    [RelayCommand] private void SelectNone() => Entries.ToList().ForEach(e => e.IsSelected = false);          // uncheck every entry in this category
-
-    [RelayCommand] private void SelectDefaults() => Entries.ToList().ForEach(e => e.IsSelected = e.Entry.Default); // restore the Default=True/False values from the database
-
-    public CleanerCategoryViewModel(string name) => Name = name;
-
-    // What the tree shows. Generic categories are localised by convention ("Utilities" ->
-    // Cat_Utilities); brand names like Firefox or Adobe have no key, and ResourceService.Get
-    // hands the key back on a miss, which is the signal to keep the raw name.
     public string DisplayName
     {
         get
@@ -38,66 +50,80 @@ public partial class CleanerCategoryViewModel : ObservableObject
         }
     }
 
-    // Right-click menu, same as on an entry.
     public string AnalyzeText => ResourceService.Fmt("MenuAnalyzeNamed", DisplayName);
     public string CleanText   => ResourceService.Fmt("MenuCleanNamed", DisplayName);
 
-    // --- Tree icon -----------------------------------------------------------
+    partial void OnAppIconBitmapChanged(ImageSource? value) => OnPropertyChanged(nameof(HasAppIcon));
 
-    // Segoe Fluent Icons glyph + accent per known category. Anything missing keeps the
-    // folder, so a plain folder in the tree means "custom or unrecognised category".
-    // Adding a category is one line; the glyphs were checked against the installed font.
-    private static readonly Dictionary<string, (string Glyph, uint Rgb)> Icons = new()
+    partial void OnIsCategoryCheckedChanged(bool? value)
     {
-        ["Developer Tools"]        = ("", 0x2EC4B6),   // code; Section= in our Winapp2.ini
-        ["Microsoft Edge"]         = ("", 0x3FA7E0),   // globe
-        ["Internet"]               = ("", 0x4FC3F7),
-        ["Applications"]           = ("", 0x9C7BE8),   // app tiles
-        ["Multimedia"]             = ("", 0xE8669B),   // video
-        ["Utilities"]              = ("", 0x67C98B),   // wrench
-        ["Windows"]                = ("", 0x3FA7E0),   // monitor
-        ["Firefox"]                = ("", 0xFF8A3D),
-        ["Opera"]                  = ("", 0xE8544C),
-        ["Opera GX"]               = ("", 0xE8544C),
-        ["Safari"]                 = ("", 0x4FC3F7),
-        ["Google Chrome"]          = ("", 0xE8C14C),
-        ["Vivaldi"]                = ("", 0xE8544C),
-        ["Arc Browser"]            = ("", 0xE8669B),
-        ["Brave"]                  = ("", 0xFF7139),   // shield
-        ["Avast Secure Browser"]   = ("", 0xFF7A18),
-        ["AVG Secure Browser"]     = ("", 0x4FC3F7),
-        ["Norton Private Browser"] = ("", 0xE8C14C),
-        ["Avira Secure Browser"]   = ("", 0xE8544C),
-        ["Microsoft Store"]        = ("", 0x4FC3F7),   // shopping bag
-        ["Spotify"]                = ("", 0x4CC25F),   // music
-        ["iTunes"]                 = ("", 0xE8669B),
-        ["WhatsApp"]               = ("", 0x4CC25F),   // chat bubble
-        ["Games"]                  = ("", 0x9C7BE8),   // controller
-    };
+        if (_syncingCheckState) return;
+        bool target = value == true;
+        if (_onBulkSelect is not null)
+        {
+            _onBulkSelect(this, target);
+        }
+        else
+        {
+            foreach (var e in Entries) e.IsSelected = target;
+            RefreshStats();
+        }
+    }
 
-    private const string FolderGlyph = "";
-    private const uint FolderRgb = 0xE8B14C;
-
-    // Static, so a result row after Analyze gets the same icon as its category in the tree.
-    public static string GlyphFor(string category) =>
-        Icons.TryGetValue(category, out var icon) ? icon.Glyph : FolderGlyph;
-
-    public static Microsoft.UI.Xaml.Media.SolidColorBrush BrushFor(string category) =>
-        Brush(Icons.TryGetValue(category, out var icon) ? icon.Rgb : FolderRgb);
-
-    public string Glyph => GlyphFor(Name);
-    public Microsoft.UI.Xaml.Media.SolidColorBrush IconBrush => BrushFor(Name);
-
-    // One brush per colour, shared across rows; a new brush per binding would be wasteful.
-    private static readonly Dictionary<uint, Microsoft.UI.Xaml.Media.SolidColorBrush> Brushes = new();
-
-    private static Microsoft.UI.Xaml.Media.SolidColorBrush Brush(uint rgb)
+    partial void OnSelectedCountChanged(int value)
     {
-        if (Brushes.TryGetValue(rgb, out var cached)) return cached;
+        OnPropertyChanged(nameof(SelectionSummary));
+        OnPropertyChanged(nameof(HeaderBadgeText));
+    }
 
-        var brush = new Microsoft.UI.Xaml.Media.SolidColorBrush(
-            Windows.UI.Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb));
-        Brushes[rgb] = brush;
-        return brush;
+    partial void OnTotalCountChanged(int value)
+    {
+        OnPropertyChanged(nameof(SelectionSummary));
+        OnPropertyChanged(nameof(HeaderBadgeText));
+    }
+
+    partial void OnScannedBytesChanged(long value)
+    {
+        CategorySizeText = value > 0 ? ScanResult.FormatBytes(value) : "";
+        OnPropertyChanged(nameof(HasScannedSize));
+        OnPropertyChanged(nameof(HeaderBadgeText));
+    }
+
+    public void RefreshStats()
+    {
+        TotalCount        = Entries.Count;
+        SelectedCount     = Entries.Count(e => e.IsSelected);
+        ScannedBytes      = Entries.Sum(e => e.ScannedBytes);
+        HasRunningProcess = Entries.Any(e => e.IsProcessRunning);
+
+        _syncingCheckState = true;
+        IsCategoryChecked = SelectedCount == 0
+            ? false
+            : (SelectedCount == TotalCount ? true : null);
+        _syncingCheckState = false;
+    }
+
+    [RelayCommand] private void Toggle()        => IsExpanded = !IsExpanded;
+    [RelayCommand] private void SelectAll()     => IsCategoryChecked = true;
+    [RelayCommand] private void SelectNone()    => IsCategoryChecked = false;
+    [RelayCommand] private void SelectDefaults() => Entries.ToList().ForEach(e => e.IsSelected = !IsDangerous && e.Entry.Default);
+
+    public CleanerCategoryViewModel(
+        string name,
+        string macroGroup = "Apps",
+        string iconGlyph = "\uE71D",
+        string accentColorHex = "#8B5CF6",
+        string iconBackgroundHex = "#228B5CF6",
+        ImageSource? appIconBitmap = null,
+        Action<CleanerCategoryViewModel, bool>? onBulkSelect = null)
+    {
+        Name              = name;
+        MacroGroup        = macroGroup;
+        IconGlyph         = string.IsNullOrEmpty(iconGlyph) ? "\uE71D" : iconGlyph;
+        AccentColorHex    = accentColorHex;
+        IconBackgroundHex = iconBackgroundHex;
+        IsDangerous       = name.StartsWith("Dangerous ", StringComparison.OrdinalIgnoreCase);
+        AppIconBitmap     = appIconBitmap;
+        _onBulkSelect     = onBulkSelect;
     }
 }

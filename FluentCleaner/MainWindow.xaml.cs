@@ -1,245 +1,318 @@
-using FluentCleaner.Services;
 using FluentCleaner.Plugins.Apps;
 using FluentCleaner.Plugins.Tweaks;
+using FluentCleaner.Services;
 using FluentCleaner.Views;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Media.Imaging;
+using System.Net.Http;
+using Windows.System;
 
 namespace FluentCleaner;
 
 public sealed partial class MainWindow : Window
 {
-    // One place for glyph and label, shared by the tab and the "+" menu.
-    private sealed record PageKind(Type PageType, string Glyph, string LabelKey, string Fallback, string? Image = null);
-
-    private const string AppIcon = "ms-appx:///Assets/AppIcon.ico";
-
-    private static readonly PageKind[] NewTabKinds =
-    [
-        new(typeof(CleanerPage),  "", "NavCleaner/Content",  "Cleaner", AppIcon),
-        new(typeof(TweaksPage),   "", "NavTweaks/Content",   "Tweaks"),
-        new(typeof(AppsPage),     "", "NavApps/Content",     "Apps"),
-        new(typeof(TerminalPage), "", "NavTerminal/Content", "Terminal"),
-        new(typeof(CustomPage),   "", "NavCustom/Content",   "Custom"),
-    ];
-
-    private static readonly PageKind SettingsKind =
-        new(typeof(SettingsPage), "", "SettingsTitle/Text", "Settings");
+    public string InsiderSubtitle   => AppInfo.InsiderSubtitle;
+    public string VersionFooterText => $"v{AppInfo.DisplayVersion}";
 
     public MainWindow()
     {
-        InitializeComponent();
-        ExtendsContentIntoTitleBar = true;
-
-        SetTitleBar(TitleDragRegion);
-
-        InsiderLabel.Text = AppInfo.InsiderSubtitle;
-        AppMenuSearch.Text = ResourceService.Get("SearchBox/PlaceholderText");        // Queued so the window shows without waiting ~50 ms for the page.
-        DispatcherQueue.TryEnqueue(() => AddTab(NewTabKinds[0]));
-
-        //No ~800 ms slide-in for new tabs;they appear with their page, like Terminal
-        Tabs.Loaded += (_, _) =>
+        try
         {
-            if (FindDescendant<ListView>(Tabs) is { } strip)
-                strip.ItemContainerTransitions = [];
-        };
-
-        SizeChanged += (_, _) => UpdateCaptionInset();
-        UpdateCaptionInset();
-    }
-
-    // --- Tabs -----------------------------------------------------------------
-
-    private Frame? ActiveFrame => (Tabs.SelectedItem as TabViewItem)?.Tag as Frame;
-
-    private object? ActivePage => ActiveFrame?.Content;
-
-    //opens a page as new tab and returns it (Rule Lab uses it)
-    public T OpenTab<T>(string header) where T : Page =>
-        (T)AddTab(new PageKind(typeof(T), "", "", header)).Content;   //test beaker, like "Test in Rule Lab"
-
-    private Frame AddTab(PageKind kind)
-    {
-        var frame = new Frame();
-
-        //No page transition: it read as lag
-        frame.Navigate(kind.PageType, null, new SuppressNavigationTransitionInfo());
-
-        //MinWidth = Explorer tab width, MaxWidth + trimming for long Rule Lab names
-        var label = Label(kind);
-        var tab = new TabViewItem
-        {
-            Header = new TextBlock { Text = label, TextTrimming = TextTrimming.CharacterEllipsis },
-            IconSource = Icon(kind),
-            Tag = frame,
-            MinWidth = 180,
-            MaxWidth = 240
-        };
-        ToolTipService.SetToolTip(tab, label);
-        Tabs.TabItems.Add(tab);
-
-        Tabs.SelectedIndex = Tabs.TabItems.Count - 1;
-        return frame;
-    }
-
-    private static T? FindDescendant<T>(DependencyObject root) where T : DependencyObject
-    {
-        int count = VisualTreeHelper.GetChildrenCount(root);
-        for (int i = 0; i < count; i++)
-        {
-            var child = VisualTreeHelper.GetChild(root, i);
-            if (child is T match) return match;
-            if (FindDescendant<T>(child) is { } nested) return nested;
+            InitializeComponent();
         }
-        return null;
-    }
-
-    // Coloured image where set, like Explorer's tabs; otherwise the mono glyph
-    private static IconSource Icon(PageKind kind) => kind.Image is { } uri
-        ? new ImageIconSource { ImageSource = new BitmapImage(new Uri(uri)) }
-        : new FontIconSource { Glyph = kind.Glyph };
-
-    private static string Label(PageKind kind)
-    {
-        if (kind.LabelKey.Length == 0) return kind.Fallback;   //OpenTab passes its header as is
-        var text = ResourceService.Get(kind.LabelKey);
-        return text == kind.LabelKey ? kind.Fallback : text;
-    }
-
-    private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        SearchBox.Text = "";
-        UpdateSearchIndicator();
-        if (e.RemovedItems.FirstOrDefault() is TabViewItem { Tag: Frame old }
-            && old.Content is ISearchablePage searchable)
-            searchable.OnSearch("");
-
-        PageHost.Child = ActiveFrame;
+        catch (Exception ex)
+        {
+            var crashPath = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "FluentCleaner", "crash.log");
+            System.IO.File.AppendAllText(crashPath, $"[INIT COMPONENT FAILED {DateTime.Now:yyyy-MM-dd HH:mm:ss}]\nMessage: {ex.Message}\nHResult: 0x{ex.HResult:X8}\n{ex}\n\n");
+            throw;
+        }
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(AppTitleBar);
+        AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
 
         SyncSearchState();
-    }
+        SizeChanged += MainWindow_SizeChanged;
+        UpdateTitleSearch(AppWindow.Size.Width);
 
-    //The last tab can't be closed
-    private void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
-    {
-        if (Tabs.TabItems.Count > 1)
-            Tabs.TabItems.Remove(args.Tab);
-    }
-
-    private void NewTabFlyout_Opening(object sender, object e)
-    {
-        NewTabFlyout.Items.Clear();
-
-        foreach (var kind in NewTabKinds)
+        NavView.SelectedItem = NavItemCleaner;
+        if (NavFrame.Content == null)
         {
-            var item = new MenuFlyoutItem
-            {
-                Text = Label(kind),
-                Icon = Icon(kind).CreateIconElement()
-            };
-            item.Click += (_, _) => AddTab(kind);
-            NewTabFlyout.Items.Add(item);
-        }
-    }
-
-    // Settings opens only once; a second click selects the open tab
-    private void Settings_Click(object sender, RoutedEventArgs e)
-    {
-        var open = Tabs.TabItems.OfType<TabViewItem>().FirstOrDefault(
-            t => t.Tag is Frame f && f.SourcePageType == typeof(SettingsPage));
-
-        if (open is not null) Tabs.SelectedItem = open;
-        else AddTab(SettingsKind);
-    }
-
-    private async void Donate_Click(object sender, RoutedEventArgs e) =>
-        await AppLinks.OpenAsync(AppLinks.Donate);
-
-    private async void GitHub_Click(object sender, RoutedEventArgs e) =>
-        await AppLinks.OpenAsync(AppLinks.GitHub);
-
-    private async void CheckUpdates_Click(object sender, RoutedEventArgs e) =>
-        await AppLinks.OpenAsync(AppLinks.CreateUpdateUrl("modern", AppInfo.VersionString));
-
-    // --- App menu (∨) -----------------------------------------------------------
-
-    private int _pageActionCount;   //items currently inserted above the separator
-
-    // The active page's actions on top, rebuilt on every open.
-    private void AppMenu_Opening(object sender, object e)
-    {
-        for (int i = 0; i < _pageActionCount; i++)
-            AppMenu.Items.RemoveAt(0);
-        _pageActionCount = 0;
-
-        if (ActivePage is IPageActions provider)
-        {
-            // Built in a spare flyout and moved over: an item can have only one parent
-            var scratch = new MenuFlyout();
-            provider.BuildActions(scratch);
-            var items = scratch.Items.ToList();
-            scratch.Items.Clear();
-            foreach (var item in items)
-                AppMenu.Items.Insert(_pageActionCount++, item);
+            NavFrame.Navigate(typeof(CleanerPage));
         }
 
-        AppMenuSeparator.Visibility = _pageActionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ApplyNavPanePinState(
+            AppSettings.Instance.IsNavPanePinned,
+            openIfPinned: AppSettings.Instance.IsNavPanePinned);
     }
 
-    private void Refresh_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    // --- Keyboard Accelerators ------------------------------------------------
+
+    private void AccelFocusSearch_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
-        if (ActivePage is not IRefreshablePage page) return;
-        page.Refresh();
+        if (TitleSearchBox.IsEnabled && TitleSearchBox.Visibility == Visibility.Visible)
+            TitleSearchBox.Focus(FocusState.Programmatic);
         args.Handled = true;
+    }
+
+    private void AccelNav_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        NavigationViewItem? target = sender.Key switch
+        {
+            VirtualKey.Number1 => NavItemCleaner,
+            VirtualKey.Number2 => NavItemApps,
+            VirtualKey.Number3 => NavItemTweaks,
+            VirtualKey.Number4 => NavItemCustom,
+            VirtualKey.Number5 => NavItemTerminal,
+            _                  => null
+        };
+        if (target is not null)
+        {
+            NavView.SelectedItem = target;
+            args.Handled = true;
+        }
+    }
+
+    // --- TitleBar pane toggle & Pin -------------------------------------------
+
+    private void TitleBar_PaneToggleRequested(TitleBar sender, object args) =>
+        NavView.IsPaneOpen = !NavView.IsPaneOpen;
+
+    private void BtnPinNav_Click(object sender, RoutedEventArgs e)
+    {
+        bool nextPinned = !AppSettings.Instance.IsNavPanePinned;
+        AppSettings.Instance.IsNavPanePinned = nextPinned;
+        AppSettings.Instance.Save();
+
+        ApplyNavPanePinState(nextPinned, openIfPinned: true);
+        if (!nextPinned)
+            NavView.IsPaneOpen = false;
+    }
+
+    private void NavView_PaneOpening(NavigationView sender, object args) =>
+        UpdatePaneHeaderVisibility(true);
+
+    private void NavView_PaneClosed(NavigationView sender, object args) =>
+        UpdatePaneHeaderVisibility(false);
+
+    private void ApplyNavPanePinState(bool pinned, bool openIfPinned)
+    {
+        NavView.PaneDisplayMode = pinned
+            ? NavigationViewPaneDisplayMode.Left
+            : NavigationViewPaneDisplayMode.LeftCompact;
+
+        if (pinned && openIfPinned)
+            NavView.IsPaneOpen = true;
+        else if (!pinned && !openIfPinned)
+            NavView.IsPaneOpen = false;
+
+        UpdatePinButtonVisuals(pinned);
+        UpdatePaneHeaderVisibility(NavView.IsPaneOpen);
+    }
+
+    private void UpdatePaneHeaderVisibility(bool isOpen) =>
+        NavPaneHeaderGrid.Visibility = isOpen ? Visibility.Visible : Visibility.Collapsed;
+
+    private void UpdatePinButtonVisuals(bool pinned)
+    {
+        PinNavIcon.Glyph = pinned ? "\uE840" : "\uE718";
+        var brushKey = pinned ? "AccentTextFillColorPrimaryBrush" : "TextFillColorSecondaryBrush";
+        if (Application.Current.Resources.TryGetValue(brushKey, out var res) && res is Brush brush)
+            PinNavIcon.Foreground = brush;
+
+        var label = pinned ? "Unpin navigation bar (collapse to rail)" : "Pin navigation bar side-by-side";
+        Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(BtnPinNav, pinned ? "Unpin navigation bar" : "Pin navigation bar");
+        ToolTipService.SetToolTip(BtnPinNav, label);
+    }
+
+    private void CollapseUnpinnedOverlay()
+    {
+        if (AppSettings.Instance.IsNavPanePinned) return;
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            if (!AppSettings.Instance.IsNavPanePinned && NavView.IsPaneOpen)
+                NavView.IsPaneOpen = false;
+        });
+    }
+
+    // --- Navigation -----------------------------------------------------------
+
+    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    {
+        TitleSearchBox.Text = "";
+        var prevContent = NavFrame.Content;
+        if (prevContent is ISearchablePage old)
+            old.OnSearch("");
+
+        var transition = new EntranceNavigationTransitionInfo();
+
+        if (args.IsSettingsSelected)
+        {
+            NavigateToSettings("General", transition);
+        }
+        else if (args.SelectedItem is NavigationViewItem item && item.Tag is string tag)
+        {
+            if (tag.StartsWith("Settings:", StringComparison.OrdinalIgnoreCase))
+            {
+                var section = tag["Settings:".Length..];
+                NavigateToSettings(section, transition);
+            }
+            else
+            {
+                switch (tag)
+                {
+                    case "Cleaner":  NavFrame.Navigate(typeof(CleanerPage),  null, transition); break;
+                    case "Apps":     NavFrame.Navigate(typeof(AppsPage),     null, transition); break;
+                    case "Tweaks":   NavFrame.Navigate(typeof(TweaksPage),   null, transition); break;
+                    case "Custom":   NavFrame.Navigate(typeof(CustomPage),   null, transition); break;
+                    case "Terminal": NavFrame.Navigate(typeof(TerminalPage), null, transition); break;
+                }
+            }
+        }
+
+        SyncSearchState();
+        CollapseUnpinnedOverlay();
+    }
+
+    private void NavigateToSettings(string section, NavigationTransitionInfo transition)
+    {
+        if (NavFrame.Content is SettingsPage existing)
+        {
+            existing.NavigateToSection(section);
+        }
+        else
+        {
+            NavFrame.Navigate(typeof(SettingsPage), section, transition);
+        }
+    }
+
+    private async void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        CollapseUnpinnedOverlay();
+        if (args.InvokedItemContainer is NavigationViewItem item)
+        {
+            if (item.Tag is "VersionCheck" or "GitHub")
+            {
+                await CheckForUpdatesAsync();
+            }
+        }
+    }
+
+    private async Task CheckForUpdatesAsync()
+    {
+        if (Content?.XamlRoot is null) return;
+
+        try
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(8) };
+            var latest = (await http.GetStringAsync(AppLinks.VersionCheck)).Trim();
+            bool hasUpdate = Version.TryParse(latest, out var remote) &&
+                             Version.TryParse(AppInfo.VersionString, out var local) &&
+                             remote > local;
+
+            if (hasUpdate)
+            {
+                var dialog = new ContentDialog
+                {
+                    XamlRoot          = Content.XamlRoot,
+                    RequestedTheme    = (Content as FrameworkElement)?.ActualTheme ?? ElementTheme.Default,
+                    Title             = ResourceService.Fmt("St_UpdateAvailable", latest),
+                    Content           = ResourceService.Fmt("St_UpdateMessage", AppInfo.DisplayVersion, latest),
+                    PrimaryButtonText = ResourceService.Get("St_Download"),
+                    CloseButtonText   = ResourceService.Get("DlgRestartLater"),
+                    DefaultButton     = ContentDialogButton.Primary
+                };
+                if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    await AppLinks.OpenAsync(AppLinks.Releases);
+                }
+            }
+            else
+            {
+                var dialog = new ContentDialog
+                {
+                    XamlRoot        = Content.XamlRoot,
+                    RequestedTheme  = (Content as FrameworkElement)?.ActualTheme ?? ElementTheme.Default,
+                    Title           = ResourceService.Get("St_UpToDate"),
+                    Content         = ResourceService.Fmt("St_UpToDateMessage", AppInfo.DisplayVersion),
+                    CloseButtonText = "OK",
+                    DefaultButton   = ContentDialogButton.Close
+                };
+                await dialog.ShowAsync();
+            }
+        }
+        catch
+        {
+            var dialog = new ContentDialog
+            {
+                XamlRoot        = Content.XamlRoot,
+                RequestedTheme  = (Content as FrameworkElement)?.ActualTheme ?? ElementTheme.Default,
+                Title           = "Version Check",
+                Content         = $"Unable to connect to the update server at this time. You are running v{AppInfo.DisplayVersion}.",
+                CloseButtonText = "OK",
+                DefaultButton   = ContentDialogButton.Close
+            };
+            await dialog.ShowAsync();
+        }
+    }
+
+    // --- Page actions flyout --------------------------------------------------
+
+    private void PageActionsFlyout_Opening(object sender, object e)
+    {
+        PageActionsFlyout.Items.Clear();
+
+        if (NavFrame.Content is IPageActions provider)
+            provider.BuildActions(PageActionsFlyout);
+        else
+        {
+            PageActionsFlyout.Items.Add(new MenuFlyoutItem
+            {
+                Text = ResourceService.Get("St_NoActions"),
+                IsEnabled = false
+            });
+        }
     }
 
     // --- Search ---------------------------------------------------------------
 
-    // Disabled on pages without search, which also turns off Ctrl+F.
-    private void SyncSearchState() => AppMenuSearch.IsEnabled = ActivePage is ISearchablePage;
+    private void SyncSearchState()
+    {
+        bool searchable = NavFrame.Content is ISearchablePage;
+        TitleSearchBox.IsEnabled = searchable;
+        SearchIconButton.IsEnabled = searchable;
+    }
 
-    // Queued so the menu has closed before the search box opens.
-    private void Search_Click(object sender, RoutedEventArgs e) =>
-        DispatcherQueue.TryEnqueue(() => FlyoutBase.ShowAttachedFlyout(AppMenuButton));
-
-    private void SearchFlyout_Opened(object sender, object e) =>
-        SearchBox.Focus(FocusState.Programmatic);
-
-    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+    private void TitleSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
     {
         if (e.Reason == AutoSuggestionBoxTextChangeReason.UserInput
-            && ActivePage is ISearchablePage page)
+            && NavFrame.Content is ISearchablePage page)
             page.OnSearch(sender.Text);
-
-        UpdateSearchIndicator();
     }
 
-    public void ClearSearch()
+    // --- Search collapse -----------------------------------------------------
+
+    private void MainWindow_SizeChanged(object sender, WindowSizeChangedEventArgs args) =>
+        UpdateTitleSearch(args.Size.Width);
+
+    private void UpdateTitleSearch(double width)
     {
-        SearchBox.Text = "";
-        UpdateSearchIndicator();
-        if (ActivePage is ISearchablePage page) page.OnSearch("");
+        bool compact = width < 580;
+        TitleSearchBox.Visibility = compact ? Visibility.Collapsed : Visibility.Visible;
+        SearchIconButton.Visibility = compact ? Visibility.Visible : Visibility.Collapsed;
+
+        if (!compact)
+            TitleSearchBox.Width = width < 760 ? 220 : 320;
     }
 
-    // Two glyphs instead of recolouring one, so both follow a theme switch.
-    private void UpdateSearchIndicator()
+    public T? OpenTab<T>(string title = "") where T : class
     {
-        bool active = !string.IsNullOrEmpty(SearchBox.Text);
-        MenuGlyph.Visibility = active ? Visibility.Collapsed : Visibility.Visible;
-        MenuGlyphActive.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    // Width of the caption buttons. RightInset is in physical pixels, hence the scale
-    private void UpdateCaptionInset()
-    {
-        double scale = Content?.XamlRoot?.RasterizationScale ?? 1.0;
-        if (scale <= 0) scale = 1.0;
-
-        CaptionSpacer.Width = AppWindow.TitleBar.RightInset / scale;
+        NavFrame.Navigate(typeof(T));
+        return NavFrame.Content as T;
     }
 }

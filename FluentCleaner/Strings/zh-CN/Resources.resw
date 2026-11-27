@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -319,4 +319,7 @@
   <data name="AppMenuSettings.Text"><value>设置</value></data>
   <data name="AppMenuDonate.Text"><value>支持本项目</value></data>
   <data name="AppMenuUpdates.Text"><value>检查更新</value></data>
+  <data name="Cookies_IntelligentScan"><value>✨ 智能扫描</value></data>
+  <data name="Cookies_IntelligentScanning"><value>正在扫描身份验证和登录 Cookie...</value></data>
+  <data name="Cookies_IntelligentResult"><value>已将 {0} 个登录域名添加到保留列表（共检测到 {1} 个）。</value></data>
 </root>

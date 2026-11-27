@@ -1,5 +1,6 @@
-﻿using FluentCleaner.Services;
+using FluentCleaner.Services;
 using Microsoft.UI;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -13,6 +14,18 @@ public partial class App : Application
 
     public App()
     {
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            if (e.ExceptionObject is Exception ex)
+                LogCrash(ex);
+        };
+
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            LogCrash(e.Exception);
+            e.SetObserved();
+        };
+
         //Language must be applied BEFORE InitializeComponent so WinUI reads it once at startup
         try
         {
@@ -42,8 +55,22 @@ public partial class App : Application
                 "FluentCleaner", "crash.log");
 
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.AppendAllText(path,
-                $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n{ex}\n{new string('-', 60)}\n\n");
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]");
+            sb.AppendLine($"Exception Type: {ex.GetType().FullName}");
+            sb.AppendLine($"HResult: 0x{ex.HResult:X8}");
+            sb.AppendLine($"Message: {ex.Message}");
+            sb.AppendLine($"StackTrace:\n{ex.StackTrace}");
+            var inner = ex.InnerException;
+            while (inner != null)
+            {
+                sb.AppendLine($"--- InnerException ({inner.GetType().FullName}): {inner.Message}");
+                sb.AppendLine(inner.StackTrace);
+                inner = inner.InnerException;
+            }
+            sb.AppendLine(new string('-', 60));
+            sb.AppendLine();
+            File.AppendAllText(path, sb.ToString());
         }
         catch { /* logging must never be the thing that crashes us */ }
     }
@@ -69,31 +96,57 @@ public partial class App : Application
             return;
         }
 
-        MainWindow = new MainWindow();
-        SetupTitleBar();
-        RestoreWindowSize();
-        ApplyBackdrop(AppSettings.Instance.Backdrop);
-        ApplyTheme(AppSettings.Instance.Theme);
-        MainWindow.Activate();
+        try
+        {
+            MainWindow = new MainWindow();
+            SetupTitleBar();
+            RestoreWindowSize();
+            ApplyBackdrop(AppSettings.Instance.Backdrop);
+            ApplyTheme(AppSettings.Instance.Theme);
+            MainWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            LogCrash(ex);
+            throw;
+        }
 
-        // window first, then read Winapp2 in the background while the first tab gets built.
-        // before Activate the window came up 66 ms later
-        ViewModels.CleanerPageViewModel.StartPreload();
-
-        //Remember size for next launch
+        //Remember size for next launch and guarantee complete process termination on close
         MainWindow.Closed += (_, _) =>
         {
-            var size = MainWindow.AppWindow.Size;
-            AppSettings.Instance.WindowWidth  = size.Width;
-            AppSettings.Instance.WindowHeight = size.Height;
-            AppSettings.Instance.Save();
+            try
+            {
+                var size = MainWindow.AppWindow.Size;
+                AppSettings.Instance.WindowWidth  = size.Width;
+                AppSettings.Instance.WindowHeight = size.Height;
+                AppSettings.Instance.Save();
+            }
+            catch { }
+            finally
+            {
+                Microsoft.UI.Xaml.Application.Current.Exit();
+                Environment.Exit(0);
+            }
+        };
+
+        MainWindow.AppWindow.Closing += (_, _) =>
+        {
+            try
+            {
+                var size = MainWindow.AppWindow.Size;
+                AppSettings.Instance.WindowWidth  = size.Width;
+                AppSettings.Instance.WindowHeight = size.Height;
+                AppSettings.Instance.Save();
+            }
+            catch { }
+            finally
+            {
+                Microsoft.UI.Xaml.Application.Current.Exit();
+                Environment.Exit(0);
+            }
         };
     }
-    // idea from John Gage Faulkner's WinUI3SampleStarterApp
-    // https://github.com/johngagefaulkner/WinUI3SampleStarterApp
-    // remove idle background only;so it lets TitleBar blend with Mica
-    // don't touch hover/pressed, PreferredTheme handles it
-    // overriding all states breaks hover (learned that the hard way)
+
     private void SetupTitleBar()
     {
         if (AppWindowTitleBar.IsCustomizationSupported())
@@ -104,23 +157,23 @@ public partial class App : Application
         }
     }
 
-    //Picks up the saved size from settings, falls back to 960x620 on first run
+    //Picks up the saved size from settings, falls back to 1160x740 on first run
     private void RestoreWindowSize()
     {
-        var w = AppSettings.Instance.WindowWidth;
-        var h = AppSettings.Instance.WindowHeight;
+        var w = Math.Max(720, AppSettings.Instance.WindowWidth);
+        var h = Math.Max(540, AppSettings.Instance.WindowHeight);
         MainWindow!.AppWindow.Resize(new SizeInt32(w, h));
 
         if (DisplayArea.GetFromWindowId(MainWindow.AppWindow.Id, DisplayAreaFallback.Primary) is { } display)
         {
             var area = display.WorkArea;
             MainWindow.AppWindow.Move(new PointInt32(
-                area.X + (area.Width  - w) / 2,
-                area.Y + (area.Height - h) / 2));
+                area.X + Math.Max(0, (area.Width  - w) / 2),
+                area.Y + Math.Max(0, (area.Height - h) / 2)));
         }
     }
 
-    // Switches light/dark/system 
+    // Switches light/dark/system
     public void ApplyTheme(string? theme)
     {
         var elementTheme = theme switch
@@ -143,7 +196,7 @@ public partial class App : Application
         };
     }
 
-    // Settings > Appearance > Backdrop. Mica is default, Mica Alt is more colorful
+    // MicaAlt by default for authentic Windows 11 tabbed/nav depth; Mica or Acrylic supported
     public void ApplyBackdrop(string? backdrop)
     {
         if (MainWindow is null) return;
@@ -151,8 +204,8 @@ public partial class App : Application
         MainWindow.SystemBackdrop = backdrop?.ToLowerInvariant() switch
         {
             "acrylic" => new DesktopAcrylicBackdrop(),
-            "micaalt" => new MicaBackdrop { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt },
-            _         => new MicaBackdrop()
+            "mica"    => new MicaBackdrop { Kind = MicaKind.Base },
+            _         => new MicaBackdrop { Kind = MicaKind.BaseAlt }
         };
     }
 }

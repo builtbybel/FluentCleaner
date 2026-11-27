@@ -3,42 +3,62 @@
     NavigationCacheMode="Required"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Background="Transparent">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-    <!-- solid background like Windows Terminal (TerminalBrush in App.xaml);transparent was hard to read -->
-    <Grid Background="{ThemeResource TerminalBrush}">
+    <Grid Padding="16,12,16,14" RowSpacing="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Spacing="2">
+            <TextBlock Text="Terminal CLI" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="Run interactive cleaner, AppX debloat, and diagnostic commands." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
 
-        <ScrollViewer x:Name="OutputScroller"
-                      Grid.Row="0"
-                      Padding="16,12"
-                      VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{x:Bind ViewModel.Output}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <TextBlock Text="{x:Bind}"
-                                   FontFamily="Cascadia Mono, Consolas"
-                                   FontSize="13"
-                                   TextWrapping="WrapWholeWords"
-                                   IsTextSelectionEnabled="True"
-                                   Margin="0,1" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+        <!-- output + input in one card; suggestion popup stays inside -->
+        <Border Grid.Row="1" CornerRadius="8"
+                Background="{ThemeResource TerminalBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-        <AutoSuggestBox x:Uid="TerminalPlaceholder"
-                        Grid.Row="1"
-                        Margin="12,0,12,12"
-                        QueryIcon="Send"
-                        FontFamily="Cascadia Mono, Consolas"
-                        FontSize="13"
-                        MaxSuggestionListHeight="200"
-                        IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
-                        TextChanged="Input_TextChanged"
-                        QuerySubmitted="Input_QuerySubmitted" />
+                <ScrollViewer x:Name="OutputScroller"
+                              Grid.Row="0"
+                              Padding="16"
+                              VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.Output}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <TextBlock Text="{x:Bind}"
+                                           FontFamily="Cascadia Code, Consolas"
+                                           FontSize="12"
+                                           TextWrapping="WrapWholeWords"
+                                           IsTextSelectionEnabled="True"
+                                           Margin="0,1" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <AutoSuggestBox x:Name="InputBox"
+                                x:Uid="TerminalPlaceholder"
+                                Grid.Row="1"
+                                Margin="8,0,8,8"
+                                QueryIcon="Send"
+                                FontFamily="Cascadia Code, Consolas"
+                                FontSize="12"
+                                MaxSuggestionListHeight="200"
+                                IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                                TextChanged="Input_TextChanged"
+                                QuerySubmitted="Input_QuerySubmitted" />
+            </Grid>
+        </Border>
+
     </Grid>
 </Page>
