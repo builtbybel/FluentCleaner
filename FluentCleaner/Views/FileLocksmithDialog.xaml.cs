@@ -10,11 +10,12 @@ public sealed partial class FileLocksmithDialog : ContentDialog
     private List<LockedFileItem> _remaining;
     public int  AdditionalRemovedCount { get; private set; }
     public long AdditionalFreedBytes   { get; private set; }
+    public IReadOnlyList<LockedFileItem> RemainingLockedFiles => _remaining;
 
     public FileLocksmithDialog(IReadOnlyList<LockedFileItem> lockedFiles)
     {
         InitializeComponent();
-        _remaining = lockedFiles.ToList();
+        _remaining = lockedFiles.DistinctBy(f => f.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
         Loaded += async (_, _) => await RefreshLocksAsync();
     }
 
@@ -32,7 +33,7 @@ public sealed partial class FileLocksmithDialog : ContentDialog
             ProcessList.ItemsSource = Array.Empty<LockingProcessGroup>();
             EmptyProcessesText.Visibility = Visibility.Collapsed;
             LoadingBar.Visibility = Visibility.Collapsed;
-            ShowActionInfo(InfoBarSeverity.Success, "All Locked Files Cleared", "Every previously locked file has been removed.");
+            ShowActionInfo(InfoBarSeverity.Success, "All Locked Files Cleared", "Every previously locked file has been removed or excluded.");
             return;
         }
 
@@ -57,7 +58,7 @@ public sealed partial class FileLocksmithDialog : ContentDialog
         if (sender is not Button { Tag: LockingProcessGroup group }) return;
 
         LoadingBar.Visibility = Visibility.Visible;
-        bool closed = await FileLocksmithService.CloseProcessAsync(group.ProcessId);
+        bool closed = await FileLocksmithService.CloseProcessAsync(group.ProcessId, group.ProcessName);
 
         int deleted = 0;
         long freed = 0;
@@ -83,6 +84,28 @@ public sealed partial class FileLocksmithDialog : ContentDialog
                 ? $"Deleted {deleted:N0} files and reclaimed {ScanResult.FormatBytes(freed)}."
                 : "Files remained locked after closing. Try running as administrator or schedule delete on reboot.");
 
+        await RefreshLocksAsync();
+    }
+
+    private async void ExcludeLockedFile_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: LockedFileItem item }) return;
+
+        var dir  = Path.GetDirectoryName(item.FilePath);
+        var file = Path.GetFileName(item.FilePath);
+        if (string.IsNullOrEmpty(dir) || string.IsNullOrEmpty(file)) return;
+
+        var rule = $"FILE|{dir}|{file}";
+        var settings = AppSettings.Instance;
+        if (!settings.GlobalExclusions.Contains(rule, StringComparer.OrdinalIgnoreCase))
+        {
+            settings.GlobalExclusions.Add(rule);
+            settings.GlobalExclusionsEnabled = true;
+            settings.Save();
+        }
+
+        _remaining.RemoveAll(r => string.Equals(r.FilePath, item.FilePath, StringComparison.OrdinalIgnoreCase));
+        ShowActionInfo(InfoBarSeverity.Informational, "Excluded File", $"Added {file} to Global Exclusions.");
         await RefreshLocksAsync();
     }
 

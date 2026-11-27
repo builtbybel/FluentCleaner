@@ -7,8 +7,10 @@ public class ScanResult
     public CleanerEntry Entry { get; set; } = null!;                        // The entry that was analyzed; used after cleaning for REMOVESELF logic.
     public List<string> FilesToDelete { get; set; } = new();                // Absolute file paths collected during analysis that are safe to delete.
     public Dictionary<string, long> FileSizes { get; set; } = new(StringComparer.OrdinalIgnoreCase); // Size captured during analysis; avoids touching every file again in detail views.
+    public List<(string FilePath, long SizeBytes)> LockedFiles { get; set; } = new(); // Files detected as hard-locked during Analyze so File Locksmith can surface them.
     public List<RegistryItemToDelete> RegistryToDelete { get; set; } = new(); // Registry keys/values collected during analysis that are safe to delete.
-    public long TotalBytes { get; set; }                                    // Sum of file sizes at scan time, updated incrementally as files are found.
+    public long TotalBytes { get; set; }                                    // Sum of deletable file sizes at scan time, updated incrementally as files are found.
+    public long LockedBytes { get; set; }                                   // Sum of locked file sizes discovered during Analyze.
     public string FormattedSize => FormatBytes(TotalBytes);                 // Just the human-readable size string (e.g. "1.2 MB") derived from TotalBytes.
 
     public static string FormatBytes(long bytes)

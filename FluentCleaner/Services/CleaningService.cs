@@ -58,11 +58,22 @@ public class CleaningService
                 {
                     if (!seen.Add(file)) continue;
 
-                    // Skip files that are truly inaccessible (hard lock / no permissions).
+                    // Probe deletability; track hard-locked files separately so File Locksmith can surface them.
                     var size = TryGetDeletableSize(file);
-                    if (size < 0) continue;
+                    if (size < 0)
+                    {
+                        if (File.Exists(file))
+                        {
+                            long lockedSize = 0;
+                            try { lockedSize = new FileInfo(file).Length; } catch { }
+                            result.LockedFiles.Add((file, lockedSize));
+                            result.LockedBytes += lockedSize;
+                        }
+                        continue;
+                    }
 
                     result.FilesToDelete.Add(file);
+                    result.FileSizes[file] = size;
                     result.TotalBytes += size;
                 }
             }
@@ -489,6 +500,8 @@ public class CleaningService
     public static IReadOnlyList<string> ProtectedPaths => ProtectedSegments;
 
     // True when the path sits under one of the protected segments
+    public static bool IsProtectedPath(string path) => IsProtected(path);
+
     private static bool IsProtected(string path) =>
         ProtectedSegments.Any(s => path.Contains(s, StringComparison.OrdinalIgnoreCase));
 
