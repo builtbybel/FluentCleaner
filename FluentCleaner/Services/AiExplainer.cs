@@ -11,7 +11,7 @@ namespace FluentCleaner.Services;
 // selected in Settings. Results are cached per provider, language and rule.
 public static class AiExplainer
 {
-    private static readonly HttpClient _http = new();
+    private static readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(20) };
     private static readonly Dictionary<string, string> _cache = new(StringComparer.OrdinalIgnoreCase);
 
     private static (string BaseUrl, string Model) ProviderInfo(string provider) => provider switch
