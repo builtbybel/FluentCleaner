@@ -11,111 +11,110 @@ using Windows.Management.Deployment;
 namespace FluentCleaner.Services;
 
 /// <summary>
-/// NativeAOT-safe, UI-thread-safe application icon resolver.
-/// Tier 1: Bundled high-DPI PNG assets (ms-appx:///Assets/Icons/*.png) verified on disk.
-/// Tier 2: Dynamic Win32 PE/ICO extraction (App Paths / indexed Uninstall DisplayIcon / PathExpander DetectFiles)
-///         via ExtractIconExW + SHGetFileInfoW + GetDIBits -> WriteableBitmap on DispatcherQueue.
-/// Tier 3: Indexed Windows Store / MSIX PackageManager Logo URI lookup with MRT scale & ACL validation.
-/// Non-app categories (Utilities, Developer Tools, Multimedia, Games, etc.) return null
-/// so the UI renders their vibrant colorful Fluent icon badge with zero binding errors.
+/// NativeAOT-safe, UI-thread-safe application & native Windows 11 system icon resolver.
+/// Priority 1: REAL installed Windows application logos (.exe via App Paths / common install dirs /
+///             Uninstall DisplayIcon / DetectFiles, or MSIX Store PackageManager Logo).
+/// Priority 2: Authentic multi-color Windows 11 Fluent system icons extracted directly from
+///             System32\imageres.dll and System32\shell32.dll for non-app categories
+///             (Applications, Developer Tools, Games, Internet, Multimedia, Utilities, Windows, etc.).
+/// Priority 3: Bundled high-DPI PNG fallback (only if native extraction finds nothing).
 /// </summary>
 public static class AppIconResolverService
 {
-    private static readonly HashSet<string> GenericCategories = new(StringComparer.OrdinalIgnoreCase)
+    // Native Windows 11 multi-color Fluent icons inside System32\imageres.dll / shell32.dll / ddores.dll
+    // Negative numbers are resource IDs in Windows DLLs (stable across Windows 10 & Windows 11).
+    private static readonly Dictionary<string, (string Dll, int ResourceId)[]> NativeSystemIcons = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Applications", "Developer Tools", "Developer & AI", "AI", "Command Palette",
-        "Utilities", "Games", "Multimedia", "Language Files", "Internet", "Long",
-        "Other Applications", "System", "Logs", "Registry"
+        ["Windows"]            = [("imageres.dll", -109), ("shell32.dll", -15)],   // Colorful Windows PC / Monitor
+        ["Applications"]       = [("imageres.dll", -11),  ("shell32.dll", -2)],    // Colorful Application Window
+        ["Developer Tools"]    = [("cmd.exe", 0),         ("imageres.dll", -5377)],// Native Terminal / Dev Tool
+        ["Developer & AI"]     = [("cmd.exe", 0),         ("imageres.dll", -5377)],
+        ["Command Palette"]    = [("cmd.exe", 0),         ("imageres.dll", -5377)],
+        ["Games"]              = [("ddores.dll", -2029),  ("imageres.dll", -186)], // Colorful Gamepad Controller
+        ["Internet"]           = [("shell32.dll", -14),   ("imageres.dll", -25)],  // Colorful Globe
+        ["Multimedia"]         = [("imageres.dll", -108), ("imageres.dll", -18)],  // Colorful Media / Music-Video
+        ["Utilities"]          = [("imageres.dll", -114), ("shell32.dll", -22)],   // Colorful Settings / Tools
+        ["Language Files"]     = [("imageres.dll", -25),  ("shell32.dll", -21)],   // Colorful Globe / Language
+        ["Long"]               = [("imageres.dll", -3),   ("shell32.dll", -4)],    // Native Windows 11 Yellow Folder
+        ["Other Applications"] = [("imageres.dll", -11),  ("shell32.dll", -2)],
     };
 
-    private static readonly HashSet<string> GenericExeNames = new(StringComparer.OrdinalIgnoreCase)
+    // Known app category -> candidate executable names AND common install paths
+    private static readonly Dictionary<string, (string[] Exes, string[] FallbackPaths)> KnownApps = new(StringComparer.OrdinalIgnoreCase)
     {
-        "uninstall.exe", "unins000.exe", "uninst.exe", "update.exe", "updater.exe", "setup.exe"
+        ["Firefox"]                 = (["firefox.exe"], [@"%ProgramFiles%\Mozilla Firefox\firefox.exe", @"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"]),
+        ["Mozilla Firefox"]         = (["firefox.exe"], [@"%ProgramFiles%\Mozilla Firefox\firefox.exe", @"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"]),
+        ["Google Chrome"]           = (["chrome.exe"],  [@"%ProgramFiles%\Google\Chrome\Application\chrome.exe", @"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe", @"%LocalAppData%\Google\Chrome\Application\chrome.exe"]),
+        ["Chrome"]                  = (["chrome.exe"],  [@"%ProgramFiles%\Google\Chrome\Application\chrome.exe", @"%LocalAppData%\Google\Chrome\Application\chrome.exe"]),
+        ["Microsoft Edge"]          = (["msedge.exe"],  [@"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe", @"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"]),
+        ["Edge"]                    = (["msedge.exe"],  [@"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe", @"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"]),
+        ["Edge Chromium"]           = (["msedge.exe"],  [@"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe", @"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"]),
+        ["Brave"]                   = (["brave.exe"],   [@"%ProgramFiles%\BraveSoftware\Brave-Browser\Application\brave.exe", @"%LocalAppData%\BraveSoftware\Brave-Browser\Application\brave.exe"]),
+        ["Opera"]                   = (["opera.exe"],   [@"%LocalAppData%\Programs\Opera\opera.exe", @"%ProgramFiles%\Opera\opera.exe"]),
+        ["Opera GX"]                = (["opera.exe"],   [@"%LocalAppData%\Programs\Opera GX\opera.exe"]),
+        ["Vivaldi"]                 = (["vivaldi.exe"], [@"%LocalAppData%\Vivaldi\Application\vivaldi.exe", @"%ProgramFiles%\Vivaldi\Application\vivaldi.exe"]),
+        ["Microsoft PowerToys"]     = (["PowerToys.exe"], [@"%ProgramFiles%\PowerToys\PowerToys.exe", @"%LocalAppData%\PowerToys\PowerToys.exe"]),
+        ["PowerToys"]               = (["PowerToys.exe"], [@"%ProgramFiles%\PowerToys\PowerToys.exe", @"%LocalAppData%\PowerToys\PowerToys.exe"]),
+        ["Adobe"]                   = (["Acrobat.exe", "AcroRd32.exe"], [@"%ProgramFiles%\Adobe\Acrobat DC\Acrobat\Acrobat.exe", @"%ProgramFiles(x86)%\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"]),
+        ["Adobe Acrobat"]           = (["Acrobat.exe"], [@"%ProgramFiles%\Adobe\Acrobat DC\Acrobat\Acrobat.exe"]),
+        ["Adobe Reader"]            = (["AcroRd32.exe"], [@"%ProgramFiles(x86)%\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"]),
+        ["Spotify"]                 = (["Spotify.exe"], [@"%AppData%\Spotify\Spotify.exe"]),
+        ["Discord"]                 = (["Discord.exe"], [@"%LocalAppData%\Discord\Update.exe"]),
+        ["WhatsApp"]                = (["WhatsApp.exe"], []),
+        ["Telegram"]                = (["Telegram.exe"], [@"%AppData%\Telegram Desktop\Telegram.exe"]),
+        ["Thunderbird"]             = (["thunderbird.exe"], [@"%ProgramFiles%\Mozilla Thunderbird\thunderbird.exe"]),
+        ["iTunes"]                  = (["iTunes.exe"], [@"%ProgramFiles%\iTunes\iTunes.exe"]),
+        ["VLC"]                     = (["vlc.exe"], [@"%ProgramFiles%\VideoLAN\VLC\vlc.exe"]),
+        ["VLC Media Player"]        = (["vlc.exe"], [@"%ProgramFiles%\VideoLAN\VLC\vlc.exe"]),
+        ["Steam"]                   = (["steam.exe"], [@"%ProgramFiles(x86)%\Steam\steam.exe"]),
+        ["7-Zip"]                   = (["7zFM.exe"], [@"%ProgramFiles%\7-Zip\7zFM.exe"]),
+        ["Notepad++"]               = (["notepad++.exe"], [@"%ProgramFiles%\Notepad++\notepad++.exe"]),
+        ["VS Code"]                 = (["Code.exe"], [@"%LocalAppData%\Programs\Microsoft VS Code\Code.exe", @"%ProgramFiles%\Microsoft VS Code\Code.exe"]),
+        ["Visual Studio Code"]      = (["Code.exe"], [@"%LocalAppData%\Programs\Microsoft VS Code\Code.exe"]),
+        ["Cursor"]                  = (["Cursor.exe"], [@"%LocalAppData%\Programs\cursor\Cursor.exe"]),
+        ["Docker"]                  = (["Docker Desktop.exe"], [@"%ProgramFiles%\Docker\Docker\Docker Desktop.exe"]),
+        ["Docker Desktop"]          = (["Docker Desktop.exe"], [@"%ProgramFiles%\Docker\Docker\Docker Desktop.exe"]),
+        ["Slack"]                   = (["slack.exe"], [@"%LocalAppData%\slack\slack.exe"]),
+        ["Zoom"]                    = (["Zoom.exe"], [@"%AppData%\Zoom\bin\Zoom.exe"]),
+        ["OBS Studio"]              = (["obs64.exe"], [@"%ProgramFiles%\obs-studio\bin\64bit\obs64.exe"]),
+        ["Arc Browser"]             = (["Arc.exe"], []),
+        ["Internet Explorer"]       = (["iexplore.exe"], [@"%ProgramFiles%\Internet Explorer\iexplore.exe"]),
+        ["Microsoft Store"]         = ([], []),
+        ["Windows Store"]           = ([], []),
     };
 
-    private static readonly Dictionary<string, string[]> KnownAppExes = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["Spotify"]                 = ["Spotify.exe"],
-        ["Discord"]                 = ["Discord.exe"],
-        ["WhatsApp"]                = ["WhatsApp.exe"],
-        ["Telegram"]                = ["Telegram.exe"],
-        ["Thunderbird"]             = ["thunderbird.exe"],
-        ["iTunes"]                  = ["iTunes.exe"],
-        ["VLC"]                     = ["vlc.exe"],
-        ["VLC Media Player"]        = ["vlc.exe"],
-        ["Steam"]                   = ["steam.exe"],
-        ["7-Zip"]                   = ["7zFM.exe"],
-        ["Notepad++"]               = ["notepad++.exe"],
-        ["VS Code"]                 = ["Code.exe"],
-        ["Visual Studio Code"]      = ["Code.exe"],
-        ["Cursor"]                  = ["Cursor.exe"],
-        ["Windsurf"]                = ["Windsurf.exe"],
-        ["Docker"]                  = ["Docker Desktop.exe"],
-        ["Docker Desktop"]          = ["Docker Desktop.exe"],
-        ["Slack"]                   = ["slack.exe"],
-        ["Zoom"]                    = ["Zoom.exe"],
-        ["OBS Studio"]              = ["obs64.exe"],
-        ["Blender"]                 = ["blender.exe"],
-        ["GIMP"]                    = ["gimp-2.10.exe", "gimp-3.0.exe"],
-        ["WinRAR"]                  = ["WinRAR.exe"],
-        ["qBittorrent"]             = ["qbittorrent.exe"],
-        ["FileZilla"]               = ["filezilla.exe"],
-        ["Audacity"]                = ["audacity.exe"],
-        ["HandBrake"]               = ["HandBrake.exe"],
-        ["Arc Browser"]             = ["Arc.exe"],
-        ["Opera GX"]                = ["opera.exe"],
-        ["Avast Secure Browser"]    = ["AvastBrowser.exe"],
-        ["AVG Secure Browser"]      = ["AVGBrowser.exe"],
-        ["Norton Private Browser"]  = ["NortonBrowser.exe"],
-        ["Avira Secure Browser"]    = ["AviraBrowser.exe"],
-        ["Safari"]                  = ["Safari.exe"],
-        ["Internet Explorer"]       = ["iexplore.exe"],
-    };
-
-    private static readonly ConcurrentDictionary<string, ImageSource> _iconCache = new(StringComparer.OrdinalIgnoreCase);
+    // UI-thread cache: normalized category key -> ImageSource (preferring native extracted icons)
+    private static readonly ConcurrentDictionary<string, ImageSource> _nativeIconCache = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, ImageSource> _bundledIconCache = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConcurrentDictionary<string, byte> _missCache = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly ConcurrentDictionary<string, Task<ExtractedIconData?>> _inFlight = new(StringComparer.OrdinalIgnoreCase);
 
-    private static readonly Lazy<List<(string DisplayName, string IconPath, int IconIndex)>> _uninstallIndex =
-        new(BuildUninstallIconIndex, LazyThreadSafetyMode.ExecutionAndPublication);
-
-    private static readonly Lazy<List<(string DisplayName, string IdName, Uri? Logo)>> _packageIndex =
-        new(BuildPackageIndex, LazyThreadSafetyMode.ExecutionAndPublication);
-
-    private static readonly Lazy<PathExpander> _pathExpander =
-        new(() => new PathExpander(), LazyThreadSafetyMode.ExecutionAndPublication);
-
-    /// <summary>Clears cached misses (e.g., when custom rules are reloaded with new paths).</summary>
     public static void InvalidateMissCache() => _missCache.Clear();
 
-    /// <summary>Returns a cached ImageSource if already resolved for this category.</summary>
-    public static ImageSource? TryGetCached(string? categoryName)
+    /// <summary>Returns the best cached icon (native extracted icon preferred over bundled PNG).</summary>
+    public static ImageSource? TryGetCached(string categoryName)
     {
         if (string.IsNullOrWhiteSpace(categoryName)) return null;
-        return _iconCache.TryGetValue(NormalizeCategoryKey(categoryName), out var img) ? img : null;
+        var key = NormalizeCategoryKey(categoryName);
+        if (_nativeIconCache.TryGetValue(key, out var nativeImg)) return nativeImg;
+        if (_bundledIconCache.TryGetValue(key, out var bundledImg)) return bundledImg;
+        return null;
     }
 
     /// <summary>
-    /// Synchronously creates and caches a BitmapImage for a bundled ms-appx:/// asset URI.
-    /// Must be called on the UI thread; returns null cleanly if the asset is missing on disk.
+    /// Synchronously creates a BitmapImage for a bundled ms-appx:/// fallback URI (only used until
+    /// or unless native Windows icon extraction succeeds). Must be called on the UI thread.
     /// </summary>
-    public static ImageSource? TryGetBundledBitmap(string? categoryName, string? msAppxUri)
+    public static ImageSource? TryGetBundledBitmap(string categoryName, string? msAppxUri)
     {
-        if (string.IsNullOrWhiteSpace(categoryName)) return null;
         if (string.IsNullOrWhiteSpace(msAppxUri)) return null;
-
         var key = NormalizeCategoryKey(categoryName);
-        if (_iconCache.TryGetValue(key, out var existing))
-            return existing;
 
-        const string prefix = "ms-appx:///";
-        if (msAppxUri.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-        {
-            var rel = msAppxUri[prefix.Length..].Replace('/', Path.DirectorySeparatorChar);
-            var diskPath = Path.Combine(AppContext.BaseDirectory, rel);
-            if (!IsReadableFile(diskPath))
-                return null;
-        }
+        // If we already extracted the real native Windows icon, never downgrade it to a bundled PNG!
+        if (_nativeIconCache.TryGetValue(key, out var nativeImg))
+            return nativeImg;
+
+        if (_bundledIconCache.TryGetValue(key, out var existing))
+            return existing;
 
         try
         {
@@ -124,7 +123,7 @@ public static class AppIconResolverService
                 DecodePixelWidth  = 48,
                 DecodePixelHeight = 48
             };
-            _iconCache[key] = bmp;
+            _bundledIconCache[key] = bmp;
             return bmp;
         }
         catch
@@ -134,23 +133,22 @@ public static class AppIconResolverService
     }
 
     /// <summary>
-    /// Asynchronously extracts a real installed application logo (Win32 .exe or MSIX package)
-    /// off the UI thread with in-flight deduplication and invokes onResolved on the UI DispatcherQueue.
+    /// Asynchronously extracts either:
+    /// 1. The REAL installed application icon (.exe / MSIX) for app categories (Firefox, Chrome, Edge, PowerToys, etc.), OR
+    /// 2. The REAL native multi-color Windows 11 Fluent system icon from imageres.dll / shell32.dll for non-app categories.
+    /// Always runs extraction off the UI thread and marshals WriteableBitmap / BitmapImage creation to DispatcherQueue.
     /// </summary>
-    public static async Task TryResolveDynamicAppIconAsync(
-        string? categoryName,
-        IReadOnlyList<CleanerEntry>? entries,
-        DispatcherQueue? dispatcher,
-        Action<ImageSource>? onResolved)
+    public static async Task TryResolveNativeIconAsync(
+        string categoryName,
+        IReadOnlyList<CleanerEntry> entries,
+        DispatcherQueue dispatcher,
+        Action<ImageSource> onResolved)
     {
-        if (string.IsNullOrWhiteSpace(categoryName) || dispatcher is null || onResolved is null)
-            return;
-
         var key = NormalizeCategoryKey(categoryName);
-        if (string.IsNullOrWhiteSpace(key) || GenericCategories.Contains(key))
+        if (string.IsNullOrWhiteSpace(key))
             return;
 
-        if (_iconCache.TryGetValue(key, out var cached))
+        if (_nativeIconCache.TryGetValue(key, out var cached))
         {
             dispatcher.TryEnqueue(() => onResolved(cached));
             return;
@@ -159,23 +157,10 @@ public static class AppIconResolverService
         if (_missCache.ContainsKey(key))
             return;
 
-        var safeEntries = entries is not null ? entries.ToList() : [];
-        var task = _inFlight.GetOrAdd(key, k => Task.Run(() => ExtractIconDataBackground(k, safeEntries)));
-
-        ExtractedIconData? extracted;
-        try
-        {
-            extracted = await task;
-        }
-        finally
-        {
-            _inFlight.TryRemove(KeyValuePair.Create(key, task));
-        }
-
+        var extracted = await Task.Run(() => ExtractIconDataBackground(key, entries));
         if (extracted is null)
         {
-            if (safeEntries.Count > 0)
-                _missCache[key] = 1;
+            _missCache[key] = 1;
             return;
         }
 
@@ -183,12 +168,6 @@ public static class AppIconResolverService
         {
             try
             {
-                if (_iconCache.TryGetValue(key, out var already))
-                {
-                    onResolved(already);
-                    return;
-                }
-
                 ImageSource? source = null;
                 if (extracted.LogoUri is not null)
                 {
@@ -211,7 +190,7 @@ public static class AppIconResolverService
 
                 if (source is not null)
                 {
-                    _iconCache[key] = source;
+                    _nativeIconCache[key] = source;
                     onResolved(source);
                 }
             }
@@ -229,80 +208,74 @@ public static class AppIconResolverService
 
     private sealed record ExtractedIconData(Uri? LogoUri, int Width, int Height, byte[]? BgraPixels);
 
-    private static ExtractedIconData? ExtractIconDataBackground(string appName, IReadOnlyList<CleanerEntry> entries)
+    private static ExtractedIconData? ExtractIconDataBackground(string key, IReadOnlyList<CleanerEntry> entries)
     {
-        // 1. Known executable names via Registry App Paths
-        if (KnownAppExes.TryGetValue(appName, out var exeNames))
+        // 1. Non-app categories -> extract genuine native multi-color Windows 11 system icon from System32 DLLs
+        if (NativeSystemIcons.TryGetValue(key, out var sysCandidates))
         {
-            foreach (var exe in exeNames)
+            var sysDir = Environment.SystemDirectory;
+            foreach (var (dll, resId) in sysCandidates)
             {
-                var path = FindAppPathInRegistry(exe);
-                if (!string.IsNullOrWhiteSpace(path) && IsReadableFile(path))
+                var dllPath = Path.Combine(sysDir, dll);
+                if (!File.Exists(dllPath)) continue;
+                var bmp = ExtractDllResourceIconBgra(dllPath, resId);
+                if (bmp is not null) return bmp;
+            }
+            return null;
+        }
+
+        // 2. Known apps -> Registry App Paths + common install directories
+        if (KnownApps.TryGetValue(key, out var appInfo))
+        {
+            foreach (var exe in appInfo.Exes)
+            {
+                var regPath = FindAppPathInRegistry(exe);
+                if (!string.IsNullOrWhiteSpace(regPath) && File.Exists(regPath))
                 {
-                    var bmp = ExtractFromIconSource(path, 0);
+                    var bmp = ExtractWin32IconBgra(regPath);
+                    if (bmp is not null) return bmp;
+                }
+            }
+
+            foreach (var rawFallback in appInfo.FallbackPaths)
+            {
+                var expanded = Environment.ExpandEnvironmentVariables(rawFallback);
+                if (File.Exists(expanded))
+                {
+                    var bmp = ExtractWin32IconBgra(expanded);
                     if (bmp is not null) return bmp;
                 }
             }
         }
 
-        // 2. Indexed Uninstall DisplayIcon matching category/app name (with trailing numeric index support)
-        var uninstallIcon = FindDisplayIconInUninstallIndex(appName);
-        if (uninstallIcon is not null)
+        // 3. Uninstall DisplayIcon matching category/app name
+        var uninstallIcon = FindDisplayIconInUninstallRegistry(key);
+        if (!string.IsNullOrWhiteSpace(uninstallIcon) && File.Exists(uninstallIcon))
         {
-            var bmp = ExtractFromIconSource(uninstallIcon.Value.Path, uninstallIcon.Value.Index);
+            var bmp = ExtractWin32IconBgra(uninstallIcon);
             if (bmp is not null) return bmp;
         }
 
-        // 3. DetectFiles using Winapp2 PathExpander (handles %LocalLowAppData%, %ProgramFilesX86%, wildcards)
+        // 4. Any .exe referenced in DetectFiles of the category's entries
         foreach (var entry in entries)
         {
-            if (entry?.DetectFiles is null) continue;
             foreach (var raw in entry.DetectFiles)
             {
-                if (string.IsNullOrWhiteSpace(raw)) continue;
-                try
+                var expanded = Environment.ExpandEnvironmentVariables(raw).Trim().Trim('"');
+                if (expanded.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && File.Exists(expanded))
                 {
-                    foreach (var resolved in _pathExpander.Value.ResolvePaths(raw))
-                    {
-                        var clean = resolved.Trim().Trim('"');
-                        var fileName = Path.GetFileName(clean);
-                        if (clean.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
-                            !GenericExeNames.Contains(fileName) &&
-                            IsReadableFile(clean))
-                        {
-                            var bmp = ExtractFromIconSource(clean, 0);
-                            if (bmp is not null) return bmp;
-                        }
-                    }
+                    var bmp = ExtractWin32IconBgra(expanded);
+                    if (bmp is not null) return bmp;
                 }
-                catch { }
             }
         }
 
-        // 4. Cached MSIX / Store PackageManager Logo URI (with MRT fallback & ACL check)
-        var pkgLogo = TryFindPackageLogoUri(appName);
+        // 5. MSIX / Store PackageManager Logo URI (WhatsApp, Microsoft Store, Store Firefox, PowerToys, etc.)
+        var pkgLogo = TryFindPackageLogoUri(key);
         if (pkgLogo is not null)
             return new ExtractedIconData(pkgLogo, 0, 0, null);
 
         return null;
-    }
-
-    private static ExtractedIconData? ExtractFromIconSource(string path, int iconIndex)
-    {
-        var ext = Path.GetExtension(path);
-        if (ext.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
-            ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-            ext.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-            ext.Equals(".bmp", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!IsReadableFile(path))
-                return null;
-            return Uri.TryCreate(Path.GetFullPath(path), UriKind.Absolute, out var fileUri)
-                ? new ExtractedIconData(fileUri, 0, 0, null)
-                : null;
-        }
-
-        return ExtractWin32IconBgra(path, iconIndex);
     }
 
     private static string? FindAppPathInRegistry(string exeName)
@@ -317,7 +290,7 @@ public static class AppIconResolverService
                 if (!string.IsNullOrWhiteSpace(val))
                 {
                     var clean = Environment.ExpandEnvironmentVariables(val.Trim().Trim('"'));
-                    if (IsReadableFile(clean)) return clean;
+                    if (File.Exists(clean)) return clean;
                 }
             }
             catch { }
@@ -325,9 +298,8 @@ public static class AppIconResolverService
         return null;
     }
 
-    private static List<(string DisplayName, string IconPath, int IconIndex)> BuildUninstallIconIndex()
+    private static string? FindDisplayIconInUninstallRegistry(string appName)
     {
-        var results = new List<(string DisplayName, string IconPath, int IconIndex)>();
         string[] paths =
         [
             @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
@@ -344,144 +316,57 @@ public static class AppIconResolverService
                     if (parent is null) continue;
                     foreach (var sub in parent.GetSubKeyNames())
                     {
-                        try
-                        {
-                            using var key = parent.OpenSubKey(sub);
-                            var displayName = key?.GetValue("DisplayName") as string;
-                            var iconRaw = key?.GetValue("DisplayIcon") as string;
-                            if (string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(iconRaw)) continue;
+                        using var key = parent.OpenSubKey(sub);
+                        var displayName = key?.GetValue("DisplayName") as string;
+                        if (string.IsNullOrWhiteSpace(displayName)) continue;
 
-                            var (cleanPath, index) = ParseIconLocation(iconRaw);
-                            if (!string.IsNullOrWhiteSpace(cleanPath))
-                                results.Add((displayName, cleanPath, index));
-                        }
-                        catch { }
+                        if (!displayName.Equals(appName, StringComparison.OrdinalIgnoreCase) &&
+                            !displayName.StartsWith(appName + " ", StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        var iconRaw = key?.GetValue("DisplayIcon") as string;
+                        if (string.IsNullOrWhiteSpace(iconRaw)) continue;
+
+                        var commaIdx = iconRaw.IndexOf(',');
+                        var cleanPath = (commaIdx >= 0 ? iconRaw[..commaIdx] : iconRaw).Trim().Trim('"');
+                        cleanPath = Environment.ExpandEnvironmentVariables(cleanPath);
+                        if (File.Exists(cleanPath)) return cleanPath;
                     }
                 }
                 catch { }
             }
         }
-        return results;
-    }
-
-    private static (string Path, int Index) ParseIconLocation(string raw)
-    {
-        var trimmed = raw.Trim();
-        int index = 0;
-
-        // Only treat trailing ",<int>" as icon index so directories containing commas stay intact
-        int lastComma = trimmed.LastIndexOf(',');
-        if (lastComma > 0)
-        {
-            var suffix = trimmed[(lastComma + 1)..].Trim().Trim('"');
-            if (int.TryParse(suffix, out int parsedIdx))
-            {
-                index = parsedIdx;
-                trimmed = trimmed[..lastComma].Trim();
-            }
-        }
-
-        var expanded = Environment.ExpandEnvironmentVariables(trimmed.Trim('"'));
-        return (expanded, index);
-    }
-
-    private static (string Path, int Index)? FindDisplayIconInUninstallIndex(string appName)
-    {
-        foreach (var (displayName, iconPath, iconIndex) in _uninstallIndex.Value)
-        {
-            if (displayName.Equals(appName, StringComparison.OrdinalIgnoreCase) ||
-                displayName.StartsWith(appName + " ", StringComparison.OrdinalIgnoreCase))
-            {
-                if (IsReadableFile(iconPath))
-                    return (iconPath, iconIndex);
-            }
-        }
         return null;
-    }
-
-    private static List<(string DisplayName, string IdName, Uri? Logo)> BuildPackageIndex()
-    {
-        var list = new List<(string DisplayName, string IdName, Uri? Logo)>();
-        try
-        {
-            var pm = new PackageManager();
-            foreach (var pkg in pm.FindPackagesForUser(""))
-            {
-                try
-                {
-                    var dName = pkg.DisplayName ?? "";
-                    var idName = pkg.Id?.Name ?? "";
-                    var logo = ResolveMrtLogoUri(pkg.Logo);
-                    if (logo is not null && (!string.IsNullOrWhiteSpace(dName) || !string.IsNullOrWhiteSpace(idName)))
-                        list.Add((dName, idName, logo));
-                }
-                catch { } // Ignore single unreadable/staged MSIX package without aborting loop
-            }
-        }
-        catch { }
-        return list;
     }
 
     private static Uri? TryFindPackageLogoUri(string appName)
     {
-        var needle = appName.Replace(" ", "", StringComparison.OrdinalIgnoreCase);
-        foreach (var (displayName, idName, logo) in _packageIndex.Value)
-        {
-            if (logo is null) continue;
-            if (displayName.Equals(appName, StringComparison.OrdinalIgnoreCase) ||
-                displayName.StartsWith(appName + " ", StringComparison.OrdinalIgnoreCase) ||
-                idName.Equals(needle, StringComparison.OrdinalIgnoreCase) ||
-                (needle.Length >= 5 && idName.EndsWith("." + needle, StringComparison.OrdinalIgnoreCase)))
-            {
-                return logo;
-            }
-        }
-        return null;
-    }
-
-    private static Uri? ResolveMrtLogoUri(Uri? logo)
-    {
-        if (logo is null || !logo.IsFile) return null;
-        var local = logo.LocalPath;
-        if (IsReadableFile(local)) return logo;
-
-        var dir = Path.GetDirectoryName(local);
-        var stem = Path.GetFileNameWithoutExtension(local);
-        var ext = Path.GetExtension(local);
-        if (string.IsNullOrEmpty(dir) || string.IsNullOrEmpty(stem) || string.IsNullOrEmpty(ext))
-            return null;
-
-        string[] qualifiers =
-        [
-            ".scale-200", ".scale-150", ".scale-125", ".scale-100", ".scale-400",
-            "_altform-unplated.targetsize-48", ".targetsize-48",
-            "_altform-lightunplated.targetsize-48", ".targetsize-32",
-            "_altform-unplated", "_altform-lightunplated"
-        ];
-        foreach (var q in qualifiers)
-        {
-            var candidate = Path.Combine(dir, $"{stem}{q}{ext}");
-            if (IsReadableFile(candidate))
-                return new Uri(candidate);
-        }
-        return null;
-    }
-
-    private static bool IsReadableFile(string? path)
-    {
-        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return false;
         try
         {
-            using var _ = File.OpenRead(path);
-            return true;
+            var pm = new PackageManager();
+            var needle = appName.Replace(" ", "", StringComparison.OrdinalIgnoreCase);
+            if (needle.Equals("WindowsStore", StringComparison.OrdinalIgnoreCase))
+                needle = "WindowsStore";
+
+            foreach (var pkg in pm.FindPackagesForUser(""))
+            {
+                var name = pkg.DisplayName ?? pkg.Id.Name;
+                if (string.IsNullOrWhiteSpace(name)) continue;
+
+                if (name.Equals(appName, StringComparison.OrdinalIgnoreCase) ||
+                    pkg.Id.Name.Contains(needle, StringComparison.OrdinalIgnoreCase) ||
+                    name.Replace(" ", "").Contains(needle, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (pkg.Logo is { } logo && File.Exists(logo.LocalPath))
+                        return logo;
+                }
+            }
         }
-        catch
-        {
-            return false;
-        }
+        catch { }
+        return null;
     }
 
-    // --- NativeAOT-Safe Win32 Icon Extraction (Zero System.Drawing, zero Shell COM dependency) ---
+    // --- NativeAOT-Safe Win32 Icon Extraction (Zero System.Drawing) -----------
 
     private const uint SHGFI_ICON      = 0x000000100;
     private const uint SHGFI_LARGEICON = 0x000000000;
@@ -538,10 +423,10 @@ public static class AppIconResolverService
     }
 
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern uint ExtractIconExW(string lpszFile, int nIconIndex, out IntPtr phiconLarge, IntPtr phiconSmall, uint nIcons);
+    private static extern IntPtr SHGetFileInfoW(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
 
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern IntPtr SHGetFileInfoW(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
+    private static extern uint ExtractIconExW(string lpszFile, int nIconIndex, IntPtr[]? phiconLarge, IntPtr[]? phiconSmall, uint nIcons);
 
     [DllImport("user32.dll")]
     private static extern bool DestroyIcon(IntPtr hIcon);
@@ -564,140 +449,115 @@ public static class AppIconResolverService
     [DllImport("gdi32.dll")]
     private static extern int GetDIBits(IntPtr hdc, IntPtr hbmp, uint uStartScan, uint cScanLines, byte[]? lpvBits, ref BITMAPINFOHEADER lpbi, uint uUsage);
 
-    private static ExtractedIconData? ExtractWin32IconBgra(string filePath, int iconIndex)
+    private static ExtractedIconData? ExtractDllResourceIconBgra(string dllPath, int iconIndexOrResId)
     {
-        IntPtr hIcon = IntPtr.Zero;
-        if (iconIndex != -1 && ExtractIconExW(filePath, iconIndex, out var extracted, IntPtr.Zero, 1) > 0 && extracted != IntPtr.Zero)
-        {
-            hIcon = extracted;
-        }
-        else if (iconIndex <= 0)
-        {
-            var shfi = new SHFILEINFO();
-            var res = SHGetFileInfoW(filePath, 0, ref shfi, (uint)Marshal.SizeOf<SHFILEINFO>(), SHGFI_ICON | SHGFI_LARGEICON);
-            if (res != IntPtr.Zero)
-                hIcon = shfi.hIcon;
-        }
-
-        if (hIcon == IntPtr.Zero)
+        var large = new IntPtr[1];
+        uint extracted = ExtractIconExW(dllPath, iconIndexOrResId, large, null, 1);
+        if (extracted == 0 || large[0] == IntPtr.Zero)
             return null;
 
         try
         {
-            if (!GetIconInfo(hIcon, out var iconInfo))
+            return HIconToBgra(large[0]);
+        }
+        finally
+        {
+            DestroyIcon(large[0]);
+        }
+    }
+
+    private static ExtractedIconData? ExtractWin32IconBgra(string filePath)
+    {
+        var shfi = new SHFILEINFO();
+        var res = SHGetFileInfoW(filePath, 0, ref shfi, (uint)Marshal.SizeOf<SHFILEINFO>(), SHGFI_ICON | SHGFI_LARGEICON);
+        if (res == IntPtr.Zero || shfi.hIcon == IntPtr.Zero)
+            return null;
+
+        try
+        {
+            return HIconToBgra(shfi.hIcon);
+        }
+        finally
+        {
+            DestroyIcon(shfi.hIcon);
+        }
+    }
+
+    private static ExtractedIconData? HIconToBgra(IntPtr hIcon)
+    {
+        if (!GetIconInfo(hIcon, out var iconInfo))
+            return null;
+
+        try
+        {
+            if (iconInfo.hbmColor == IntPtr.Zero)
                 return null;
 
+            if (GetObjectW(iconInfo.hbmColor, Marshal.SizeOf<BITMAP>(), out var bm) == 0)
+                return null;
+
+            int w = bm.bmWidth;
+            int h = bm.bmHeight;
+            if (w <= 0 || h <= 0 || w > 256 || h > 256)
+                return null;
+
+            var pixels = new byte[w * h * 4];
+            var bmi = new BITMAPINFOHEADER
+            {
+                biSize        = (uint)Marshal.SizeOf<BITMAPINFOHEADER>(),
+                biWidth       = w,
+                biHeight      = -h, // top-down DIB
+                biPlanes      = 1,
+                biBitCount    = 32,
+                biCompression = 0   // BI_RGB
+            };
+
+            var hdc = GetDC(IntPtr.Zero);
             try
             {
-                bool monochrome = iconInfo.hbmColor == IntPtr.Zero;
-                IntPtr primaryBmp = monochrome ? iconInfo.hbmMask : iconInfo.hbmColor;
-                if (primaryBmp == IntPtr.Zero)
-                    return null;
+                int lines = GetDIBits(hdc, iconInfo.hbmColor, 0, (uint)h, pixels, ref bmi, DIB_RGB_COLORS);
+                if (lines == 0) return null;
 
-                if (GetObjectW(primaryBmp, Marshal.SizeOf<BITMAP>(), out var bm) == 0)
-                    return null;
-
-                int w = bm.bmWidth;
-                int h = monochrome ? bm.bmHeight / 2 : bm.bmHeight;
-                if (w <= 0 || h <= 0 || w > 256 || h > 256)
-                    return null;
-
-                var pixels = new byte[w * h * 4];
-                var bmi = new BITMAPINFOHEADER
+                bool hasAlpha = false;
+                for (int i = 3; i < pixels.Length; i += 4)
                 {
-                    biSize        = (uint)Marshal.SizeOf<BITMAPINFOHEADER>(),
-                    biWidth       = w,
-                    biHeight      = -h, // top-down DIB
-                    biPlanes      = 1,
-                    biBitCount    = 32,
-                    biCompression = 0   // BI_RGB
-                };
+                    if (pixels[i] != 0) { hasAlpha = true; break; }
+                }
 
-                var hdc = GetDC(IntPtr.Zero);
-                try
+                if (!hasAlpha && iconInfo.hbmMask != IntPtr.Zero)
                 {
-                    if (monochrome)
+                    var mask = new byte[w * h * 4];
+                    var maskBmi = bmi;
+                    if (GetDIBits(hdc, iconInfo.hbmMask, 0, (uint)h, mask, ref maskBmi, DIB_RGB_COLORS) > 0)
                     {
-                        var maskFull = new byte[w * h * 2 * 4];
-                        var monoBmi = bmi with { biHeight = -(h * 2) };
-                        if (GetDIBits(hdc, iconInfo.hbmMask, 0, (uint)(h * 2), maskFull, ref monoBmi, DIB_RGB_COLORS) == 0)
-                            return null;
-
-                        int xorOffset = w * h * 4;
                         for (int i = 0; i < pixels.Length; i += 4)
-                        {
-                            bool andBit = maskFull[i] != 0;
-                            bool xorBit = maskFull[xorOffset + i] != 0;
-                            byte c = xorBit ? (byte)255 : (byte)0;
-                            pixels[i]     = c;
-                            pixels[i + 1] = c;
-                            pixels[i + 2] = c;
-                            pixels[i + 3] = (!andBit || xorBit) ? (byte)255 : (byte)0;
-                        }
+                            pixels[i + 3] = mask[i] == 0 ? (byte)255 : (byte)0;
                     }
-                    else
-                    {
-                        int lines = GetDIBits(hdc, iconInfo.hbmColor, 0, (uint)h, pixels, ref bmi, DIB_RGB_COLORS);
-                        if (lines == 0) return null;
-
-                        bool hasAlpha = false;
-                        for (int i = 3; i < pixels.Length; i += 4)
-                        {
-                            if (pixels[i] != 0) { hasAlpha = true; break; }
-                        }
-
-                        if (!hasAlpha)
-                        {
-                            bool maskApplied = false;
-                            if (iconInfo.hbmMask != IntPtr.Zero)
-                            {
-                                var mask = new byte[w * h * 4];
-                                var maskBmi = bmi;
-                                if (GetDIBits(hdc, iconInfo.hbmMask, 0, (uint)h, mask, ref maskBmi, DIB_RGB_COLORS) > 0)
-                                {
-                                    for (int i = 0; i < pixels.Length; i += 4)
-                                        pixels[i + 3] = mask[i] == 0 ? (byte)255 : (byte)0;
-                                    maskApplied = true;
-                                }
-                            }
-                            if (!maskApplied)
-                            {
-                                for (int i = 3; i < pixels.Length; i += 4)
-                                    pixels[i] = 255;
-                            }
-                        }
-                    }
-
-                    // Verify non-transparent pixels exist and premultiply alpha for WinUI WriteableBitmap
-                    bool anyOpaque = false;
-                    for (int i = 0; i < pixels.Length; i += 4)
-                    {
-                        byte a = pixels[i + 3];
-                        if (a > 0) anyOpaque = true;
-                        if (a < 255)
-                        {
-                            pixels[i]     = (byte)(pixels[i]     * a / 255);
-                            pixels[i + 1] = (byte)(pixels[i + 1] * a / 255);
-                            pixels[i + 2] = (byte)(pixels[i + 2] * a / 255);
-                        }
-                    }
-
-                    return anyOpaque ? new ExtractedIconData(null, w, h, pixels) : null;
                 }
-                finally
+
+                // Premultiply alpha for WinUI 3 WriteableBitmap (BGRA8 premultiplied)
+                for (int i = 0; i < pixels.Length; i += 4)
                 {
-                    ReleaseDC(IntPtr.Zero, hdc);
+                    byte a = pixels[i + 3];
+                    if (a < 255)
+                    {
+                        pixels[i]     = (byte)(pixels[i]     * a / 255);
+                        pixels[i + 1] = (byte)(pixels[i + 1] * a / 255);
+                        pixels[i + 2] = (byte)(pixels[i + 2] * a / 255);
+                    }
                 }
+
+                return new ExtractedIconData(null, w, h, pixels);
             }
             finally
             {
-                if (iconInfo.hbmColor != IntPtr.Zero) DeleteObject(iconInfo.hbmColor);
-                if (iconInfo.hbmMask  != IntPtr.Zero) DeleteObject(iconInfo.hbmMask);
+                ReleaseDC(IntPtr.Zero, hdc);
             }
         }
         finally
         {
-            DestroyIcon(hIcon);
+            if (iconInfo.hbmColor != IntPtr.Zero) DeleteObject(iconInfo.hbmColor);
+            if (iconInfo.hbmMask  != IntPtr.Zero) DeleteObject(iconInfo.hbmMask);
         }
     }
 }

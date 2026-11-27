@@ -913,10 +913,11 @@ public partial class CleanerPageViewModel : ObservableObject
             };
 
             var groupEntries = group.Select(x => x.Entry).ToList();
-            if (catVm.AppIconBitmap is null && UiDispatcher is { } dq)
+            if (UiDispatcher is { } dq)
             {
                 string resolvedCatName = group.Key.Name;
-                _ = AppIconResolverService.TryResolveDynamicAppIconAsync(
+                // Always prefer real installed Windows .exe/MSIX app logo or native Windows 11 System32 icon
+                _ = AppIconResolverService.TryResolveNativeIconAsync(
                     resolvedCatName,
                     groupEntries,
                     dq,
@@ -1093,8 +1094,7 @@ public partial class CleanerPageViewModel : ObservableObject
     {
         foreach (var line in ResultLines)
         {
-            if (string.Equals(line.CategoryName, categoryName, StringComparison.OrdinalIgnoreCase)
-                && line.AppIconBitmap is null)
+            if (string.Equals(line.CategoryName, categoryName, StringComparison.OrdinalIgnoreCase))
             {
                 line.AppIconBitmap = img;
             }
