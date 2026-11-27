@@ -42,8 +42,8 @@ public static class AppIconResolverService
     // Known app category -> candidate executable names AND common install paths
     private static readonly Dictionary<string, (string[] Exes, string[] FallbackPaths)> KnownApps = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["Firefox"]                 = (["firefox.exe"], [@"%ProgramFiles%\Mozilla Firefox\firefox.exe", @"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"]),
-        ["Mozilla Firefox"]         = (["firefox.exe"], [@"%ProgramFiles%\Mozilla Firefox\firefox.exe", @"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"]),
+        ["Firefox"]                 = (["firefox.exe"], [@"%ProgramFiles%\Mozilla Firefox\firefox.exe", @"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe", @"%LocalAppData%\Mozilla Firefox\firefox.exe", @"%ProgramFiles%\Firefox Developer Edition\firefox.exe", @"%ProgramFiles%\Firefox Nightly\firefox.exe"]),
+        ["Mozilla Firefox"]         = (["firefox.exe"], [@"%ProgramFiles%\Mozilla Firefox\firefox.exe", @"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe", @"%LocalAppData%\Mozilla Firefox\firefox.exe", @"%ProgramFiles%\Firefox Developer Edition\firefox.exe", @"%ProgramFiles%\Firefox Nightly\firefox.exe"]),
         ["Google Chrome"]           = (["chrome.exe"],  [@"%ProgramFiles%\Google\Chrome\Application\chrome.exe", @"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe", @"%LocalAppData%\Google\Chrome\Application\chrome.exe"]),
         ["Chrome"]                  = (["chrome.exe"],  [@"%ProgramFiles%\Google\Chrome\Application\chrome.exe", @"%LocalAppData%\Google\Chrome\Application\chrome.exe"]),
         ["Microsoft Edge"]          = (["msedge.exe"],  [@"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe", @"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"]),
@@ -303,6 +303,22 @@ public static class AppIconResolverService
         var pkgLogo = TryFindPackageLogoUri(key);
         if (pkgLogo is not null)
             return new ExtractedIconData(pkgLogo, 0, 0, null);
+
+        // 6. Native Windows 11 multi-color fallback for leftover/uninstalled apps (never a crude synthetic PNG!)
+        var sysDirFallback = Environment.SystemDirectory;
+        bool isBrowser = key.Contains("Firefox", StringComparison.OrdinalIgnoreCase)
+                      || key.Contains("Chrome", StringComparison.OrdinalIgnoreCase)
+                      || key.Contains("Edge", StringComparison.OrdinalIgnoreCase)
+                      || key.Contains("Brave", StringComparison.OrdinalIgnoreCase)
+                      || key.Contains("Opera", StringComparison.OrdinalIgnoreCase)
+                      || key.Contains("Vivaldi", StringComparison.OrdinalIgnoreCase)
+                      || key.Contains("Browser", StringComparison.OrdinalIgnoreCase)
+                      || key.Contains("Safari", StringComparison.OrdinalIgnoreCase);
+
+        var fallbackDll = isBrowser ? Path.Combine(sysDirFallback, "shell32.dll") : Path.Combine(sysDirFallback, "imageres.dll");
+        var fallbackRes = isBrowser ? -14 : -11; // Colorful Windows 11 Globe for uninstalled browsers, App Window for uninstalled apps
+        if (File.Exists(fallbackDll))
+            return ExtractDllResourceIconBgra(fallbackDll, fallbackRes);
 
         return null;
     }
