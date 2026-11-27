@@ -74,7 +74,7 @@ public sealed partial class SettingsPage : Page
     {
         for (int i = 0; i < SettingsNav.Items.Count; i++)
         {
-            if (SettingsNav.Items[i] is ListViewItem item &&
+            if (SettingsNav.Items[i] is FrameworkElement item &&
                 string.Equals(item.Tag as string, section, StringComparison.OrdinalIgnoreCase))
             {
                 SettingsNav.SelectedIndex = i;
@@ -84,10 +84,12 @@ public sealed partial class SettingsPage : Page
         }
         ShowSettingsSection(section);
     }
+
+    // Sections are shown and hidden in place; no second Frame needed.
     private void SettingsNav_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_navigationReady) return;
-        var item = e.AddedItems.FirstOrDefault() as ListViewItem ?? SettingsNav.SelectedItem as ListViewItem;
+        var item = e.AddedItems.FirstOrDefault() as FrameworkElement ?? SettingsNav.SelectedItem as FrameworkElement;
         if (item is null) return;
         ShowSettingsSection(item.Tag as string ?? "General");
     }
@@ -95,8 +97,8 @@ public sealed partial class SettingsPage : Page
     private void SettingsNav_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (!_navigationReady) return;
-        var item = e.ClickedItem as ListViewItem
-                   ?? SettingsNav.ContainerFromItem(e.ClickedItem) as ListViewItem;
+        var item = e.ClickedItem as FrameworkElement
+                   ?? SettingsNav.ContainerFromItem(e.ClickedItem) as FrameworkElement;
         if (item is null) return;
         SettingsNav.SelectedItem = item;
         ShowSettingsSection(item.Tag as string ?? "General");
