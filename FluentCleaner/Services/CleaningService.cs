@@ -1,6 +1,7 @@
 using FluentCleaner.Models;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
+using System.Collections.Concurrent;
 using System.IO.Enumeration;
 using System.Runtime.InteropServices;
 
@@ -12,6 +13,9 @@ namespace FluentCleaner.Services;
    Clean   ; takes the completed ScanResult and does the actual deleting. */
 public class CleaningService
 {
+    private static int MaxConcurrency => Math.Clamp(Environment.ProcessorCount, 4, 16);
+    private static readonly ConcurrentDictionary<string, object> DbLocks = new(StringComparer.OrdinalIgnoreCase);
+
     private readonly PathExpander _expander = new();
 
     // --- Public api --------------------------------------------------
@@ -43,24 +47,55 @@ public class CleaningService
         // (Firefox Caches alone is ~8600 files)
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var fileKey in entry.FileKeys)
+        if (entry.FileKeys.Count > 1)
         {
-            try
-            {
-                foreach (var file in FindFiles(fileKey, fileExclusions, entryProgress, token))
+            var candidates = new ConcurrentBag<(string File, long Size)>();
+            Parallel.ForEach(
+                entry.FileKeys,
+                new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrency, CancellationToken = token },
+                fileKey =>
                 {
-                    if (!seen.Add(file)) continue;
+                    try
+                    {
+                        foreach (var file in FindFiles(fileKey, fileExclusions, entryProgress, token))
+                        {
+                            var size = TryGetDeletableSize(file);
+                            if (size >= 0)
+                                candidates.Add((file, size));
+                        }
+                    }
+                    catch (OperationCanceledException) { throw; }
+                    catch { }
+                });
 
-                    // Skip files that are truly inaccessible (hard lock / no permissions).
-                    var size = TryGetDeletableSize(file);
-                    if (size < 0) continue;
-
-                    result.FilesToDelete.Add(file);
-                    result.TotalBytes += size;
-                }
+            foreach (var (file, size) in candidates)
+            {
+                if (!seen.Add(file)) continue;
+                result.FilesToDelete.Add(file);
+                result.TotalBytes += size;
             }
-            catch (OperationCanceledException) { throw; }  //cancel must reach the caller, not get swallowed
-            catch { }
+        }
+        else
+        {
+            foreach (var fileKey in entry.FileKeys)
+            {
+                try
+                {
+                    foreach (var file in FindFiles(fileKey, fileExclusions, entryProgress, token))
+                    {
+                        if (!seen.Add(file)) continue;
+
+                        // Skip files that are truly inaccessible (hard lock / no permissions).
+                        var size = TryGetDeletableSize(file);
+                        if (size < 0) continue;
+
+                        result.FilesToDelete.Add(file);
+                        result.TotalBytes += size;
+                    }
+                }
+                catch (OperationCanceledException) { throw; }  //cancel must reach the caller, not get swallowed
+                catch { }
+            }
         }
 
         foreach (var regKey in entry.RegKeys)
@@ -173,35 +208,53 @@ public class CleaningService
         int count = 0;
         long bytes = 0;
         var registryExclusions = BuildRegistryExclusions(result.Entry);
+        var domainsToKeep = AppSettings.Instance.CookieDomainsToKeep;
 
-        foreach (var file in result.FilesToDelete)
+        void CleanSingleFile(string file)
         {
-            token.ThrowIfCancellationRequested(); //stop between files so we never delete half an entry
+            token.ThrowIfCancellationRequested();
             try
             {
                 // A keep-list replaces Winapp2's whole-file delete for known browser stores.
                 // CookieService owns the SQL work and blocks unsafe fallback deletion.
-                var cookieClean = CookieService.TryCleanProtectedStore(
-                    file, AppSettings.Instance.CookieDomainsToKeep);
-                if (cookieClean.Handled)
+                // Serialize SQLite access per database path so concurrent workers never collide.
+                var dbLock = DbLocks.GetOrAdd(file, _ => new object());
+                bool handledCookieStore;
+                lock (dbLock)
                 {
-                    if (cookieClean.Succeeded)
+                    var cookieClean = CookieService.TryCleanProtectedStore(file, domainsToKeep);
+                    handledCookieStore = cookieClean.Handled;
+                    if (handledCookieStore && cookieClean.Succeeded)
                     {
-                        count += cookieClean.CookiesRemoved;
-                        bytes += cookieClean.BytesFreed;
+                        Interlocked.Add(ref count, cookieClean.CookiesRemoved);
+                        Interlocked.Add(ref bytes, cookieClean.BytesFreed);
                         if (cookieClean.CookiesRemoved > 0)
                             progress?.Report(ResourceService.Fmt("Cleaning_CleanedCookies", cookieClean.CookiesRemoved, file));
                     }
-                    continue;
                 }
+
+                if (handledCookieStore)
+                    return;
 
                 var size = new FileInfo(file).Length;
                 File.Delete(file);
-                count++;
-                bytes += size;
+                Interlocked.Increment(ref count);
+                Interlocked.Add(ref bytes, size);
                 progress?.Report(ResourceService.Fmt("Prog_Deleted", file));
             }
             catch { } //in use or already gone; skip silently
+        }
+
+        if (result.FilesToDelete.Count > 1)
+        {
+            Parallel.ForEach(
+                result.FilesToDelete,
+                new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrency, CancellationToken = token },
+                CleanSingleFile);
+        }
+        else if (result.FilesToDelete.Count == 1)
+        {
+            CleanSingleFile(result.FilesToDelete[0]);
         }
 
         foreach (var regItem in result.RegistryToDelete)

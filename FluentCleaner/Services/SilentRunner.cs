@@ -22,8 +22,9 @@ public static class SilentRunner
         var cleaner   = new CleaningService();
 
         var allEntries = new List<CleanerEntry>();
-        foreach (var p in paths)
-            allEntries.AddRange(await parser.ParseFileAsync(p));
+        var parsedDbs = await Task.WhenAll(paths.Select(p => parser.ParseFileAsync(p)));
+        foreach (var db in parsedDbs)
+            allEntries.AddRange(db);
 
         // Custom/ folder entries;same as the GUI does via CustomEntryService
         allEntries.AddRange(await new CustomEntryService().LoadEnabledEntriesAsync());
@@ -35,6 +36,8 @@ public static class SilentRunner
         var settings = AppSettings.Instance;
         var saved    = settings.SelectedEntries;
         var selected = allEntries
+            .AsParallel()
+            .AsOrdered()
             .Where(detection.IsInstalled)
             .Where(e => settings.HasSavedCleanerSelection ? saved.Contains(e.Name) : e.Default)
             .ToList();
@@ -46,28 +49,45 @@ public static class SilentRunner
         log.AppendLine($"[{DateTime.Now:yyyy-MM-dd HH:mm}]  FluentCleaner /AUTO{(shutdown ? " /SHUTDOWN" : "")}");
         log.AppendLine(new string('─', 60));
 
-        foreach (var entry in selected)
+        var entryLogs = new string?[selected.Count];
+        int maxConcurrency = Math.Clamp(Environment.ProcessorCount, 4, 16);
+        using var throttle = new SemaphoreSlim(maxConcurrency);
+
+        await Task.WhenAll(selected.Select(async (entry, idx) =>
         {
-            var result = await cleaner.AnalyzeAsync(entry);
+            await throttle.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                var result = await cleaner.AnalyzeAsync(entry).ConfigureAwait(false);
+                if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0)
+                    return;
 
-            if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0)
-                continue;
+                var (count, bytes) = await cleaner.CleanAsync(result).ConfigureAwait(false);
+                Interlocked.Add(ref totalItems, count);
+                Interlocked.Add(ref totalBytes, bytes);
 
-            var (count, bytes) = await cleaner.CleanAsync(result);
-            totalItems += count;
-            totalBytes += bytes;
+                var sb = new StringBuilder();
+                sb.AppendLine();
+                sb.AppendLine(entry.Name);
 
-            log.AppendLine();
-            log.AppendLine(entry.Name);
+                foreach (var file in result.FilesToDelete)
+                    sb.AppendLine($"  {file}");
 
-            foreach (var file in result.FilesToDelete)
-                log.AppendLine($"  {file}");
+                foreach (var reg in result.RegistryToDelete)
+                    sb.AppendLine($"  {reg}");
 
-            foreach (var reg in result.RegistryToDelete)
-                log.AppendLine($"  {reg}");
+                sb.AppendLine($"  → {count} items · {ScanResult.FormatBytes(bytes)}");
+                entryLogs[idx] = sb.ToString();
+            }
+            finally
+            {
+                throttle.Release();
+            }
+        })).ConfigureAwait(false);
 
-            log.AppendLine($"  → {count} items · {ScanResult.FormatBytes(bytes)}");
-        }
+        foreach (var chunk in entryLogs)
+            if (chunk is not null)
+                log.Append(chunk);
 
         log.AppendLine();
         log.AppendLine(new string('─', 60));

@@ -73,16 +73,29 @@ public class CliCleanerModule
 
         setBusy(true);
         int totalCount = 0; long totalBytes = 0;
+        using var throttle = new SemaphoreSlim(Math.Clamp(Environment.ProcessorCount, 4, 16));
 
-        foreach (var entry in entries)
+        await Task.WhenAll(entries.Select(async entry =>
         {
-            var result = await _cleaner.AnalyzeAsync(entry);
-            if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0) continue;
-            var (count, bytes) = await _cleaner.CleanAsync(result);
-            totalCount += count;
-            totalBytes += bytes;
-            output.Add(ResourceService.Fmt("CLI_CleanEntry", entry.Name, count, ScanResult.FormatBytes(bytes)));
-        }
+            await throttle.WaitAsync();
+            ScanResult result;
+            (int count, long bytes) outcome = default;
+            try
+            {
+                result = await _cleaner.AnalyzeAsync(entry);
+                if (result.FilesToDelete.Count > 0 || result.RegistryToDelete.Count > 0)
+                    outcome = await _cleaner.CleanAsync(result);
+            }
+            finally
+            {
+                throttle.Release();
+            }
+
+            if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0) return;
+            totalCount += outcome.count;
+            totalBytes += outcome.bytes;
+            output.Add(ResourceService.Fmt("CLI_CleanEntry", entry.Name, outcome.count, ScanResult.FormatBytes(outcome.bytes)));
+        }));
 
         output.Add(totalCount > 0
             ? ResourceService.Fmt("CLI_CleanDone", totalCount, ScanResult.FormatBytes(totalBytes))
@@ -98,14 +111,25 @@ public class CliCleanerModule
 
         setBusy(true);
         long totalBytes = 0;
+        using var throttle = new SemaphoreSlim(Math.Clamp(Environment.ProcessorCount, 4, 16));
 
-        foreach (var entry in entries)
+        await Task.WhenAll(entries.Select(async entry =>
         {
-            var result = await _cleaner.AnalyzeAsync(entry);
-            if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0) continue;
+            await throttle.WaitAsync();
+            ScanResult result;
+            try
+            {
+                result = await _cleaner.AnalyzeAsync(entry);
+            }
+            finally
+            {
+                throttle.Release();
+            }
+
+            if (result.FilesToDelete.Count == 0 && result.RegistryToDelete.Count == 0) return;
             totalBytes += result.TotalBytes;
             output.Add(ResourceService.Fmt("CLI_AnalyzeEntry", entry.Name, result.FilesToDelete.Count, result.RegistryToDelete.Count, result.FormattedSize));
-        }
+        }));
 
         output.Add(totalBytes > 0
             ? ResourceService.Fmt("CLI_AnalyzeTotal", ScanResult.FormatBytes(totalBytes))
