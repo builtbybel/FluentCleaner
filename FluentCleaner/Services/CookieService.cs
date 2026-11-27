@@ -54,6 +54,16 @@ internal static class CookieService
         };
     }
 
+    // Scans browser cookies and filters them against the IntelligentDomains knowledge base
+    public static IReadOnlyList<string> DetectIntelligentDomains()
+    {
+        var scan = ScanDomains();
+        return scan.Domains
+            .Where(IntelligentDomains.IsAuthDomain)
+            .OrderBy(domain => domain, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
     //one selected website removes that domain and its subdomains from every supported profile,
     //except for anything the keep list protects
     public static int DeleteDomains(IEnumerable<string> domains, IEnumerable<string> domainsToKeep)
@@ -121,13 +131,23 @@ internal static class CookieService
             using var database = new WinSqlite(path);
             var column = match.Store.Kind == StoreKind.Chromium ? "host_key" : "host";
             var table = match.Store.Kind == StoreKind.Chromium ? "cookies" : "moz_cookies";
-            var keepExpression = BuildDomainExpression(column, protectedDomains);
 
             database.Execute("BEGIN IMMEDIATE");
             int removed;
             try
             {
-                removed = database.Execute($"DELETE FROM {table} WHERE NOT ({keepExpression})");
+                database.PopulateTempDomainTable("_kept_domains", protectedDomains);
+                removed = database.Execute($@"
+                    DELETE FROM {table}
+                    WHERE lower(ltrim({column}, '.')) NOT IN (SELECT domain FROM _kept_domains)
+                      AND (
+                          instr(lower(ltrim({column}, '.')), '.') == 0
+                          OR substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1) NOT IN (SELECT domain FROM _kept_domains)
+                      )
+                      AND (
+                          instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') == 0
+                          OR substr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), instr(substr(lower(ltrim({column}, '.')), instr(lower(ltrim({column}, '.')), '.') + 1), '.') + 1) NOT IN (SELECT domain FROM _kept_domains)
+                      )");
                 database.Execute("COMMIT");
             }
             catch

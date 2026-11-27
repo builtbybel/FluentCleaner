@@ -36,7 +36,9 @@ public sealed partial class CookiesSettingsView : UserControl
         KeptLabel.Text = ResourceService.Get("Cookies_Kept");
         AvailableSearch.PlaceholderText = KeptSearch.PlaceholderText = ResourceService.Get("Cookies_Search");
         RefreshButton.Content = ResourceService.Get("Cookies_Refresh");
+        IntelligentScanButton.Content = ResourceService.Get("Cookies_IntelligentScan");
         KeepMenuItem.Text = ResourceService.Get("Cookies_MiKeep");
+        IntelligentScanMenuItem.Text = ResourceService.Get("Cookies_MiIntelligentScan");
         DeleteMenuItem.Text = ResourceService.Get("Cookies_MiDelete");
         RemoveMenuItem.Text = ResourceService.Get("Cookies_MiRemove");
         ImportMenuItem.Text = ResourceService.Get("Cookies_MiImport");
@@ -72,6 +74,7 @@ public sealed partial class CookiesSettingsView : UserControl
         if (_loading) return;
         _loading = true;
         RefreshButton.IsEnabled = false;
+        IntelligentScanButton.IsEnabled = false;
         StatusText.Text = ResourceService.Get("Cookies_Scanning");
 
         try
@@ -88,6 +91,41 @@ public sealed partial class CookiesSettingsView : UserControl
         {
             _loading = false;
             RefreshButton.IsEnabled = true;
+            IntelligentScanButton.IsEnabled = true;
+        }
+    }
+
+    private async void IntelligentScan_Click(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        _loading = true;
+        RefreshButton.IsEnabled = false;
+        IntelligentScanButton.IsEnabled = false;
+        StatusText.Text = ResourceService.Get("Cookies_IntelligentScanning");
+
+        try
+        {
+            var detectedAuth = await Task.Run(CookieService.DetectIntelligentDomains);
+            int addedCount = 0;
+            foreach (var domain in detectedAuth)
+            {
+                if (_kept.Add(domain))
+                    addedCount++;
+            }
+
+            if (addedCount > 0)
+            {
+                SaveKeepList();
+                RefreshLists();
+            }
+
+            StatusText.Text = ResourceService.Fmt("Cookies_IntelligentResult", addedCount, detectedAuth.Count);
+        }
+        finally
+        {
+            _loading = false;
+            RefreshButton.IsEnabled = true;
+            IntelligentScanButton.IsEnabled = true;
         }
     }
 
@@ -113,6 +151,7 @@ public sealed partial class CookiesSettingsView : UserControl
 
         _loading = true;
         RefreshButton.IsEnabled = false;
+        IntelligentScanButton.IsEnabled = false;
         StatusText.Text = ResourceService.Get("Cookies_Scanning");
         var unavailable = 0;
         try { unavailable = await Task.Run(() => CookieService.DeleteDomains(domains, kept)); }
@@ -120,6 +159,7 @@ public sealed partial class CookiesSettingsView : UserControl
         {
             _loading = false;
             RefreshButton.IsEnabled = true;
+            IntelligentScanButton.IsEnabled = true;
         }
 
         await RefreshDomainsAsync();
@@ -198,6 +238,7 @@ public sealed partial class CookiesSettingsView : UserControl
     {
         var enabled = AvailableList.SelectedItems.Count > 0;
         KeepMenuItem.IsEnabled = DeleteMenuItem.IsEnabled = enabled;
+        IntelligentScanMenuItem.IsEnabled = !_loading;
     }
 
     private void KeptMenu_Opening(object sender, object e)

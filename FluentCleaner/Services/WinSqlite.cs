@@ -64,6 +64,25 @@ internal sealed class WinSqlite : IDisposable
         finally { Native.sqlite3_finalize(statement); }
     }
 
+    /* Populates an indexed SQLite TEMP TABLE with domain strings in bounded batches.
+       Supports 10,000+ domains without triggering SQLite's SQLITE_LIMIT_EXPR_DEPTH. */
+    public void PopulateTempDomainTable(string tableName, IEnumerable<string> domains)
+    {
+        Execute($"CREATE TEMP TABLE IF NOT EXISTS {tableName} (domain TEXT PRIMARY KEY);");
+        Execute($"DELETE FROM {tableName};");
+
+        var domainList = domains as IList<string> ?? domains.ToList();
+        if (domainList.Count == 0) return;
+
+        const int batchSize = 400;
+        for (int i = 0; i < domainList.Count; i += batchSize)
+        {
+            var batch = domainList.Skip(i).Take(batchSize);
+            var values = string.Join(",", batch.Select(d => $"('{d.Replace("'", "''")}')"));
+            Execute($"INSERT OR IGNORE INTO {tableName} (domain) VALUES {values};");
+        }
+    }
+
     public void Dispose()
     {
         if (_database == IntPtr.Zero) return;
