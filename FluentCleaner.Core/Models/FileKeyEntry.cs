@@ -50,7 +50,7 @@ public class FileKeyEntry
             {
                 var pattern = p.Substring(p.IndexOf('=') + 1).Trim();
                 entry.IncludeRegexPattern = pattern;
-                try { entry.IncludeRegex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase); }
+                try { entry.IncludeRegex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)); }
                 catch { }
             }
             else if (p.StartsWith("nwholeregex=", StringComparison.OrdinalIgnoreCase) ||
@@ -59,7 +59,7 @@ public class FileKeyEntry
             {
                 var pattern = p.Substring(p.IndexOf('=') + 1).Trim();
                 entry.ExcludeRegexPattern = pattern;
-                try { entry.ExcludeRegex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase); }
+                try { entry.ExcludeRegex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)); }
                 catch { }
             }
             else if (p.Equals("RECURSE", StringComparison.OrdinalIgnoreCase))

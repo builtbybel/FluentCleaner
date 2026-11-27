@@ -113,7 +113,7 @@ public class CleaningService
             yield break;
 
         // Directory-level regex pruning: if excludeRegex matches this folder, skip it entirely
-        if (excludeRegex is not null && excludeRegex.IsMatch(scanRoot))
+        if (excludeRegex is not null && SafeIsMatch(excludeRegex, scanRoot))
             yield break;
 
         progress?.Report(root);
@@ -126,10 +126,10 @@ public class CleaningService
             catch { files = []; }
             foreach (var f in files)
             {
-                if (excludeRegex is not null && excludeRegex.IsMatch(f))
+                if (excludeRegex is not null && SafeIsMatch(excludeRegex, f))
                     continue;
 
-                if (includeRegex is not null && !includeRegex.IsMatch(f))
+                if (includeRegex is not null && !SafeIsMatch(includeRegex, f))
                     continue;
 
                 if (seen.Add(f))   // skip if another pattern already matched this file
@@ -156,12 +156,18 @@ public class CleaningService
 
             // Directory-level regex pruning before recursing into children
             var subScan = sub.TrimEnd('\\') + "\\";
-            if (excludeRegex is not null && excludeRegex.IsMatch(subScan))
+            if (excludeRegex is not null && SafeIsMatch(excludeRegex, subScan))
                 continue;
 
             foreach (var f in EnumerateFilesSafe(sub, patterns, excluded, recurse: true, includeRegex, excludeRegex, progress, token))
                 yield return f;
         }
+    }
+
+    private static bool SafeIsMatch(Regex regex, string input)
+    {
+        try { return regex.IsMatch(input); }
+        catch (RegexMatchTimeoutException) { return false; }
     }
 
     // Checks whether a registry key/value exists before queuing it for deletion
