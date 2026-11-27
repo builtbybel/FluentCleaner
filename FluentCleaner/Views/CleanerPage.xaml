@@ -396,6 +396,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <FontIcon Glyph="{x:Bind Glyph}" FontSize="13"
                                               Foreground="{x:Bind IconBrush}"
@@ -406,6 +407,16 @@
                                                VerticalAlignment="Center"
                                                TextTrimming="CharacterEllipsis"
                                                ToolTipService.ToolTip="{x:Bind AppName}" />
+                                    <Border Grid.Column="2"
+                                            Background="#22F59E0B"
+                                            BorderBrush="#88F59E0B"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="6,1"
+                                            VerticalAlignment="Center"
+                                            Visibility="{x:Bind HasLockedFiles, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <TextBlock Text="{x:Bind LockedLabel}" FontSize="10" FontWeight="SemiBold" Foreground="#FBBF24" />
+                                    </Border>
                                 </Grid>
 
                                 <TextBlock Grid.Column="1"
