@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FluentCleaner Privacy</title>
+<meta name="description" content="Privacy policy for FluentCleaner. No telemetry, no account, no ads." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23d6007f%22/><path d=%22M18 14h30v9H29v8h16v9H29v14H18z%22 fill=%22white%22/></svg>" />
+<style>
+  /* Same tokens as index.html and seed.html. */
+  :root{
+    --bg:#faf9fb; --card:#ffffff; --line:#e7e4ea;
+    --text:#17151a; --dim:#6b6671; --faint:#938d99;
+    --accent:#d6007f;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#131216; --card:#1b1a1f; --line:#2c2a31;
+      --text:#f2f0f4; --dim:#a39ead; --faint:#726c7a;
+      --accent:#ff2e9a;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:15px/1.65 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+    display:flex; justify-content:center; padding:56px 16px 72px;
+  }
+  main{width:100%; max-width:640px}
+  .brand{display:flex; align-items:center; gap:12px; margin-bottom:30px}
+  .mark{
+    width:38px; height:38px; border-radius:10px; background:var(--accent);
+    display:grid; place-items:center; color:#fff; font-weight:700; font-size:20px;
+  }
+  .brand h1{margin:0; font-size:19px; font-weight:650}
+  .brand p{margin:1px 0 0; font-size:13px; color:var(--dim)}
+  .short{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 20px; margin-bottom:28px; font-weight:600;
+  }
+  h2{font-size:16px; margin:28px 0 6px}
+  p, li{color:var(--text)}
+  ul{padding-left:20px; margin:6px 0}
+  li{margin:4px 0}
+  code{font-size:13px; background:var(--card); border:1px solid var(--line); border-radius:5px; padding:1px 5px}
+  a{color:var(--accent)}
+  .foot{margin-top:36px; font-size:13px; color:var(--faint)}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <div class="mark">F</div>
+    <div>
+      <h1>Privacy</h1>
+      <p>FluentCleaner, Modern and Classic edition</p>
+    </div>
+  </div>
+
+  <div class="short">
+    FluentCleaner collects nothing. No telemetry, no analytics, no account, no ads.
+    It runs on your PC and stays there.
+  </div>
+
+  <h2>What stays on your PC</h2>
+  <p>Scan results, your selection, exclusions, custom cleaners and settings are stored only on your device:
+    next to the app in the ZIP version, in the app's own data folder in the Microsoft Store version.
+    Nothing of it is uploaded anywhere. Uninstalling the app removes it.</p>
+
+  <h2>When the app goes online</h2>
+  <p>Only when you click something. Nothing runs in the background.</p>
+  <ul>
+    <li><b>Database update:</b> downloads <code>Winapp2.ini</code> or <code>Winapp3.ini</code> from GitHub. Nothing is sent except the normal download request.</li>
+    <li><b>Check for updates:</b> opens this website in your browser with the edition and version number in the address, so the page can tell you whether a newer one exists.</li>
+    <li><b>FluentSeed:</b> opens a page that shows a shared selection. The selection sits after the <code>#</code> in the address, which browsers never send to the server.</li>
+    <li><b>Links</b> to GitHub, PayPal or Ko-fi simply open in your browser.</li>
+  </ul>
+  <p>Downloads and this website are hosted by GitHub, which may log your IP address as described in the
+    <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>.</p>
+
+  <h2>Optional AI explanations</h2>
+  <p>Off by default. They only work if you enter your own API key for OpenAI, Anthropic or Groq.
+    When you then ask for an explanation or a generated cleaner, the app sends that one request directly to the provider you picked:
+    the cleaner rule's name, its warning, its path patterns and registry keys from the database, or the description you typed.
+    No files, no file contents, no personal data. Your key is stored only on your device and is sent only to that provider.
+    What the provider does with the request is covered by its own privacy policy.</p>
+
+  <h2>Microsoft Store</h2>
+  <p>If you install FluentCleaner from the Microsoft Store, the download and installation are handled by Microsoft
+    under the <a href="https://privacy.microsoft.com/privacystatement">Microsoft Privacy Statement</a>. FluentCleaner itself receives none of that data.</p>
+
+  <h2>Children</h2>
+  <p>FluentCleaner collects no data from anyone, children included.</p>
+
+  <h2>Changes and contact</h2>
+  <p>If this ever changes, this page changes first. Questions:
+    <a href="https://github.com/builtbybel/FluentCleaner/issues">GitHub Issues</a>.</p>
+
+  <p class="foot">Last updated: November 27, 2026 · <a href="./">FluentCleaner</a></p>
+</main>
+</body>
+</html>
