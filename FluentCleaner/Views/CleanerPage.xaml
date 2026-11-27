@@ -74,14 +74,23 @@
                                     Visibility="{x:Bind ViewModel.SystemDriveUsageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                             <FontIcon Glyph="&#xEDA2;" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{x:Bind ViewModel.SystemDriveUsageText, Mode=OneWay}"
+                                <TextBlock Text="{x:Bind ViewModel.SystemDriveDisplayText, Mode=OneWay}"
                                            FontSize="11"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                <ProgressBar Width="110"
-                                             Height="3"
-                                             Minimum="0"
-                                             Maximum="100"
-                                             Value="{x:Bind ViewModel.SystemDriveUsedPercent, Mode=OneWay}" />
+                                <Grid Width="116" Height="4">
+                                    <ProgressBar Width="116"
+                                                 Height="4"
+                                                 Minimum="0"
+                                                 Maximum="100"
+                                                 Foreground="#10B981"
+                                                 Value="{x:Bind ViewModel.SystemDriveUsedPercent, Mode=OneWay}" />
+                                    <ProgressBar Width="116"
+                                                 Height="4"
+                                                 Minimum="0"
+                                                 Maximum="100"
+                                                 Background="Transparent"
+                                                 Value="{x:Bind ViewModel.SystemDriveProjectedUsedPercent, Mode=OneWay}" />
+                                </Grid>
                             </StackPanel>
                         </StackPanel>
 
@@ -456,7 +465,10 @@
                                             </ResourceDictionary>
                                         </Expander.Resources>
                                         <Expander.Header>
-                                            <Grid HorizontalAlignment="Stretch" ColumnSpacing="6">
+                                            <Grid HorizontalAlignment="Stretch"
+                                                  ColumnSpacing="4"
+                                                  PointerEntered="CatHeader_PointerEntered"
+                                                  PointerExited="CatHeader_PointerExited">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="Auto" />
@@ -473,17 +485,17 @@
                                                           Padding="0"
                                                           VerticalAlignment="Center" />
 
-                                                <!-- 28x28 Vibrant Container for Category Icon (Real App Logo + Colorful Fluent Icon) -->
+                                                <!-- 24x24 Vibrant Container for Category Icon (Real App Logo + Colorful Fluent Icon) -->
                                                 <Border Grid.Column="1"
-                                                        Width="28" Height="28"
-                                                        CornerRadius="6"
+                                                        Width="24" Height="24"
+                                                        CornerRadius="5"
                                                         Background="{x:Bind IconBackgroundHex, Converter={StaticResource HexToBrushConverter}}"
-                                                        Margin="4,0,6,0"
+                                                        Margin="2,0,4,0"
                                                         VerticalAlignment="Center">
-                                                    <Grid Width="28" Height="28">
+                                                    <Grid Width="24" Height="24">
                                                         <!-- Mode A: Strongly-typed ImageSource? (never fails x:Bind when null) -->
                                                         <Image Source="{x:Bind AppIconBitmap, Mode=OneWay}"
-                                                               Width="18" Height="18"
+                                                               Width="16" Height="16"
                                                                Stretch="Uniform"
                                                                HorizontalAlignment="Center"
                                                                VerticalAlignment="Center"
@@ -492,7 +504,7 @@
                                                         <!-- Mode B: Vibrant Colorful Fluent Icon for non-app categories -->
                                                         <FontIcon Glyph="{x:Bind IconGlyph}"
                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                                  FontSize="14"
+                                                                  FontSize="12"
                                                                   Foreground="{x:Bind AccentColorHex, Converter={StaticResource HexToBrushConverter}}"
                                                                   Visibility="{x:Bind HasAppIcon, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                                                                   HorizontalAlignment="Center"
@@ -539,7 +551,8 @@
                                                 <Button Grid.Column="4"
                                                         AutomationProperties.Name="Category actions"
                                                         ToolTipService.ToolTip="Category actions"
-                                                        Width="24" Height="24" Padding="0"
+                                                        Width="22" Height="22" Padding="0"
+                                                        Opacity="0.25"
                                                         Background="Transparent"
                                                         BorderThickness="0">
                                                     <FontIcon Glyph="&#xE712;" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -1141,9 +1154,31 @@
                            FontSize="11"
                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                 <TextBlock Text="·" FontSize="11" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-                <TextBlock Text="{x:Bind ViewModel.LifetimeReclaimedText, Mode=OneWay}"
-                           FontSize="11"
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <Button Padding="4,1"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTipService.ToolTip="Click to view recent cleanup history sparkline">
+                    <TextBlock Text="{x:Bind ViewModel.LifetimeReclaimedText, Mode=OneWay}"
+                               FontSize="11"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <Button.Flyout>
+                        <Flyout Opening="HistorySparklineFlyout_Opening">
+                            <StackPanel Width="280" Spacing="8">
+                                <TextBlock Text="Recent Cleanups (Last 30 Runs)" FontSize="13" FontWeight="SemiBold" />
+                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Padding="8">
+                                    <Canvas x:Name="HistorySparklineCanvas" Width="260" Height="64" />
+                                </Border>
+                                <TextBlock x:Name="HistorySparklineCaption"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
             </StackPanel>
         </Grid>
     </Grid>

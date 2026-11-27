@@ -8,6 +8,8 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Shapes;
+using Windows.Foundation;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -39,7 +41,7 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
 
             AppSettings.Reload();
             var paths = AppSettings.Instance.ResolveDatabasePaths().ToList();
-            if (paths.Count == 0) paths.Add(Path.Combine(AppContext.BaseDirectory, "Winapp2.ini"));
+            if (paths.Count == 0) paths.Add(System.IO.Path.Combine(AppContext.BaseDirectory, "Winapp2.ini"));
             await ViewModel.LoadWinapp2Async(paths);
         };
 
@@ -249,8 +251,8 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
     {
         if (string.IsNullOrWhiteSpace(path) || path.StartsWith("HK", StringComparison.OrdinalIgnoreCase)) return;
 
-        var dir = Path.GetDirectoryName(path);
-        var file = Path.GetFileName(path);
+        var dir = System.IO.Path.GetDirectoryName(path);
+        var file = System.IO.Path.GetFileName(path);
         if (string.IsNullOrEmpty(dir) || string.IsNullOrEmpty(file)) return;
 
         AddGlobalExclusion($"FILE|{dir}|{file}", ResourceService.Fmt("St_ExcludedFile", file));
@@ -261,7 +263,7 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
         if (sender is not MenuFlyoutItem { Tag: string path } || string.IsNullOrWhiteSpace(path)) return;
         if (path.StartsWith("HK", StringComparison.OrdinalIgnoreCase)) return;
 
-        var dir = Path.GetDirectoryName(path);
+        var dir = System.IO.Path.GetDirectoryName(path);
         if (string.IsNullOrEmpty(dir)) return;
 
         AddGlobalExclusion($"PATH|{dir}", ResourceService.Fmt("St_ExcludedFolder", dir));
@@ -462,6 +464,56 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions
     }
 
     // --- Row Hover Accent -----------------------------------------------------
+
+    private void CatHeader_PointerEntered(object sender, PointerRoutedEventArgs e) =>
+        SetMenuButtonOpacity(sender, 1.0);
+
+    private void CatHeader_PointerExited(object sender, PointerRoutedEventArgs e) =>
+        SetMenuButtonOpacity(sender, 0.25);
+
+    private void HistorySparklineFlyout_Opening(object sender, object e)
+    {
+        if (HistorySparklineCanvas is null) return;
+        HistorySparklineCanvas.Children.Clear();
+
+        var recent = AppSettings.Instance.CleanHistory.TakeLast(30).ToList();
+        if (recent.Count == 0)
+        {
+            HistorySparklineCaption.Text = "No completed cleans recorded yet.";
+            return;
+        }
+
+        double w = HistorySparklineCanvas.Width;
+        double h = HistorySparklineCanvas.Height;
+        long maxBytes = Math.Max(1, recent.Max(r => r.BytesFreed));
+        long totalBytes = recent.Sum(r => r.BytesFreed);
+
+        var line = new Polyline
+        {
+            Stroke          = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 56, 189, 248)),
+            StrokeThickness = 2,
+            StrokeLineJoin  = PenLineJoin.Round
+        };
+        var area = new Polygon
+        {
+            Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(42, 56, 189, 248))
+        };
+
+        area.Points.Add(new Point(0, h));
+        for (int i = 0; i < recent.Count; i++)
+        {
+            double xPos = recent.Count == 1 ? w / 2.0 : (i * w / (recent.Count - 1));
+            double yPos = h - 6 - ((recent[i].BytesFreed / (double)maxBytes) * (h - 14));
+            var pt = new Point(xPos, yPos);
+            line.Points.Add(pt);
+            area.Points.Add(pt);
+        }
+        area.Points.Add(new Point(recent.Count == 1 ? w / 2.0 : w, h));
+
+        HistorySparklineCanvas.Children.Add(area);
+        HistorySparklineCanvas.Children.Add(line);
+        HistorySparklineCaption.Text = $"{recent.Count} cleans · Peak: {FluentCleaner.Models.ScanResult.FormatBytes(maxBytes)} · Total: {FluentCleaner.Models.ScanResult.FormatBytes(totalBytes)}";
+    }
 
     private void EntryRow_PointerEntered(object sender, PointerRoutedEventArgs e) =>
         SetMenuButtonOpacity(sender, 1.0);
