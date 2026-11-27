@@ -87,6 +87,26 @@ public static class AppIconResolverService
     private static readonly ConcurrentDictionary<string, ImageSource> _nativeIconCache = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConcurrentDictionary<string, ImageSource> _bundledIconCache = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConcurrentDictionary<string, byte> _missCache = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly SemaphoreSlim _extractionThrottle = new(4, 4);
+    private static readonly Lazy<List<(string DisplayName, string IdName, Uri Logo)>> _msixPackageSnapshot = new(() =>
+    {
+        var list = new List<(string, string, Uri)>();
+        try
+        {
+            var pm = new PackageManager();
+            foreach (var pkg in pm.FindPackagesForUser(""))
+            {
+                try
+                {
+                    if (pkg.Logo is { } logo && File.Exists(logo.LocalPath))
+                        list.Add((pkg.DisplayName ?? "", pkg.Id.Name ?? "", logo));
+                }
+                catch { }
+            }
+        }
+        catch { }
+        return list;
+    }, LazyThreadSafetyMode.ExecutionAndPublication);
 
     public static void InvalidateMissCache() => _missCache.Clear();
 
@@ -157,7 +177,16 @@ public static class AppIconResolverService
         if (_missCache.ContainsKey(key))
             return;
 
-        var extracted = await Task.Run(() => ExtractIconDataBackground(key, entries));
+        await _extractionThrottle.WaitAsync();
+        ExtractedIconData? extracted;
+        try
+        {
+            extracted = await Task.Run(() => ExtractIconDataBackground(key, entries));
+        }
+        finally
+        {
+            _extractionThrottle.Release();
+        }
         if (extracted is null)
         {
             _missCache[key] = 1;
@@ -341,28 +370,19 @@ public static class AppIconResolverService
 
     private static Uri? TryFindPackageLogoUri(string appName)
     {
-        try
+        var needle = appName.Replace(" ", "", StringComparison.OrdinalIgnoreCase);
+        foreach (var (displayName, idName, logo) in _msixPackageSnapshot.Value)
         {
-            var pm = new PackageManager();
-            var needle = appName.Replace(" ", "", StringComparison.OrdinalIgnoreCase);
-            if (needle.Equals("WindowsStore", StringComparison.OrdinalIgnoreCase))
-                needle = "WindowsStore";
+            var name = !string.IsNullOrWhiteSpace(displayName) ? displayName : idName;
+            if (string.IsNullOrWhiteSpace(name)) continue;
 
-            foreach (var pkg in pm.FindPackagesForUser(""))
+            if (name.Equals(appName, StringComparison.OrdinalIgnoreCase) ||
+                idName.Contains(needle, StringComparison.OrdinalIgnoreCase) ||
+                name.Replace(" ", "").Contains(needle, StringComparison.OrdinalIgnoreCase))
             {
-                var name = pkg.DisplayName ?? pkg.Id.Name;
-                if (string.IsNullOrWhiteSpace(name)) continue;
-
-                if (name.Equals(appName, StringComparison.OrdinalIgnoreCase) ||
-                    pkg.Id.Name.Contains(needle, StringComparison.OrdinalIgnoreCase) ||
-                    name.Replace(" ", "").Contains(needle, StringComparison.OrdinalIgnoreCase))
-                {
-                    if (pkg.Logo is { } logo && File.Exists(logo.LocalPath))
-                        return logo;
-                }
+                return logo;
             }
         }
-        catch { }
         return null;
     }
 
