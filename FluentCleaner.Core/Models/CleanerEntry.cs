@@ -17,6 +17,7 @@ public class CleanerEntry
     public List<ExcludeKeyEntry> ExcludeKeys { get; set; } = new(); // Paths/files to skip even if they match a FileKey.
     public string? Warning { get; set; }                           // Winapp2 warning shown as tooltip (e.g. "Removes saved passwords").
     public bool Default { get; set; } = true;                      // Whether this entry is checked by default in the UI.
+    public string? RunningProcess { get; set; }                    // Process name(s) associated with this entry (e.g. "chrome.exe", "Code.exe").
 
     // Not from Winapp2.ini; used internally by FluentCleaner:
     public bool IsCustom { get; set; }                             // True for entries loaded from the user's Custom/ folder.

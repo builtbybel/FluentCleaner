@@ -30,6 +30,12 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions, I
         // On Loaded, not in the ctor: measured 20 ms faster. The catalogue is preloaded at launch.
         Loaded += async (_, _) =>
         {
+            if (Application.Current is App app && app.MainWindow is { } mainWin)
+            {
+                mainWin.Activated -= MainWindow_Activated;
+                mainWin.Activated += MainWindow_Activated;
+            }
+
             if (_loaded) return;
             _loaded = true;
 
@@ -37,6 +43,18 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions, I
             ShowWhatsNewOnce();   // before the load, which saves a first run's selection
             await ViewModel.LoadWinapp2Async(CleanerPageViewModel.DatabasePaths());
         };
+
+        Unloaded += (_, _) =>
+        {
+            if (Application.Current is App app && app.MainWindow is { } mainWin)
+                mainWin.Activated -= MainWindow_Activated;
+        };
+    }
+
+    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        if (args.WindowActivationState != WindowActivationState.Deactivated && _loaded && !ViewModel.IsBusy)
+            _ = ViewModel.RefreshRunningProcessesAsync();
     }
 
     // Once after an update. A fresh install has no saved selection yet and gets nothing.

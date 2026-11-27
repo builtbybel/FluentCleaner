@@ -600,6 +600,32 @@ public partial class CleanerPageViewModel : ObservableObject
             }
             Categories.Add(catVm);
         }
+
+        _ = RefreshRunningProcessesAsync();
+    }
+
+    /// <summary>
+    /// Asynchronously updates running process warning badges across all loaded entries without blocking UI.
+    /// </summary>
+    public async Task RefreshRunningProcessesAsync()
+    {
+        try
+        {
+            var snapshot = await ProcessDetectionService.GetRunningProcessesAsync();
+            foreach (var category in Categories)
+            {
+                foreach (var entryVm in category.Entries)
+                {
+                    bool isRunning = ProcessDetectionService.IsProcessRunning(entryVm.Entry, out var procName, snapshot);
+                    entryVm.IsProcessRunning = isRunning;
+                    entryVm.RunningProcessName = procName;
+                    entryVm.RunningWarningText = isRunning
+                        ? ResourceService.Fmt("St_ProcessRunningWarning", procName)
+                        : string.Empty;
+                }
+            }
+        }
+        catch { }
     }
 
     // All the little "derived state" toggles live here so we do not forget one

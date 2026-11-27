@@ -12,6 +12,9 @@ public partial class CleanerEntryViewModel : ObservableObject
 
     [ObservableProperty] public partial bool   IsSelected { get; set; }
     [ObservableProperty] public partial string SizeText { get; set; } = "";
+    [ObservableProperty] public partial bool   IsProcessRunning { get; set; }
+    [ObservableProperty] public partial string RunningProcessName { get; set; } = "";
+    [ObservableProperty] public partial string RunningWarningText { get; set; } = "";
 
     public string  Name    => Entry.Name;
     public string? Warning => Entry.Warning;

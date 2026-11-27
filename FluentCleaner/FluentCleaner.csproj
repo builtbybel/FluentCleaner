@@ -69,6 +69,7 @@
     <Compile Include="..\FluentCleaner.Core\Services\CustomEntryService.cs" Link="Services\CustomEntryService.cs" />
     <Compile Include="..\FluentCleaner.Core\Services\DetectionService.cs" Link="Services\DetectionService.cs" />
     <Compile Include="..\FluentCleaner.Core\Services\PathExpander.cs" Link="Services\PathExpander.cs" />
+    <Compile Include="..\FluentCleaner.Core\Services\ProcessDetectionService.cs" Link="Services\ProcessDetectionService.cs" />
     <Compile Include="..\FluentCleaner.Core\Services\RegistryHelpers.cs" Link="Services\RegistryHelpers.cs" />
     <Compile Include="..\FluentCleaner.Core\Services\Winapp2Parser.cs" Link="Services\Winapp2Parser.cs" />
   </ItemGroup>

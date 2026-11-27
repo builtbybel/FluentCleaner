@@ -64,6 +64,7 @@ public class Winapp2Parser
             else if (key.Equals("SpecialDetect", StringComparison.OrdinalIgnoreCase)) current.SpecialDetect = value;
             else if (key.Equals("Warning", StringComparison.OrdinalIgnoreCase)) current.Warning = value;
             else if (key.Equals("Default", StringComparison.OrdinalIgnoreCase)) current.Default = value.Equals("True", StringComparison.OrdinalIgnoreCase);
+            else if (key.Equals("RunningProcess", StringComparison.OrdinalIgnoreCase) || key.Equals("CloseProcesses", StringComparison.OrdinalIgnoreCase)) current.RunningProcess = value;
             else if (RxDetect.IsMatch(key)) current.DetectKeys.Add(value);
             else if (RxDetectFile.IsMatch(key)) current.DetectFiles.Add(value);
             else if (RxFileKey.IsMatch(key)) current.FileKeys.Add(FileKeyEntry.Parse(value));

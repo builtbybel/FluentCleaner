@@ -239,6 +239,8 @@
   <data name="St_EntryScanningProgress"><value>Scanning {0}...</value></data>
   <data name="St_ExcludedFile"><value>Excluded: {0}</value></data>
   <data name="St_ExcludedFolder"><value>Excluded: {0}</value></data>
+  <data name="St_ProcessRunningWarning"><value>{0} is currently running. Close it to clean locked cache files.</value></data>
+  <data name="St_ProcessRunningBadge"><value>In Use</value></data>
 
   <!-- CleaningService progress messages -->
   <data name="Prog_Deleted"><value>Deleted: {0}</value></data>
