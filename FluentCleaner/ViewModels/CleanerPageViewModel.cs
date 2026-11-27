@@ -20,6 +20,7 @@ public partial class CleanerPageViewModel : ObservableObject
     private List<string> _lastPaths = [];                   // stored so Refresh can reload without the paths being passed again
     private bool _suppressSave;                             // prevents N disk writes when SelectAll/SelectNone fires per-entry callbacks
     private CancellationTokenSource? _cts;                  // lives only during an active scan or clean; null = nothing running
+    private CancellationTokenSource? _searchDebounceCts;
 
     // --- Observable state ---------------------------------------------------
     [ObservableProperty] public partial ObservableCollection<CleanerCategoryViewModel> Categories { get; set; } = [];    // left panel: category tree
@@ -60,13 +61,30 @@ public partial class CleanerPageViewModel : ObservableObject
         RebuildDetailLines(value);
     }
 
-    // Search rebuilds the visible category list from scratch; just simple, no weird state to debug
+    // Search rebuilds the visible category list from scratch after a 150ms debounce
     partial void OnSearchTextChanged(string value)
     {
-        RebuildVisibleCategories();
-        if (!string.IsNullOrWhiteSpace(value)) SetAllExpanded(true); //results are useless if they're all collapsed
-        RefreshCategoryState();
         OnPropertyChanged(nameof(HasSearchText));   // the footer counts show what the filter left
+        _searchDebounceCts?.Cancel();
+        _searchDebounceCts?.Dispose();
+        var cts = new CancellationTokenSource();
+        _searchDebounceCts = cts;
+        _ = ApplyDebouncedSearchAsync(value, cts.Token);
+    }
+
+    private async Task ApplyDebouncedSearchAsync(string value, CancellationToken token)
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+                await Task.Delay(150, token);
+            if (token.IsCancellationRequested) return;
+
+            RebuildVisibleCategories();
+            if (!string.IsNullOrWhiteSpace(value)) SetAllExpanded(true); //results are useless if they're all collapsed
+            RefreshCategoryState();
+        }
+        catch (OperationCanceledException) { }
     }
 
     // keep the progress/1-100 label in sync with the bar
