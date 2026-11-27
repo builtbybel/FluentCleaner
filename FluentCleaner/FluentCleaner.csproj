@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
@@ -71,6 +71,9 @@
     <Compile Include="..\FluentCleaner.Core\Services\PathExpander.cs" Link="Services\PathExpander.cs" />
     <Compile Include="..\FluentCleaner.Core\Services\RegistryHelpers.cs" Link="Services\RegistryHelpers.cs" />
     <Compile Include="..\FluentCleaner.Core\Services\Winapp2Parser.cs" Link="Services\Winapp2Parser.cs" />
+    <Compile Include="..\FluentCleaner.Core\Services\WinSqlite.cs" Link="Services\WinSqlite.cs" />
+    <Compile Include="..\FluentCleaner.Core\Services\SqliteCompactorTargets.cs" Link="Services\SqliteCompactorTargets.cs" />
+    <Compile Include="..\FluentCleaner.Core\Services\SqliteCompactorService.cs" Link="Services\SqliteCompactorService.cs" />
   </ItemGroup>
 
   <!-- Localization: every Strings/{lang}/Resources.resw is compiled into the .pri for       -->

@@ -20,6 +20,7 @@ public class CleanerEntry
 
     // Not from Winapp2.ini; used internally by FluentCleaner:
     public bool IsCustom { get; set; }                             // True for entries loaded from the user's Custom/ folder.
+    public bool IsCompactionOnly { get; set; }                     // True for SQLite VACUUM optimization (compacts in-place without deletion).
 
     public string RawText { get; set; } = "";                      // Verbatim ini block for the "Show source" view.
 }
