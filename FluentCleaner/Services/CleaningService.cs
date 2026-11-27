@@ -57,10 +57,9 @@ public class CleaningService
                 {
                     try
                     {
-                        foreach (var file in FindFiles(fileKey, fileExclusions, entryProgress, token))
+                        foreach (var (file, size) in FindFilesWithSize(fileKey, fileExclusions, entryProgress, token))
                         {
-                            var size = TryGetDeletableSize(file);
-                            if (size >= 0)
+                            if (CanDeleteFile(file, out _))
                                 candidates.Add((file, size));
                         }
                     }
@@ -81,13 +80,12 @@ public class CleaningService
             {
                 try
                 {
-                    foreach (var file in FindFiles(fileKey, fileExclusions, entryProgress, token))
+                    foreach (var (file, size) in FindFilesWithSize(fileKey, fileExclusions, entryProgress, token))
                     {
                         if (!seen.Add(file)) continue;
 
                         // Skip files that are truly inaccessible (hard lock / no permissions).
-                        var size = TryGetDeletableSize(file);
-                        if (size < 0) continue;
+                        if (!CanDeleteFile(file, out _)) continue;
 
                         result.FilesToDelete.Add(file);
                         result.TotalBytes += size;
@@ -107,9 +105,9 @@ public class CleaningService
         return result;
     }
 
-    /* Resolves the FileKey path to real directories and yields every matching file.
+    /* Resolves the FileKey path to real directories and yields every matching file with its OS-reported size.
        Patterns get split here upfront so the tree walk only happens once down below. */
-    private IEnumerable<string> FindFiles(FileKeyEntry fileKey, List<ExclusionRule> excluded, IProgress<string>? progress, CancellationToken token = default)
+    private IEnumerable<(string Path, long Size)> FindFilesWithSize(FileKeyEntry fileKey, List<ExclusionRule> excluded, IProgress<string>? progress, CancellationToken token = default)
     {
         bool recurse = fileKey.Flag is FileKeyFlag.Recurse or FileKeyFlag.RemoveSelf;
 
@@ -120,17 +118,22 @@ public class CleaningService
         {
             if (!Directory.Exists(dir)) continue;
 
-            foreach (var f in EnumerateFilesSafe(dir, patterns, excluded, recurse, progress, token))
-                if (!IsExcluded(f, excluded) && !IsProtected(f))
-                    yield return f;
+            foreach (var item in EnumerateFilesWithSizeSafe(dir, patterns, excluded, recurse, progress, token, depth: 0))
+                if (!IsExcluded(item.Path, excluded) && !IsProtected(item.Path))
+                    yield return item;
         }
     }
 
-    /* Walks the tree once; lets the OS match files per pattern (FindFirstFile knows about
-       8.3 short-name aliases,we don't). HashSet drops files that match more than one pattern.
-       Reparse points skipped;Windows ships with fun traps like
-     C:\Users\All Users >> C:\ProgramData >> All Users >>....forever */
-    private static IEnumerable<string> EnumerateFilesSafe(string root, string[] patterns, List<ExclusionRule> excluded, bool recurse, IProgress<string>? progress = null, CancellationToken token = default)
+    /* Single-pass OS directory enumeration returning (FullPath, Length) directly from WIN32_FIND_DATA
+       with zero extra FileInfo.Length syscalls. Parallelizes top-level subdirectories at depth 0. */
+    private static IEnumerable<(string Path, long Size)> EnumerateFilesWithSizeSafe(
+        string root,
+        string[] patterns,
+        List<ExclusionRule> excluded,
+        bool recurse,
+        IProgress<string>? progress = null,
+        CancellationToken token = default,
+        int depth = 0)
     {
         //Whole-root check:skip an excluded branch before touching anything below it
         var scanRoot = root.TrimEnd('\\') + "\\";
@@ -140,35 +143,71 @@ public class CleaningService
 
         progress?.Report(root);
 
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var p in patterns)
-        {
-            IEnumerable<string> files;
-            try { files = Directory.EnumerateFiles(root, p); }
-            catch { files = []; }
-            foreach (var f in files)
-                if (seen.Add(f))   //skip if another pattern already matched this file
-                    yield return f;
-        }
+        bool matchAll = patterns.Length == 0 || patterns.Any(p => p is "*" or "*.*");
+        var subDirs = recurse ? new List<string>() : null;
 
-        if (!recurse) yield break;
-
-        IEnumerable<string> dirs;
-        //!FIX!Skip reparse points (junctions & symlinks);Windows ships with traps like
-        //C:\Users\All Users >> C:\ProgramData >>> All Users >>...forever ;)
-        //Real content is always reachable via the canonical path;no need to follow aliases
+        IEnumerable<(string Path, long Size)>? files = null;
         try
         {
-            dirs = Directory.EnumerateDirectories(root)
-                              .Where(d => (File.GetAttributes(d) & FileAttributes.ReparsePoint) == 0);
+            var enumerable = new FileSystemEnumerable<(string Path, long Size)>(
+                root,
+                (ref FileSystemEntry entry) => (entry.ToFullPath(), entry.Length),
+                new EnumerationOptions
+                {
+                    RecurseSubdirectories = false,
+                    IgnoreInaccessible = true,
+                    AttributesToSkip = 0
+                })
+            {
+                ShouldIncludePredicate = (ref FileSystemEntry entry) =>
+                {
+                    if (entry.IsDirectory)
+                    {
+                        if (recurse && (entry.Attributes & FileAttributes.ReparsePoint) == 0)
+                            subDirs!.Add(entry.ToFullPath());
+                        return false;
+                    }
+                    if (matchAll) return true;
+                    foreach (var p in patterns)
+                    {
+                        if (FileSystemName.MatchesSimpleExpression(p, entry.FileName, ignoreCase: true))
+                            return true;
+                    }
+                    return false;
+                }
+            };
+            files = enumerable.ToList();
         }
-        catch { yield break; }
+        catch { files = []; }
 
-        foreach (var sub in dirs)
+        foreach (var item in files)
+            yield return item;
+
+        if (!recurse || subDirs is null || subDirs.Count == 0) yield break;
+
+        if (depth == 0 && subDirs.Count > 1)
         {
-            token.ThrowIfCancellationRequested(); //one check per folder is enough;no need to go per-file
-            foreach (var f in EnumerateFilesSafe(sub, patterns, excluded, recurse: true, progress, token))
-                yield return f;
+            var bag = new ConcurrentBag<(string Path, long Size)>();
+            Parallel.ForEach(
+                subDirs,
+                new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrency, CancellationToken = token },
+                sub =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    foreach (var item in EnumerateFilesWithSizeSafe(sub, patterns, excluded, recurse: true, progress, token, depth + 1))
+                        bag.Add(item);
+                });
+            foreach (var item in bag)
+                yield return item;
+        }
+        else
+        {
+            foreach (var sub in subDirs)
+            {
+                token.ThrowIfCancellationRequested();
+                foreach (var item in EnumerateFilesWithSizeSafe(sub, patterns, excluded, recurse: true, progress, token, depth + 1))
+                    yield return item;
+            }
         }
     }
 
@@ -463,16 +502,30 @@ public class CleaningService
     // Yes, theres a TOCTOU gap between Analyze and Clean;file state can change in between
     // Worst case: we report a slightly off size or try to delete something that moved. Both are caught silently.
     //The goal here is simply to avoid counting files that are already undeletable right now
-    private static long TryGetDeletableSize(string path)
+    private static bool CanDeleteFile(string path, out bool notFound)
     {
         const uint DELETE = 0x00010000;
         const uint FILE_SHARE_ALL = 0x7;   // Read | Write | Delete
         const uint OPEN_EXISTING = 3;
+        const int ERROR_FILE_NOT_FOUND = 2;
+        const int ERROR_PATH_NOT_FOUND = 3;
 
         using var handle = CreateFileW(path, DELETE, FILE_SHARE_ALL,
                                        IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
-        if (handle.IsInvalid) return -1;   // locked; skip!
+        if (!handle.IsInvalid)
+        {
+            notFound = false;
+            return true;
+        }
 
+        int err = Marshal.GetLastWin32Error();
+        notFound = err is ERROR_FILE_NOT_FOUND or ERROR_PATH_NOT_FOUND;
+        return false;
+    }
+
+    private static long TryGetDeletableSize(string path)
+    {
+        if (!CanDeleteFile(path, out _)) return -1;
         try { return new FileInfo(path).Length; }
         catch { return -1; }
     }
