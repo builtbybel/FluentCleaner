@@ -32,6 +32,7 @@ public partial class CleanerPageViewModel : ObservableObject
     [ObservableProperty] public partial string  TotalSize     { get; set; } = "";                                        // sum of all scan results
     [ObservableProperty] public partial int     CatalogueCount { get; set; }                                             // entries in the databases, before the installed check
     [ObservableProperty] public partial double  ScanProgress  { get; set; }                                               // 0–100; drives the real progress bar
+    [ObservableProperty] public partial string  ScanTelemetryText { get; set; } = "";                                      // e.g. "42% · 81/192 rules · ~6s left"
     [ObservableProperty] public partial bool    IsBusy        { get; set; }                                               // locked while a scan or clean is running
     [ObservableProperty] public partial bool    OfferElevation { get; set; }                                              // last clean skipped files and we're not admin: header offers a restart
 
@@ -257,6 +258,8 @@ public partial class CleanerPageViewModel : ObservableObject
         {
             long totalBytes = 0; int totalFiles = 0; int totalReg = 0; int done = 0;
             int total = selected.Count;
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            ScanTelemetryText = ScanProgressEstimator.Estimate(0, total, TimeSpan.Zero).DisplayText;
             var progress = new Progress<string>(msg =>
                 StatusText = msg);             //live percent + entry name
 
@@ -267,7 +270,9 @@ public partial class CleanerPageViewModel : ObservableObject
                 totalFiles += result.FilesToDelete.Count;
                 totalReg   += result.RegistryToDelete.Count;
                 TotalSize    = ScanResult.FormatBytes(totalBytes);                      //live size counter
-                ScanProgress = ++done * 100.0 / total;                                  //progress per entry
+                var snap = ScanProgressEstimator.Estimate(++done, total, sw.Elapsed);
+                ScanProgress      = snap.Percent;                                       //progress per entry
+                ScanTelemetryText = snap.DisplayText;
             }
             SortResultLinesBySize(descending: true);  //biggest entries first
             StatusText = ResourceService.Fmt("St_ScanComplete", totalFiles, totalReg, TotalSize);
@@ -280,8 +285,9 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
@@ -347,8 +353,9 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
 
         // Log the clean run in HISTORY so the user can track their junk growth over time if they want
@@ -429,8 +436,9 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
@@ -469,8 +477,9 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
@@ -510,8 +519,9 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
