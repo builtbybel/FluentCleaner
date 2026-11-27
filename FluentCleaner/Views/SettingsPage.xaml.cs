@@ -86,22 +86,36 @@ public sealed partial class SettingsPage : Page
     }
     private void SettingsNav_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!_navigationReady || SettingsNav.SelectedItem is not ListViewItem item) return;
+        if (!_navigationReady) return;
+        var item = e.AddedItems.FirstOrDefault() as ListViewItem ?? SettingsNav.SelectedItem as ListViewItem;
+        if (item is null) return;
+        ShowSettingsSection(item.Tag as string ?? "General");
+    }
+
+    private void SettingsNav_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (!_navigationReady) return;
+        var item = e.ClickedItem as ListViewItem
+                   ?? SettingsNav.ContainerFromItem(e.ClickedItem) as ListViewItem;
+        if (item is null) return;
+        SettingsNav.SelectedItem = item;
         ShowSettingsSection(item.Tag as string ?? "General");
     }
 
     private void ShowSettingsSection(string section)
     {
+        bool Is(string name) => string.Equals(section, name, StringComparison.OrdinalIgnoreCase);
+
         AppearanceSection.Visibility = DatabaseSection.Visibility =
-            section == "General" ? Visibility.Visible : Visibility.Collapsed;
-        CookiesSection.Visibility = section == "Cookies" ? Visibility.Visible : Visibility.Collapsed;
-        ExclusionsSection.Visibility = section == "Exclusions" ? Visibility.Visible : Visibility.Collapsed;
-        PostCleanSection.Visibility = section == "Tasks" ? Visibility.Visible : Visibility.Collapsed;
-        HistorySection.Visibility = section == "History" ? Visibility.Visible : Visibility.Collapsed;
-        AiSection.Visibility = section == "AI" ? Visibility.Visible : Visibility.Collapsed;
-        SchedulerSection.Visibility = section == "Scheduler" ? Visibility.Visible : Visibility.Collapsed;
+            Is("General") ? Visibility.Visible : Visibility.Collapsed;
+        CookiesSection.Visibility = Is("Cookies") ? Visibility.Visible : Visibility.Collapsed;
+        ExclusionsSection.Visibility = Is("Exclusions") ? Visibility.Visible : Visibility.Collapsed;
+        PostCleanSection.Visibility = Is("Tasks") ? Visibility.Visible : Visibility.Collapsed;
+        HistorySection.Visibility = Is("History") ? Visibility.Visible : Visibility.Collapsed;
+        AiSection.Visibility = Is("AI") ? Visibility.Visible : Visibility.Collapsed;
+        SchedulerSection.Visibility = Is("Scheduler") ? Visibility.Visible : Visibility.Collapsed;
         BackupSection.Visibility = AboutSection.Visibility =
-            section == "About" ? Visibility.Visible : Visibility.Collapsed;
+            Is("About") ? Visibility.Visible : Visibility.Collapsed;
         SettingsScroll.ChangeView(null, 0, null, true);
     }
 

@@ -52,6 +52,8 @@
                   Margin="12,20,0,20"
                   Padding="0"
                   SelectedIndex="3"
+                  IsItemClickEnabled="True"
+                  ItemClick="SettingsNav_ItemClick"
                   SelectionChanged="SettingsNav_SelectionChanged">
             <ListViewItem x:Uid="SettingsNavAI" Tag="AI" />
             <ListViewItem x:Uid="SettingsNavCookies" Tag="Cookies" />
