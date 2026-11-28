@@ -26,7 +26,7 @@
                        TextWrapping="Wrap" />
         </StackPanel>
 
-        <Grid Grid.Row="1" ColumnSpacing="12" MinHeight="360">
+        <Grid Grid.Row="1" ColumnSpacing="12" MinHeight="300">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
