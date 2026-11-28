@@ -149,6 +149,37 @@
                 </Grid>
             </Border>
 
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="18,14">
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="Save settings in app folder" FontWeight="SemiBold" />
+                        <TextBlock Text="Store settings.json next to the executable instead of %AppData%\FluentCleaner."
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="{x:Bind ViewModel.ActiveSettingsPath, Mode=OneWay}"
+                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                   FontSize="11"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <Button Grid.Column="1"
+                            Content="Open folder"
+                            Click="OpenSettingsFolder_Click"
+                            VerticalAlignment="Center" />
+                    <ToggleSwitch Grid.Column="2"
+                                  IsOn="{x:Bind ViewModel.IsPortable, Mode=TwoWay}"
+                                  OnContent="" OffContent="" MinWidth="0"
+                                  VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+
             </StackPanel>
 
             <!-- Database -->

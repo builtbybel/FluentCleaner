@@ -28,10 +28,16 @@ public class AppSettings
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "FluentCleaner", "settings.json");
 
-    private static readonly string SettingsFile = File.Exists(PortablePath) ? PortablePath : RoamingPath;
+    private static string SettingsFile = ResolveSettingsPath(PortablePath, RoamingPath);
 
     [JsonIgnore]
     public static bool IsPortable => SettingsFile == PortablePath;
+
+    [JsonIgnore]
+    public static string ActiveSettingsPath => SettingsFile;
+
+    public static string ResolveSettingsPath(string portablePath, string roamingPath) =>
+        File.Exists(portablePath) ? portablePath : roamingPath;
 
     static AppSettings() => Instance = Load();
 
@@ -144,16 +150,48 @@ public class AppSettings
         catch { }
     }
 
-    private static AppSettings Load()
+    private static AppSettings Load() => LoadFrom(SettingsFile);
+
+    public static AppSettings LoadFrom(string path)
     {
         try
         {
-            if (!File.Exists(SettingsFile)) return new();
-            var s = JsonSerializer.Deserialize(File.ReadAllText(SettingsFile), SettingsJson.Default.AppSettings) ?? new();
+            if (!File.Exists(path)) return new();
+            var s = JsonSerializer.Deserialize(File.ReadAllText(path), SettingsJson.Default.AppSettings) ?? new();
             s.CustomWinapp2Path = NormalizePath(s.CustomWinapp2Path);
             return s;
         }
         catch { return new(); }  // corrupted file;just start fresh
+    }
+
+    public static bool SetPortableMode(bool enable, out string? error)
+        => SwitchStorageLocation(Instance, enable, PortablePath, RoamingPath, ref SettingsFile, out error);
+
+    public static bool SwitchStorageLocation(
+        AppSettings instance,
+        bool enablePortable,
+        string portablePath,
+        string roamingPath,
+        ref string activeFile,
+        out string? error)
+    {
+        error = null;
+        string target = enablePortable ? portablePath : roamingPath;
+        try
+        {
+            var dir = Path.GetDirectoryName(target);
+            if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+            File.WriteAllText(target, JsonSerializer.Serialize(instance, SettingsJson.Default.AppSettings));
+            if (!enablePortable && File.Exists(portablePath))
+                File.Delete(portablePath);
+            activeFile = target;
+            return true;
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+        {
+            error = ex.Message;
+            return false;
+        }
     }
 
     // Export current settings to a file (for backup or sharing)
