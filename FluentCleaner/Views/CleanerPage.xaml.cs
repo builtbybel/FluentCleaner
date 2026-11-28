@@ -3,9 +3,12 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentCleaner.Services;
 using FluentCleaner.ViewModels;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace FluentCleaner.Views;
@@ -16,18 +19,24 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions, I
     public CleanerPageViewModel ViewModel { get; } = new();
 
     private bool _loaded;
+    private bool _isDraggingSplitter;
+    private double _dragStartPointerX;
+    private double _dragStartColumnWidth;
     private bool _sortDescending = true;
 
     public CleanerPage()
     {
         InitializeComponent();
 
+        // Restore remembered pane width from settings
+        var savedWidth = AppSettings.Instance.CleanerPaneWidth;
+        if (savedWidth >= 180 && savedWidth <= 650)
+            LeftPaneColumn.Width = new GridLength(savedWidth);
+
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         ViewModel.Categories.CollectionChanged += OnCategoriesChanged;
 
         UpdateStatusBar();
-
-        // On Loaded, not in the ctor: measured 20 ms faster. The catalogue is preloaded at launch.
         Loaded += async (_, _) =>
         {
             if (_loaded) return;
@@ -356,6 +365,84 @@ public sealed partial class CleanerPage : Page, ISearchablePage, IPageActions, I
         };
 
         return await dialog.ShowAsync() == ContentDialogResult.Primary;
+    }
+
+    // --- Interactive Pane Splitter --------------------------------------------
+
+    private void PaneSplitter_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast);
+        if (!_isDraggingSplitter && Application.Current.Resources.TryGetValue("AccentFillColorDefaultBrush", out var brush))
+            PaneSplitterLine.Fill = (Brush)brush;
+    }
+
+    private void PaneSplitter_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingSplitter)
+        {
+            ProtectedCursor = null;
+            if (Application.Current.Resources.TryGetValue("DividerStrokeColorDefaultBrush", out var brush))
+                PaneSplitterLine.Fill = (Brush)brush;
+        }
+    }
+
+    private void PaneSplitter_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(PaneSplitter).Properties.IsLeftButtonPressed) return;
+
+        _isDraggingSplitter = true;
+        PaneSplitter.CapturePointer(e.Pointer);
+        _dragStartPointerX = e.GetCurrentPoint(this).Position.X;
+        _dragStartColumnWidth = LeftPaneColumn.ActualWidth;
+
+        if (Application.Current.Resources.TryGetValue("AccentFillColorDefaultBrush", out var brush))
+            PaneSplitterLine.Fill = (Brush)brush;
+
+        e.Handled = true;
+    }
+
+    private void PaneSplitter_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingSplitter) return;
+
+        var currentX = e.GetCurrentPoint(this).Position.X;
+        var delta = currentX - _dragStartPointerX;
+        var maxAllowed = Math.Max(250, ActualWidth - 320);
+        var targetWidth = Math.Clamp(_dragStartColumnWidth + delta, 180, Math.Min(650, maxAllowed));
+
+        LeftPaneColumn.Width = new GridLength(targetWidth);
+        e.Handled = true;
+    }
+
+    private void PaneSplitter_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        EndSplitterDrag(e);
+    }
+
+    private void PaneSplitter_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
+    {
+        EndSplitterDrag(e);
+    }
+
+    private void EndSplitterDrag(PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingSplitter) return;
+
+        _isDraggingSplitter = false;
+        try { PaneSplitter.ReleasePointerCapture(e.Pointer); } catch { }
+
+        ProtectedCursor = null;
+        if (Application.Current.Resources.TryGetValue("DividerStrokeColorDefaultBrush", out var brush))
+            PaneSplitterLine.Fill = (Brush)brush;
+
+        // Persist new pane width to settings
+        var newWidth = LeftPaneColumn.ActualWidth;
+        if (newWidth >= 180)
+        {
+            AppSettings.Instance.CleanerPaneWidth = newWidth;
+            AppSettings.Instance.Save();
+        }
+        e.Handled = true;
     }
 }
 

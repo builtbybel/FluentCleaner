@@ -20,6 +20,7 @@ public partial class CleanerPageViewModel : ObservableObject
     private List<string> _lastPaths = [];                   // stored so Refresh can reload without the paths being passed again
     private bool _suppressSave;                             // prevents N disk writes when SelectAll/SelectNone fires per-entry callbacks
     private CancellationTokenSource? _cts;                  // lives only during an active scan or clean; null = nothing running
+    private CancellationTokenSource? _searchDebounceCts;
 
     // --- Observable state ---------------------------------------------------
     [ObservableProperty] public partial ObservableCollection<CleanerCategoryViewModel> Categories { get; set; } = [];    // left panel: category tree
@@ -31,6 +32,7 @@ public partial class CleanerPageViewModel : ObservableObject
     [ObservableProperty] public partial string  TotalSize     { get; set; } = "";                                        // sum of all scan results
     [ObservableProperty] public partial int     CatalogueCount { get; set; }                                             // entries in the databases, before the installed check
     [ObservableProperty] public partial double  ScanProgress  { get; set; }                                               // 0–100; drives the real progress bar
+    [ObservableProperty] public partial string  ScanTelemetryText { get; set; } = "";                                      // e.g. "42% · 81/192 rules · ~6s left"
     [ObservableProperty] public partial bool    IsBusy        { get; set; }                                               // locked while a scan or clean is running
     [ObservableProperty] public partial bool    OfferElevation { get; set; }                                              // last clean skipped files and we're not admin: header offers a restart
 
@@ -60,13 +62,30 @@ public partial class CleanerPageViewModel : ObservableObject
         RebuildDetailLines(value);
     }
 
-    // Search rebuilds the visible category list from scratch; just simple, no weird state to debug
+    // Search rebuilds the visible category list from scratch after a 150ms debounce
     partial void OnSearchTextChanged(string value)
     {
-        RebuildVisibleCategories();
-        if (!string.IsNullOrWhiteSpace(value)) SetAllExpanded(true); //results are useless if they're all collapsed
-        RefreshCategoryState();
         OnPropertyChanged(nameof(HasSearchText));   // the footer counts show what the filter left
+        _searchDebounceCts?.Cancel();
+        _searchDebounceCts?.Dispose();
+        var cts = new CancellationTokenSource();
+        _searchDebounceCts = cts;
+        _ = ApplyDebouncedSearchAsync(value, cts.Token);
+    }
+
+    private async Task ApplyDebouncedSearchAsync(string value, CancellationToken token)
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+                await Task.Delay(150, token);
+            if (token.IsCancellationRequested) return;
+
+            RebuildVisibleCategories();
+            if (!string.IsNullOrWhiteSpace(value)) SetAllExpanded(true); //results are useless if they're all collapsed
+            RefreshCategoryState();
+        }
+        catch (OperationCanceledException) { }
     }
 
     // keep the progress/1-100 label in sync with the bar
@@ -239,6 +258,8 @@ public partial class CleanerPageViewModel : ObservableObject
         {
             long totalBytes = 0; int totalFiles = 0; int totalReg = 0; int done = 0;
             int total = selected.Count;
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            ScanTelemetryText = ScanProgressEstimator.Estimate(0, total, TimeSpan.Zero).DisplayText;
             var progress = new Progress<string>(msg =>
                 StatusText = msg);             //live percent + entry name
 
@@ -249,20 +270,24 @@ public partial class CleanerPageViewModel : ObservableObject
                 totalFiles += result.FilesToDelete.Count;
                 totalReg   += result.RegistryToDelete.Count;
                 TotalSize    = ScanResult.FormatBytes(totalBytes);                      //live size counter
-                ScanProgress = ++done * 100.0 / total;                                  //progress per entry
+                var snap = ScanProgressEstimator.Estimate(++done, total, sw.Elapsed);
+                ScanProgress      = snap.Percent;                                       //progress per entry
+                ScanTelemetryText = snap.DisplayText;
             }
             SortResultLinesBySize(descending: true);  //biggest entries first
             StatusText = ResourceService.Fmt("St_ScanComplete", totalFiles, totalReg, TotalSize);
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Get("St_ScanCancelled");
             TotalSize  = "";
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
@@ -328,8 +353,9 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
 
         // Log the clean run in HISTORY so the user can track their junk growth over time if they want
@@ -399,17 +425,20 @@ public partial class CleanerPageViewModel : ObservableObject
             var result = await AnalyzeEntryInternalAsync(entryVm.Entry,
                 new Progress<string>(msg => StatusText = msg), keepDetailSelection: true, cts.Token);
 
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Fmt("St_EntryScanned", entryVm.Name, result.FilesToDelete.Count, result.RegistryToDelete.Count);
             UpdateTotalsFromLastScan();
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Get("St_ScanCancelled");
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
@@ -448,8 +477,9 @@ public partial class CleanerPageViewModel : ObservableObject
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
@@ -478,17 +508,20 @@ public partial class CleanerPageViewModel : ObservableObject
                 ScanProgress = ++done * 100.0 / total;
             }
 
+            SortResultLinesBySize(descending: true);
             UpdateTotalsFromLastScan();
             StatusText = ResourceService.Fmt("St_CategoryScanned", categoryVm.Name, selected.Count);
         }
         catch (OperationCanceledException)
         {
+            SortResultLinesBySize(descending: true);
             StatusText = ResourceService.Get("St_ScanCancelled");
         }
         finally
         {
-            _cts   = null;
-            IsBusy = false;
+            _cts              = null;
+            IsBusy            = false;
+            ScanTelemetryText = "";
         }
     }
 
@@ -542,8 +575,12 @@ public partial class CleanerPageViewModel : ObservableObject
     public void SortResultLinesBySize(bool descending = true)
     {
         var sorted = descending
-            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? 0).ToList()
-            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? 0).ToList();
+            ? ResultLines.OrderByDescending(l => l.Result?.TotalBytes ?? 0)
+                         .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
+                         .ToList()
+            : ResultLines.OrderBy(l => l.Result?.TotalBytes ?? 0)
+                         .ThenBy(l => l.AppName, StringComparer.OrdinalIgnoreCase)
+                         .ToList();
         for (int i = 0; i < sorted.Count; i++)
         {
             int from = ResultLines.IndexOf(sorted[i]);
@@ -570,8 +607,7 @@ public partial class CleanerPageViewModel : ObservableObject
         var groups = entries
             .Select(e => new { Entry = e, Category = CategoryResolver.TryMapLangSecRef(e) })
             .GroupBy(x => x.Category)
-            .OrderBy(g => g.Key.Order)
-            .ThenBy(g => g.Key.Name, StringComparer.OrdinalIgnoreCase);
+            .OrderBy(g => g.Key.Name, StringComparer.OrdinalIgnoreCase);
 
         var settings = AppSettings.Instance;
         var saved = settings.SelectedEntries;

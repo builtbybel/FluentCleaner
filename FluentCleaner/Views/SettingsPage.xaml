@@ -51,14 +51,16 @@
         <ListView x:Name="SettingsNav"
                   Margin="12,20,0,20"
                   Padding="0"
-                  SelectedIndex="0"
+                  SelectedIndex="3"
+                  IsItemClickEnabled="True"
+                  ItemClick="SettingsNav_ItemClick"
                   SelectionChanged="SettingsNav_SelectionChanged">
-            <ListViewItem x:Uid="SettingsNavGeneral" Tag="General" />
+            <ListViewItem x:Uid="SettingsNavAI" Tag="AI" />
             <ListViewItem x:Uid="SettingsNavCookies" Tag="Cookies" />
             <ListViewItem x:Uid="SettingsNavExclusions" Tag="Exclusions" />
-            <ListViewItem x:Uid="SettingsNavTasks" Tag="Tasks" />
+            <ListViewItem x:Uid="SettingsNavGeneral" Tag="General" />
             <ListViewItem x:Uid="SettingsNavHistory" Tag="History" />
-            <ListViewItem x:Uid="SettingsNavAI" Tag="AI" />
+            <ListViewItem x:Uid="SettingsNavTasks" Tag="Tasks" />
             <ListViewItem x:Uid="SettingsNavScheduler" Tag="Scheduler" />
             <ListViewItem x:Uid="SettingsNavAbout" Tag="About" />
         </ListView>
@@ -337,8 +339,7 @@
 
             </StackPanel>
 
-            <!-- Cookie manager (own control) -->
-            <settings:CookiesSettingsView x:Name="CookiesSection" Visibility="Collapsed" />
+            <!-- Cookie manager moved to CookiesHostGrid below so it fills viewport height -->
 
             <!-- Post-clean tasks  -->
             <StackPanel x:Name="PostCleanSection" Spacing="8" Visibility="Collapsed">
@@ -771,6 +772,15 @@
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
+
+    <Grid x:Name="CookiesHostGrid" Grid.Column="1" Margin="32,26,32,24" RowSpacing="22" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Uid="SettingsTitle" Style="{StaticResource TitleTextBlockStyle}" />
+        <settings:CookiesSettingsView x:Name="CookiesSection" Grid.Row="1" />
+    </Grid>
     </Grid>
     </Grid>
 </Page>

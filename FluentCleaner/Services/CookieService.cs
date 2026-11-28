@@ -48,7 +48,7 @@ internal static class CookieService
 
         return new DomainScanResult
         {
-            Domains = domains.OrderBy(domain => domain, StringComparer.CurrentCultureIgnoreCase).ToArray(),
+            Domains = domains.OrderBy(domain => domain, StringComparer.OrdinalIgnoreCase).ToArray(),
             StoresFound = stores.Count,
             StoresUnavailable = unavailable
         };
