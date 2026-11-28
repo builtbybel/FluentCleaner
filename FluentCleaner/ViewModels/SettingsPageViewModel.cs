@@ -61,6 +61,7 @@ public partial class SettingsPageViewModel : ObservableObject
     public ObservableCollection<LanguageOption> Languages { get; } = [];
     [ObservableProperty] public partial LanguageOption? SelectedLanguage { get; set; }
     [ObservableProperty] public partial bool   IsPortable { get; set; }         // true when settings.json sits next to exe
+    [ObservableProperty] public partial string ActiveSettingsPath { get; set; } = AppSettings.ActiveSettingsPath;
 
     private bool _refreshing;
 
@@ -96,6 +97,21 @@ public partial class SettingsPageViewModel : ObservableObject
         AppSettings.Instance.Save();
         ResourceService.SetLanguage(value.Code); // applies PrimaryLanguageOverride; code-side strings switch immediately
         // restart prompt is shown by SettingsPage code-behind via PropertyChanged
+    }
+
+    partial void OnIsPortableChanged(bool value)
+    {
+        if (_refreshing) return;
+        if (!AppSettings.SetPortableMode(value, out var error))
+        {
+            _refreshing = true;
+            IsPortable = AppSettings.IsPortable;
+            _refreshing = false;
+            StatusText = $"Could not change settings location: {error}";
+            return;
+        }
+        ActiveSettingsPath = AppSettings.ActiveSettingsPath;
+        StatusText = "";
     }
 
     // Builds the dropdown: a "System default" entry first, then every discovered language shown in
@@ -255,6 +271,7 @@ public partial class SettingsPageViewModel : ObservableObject
         GlobalExclusionsText     = string.Join("\n", s.GlobalExclusions);
         CleanHistoryEnabled      = s.CleanHistoryEnabled;
         IsPortable          = AppSettings.IsPortable;
+        ActiveSettingsPath  = AppSettings.ActiveSettingsPath;
         ThemeIndex          = s.Theme    switch { "Light" => 1, "Dark"  => 2,    _ => 0 };
         BackdropIndex       = s.Backdrop?.ToLowerInvariant() switch { "micaalt" => 1, "acrylic" => 2, _ => 0 };
         BuildLanguageList();

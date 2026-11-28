@@ -380,6 +380,13 @@ public sealed partial class SettingsPage : Page
 
     // --- Export / Import settings -----------------------------------------
 
+    private void OpenSettingsFolder_Click(object sender, RoutedEventArgs e)
+    {
+        var dir = Path.GetDirectoryName(AppSettings.ActiveSettingsPath);
+        if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir)) return;
+        using var _ = Process.Start(new ProcessStartInfo("explorer.exe", $"\"{dir}\"") { UseShellExecute = true });
+    }
+
     private async void ExportSettings_Click(object sender, RoutedEventArgs e)
     {
         var picker = new FileSavePicker { SuggestedStartLocation = PickerLocationId.Desktop, SuggestedFileName = "settings" };
