@@ -110,7 +110,10 @@ public sealed partial class SettingsPage : Page
 
         AppearanceSection.Visibility = DatabaseSection.Visibility =
             Is("General") ? Visibility.Visible : Visibility.Collapsed;
-        CookiesSection.Visibility = Is("Cookies") ? Visibility.Visible : Visibility.Collapsed;
+        bool isCookies = Is("Cookies");
+        SettingsScroll.Visibility = isCookies ? Visibility.Collapsed : Visibility.Visible;
+        CookiesHostGrid.Visibility = isCookies ? Visibility.Visible : Visibility.Collapsed;
+        CookiesSection.Visibility = isCookies ? Visibility.Visible : Visibility.Collapsed;
         ExclusionsSection.Visibility = Is("Exclusions") ? Visibility.Visible : Visibility.Collapsed;
         PostCleanSection.Visibility = Is("Tasks") ? Visibility.Visible : Visibility.Collapsed;
         HistorySection.Visibility = Is("History") ? Visibility.Visible : Visibility.Collapsed;

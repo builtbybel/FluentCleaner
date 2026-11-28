@@ -339,8 +339,7 @@
 
             </StackPanel>
 
-            <!-- Cookie manager (own control) -->
-            <settings:CookiesSettingsView x:Name="CookiesSection" Visibility="Collapsed" />
+            <!-- Cookie manager moved to CookiesHostGrid below so it fills viewport height -->
 
             <!-- Post-clean tasks  -->
             <StackPanel x:Name="PostCleanSection" Spacing="8" Visibility="Collapsed">
@@ -773,6 +772,15 @@
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
+
+    <Grid x:Name="CookiesHostGrid" Grid.Column="1" Margin="32,26,32,24" RowSpacing="22" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Uid="SettingsTitle" Style="{StaticResource TitleTextBlockStyle}" />
+        <settings:CookiesSettingsView x:Name="CookiesSection" Grid.Row="1" />
+    </Grid>
     </Grid>
     </Grid>
 </Page>
